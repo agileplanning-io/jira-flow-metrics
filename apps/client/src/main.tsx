@@ -4,7 +4,6 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { client } from "./data/client.ts";
 import { ConfigProvider } from "antd";
 import App from "./app/app.tsx";
-import { FilterProvider } from "./app/filter/context/provider.tsx";
 import "./main.css";
 
 import {
@@ -44,21 +43,19 @@ ChartJS.register(
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={client}>
-      <FilterProvider>
-        <ConfigProvider
-          theme={{
-            components: {
-              Layout: {
-                headerBg: "#FFF",
-                bodyBg: "#FFF",
-                footerBg: "#FFF",
-              },
+      <ConfigProvider
+        theme={{
+          components: {
+            Layout: {
+              headerBg: "#FFF",
+              bodyBg: "#FFF",
+              footerBg: "#FFF",
             },
-          }}
-        >
-          <App />
-        </ConfigProvider>
-      </FilterProvider>
+          },
+        }}
+      >
+        <App />
+      </ConfigProvider>
     </QueryClientProvider>
   </React.StrictMode>,
 );
