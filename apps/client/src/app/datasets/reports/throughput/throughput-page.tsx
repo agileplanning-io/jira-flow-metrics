@@ -16,12 +16,15 @@ import { useFilterContext } from "../../../filter/context";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useDatasetContext } from "../../context";
+import { useSearchParams } from "react-router-dom";
 
 export const ThroughputPage = () => {
   const { issues } = useDatasetContext();
   const { filter } = useFilterContext();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [timeUnit, setTimeUnit] = useState<TimeUnit>(TimeUnit.Day);
+  const timeUnit = (searchParams.get("timeUnit") as TimeUnit) ?? TimeUnit.Week;
+
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
   const [throughputResult, setThroughputResult] = useState<ThroughputResult>();
@@ -48,6 +51,13 @@ export const ThroughputPage = () => {
     );
   }, [filter, timeUnit, issues]);
 
+  const onTimeUnitChanged = (timeUnit: TimeUnit) => {
+    setSearchParams((prev) => {
+      prev.set("timeUnit", timeUnit);
+      return prev;
+    });
+  };
+
   return (
     <>
       <FilterOptionsForm
@@ -68,7 +78,7 @@ export const ThroughputPage = () => {
         <Row gutter={[8, 8]}>
           <Col span={4}>
             <Form.Item label="Time Unit">
-              <Select value={timeUnit} onChange={setTimeUnit}>
+              <Select value={timeUnit} onChange={onTimeUnitChanged}>
                 <Select.Option key={TimeUnit.Day}>Days</Select.Option>
                 <Select.Option key={TimeUnit.Week}>Weeks</Select.Option>
                 <Select.Option key={TimeUnit.Fortnight}>
