@@ -11,19 +11,17 @@ export type NavigationContext = {
   dataset?: Dataset;
   datasets?: Dataset[];
   issueKey?: string;
-  reportKey?: string;
 };
 
 export const useNavigationContext = (): NavigationContext => {
   const { pathname: path } = useLocation();
-  const { datasetId, domainId, issueKey, reportKey } = useParams();
-
+  const { datasetId, domainId: domainIdParam, issueKey } = useParams();
   const { data: dataset } = useDataset(datasetId);
 
+  const domainId = domainIdParam ?? dataset?.domainId;
+
   const { data: domains } = useDomains();
-  const domain = domains?.find(
-    (domain) => domain.id === (domainId ?? dataset?.domainId),
-  );
+  const domain = domains?.find((domain) => domain.id === domainId);
 
   const { data: datasets } = useDatasets(domainId ?? dataset?.domainId);
 
@@ -36,6 +34,5 @@ export const useNavigationContext = (): NavigationContext => {
     datasetId,
     datasets,
     issueKey,
-    reportKey,
   };
 };

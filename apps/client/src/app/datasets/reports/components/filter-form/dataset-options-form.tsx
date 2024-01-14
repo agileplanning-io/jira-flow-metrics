@@ -19,6 +19,7 @@ import { WorkflowStage } from "@data/issues";
 import { flatten } from "rambda";
 import { useDatasetContext } from "@app/datasets/context";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
+import { useSearchParams } from "react-router-dom";
 
 export type DatasetOptions = {
   statuses?: string[];
@@ -30,8 +31,7 @@ export type DatasetOptions = {
 
 export const DatasetOptionsForm = () => {
   const [workflowStages, setWorkflowStages] = useState<WorkflowStage[]>();
-  const [initialized, setInitialized] = useState(false);
-
+  const [searchParams] = useSearchParams();
   const { dataset, datasetOptions, setDatasetOptions, issues } =
     useDatasetContext();
 
@@ -46,14 +46,13 @@ export const DatasetOptionsForm = () => {
     )
     .map((stage) => stage.name);
 
+  const initialized = searchParams.get("datasetStatuses");
+
   useEffect(() => {
-    if (!dataset || initialized) return;
+    if (!dataset || !selectedStages || initialized) return;
 
     const workflowStages = dataset.workflow;
-
     setWorkflowStages(workflowStages);
-
-    if (selectedStages && selectedStages.length > 0) return;
 
     const defaultSelectedStages = workflowStages.filter(
       (stage) => stage.selectByDefault,
@@ -66,9 +65,8 @@ export const DatasetOptionsForm = () => {
     setDatasetOptions({
       ...datasetOptions,
       statuses: defaultStatuses,
+      labelFilterType: LabelFilterType.Include,
     });
-
-    setInitialized(true);
   }, [
     dataset,
     datasetOptions,
@@ -76,7 +74,6 @@ export const DatasetOptionsForm = () => {
     setWorkflowStages,
     selectedStages,
     initialized,
-    setInitialized,
   ]);
 
   const [components, setComponents] = useState<SelectProps["options"]>();
