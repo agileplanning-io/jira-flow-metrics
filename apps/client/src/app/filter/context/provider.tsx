@@ -3,7 +3,8 @@ import { FilterContext } from "./context";
 import { useSearchParams } from "react-router-dom";
 import { equals, pick } from "rambda";
 import { Interval } from "@jbrunton/flow-lib";
-import { endOfDay, format, parse } from "date-fns";
+import { endOfDay, parse } from "date-fns";
+import { SearchParamsBuilder } from "@lib/search-params-builder";
 
 export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -14,9 +15,9 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
     dates: parseDates(searchParams),
     hierarchyLevel:
       (searchParams.get("hierarchyLevel") as HierarchyLevel) ?? undefined,
-    resolutions: searchParams.getAll("resolution") ?? undefined,
-    statuses: searchParams.getAll("status") ?? undefined,
-    issueTypes: searchParams.getAll("issueType") ?? undefined,
+    resolutions: searchParams.getAll("resolutions") ?? undefined,
+    statuses: searchParams.getAll("filterStatuses") ?? undefined,
+    issueTypes: searchParams.getAll("issueTypes") ?? undefined,
     assignees: searchParams.getAll("assignees") ?? undefined,
   };
 
@@ -40,9 +41,9 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
             .set("hierarchyLevel", newFilter.hierarchyLevel as string)
             .set("fromDate", newFilter.dates?.start)
             .set("toDate", newFilter.dates?.end)
-            .setAll("resolution", newFilter.resolutions)
-            .setAll("status", newFilter.statuses)
-            .setAll("issueType", newFilter.issueTypes)
+            .setAll("resolutions", newFilter.resolutions)
+            .setAll("filterStatuses", newFilter.statuses)
+            .setAll("issueTypes", newFilter.issueTypes)
             .setAll("assignees", newFilter.assignees)
             .getParams();
         },
@@ -68,32 +69,3 @@ const parseDates = (params: URLSearchParams): Interval | undefined => {
     };
   }
 };
-
-class SearchParamsBuilder {
-  constructor(private readonly params: URLSearchParams) {}
-
-  set(name: string, value?: string | Date) {
-    if (value) {
-      if (typeof value === "string") {
-        this.params.set(name, value);
-      } else {
-        this.params.set(name, format(value, "yyyy-MM-dd"));
-      }
-    } else {
-      this.params.delete(name);
-    }
-    return this;
-  }
-
-  setAll(name: string, value?: string[]) {
-    this.params.delete(name);
-    if (value && value.length) {
-      value.forEach((v) => this.params.append(name, v));
-    }
-    return this;
-  }
-
-  getParams() {
-    return this.params;
-  }
-}

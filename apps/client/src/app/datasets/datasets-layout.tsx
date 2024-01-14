@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 import { DatasetOptionsForm } from "./reports/components/filter-form/dataset-options-form";
 
 export const DatasetsLayout = () => {
-  const { dataset, setDatasetOptions, issues } = useDatasetContext();
+  const { dataset } = useDatasetContext();
 
   if (!dataset) {
     return <LoadingSpinner />;
@@ -12,11 +12,7 @@ export const DatasetsLayout = () => {
 
   return (
     <>
-      <DatasetOptionsForm
-        datasetId={dataset?.id}
-        onOptionsChanged={setDatasetOptions}
-        issuesCount={issues?.length}
-      />
+      <DatasetOptionsForm />
       <Outlet />
     </>
   );
