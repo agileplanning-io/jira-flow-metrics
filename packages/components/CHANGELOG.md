@@ -1,5 +1,13 @@
 # @jbrunton/flow-components
 
+## 0.0.9
+
+### Patch Changes
+
+- b3ff67c: feat: epic preview link
+- Updated dependencies [cd86e4e]
+  - @jbrunton/flow-metrics@0.0.10
+
 ## 0.0.8
 
 ### Patch Changes

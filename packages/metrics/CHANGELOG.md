@@ -1,5 +1,11 @@
 # @jbrunton/flow-metrics
 
+## 0.0.10
+
+### Patch Changes
+
+- cd86e4e: feat: epic cycle time policies
+
 ## 0.0.9
 
 ### Patch Changes
