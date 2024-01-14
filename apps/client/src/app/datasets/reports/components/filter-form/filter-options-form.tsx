@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { HierarchyLevel, Issue } from "@jbrunton/flow-metrics";
+import { HierarchyLevel, Issue, filterIssues } from "@jbrunton/flow-metrics";
 import { Col, Form, Row, Select, SelectProps, Tag } from "antd";
 import { DateSelector } from "../date-selector";
 import { isNil, map, pipe, reject, uniq } from "rambda";
@@ -37,92 +37,76 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
   showStatusFilter,
   showHierarchyFilter,
 }) => {
-  const { filter: initialFilter, setFilter } = useFilterContext();
+  const { filter, setFilter } = useFilterContext();
 
   const [resolutions, setResolutions] = useState<SelectProps["options"]>();
   const [statuses, setStatuses] = useState<SelectProps["options"]>();
   const [issueTypes, setIssueTypes] = useState<SelectProps["options"]>();
   const [assignees, setAssignees] = useState<SelectProps["options"]>();
 
-  const [hierarchyLevel, setHierarchyLevel] = useState<
-    HierarchyLevel | undefined
-  >(initialFilter.hierarchyLevel);
+  useEffect(() => {
+    if (showDateSelector && !filter.dates) {
+      setFilter({ ...filter, dates: defaultDateRange() });
+    }
+  });
 
   useEffect(() => {
     if (!issues) {
       return;
     }
 
-    const filteredIssues = issues.filter((issue) =>
-      hierarchyLevel ? issue.hierarchyLevel === hierarchyLevel : true,
-    );
+    const filteredIssues = filterIssues(issues, {
+      hierarchyLevel: filter.hierarchyLevel,
+    });
 
     setResolutions(makeFilterOptions(filteredIssues, "resolution"));
     setIssueTypes(makeFilterOptions(filteredIssues, "issueType"));
     setStatuses(makeFilterOptions(filteredIssues, "status"));
     setAssignees(makeFilterOptions(filteredIssues, "assignee"));
-  }, [issues, hierarchyLevel, setResolutions, setIssueTypes, setStatuses]);
+  }, [issues, filter, setResolutions, setIssueTypes, setStatuses]);
 
-  const [selectedResolutions, setSelectedResolutions] = useState<string[]>(
-    showResolutionFilter ? initialFilter.resolutions ?? [] : [],
-  );
-  const [selectedStatuses, setSelectedStatuses] = useState<string[]>(
-    showStatusFilter ? initialFilter.statuses ?? [] : [],
-  );
-  const [selectedIssueTypes, setSelectedIssueTypes] = useState<string[]>(
-    initialFilter.issueTypes ?? [],
-  );
-  const [selectedAssignees, setSelectedAssignees] = useState<string[]>(
-    initialFilter.assignees ?? [],
-  );
-
-  const [dates, setDates] = useState<Interval | undefined>(() => {
-    return showDateSelector
-      ? initialFilter.dates ?? defaultDateRange()
-      : undefined;
-  });
-
-  useEffect(() => {
-    setFilter({
-      dates,
-      resolutions: selectedResolutions,
-      statuses: selectedStatuses,
-      issueTypes: selectedIssueTypes,
-      assignees: selectedAssignees,
-      hierarchyLevel,
-    });
-  }, [
-    setFilter,
-    dates,
-    selectedResolutions,
-    selectedStatuses,
-    selectedIssueTypes,
-    selectedAssignees,
-    hierarchyLevel,
-  ]);
   const options: ExpandableOptionsHeader["options"][number][] = [];
 
-  if (dates) {
+  if (filter.dates) {
     options.push({
       label: "Dates",
-      value: `${formatDate(dates.start)}-${formatDate(dates.end)}`,
+      value: `${formatDate(filter.dates.start)}-${formatDate(
+        filter.dates.end,
+      )}`,
     });
   }
-  if (hierarchyLevel) {
-    options.push({ label: "Hierarchy level", value: hierarchyLevel });
+  if (filter.hierarchyLevel) {
+    options.push({ label: "Hierarchy level", value: filter.hierarchyLevel });
   }
-  if (selectedResolutions.length) {
-    options.push({ label: "Resolutions", value: selectedResolutions.join() });
+  if (filter.resolutions?.length) {
+    options.push({ label: "Resolutions", value: filter.resolutions.join() });
   }
-  if (selectedStatuses.length) {
-    options.push({ label: "Statuses", value: selectedStatuses.join() });
+  if (filter.statuses?.length) {
+    options.push({ label: "Statuses", value: filter.statuses.join() });
   }
-  if (selectedIssueTypes.length) {
-    options.push({ label: "Issue types", value: selectedIssueTypes.join() });
+  if (filter.issueTypes?.length) {
+    options.push({ label: "Issue types", value: filter.issueTypes.join() });
   }
-  if (selectedAssignees.length) {
-    options.push({ label: "Assignees", value: selectedAssignees.join() });
+  if (filter.assignees?.length) {
+    options.push({ label: "Assignees", value: filter.assignees.join() });
   }
+
+  const onHierarchyLevelChanged = (hierarchyLevel: HierarchyLevel) =>
+    setFilter({ ...filter, hierarchyLevel });
+
+  const onResolutionsChanged = (resolutions?: string[]) =>
+    setFilter({ ...filter, resolutions });
+
+  const onStatusesChanged = (statuses?: string[]) =>
+    setFilter({ ...filter, statuses });
+
+  const onIssueTypesChanged = (issueTypes?: string[]) =>
+    setFilter({ ...filter, issueTypes });
+
+  const onAssigneesChanged = (assignees?: string[]) =>
+    setFilter({ ...filter, assignees });
+
+  const onDatesChanged = (dates?: Interval) => setFilter({ ...filter, dates });
 
   return (
     <ExpandableOptions
@@ -136,7 +120,7 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
           {showDateSelector ? (
             <Col span={8}>
               <Form.Item label="Dates">
-                <DateSelector dates={dates} onChange={setDates} />
+                <DateSelector dates={filter.dates} onChange={onDatesChanged} />
               </Form.Item>
             </Col>
           ) : null}
@@ -145,8 +129,8 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
               <Form.Item label="Hierarchy Level">
                 <Select
                   allowClear={true}
-                  value={hierarchyLevel}
-                  onChange={setHierarchyLevel}
+                  value={filter.hierarchyLevel}
+                  onChange={onHierarchyLevelChanged}
                 >
                   <Select.Option value="Story">Story</Select.Option>
                   <Select.Option value="Epic">Epic</Select.Option>
@@ -161,8 +145,8 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
                   mode="multiple"
                   allowClear={true}
                   options={resolutions}
-                  value={selectedResolutions}
-                  onChange={setSelectedResolutions}
+                  value={filter.resolutions}
+                  onChange={onResolutionsChanged}
                 />
               </Form.Item>
             </Col>
@@ -174,8 +158,8 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
                   mode="multiple"
                   allowClear={true}
                   options={statuses}
-                  value={selectedStatuses}
-                  onChange={setSelectedStatuses}
+                  value={filter.statuses}
+                  onChange={onStatusesChanged}
                 />
               </Form.Item>
             </Col>
@@ -186,8 +170,8 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
                 mode="multiple"
                 allowClear={true}
                 options={issueTypes}
-                value={selectedIssueTypes}
-                onChange={setSelectedIssueTypes}
+                value={filter.issueTypes}
+                onChange={onIssueTypesChanged}
               />
             </Form.Item>
           </Col>
@@ -197,8 +181,8 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
                 mode="multiple"
                 allowClear={true}
                 options={assignees}
-                value={selectedAssignees}
-                onChange={setSelectedAssignees}
+                value={filter.assignees}
+                onChange={onAssigneesChanged}
               />
             </Form.Item>
           </Col>
