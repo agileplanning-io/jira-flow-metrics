@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   CompletedIssue,
+  HierarchyLevel,
   Issue,
   filterCompletedIssues,
 } from "@jbrunton/flow-metrics";
@@ -39,7 +40,11 @@ export const ThroughputPage = () => {
     const filteredIssues = filterCompletedIssues(issues, {
       ...filter,
       dates: interval,
-    });
+    }).filter(
+      (issue) =>
+        issue.hierarchyLevel === HierarchyLevel.Epic ||
+        issue.metrics.includedInEpic,
+    );
     setFilteredIssues(filteredIssues);
 
     setThroughputResult(

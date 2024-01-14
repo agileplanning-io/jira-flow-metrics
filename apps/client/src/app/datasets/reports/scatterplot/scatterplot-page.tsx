@@ -1,5 +1,6 @@
 import {
   CompletedIssue,
+  HierarchyLevel,
   Issue,
   filterCompletedIssues,
 } from "@jbrunton/flow-metrics";
@@ -29,7 +30,11 @@ export const ScatterplotPage = () => {
 
   useEffect(() => {
     if (filter && issues) {
-      const filteredIssues = filterCompletedIssues(issues, filter);
+      const filteredIssues = filterCompletedIssues(issues, filter).filter(
+        (issue) =>
+          issue.hierarchyLevel === HierarchyLevel.Epic ||
+          issue.metrics.includedInEpic,
+      );
       const percentiles = getCycleTimePercentiles(filteredIssues);
       setFilteredIssues(filteredIssues);
       setPercentiles(percentiles);
