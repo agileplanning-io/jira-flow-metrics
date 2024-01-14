@@ -138,7 +138,6 @@ export const TimeSpentPage = () => {
         showDateSelector={true}
         showStatusFilter={false}
         showHierarchyFilter={false}
-        clearHierarchyLevelByDefault={true}
         showResolutionFilter={true}
       />
 

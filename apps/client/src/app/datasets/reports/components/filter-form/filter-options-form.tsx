@@ -27,7 +27,6 @@ type FilterOptionsProps = {
   showResolutionFilter: boolean;
   showStatusFilter: boolean;
   showHierarchyFilter: boolean;
-  clearHierarchyLevelByDefault?: boolean;
 };
 
 export const FilterOptionsForm: FC<FilterOptionsProps> = ({
@@ -37,7 +36,6 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
   showResolutionFilter,
   showStatusFilter,
   showHierarchyFilter,
-  clearHierarchyLevelByDefault,
 }) => {
   const { filter: initialFilter, setFilter } = useFilterContext();
 
@@ -48,7 +46,7 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
 
   const [hierarchyLevel, setHierarchyLevel] = useState<
     HierarchyLevel | undefined
-  >(clearHierarchyLevelByDefault ? undefined : initialFilter.hierarchyLevel);
+  >(initialFilter.hierarchyLevel);
 
   useEffect(() => {
     if (!issues) {

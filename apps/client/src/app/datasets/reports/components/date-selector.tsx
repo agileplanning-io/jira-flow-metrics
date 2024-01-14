@@ -6,6 +6,7 @@ import {
   addMonths,
   addWeeks,
   endOfDay,
+  startOfDay,
   startOfMonth,
   startOfWeek,
   subDays,
@@ -114,7 +115,7 @@ const getCalendarRange = (
 };
 
 const getDateRanges = (): DateRangeMenuOptions => {
-  const now = new Date();
+  const now = startOfDay(new Date());
 
   const relativeItems = [
     ...[7, 14, 30, 90].map((count) => getRelativeDateRange(count, now)),
