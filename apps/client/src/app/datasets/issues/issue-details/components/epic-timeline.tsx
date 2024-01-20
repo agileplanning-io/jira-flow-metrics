@@ -95,7 +95,7 @@ const getOptions = (
   });
 
   const ellipsize = (text: string) =>
-    text.length > 24 ? `${text.slice(0, 24)}…` : text;
+    text.length > 32 ? `${text.slice(0, 32)}…` : text;
 
   const data = {
     labels: labels.map((key) => {

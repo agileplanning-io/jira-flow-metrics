@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Issue, filterIssues } from "@jbrunton/flow-metrics";
+import { HierarchyLevel, Issue, filterIssues } from "@jbrunton/flow-metrics";
 import { IssuesTable } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
 import { WipResult, calculateWip } from "@usecases/wip/wip";
@@ -28,19 +28,22 @@ export const WipPage = () => {
 
   useEffect(() => {
     if (filter && issues) {
-      const filteredIssues = filterIssues(
-        issues,
-        omit(["dates"], filter),
-      ).filter((issue) => {
-        if (includeStoppedIssues) {
-          return true;
-        }
+      const filteredIssues = filterIssues(issues, omit(["dates"], filter))
+        .filter(
+          (issue) =>
+            issue.hierarchyLevel === HierarchyLevel.Epic ||
+            issue.metrics.includedInEpic,
+        )
+        .filter((issue) => {
+          if (includeStoppedIssues) {
+            return true;
+          }
 
-        const isStopped =
-          issue.metrics.started && issue.statusCategory === "To Do";
+          const isStopped =
+            issue.metrics.started && issue.statusCategory === "To Do";
 
-        return !isStopped;
-      });
+          return !isStopped;
+        });
       setFilteredIssues(filteredIssues);
     }
   }, [issues, filter, includeStoppedIssues, setFilteredIssues]);
@@ -97,6 +100,7 @@ export const WipPage = () => {
       {wipResult ? (
         <WipChart result={wipResult} setSelectedIssues={setSelectedIssues} />
       ) : null}
+      <div style={{ margin: 16 }} />
       <IssuesTable issues={selectedIssues} defaultSortField="cycleTime" />
     </>
   );
