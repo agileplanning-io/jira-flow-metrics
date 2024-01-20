@@ -30,6 +30,7 @@ export type IssuesTableProps = {
   onExcludedIssuesChanged?: (excludedIssueKeys: string[]) => void;
   defaultExcludedIssueKeys?: string[];
   percentiles?: Percentile[];
+  flowMetricsOnly?: boolean;
 };
 
 export const IssuesTable: React.FC<IssuesTableProps> = ({
@@ -41,6 +42,7 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
   onExcludedIssuesChanged,
   defaultExcludedIssueKeys,
   percentiles,
+  flowMetricsOnly,
 }) => {
   const { datasetId } = useNavigationContext();
 
@@ -131,7 +133,7 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
       dataIndex: "summary",
       render: (summary) => (
         <Typography.Text
-          style={{ maxWidth: 300 }}
+          style={{ maxWidth: flowMetricsOnly ? 200 : 300 }}
           ellipsis={{ tooltip: summary }}
         >
           {summary}
@@ -298,8 +300,10 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
     );
   };
 
+  const spliceIndex =
+    columns.findIndex((column) => column.key === "cycleTime") + 1;
   if (parentEpic) {
-    columns.splice(8, 0, {
+    columns.splice(spliceIndex, 0, {
       title: "Progress",
       key: "progress",
       render: (_, issue) => {
@@ -307,7 +311,7 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
       },
     });
   } else {
-    columns.splice(8, 0, {
+    columns.splice(spliceIndex, 0, {
       title: "Parent",
       key: "parent",
       render: (_, issue) => {
@@ -328,15 +332,27 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
     });
   }
 
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(flowMetricsOnly ? 20 : 10);
 
   return (
     <>
       <Table
         dataSource={issues}
         size="small"
-        scroll={{ x: 1440 }}
-        columns={columns}
+        scroll={{ x: flowMetricsOnly ? undefined : 1440 }}
+        columns={columns.filter((column) =>
+          flowMetricsOnly
+            ? [
+                "key",
+                "open",
+                "summary",
+                "started",
+                "completed",
+                "cycleTime",
+                "progress",
+              ].includes(column.key as string)
+            : true,
+        )}
         rowClassName={(issue) =>
           parentEpic && !issue.metrics.includedInEpic ? "excluded" : "included"
         }
