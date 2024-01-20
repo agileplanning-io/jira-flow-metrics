@@ -102,6 +102,7 @@ export const ThroughputPage = () => {
           setSelectedIssues={setSelectedIssues}
         />
       ) : null}
+      <div style={{ margin: 16 }} />
       <IssuesTable issues={selectedIssues} defaultSortField="cycleTime" />
     </>
   );

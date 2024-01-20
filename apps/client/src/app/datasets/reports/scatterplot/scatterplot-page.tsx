@@ -91,6 +91,7 @@ export const ScatterplotPage = () => {
           showPercentileLabels={showPercentileLabels}
         />
       ) : null}
+      <div style={{ margin: 16 }} />
       <IssuesTable
         issues={filteredIssues}
         onExcludedIssuesChanged={setExcludedIssues}
