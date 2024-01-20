@@ -46,7 +46,7 @@ export const DatasetOptionsForm = () => {
     )
     .map((stage) => stage.name);
 
-  const initialized = searchParams.get("datasetStatuses");
+  const initialized = workflowStages && searchParams.get("datasetStatuses");
 
   useEffect(() => {
     if (!dataset || !selectedStages || initialized) return;
