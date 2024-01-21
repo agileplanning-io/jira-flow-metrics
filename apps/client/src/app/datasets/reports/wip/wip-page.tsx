@@ -9,17 +9,24 @@ import { Checkbox, Col, Row } from "antd";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useDatasetContext } from "../../context";
 import { ExpandableOptions } from "../../../components/expandable-options";
+import { useSearchParams } from "react-router-dom";
 
 export const WipPage = () => {
   const { issues } = useDatasetContext();
-
   const { filter } = useFilterContext();
 
   const [filteredIssues, setFilteredIssues] = useState<Issue[]>([]);
-
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
 
-  const [includeStoppedIssues, setIncludeStoppedIssues] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const includeStoppedIssues =
+    searchParams.get("includeStoppedIssues") === "true";
+  const setIncludeStoppedIssues = (includeStoppedIssues: boolean) =>
+    setSearchParams((prev) => {
+      prev.set("includeStoppedIssues", includeStoppedIssues.toString());
+      return prev;
+    });
 
   useEffect(() => {
     // reset the selected issue list if we change the filter
