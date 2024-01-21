@@ -18,6 +18,7 @@ import { FilterOptionsForm } from "../components/filter-form/filter-options-form
 import { useDatasetContext } from "../../context";
 import { Checkbox, Col, Row } from "antd";
 import { ExpandableOptions } from "../../../components/expandable-options";
+import { useSearchParams } from "react-router-dom";
 
 export const ScatterplotPage = () => {
   const { issues } = useDatasetContext();
@@ -27,6 +28,16 @@ export const ScatterplotPage = () => {
 
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
   const [percentiles, setPercentiles] = useState<Percentile[] | undefined>();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const showPercentileLabels =
+    searchParams.get("showPercentileLabels") === "true";
+  const setShowPercentileLabels = (showPercentileLabels: boolean) =>
+    setSearchParams((prev) => {
+      prev.set("showPercentileLabels", showPercentileLabels.toString());
+      return prev;
+    });
 
   useEffect(() => {
     if (filter && issues) {
@@ -42,8 +53,6 @@ export const ScatterplotPage = () => {
   }, [issues, filter, setFilteredIssues, setPercentiles, excludedIssues]);
 
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
-
-  const [showPercentileLabels, setShowPercentileLabels] = useState(false);
 
   return (
     <>

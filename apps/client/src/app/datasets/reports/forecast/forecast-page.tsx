@@ -19,6 +19,7 @@ import { ExpandableOptions } from "../../../components/expandable-options";
 import { useDatasetContext } from "../../context";
 import { formatDate } from "@jbrunton/flow-lib";
 import { SummaryRow, forecast } from "@usecases/forecast/forecast";
+import { newSeed, useForecastChartParams } from "./hooks/use-chart-params";
 
 export const ForecastPage = () => {
   const { issues } = useDatasetContext();
@@ -27,13 +28,7 @@ export const ForecastPage = () => {
 
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
 
-  const [issueCount, setIssueCount] = useState(10);
-  const [startDate, setStartDate] = useState(new Date());
-  const [seed, setSeed] = useState(newSeed());
-
-  const [includeLongTail, setIncludeLongTail] = useState(false);
-  const [excludeLeadTimes, setExcludeLeadTimes] = useState(false);
-  const [excludeOutliers, setExcludeOutliers] = useState(false);
+  const { chartParams, setChartParams } = useForecastChartParams();
 
   useEffect(() => {
     if (filter && issues) {
@@ -51,23 +46,10 @@ export const ForecastPage = () => {
     if (!filteredIssues || filteredIssues.length === 0) return;
     const result = forecast({
       selectedIssues: filteredIssues,
-      issueCount,
-      startDate,
-      includeLongTail,
-      excludeLeadTimes,
-      excludeOutliers,
-      seed,
+      ...chartParams,
     });
     setSummary(result);
-  }, [
-    filteredIssues,
-    issueCount,
-    seed,
-    startDate,
-    includeLongTail,
-    excludeLeadTimes,
-    excludeOutliers,
-  ]);
+  }, [filteredIssues, filter, chartParams]);
 
   return (
     <>
@@ -83,21 +65,24 @@ export const ForecastPage = () => {
         header={{
           title: "Chart Options",
           options: [
-            { label: "Issue count", value: issueCount.toString() },
-            { label: "Start date", value: formatDate(startDate) ?? "-" },
-            { label: "Seed", value: seed.toString() },
+            { label: "Issue count", value: chartParams.issueCount.toString() },
             {
-              value: includeLongTail
+              label: "Start date",
+              value: formatDate(chartParams.startDate) ?? "-",
+            },
+            { label: "Seed", value: chartParams.seed.toString() },
+            {
+              value: chartParams.includeLongTail
                 ? "Include long tail"
                 : "Exclude long tail",
             },
             {
-              value: excludeLeadTimes
+              value: chartParams.excludeLeadTimes
                 ? "Exclude lead times"
                 : "Include lead times",
             },
             {
-              value: excludeOutliers
+              value: chartParams.excludeOutliers
                 ? "Exclude cycle time outliers"
                 : "Include cycle time outliers",
             },
@@ -110,10 +95,10 @@ export const ForecastPage = () => {
               <Form.Item label="Issue count">
                 <InputNumber
                   style={{ width: "100%" }}
-                  value={issueCount}
+                  value={chartParams.issueCount}
                   onChange={(e) => {
                     if (e) {
-                      setIssueCount(e);
+                      setChartParams({ ...chartParams, issueCount: e });
                     }
                   }}
                 />
@@ -123,11 +108,11 @@ export const ForecastPage = () => {
               <Form.Item label="Start date">
                 <DatePicker
                   style={{ width: "100%" }}
-                  value={startDate}
+                  value={chartParams.startDate}
                   allowClear={false}
                   onChange={(e) => {
                     if (e) {
-                      setStartDate(e);
+                      setChartParams({ ...chartParams, startDate: e });
                     }
                   }}
                 />
@@ -138,16 +123,22 @@ export const ForecastPage = () => {
                 <Space.Compact style={{ width: "100%" }}>
                   <InputNumber
                     style={{ width: "100%" }}
-                    value={seed}
+                    value={chartParams.seed}
                     onChange={(e) => {
                       if (e) {
-                        setSeed(e);
+                        setChartParams({ ...chartParams, seed: e });
                       }
                     }}
                   />
                   <Tooltip title="Refresh">
                     <Button
-                      icon={<RedoOutlined onClick={() => setSeed(newSeed())} />}
+                      icon={
+                        <RedoOutlined
+                          onClick={() =>
+                            setChartParams({ ...chartParams, seed: newSeed() })
+                          }
+                        />
+                      }
                     />
                   </Tooltip>
                 </Space.Compact>
@@ -157,20 +148,35 @@ export const ForecastPage = () => {
           <Row>
             <Space direction="vertical">
               <Checkbox
-                checked={includeLongTail}
-                onChange={(e) => setIncludeLongTail(e.target.checked)}
+                checked={chartParams.includeLongTail}
+                onChange={(e) =>
+                  setChartParams({
+                    ...chartParams,
+                    includeLongTail: e.target.checked,
+                  })
+                }
               >
                 Include long tail
               </Checkbox>
               <Checkbox
-                checked={excludeLeadTimes}
-                onChange={(e) => setExcludeLeadTimes(e.target.checked)}
+                checked={chartParams.excludeLeadTimes}
+                onChange={(e) =>
+                  setChartParams({
+                    ...chartParams,
+                    excludeLeadTimes: e.target.checked,
+                  })
+                }
               >
                 Exclude lead times
               </Checkbox>
               <Checkbox
-                checked={excludeOutliers}
-                onChange={(e) => setExcludeOutliers(e.target.checked)}
+                checked={chartParams.excludeOutliers}
+                onChange={(e) =>
+                  setChartParams({
+                    ...chartParams,
+                    excludeOutliers: e.target.checked,
+                  })
+                }
               >
                 Exclude cycle time outliers
               </Checkbox>
@@ -182,5 +188,3 @@ export const ForecastPage = () => {
     </>
   );
 };
-
-const newSeed = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
