@@ -1,5 +1,6 @@
 import { isNil, map, pipe, reverse, sort, sumBy } from "remeda";
 import {
+  CycleTimePolicy,
   HierarchyLevel,
   Issue,
   IssueFlowMetrics,
@@ -10,16 +11,15 @@ import {
 } from "../types";
 import { compareAsc, compareDesc } from "date-fns";
 import { getDifferenceInDays } from "@jbrunton/flow-lib";
-import { IssueFilter, filterIssues } from "../util";
+import { filterIssues } from "../util";
 
 export const getFlowMetrics = (
   issues: Issue[],
-  includeWaitTime: boolean,
-  statuses?: string[],
-  labels?: IssueFilter["labels"],
-  labelFilterType?: IssueFilter["labelFilterType"],
-  components?: IssueFilter["components"],
+  policy: CycleTimePolicy,
 ): Issue[] => {
+  const { includeWaitTime, statuses, labels, labelFilterType, components } =
+    policy;
+
   const stories = issues.filter(
     (issue) => issue.hierarchyLevel === HierarchyLevel.Story,
   );
