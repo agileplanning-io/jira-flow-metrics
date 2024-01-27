@@ -1,5 +1,11 @@
 # @jbrunton/flow-metrics
 
+## 0.0.11
+
+### Patch Changes
+
+- b028576: refactor: CycleTimePolicies type
+
 ## 0.0.10
 
 ### Patch Changes
