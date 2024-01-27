@@ -1,5 +1,12 @@
 # @jbrunton/flow-components
 
+## 0.0.10
+
+### Patch Changes
+
+- Updated dependencies [b028576]
+  - @jbrunton/flow-metrics@0.0.11
+
 ## 0.0.9
 
 ### Patch Changes

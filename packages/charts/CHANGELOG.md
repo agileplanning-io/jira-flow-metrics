@@ -1,5 +1,12 @@
 # @jbrunton/flow-charts
 
+## 0.0.14
+
+### Patch Changes
+
+- Updated dependencies [b028576]
+  - @jbrunton/flow-metrics@0.0.11
+
 ## 0.0.13
 
 ### Patch Changes
