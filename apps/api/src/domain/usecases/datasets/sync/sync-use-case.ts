@@ -7,6 +7,7 @@ import {
   StatusBuilder,
   HierarchyLevel,
   StatusCategory,
+  CycleTimePolicy,
 } from "@jbrunton/flow-metrics";
 import { DomainsRepository } from "@entities/domains";
 import { sortStatuses } from "./sort-statuses";
@@ -52,7 +53,12 @@ export class SyncUseCase {
       canonicalStatuses.find((status) => status.name === name),
     );
 
-    const workflow = dataset.workflow ?? buildDefaultWorkflow(sortedStatuses);
+    const workflow = buildWorkflow(dataset.workflow, sortedStatuses);
+    const defaultCycleTimePolicy = buildDefaultCycleTimePolicy(
+      dataset.defaultCycleTimePolicy,
+      workflow,
+      sortedStatuses,
+    );
 
     const labels = uniq(flatten<string>(issues.map((issue) => issue.labels)));
     const components = uniq(
@@ -68,13 +74,24 @@ export class SyncUseCase {
       components,
       labels,
       workflow,
+      defaultCycleTimePolicy,
     });
 
     return issues;
   }
 }
 
-const buildDefaultWorkflow = (sortedStatuses: TransitionStatus[]) => {
+const buildWorkflow = (
+  currentWorkflow: WorkflowStage[] | undefined,
+  sortedStatuses: TransitionStatus[],
+): WorkflowStage[] => {
+  if (
+    currentWorkflow &&
+    statusesInWorkflow(currentWorkflow).every(isValidStatus(sortedStatuses))
+  ) {
+    return currentWorkflow;
+  }
+
   const getWorkflowStage = (category: StatusCategory): WorkflowStage => ({
     name: category,
     selectByDefault: category === StatusCategory.InProgress,
@@ -89,3 +106,33 @@ const buildDefaultWorkflow = (sortedStatuses: TransitionStatus[]) => {
 
   return workflow;
 };
+
+const buildDefaultCycleTimePolicy = (
+  currentCycleTimePolicy: CycleTimePolicy | undefined,
+  workflow: WorkflowStage[],
+  sortedStatuses: TransitionStatus[],
+): CycleTimePolicy => {
+  if (
+    currentCycleTimePolicy &&
+    currentCycleTimePolicy.statuses.every(isValidStatus(sortedStatuses))
+  ) {
+    return currentCycleTimePolicy;
+  }
+
+  const defaultSelectedStages = workflow.filter(
+    (stage) => stage.selectByDefault,
+  );
+
+  const statuses = statusesInWorkflow(defaultSelectedStages);
+
+  return {
+    includeWaitTime: false,
+    statuses,
+  };
+};
+
+const statusesInWorkflow = (workflow: WorkflowStage[]): string[] =>
+  flatten(workflow.map((stage) => stage.statuses.map((status) => status.name)));
+
+const isValidStatus = (validStatuses: TransitionStatus[]) => (status: string) =>
+  validStatuses.map((status) => status.name).includes(status);

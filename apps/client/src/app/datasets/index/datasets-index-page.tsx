@@ -158,14 +158,18 @@ export const DatasetsIndexPage = () => {
       <Drawer
         size="large"
         placement="bottom"
+        title={`Edit ${datasetToEdit?.name}`}
         open={datasetToEdit !== undefined}
-        style={{ overflow: "hidden", height: "100%" }}
+        style={{ overflow: "hidden" }}
+        height="100%"
         onClose={() => setDatasetToEdit(undefined)}
       >
-        <EditDatasetForm
-          dataset={datasetToEdit}
-          onClose={() => setDatasetToEdit(undefined)}
-        />
+        {datasetToEdit ? (
+          <EditDatasetForm
+            dataset={datasetToEdit}
+            onClose={() => setDatasetToEdit(undefined)}
+          />
+        ) : null}
       </Drawer>
     </>
   );

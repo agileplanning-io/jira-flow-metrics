@@ -1,12 +1,25 @@
 import { LoadingSpinner } from "@app/components/loading-spinner";
 import { Dataset, UpdateDatasetParams, useUpdateDataset } from "@data/datasets";
-import { Button, Form, Input } from "antd";
-import { FC, useCallback, useState } from "react";
-import { WorkflowBoard } from "@jbrunton/flow-components";
+import {
+  Button,
+  Checkbox,
+  Col,
+  Form,
+  Input,
+  Row,
+  Select,
+  SelectProps,
+  Space,
+} from "antd";
+import { FC, Key, useCallback, useState } from "react";
+import { WorkflowBoard, WorkflowStagesTable } from "@jbrunton/flow-components";
 import { WorkflowStage } from "@data/issues";
+import { flatten } from "rambda";
+import { LabelFilterType } from "@jbrunton/flow-metrics";
+import { CheckboxChangeEvent } from "antd/es/checkbox";
 
 export type EditDatasetFormProps = {
-  dataset?: Dataset;
+  dataset: Dataset;
   onClose: () => void;
 };
 
@@ -16,6 +29,10 @@ export const EditDatasetForm: FC<EditDatasetFormProps> = ({
 }) => {
   const [updatedWorkflow, setUpdatedWorkflow] =
     useState<UpdateDatasetParams["workflow"]>();
+
+  const [updatedCycleTimePolicy, setUpdatedCycleTimePolicy] = useState<
+    UpdateDatasetParams["defaultCycleTimePolicy"]
+  >(dataset?.defaultCycleTimePolicy);
 
   const updateDataset = useUpdateDataset();
 
@@ -30,17 +47,68 @@ export const EditDatasetForm: FC<EditDatasetFormProps> = ({
     [setUpdatedWorkflow],
   );
 
+  const labels = makeOptions(dataset.labels);
+  const components = makeOptions(dataset.components);
+
+  const onStagesChanged = (keys: Key[]) => {
+    const statuses: string[] = flatten(
+      dataset?.workflow
+        .filter((stage) => keys.includes(stage.name))
+        .map((stage) => stage.statuses.map((status) => status.name)) ?? [],
+    );
+    if (updatedCycleTimePolicy) {
+      setUpdatedCycleTimePolicy({ ...updatedCycleTimePolicy, statuses });
+    }
+  };
+
+  const onIncludeWaitTimeChanged = (e: CheckboxChangeEvent) => {
+    if (updatedCycleTimePolicy) {
+      setUpdatedCycleTimePolicy({
+        ...updatedCycleTimePolicy,
+        includeWaitTime: e.target.checked,
+      });
+    }
+  };
+
+  const onLabelFilterTypeChanged = (labelFilterType: LabelFilterType) => {
+    if (updatedCycleTimePolicy) {
+      setUpdatedCycleTimePolicy({
+        ...updatedCycleTimePolicy,
+        labelFilterType,
+      });
+    }
+  };
+
+  const onLabelsChanged = (labels: string[]) => {
+    if (updatedCycleTimePolicy) {
+      setUpdatedCycleTimePolicy({
+        ...updatedCycleTimePolicy,
+        labels,
+      });
+    }
+  };
+
+  const onComponentsChanged = (components: string[]) => {
+    if (updatedCycleTimePolicy) {
+      setUpdatedCycleTimePolicy({
+        ...updatedCycleTimePolicy,
+        components,
+      });
+    }
+  };
+
   if (!dataset) {
     return <LoadingSpinner />;
   }
 
   const applyChanges = () => {
-    if (updatedWorkflow) {
+    if (updatedWorkflow && updatedCycleTimePolicy) {
       updateDataset.mutate(
         {
           id: dataset.id,
           name: dataset.name,
           workflow: updatedWorkflow,
+          defaultCycleTimePolicy: updatedCycleTimePolicy,
         },
         {
           onSuccess: onClose,
@@ -61,6 +129,60 @@ export const EditDatasetForm: FC<EditDatasetFormProps> = ({
           disabled={updateDataset.isLoading}
         />
       </Form.Item>
+
+      <Form.Item label="Default Cycle Time Policy">
+        <WorkflowStagesTable
+          workflowStages={dataset.workflow}
+          selectedStages={updatedCycleTimePolicy.statuses}
+          onSelectionChanged={onStagesChanged}
+        />
+        <Checkbox
+          checked={updatedCycleTimePolicy.includeWaitTime}
+          onChange={onIncludeWaitTimeChanged}
+        >
+          Include wait time
+        </Checkbox>
+
+        <Row gutter={[8, 8]}>
+          <Col span={8}>
+            <Form.Item label="Labels" style={{ width: "100%" }}>
+              <Space.Compact style={{ width: "100%" }}>
+                <Form.Item style={{ width: "25%" }}>
+                  <Select
+                    value={updatedCycleTimePolicy.labelFilterType}
+                    onChange={onLabelFilterTypeChanged}
+                    options={[
+                      { value: "include", label: "Include" },
+                      { value: "exclude", label: "Exclude" },
+                    ]}
+                  />
+                </Form.Item>
+                <Form.Item style={{ width: "75%" }}>
+                  <Select
+                    mode="multiple"
+                    allowClear={true}
+                    options={labels}
+                    value={updatedCycleTimePolicy.labels}
+                    onChange={onLabelsChanged}
+                  />
+                </Form.Item>
+              </Space.Compact>
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item label="Components">
+              <Select
+                mode="multiple"
+                allowClear={true}
+                options={components}
+                value={updatedCycleTimePolicy.components}
+                onChange={onComponentsChanged}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form.Item>
+
       <Button
         type="primary"
         onClick={applyChanges}
@@ -71,4 +193,11 @@ export const EditDatasetForm: FC<EditDatasetFormProps> = ({
       </Button>
     </Form>
   );
+};
+
+const makeOptions = (values?: string[]): SelectProps["options"] => {
+  return values?.map((value) => ({
+    label: value,
+    value: value,
+  }));
 };
