@@ -1,3 +1,5 @@
+import { IssueFilter } from "./util";
+
 export enum StatusCategory {
   ToDo = "To Do",
   InProgress = "In Progress",
@@ -82,3 +84,11 @@ export const isStarted = (issue: Issue): issue is StartedIssue =>
 export const isCompleted = (issue: Issue): issue is CompletedIssue =>
   issue.metrics.completed !== undefined &&
   issue.metrics.cycleTime !== undefined;
+
+export type CycleTimePolicy = {
+  includeWaitTime: boolean;
+  statuses?: string[];
+  labels?: IssueFilter["labels"];
+  labelFilterType?: IssueFilter["labelFilterType"];
+  components?: IssueFilter["components"];
+};

@@ -102,7 +102,7 @@ describe("getFlowMetrics", () => {
         metrics: {},
       });
 
-      const [result] = getFlowMetrics([issue], false);
+      const [result] = getFlowMetrics([issue], { includeWaitTime: false });
 
       expect(result.metrics).toEqual({
         cycleTime: 0.8824537037037037,
@@ -143,7 +143,7 @@ describe("getFlowMetrics", () => {
       });
 
       it("uses the first started date", () => {
-        const [result] = getFlowMetrics([issue], false);
+        const [result] = getFlowMetrics([issue], { includeWaitTime: false });
 
         expect(result.metrics).toEqual(
           expect.objectContaining({
@@ -154,7 +154,7 @@ describe("getFlowMetrics", () => {
       });
 
       it("excludes the paused status time when includeWaitTime = false", () => {
-        const [result] = getFlowMetrics([issue], false);
+        const [result] = getFlowMetrics([issue], { includeWaitTime: false });
 
         expect(result.metrics).toEqual(
           expect.objectContaining({
@@ -164,7 +164,7 @@ describe("getFlowMetrics", () => {
       });
 
       it("includes the paused status time when includeWaitTime = true", () => {
-        const [result] = getFlowMetrics([issue], true);
+        const [result] = getFlowMetrics([issue], { includeWaitTime: true });
 
         expect(result.metrics).toEqual(
           expect.objectContaining({
@@ -206,7 +206,7 @@ describe("getFlowMetrics", () => {
       });
 
       it("uses the last completed date", () => {
-        const [result] = getFlowMetrics([issue], false);
+        const [result] = getFlowMetrics([issue], { includeWaitTime: false });
 
         expect(result.metrics).toEqual(
           expect.objectContaining({
@@ -217,7 +217,7 @@ describe("getFlowMetrics", () => {
       });
 
       it("excludes the paused status time when includeWaitTime = false", () => {
-        const [result] = getFlowMetrics([issue], false);
+        const [result] = getFlowMetrics([issue], { includeWaitTime: false });
 
         expect(result.metrics).toEqual(
           expect.objectContaining({
@@ -227,7 +227,7 @@ describe("getFlowMetrics", () => {
       });
 
       it("includes the paused status time when includeWaitTime = true", () => {
-        const [result] = getFlowMetrics([issue], true);
+        const [result] = getFlowMetrics([issue], { includeWaitTime: true });
 
         expect(result.metrics).toEqual(
           expect.objectContaining({
@@ -262,7 +262,7 @@ describe("getFlowMetrics", () => {
         ],
       });
 
-      const [result] = getFlowMetrics([issue], false);
+      const [result] = getFlowMetrics([issue], { includeWaitTime: false });
 
       expect(result.metrics).toEqual({
         started: startedDate,
@@ -293,7 +293,7 @@ describe("getFlowMetrics", () => {
       });
 
       it("returns the age of the issue", () => {
-        const [result] = getFlowMetrics([issue], true);
+        const [result] = getFlowMetrics([issue], { includeWaitTime: true });
 
         expect(result.metrics).toEqual({
           started: startedDate,
@@ -302,7 +302,7 @@ describe("getFlowMetrics", () => {
       });
 
       it("excludes the current status when includeWaitTime is false", () => {
-        const [result] = getFlowMetrics([issue], false);
+        const [result] = getFlowMetrics([issue], { includeWaitTime: false });
 
         expect(result.metrics).toEqual({
           started: startedDate,
@@ -349,10 +349,10 @@ describe("getFlowMetrics", () => {
       });
 
       it("computes the cycle time for the given statuses", () => {
-        const [result] = getFlowMetrics([issue], false, [
-          inProgress.name,
-          inReview.name,
-        ]);
+        const [result] = getFlowMetrics([issue], {
+          includeWaitTime: false,
+          statuses: [inProgress.name, inReview.name],
+        });
 
         expect(result.metrics).toEqual({
           started: startedDate,
@@ -362,7 +362,10 @@ describe("getFlowMetrics", () => {
       });
 
       it("excludes times in ignored statuses when includeWaitTime = false", () => {
-        const [result] = getFlowMetrics([issue], false, [inReview.name]);
+        const [result] = getFlowMetrics([issue], {
+          includeWaitTime: false,
+          statuses: [inReview.name],
+        });
 
         expect(result.metrics).toEqual(
           expect.objectContaining({
@@ -374,7 +377,10 @@ describe("getFlowMetrics", () => {
       });
 
       it("includes times in ignored statuses when includeWaitTime = true", () => {
-        const [result] = getFlowMetrics([issue], true, [inReview.name]);
+        const [result] = getFlowMetrics([issue], {
+          includeWaitTime: true,
+          statuses: [inReview.name],
+        });
 
         expect(result.metrics).toEqual(
           expect.objectContaining({
@@ -435,7 +441,9 @@ describe("getFlowMetrics", () => {
     });
 
     it("computes epic cycle time metrics based on stories", () => {
-      const [result] = getFlowMetrics([epic, story1, story2], false);
+      const [result] = getFlowMetrics([epic, story1, story2], {
+        includeWaitTime: false,
+      });
 
       expect(result.metrics).toEqual({
         started: story1Started,
@@ -445,13 +453,11 @@ describe("getFlowMetrics", () => {
     });
 
     it("applies epic cycle time policies", () => {
-      const [result] = getFlowMetrics(
-        [epic, story1, story2],
-        false,
-        undefined,
-        story1.labels,
-        LabelFilterType.Include,
-      );
+      const [result] = getFlowMetrics([epic, story1, story2], {
+        includeWaitTime: false,
+        labels: story1.labels,
+        labelFilterType: LabelFilterType.Include,
+      });
 
       expect(result.metrics).toEqual({
         started: story1Started,
@@ -466,7 +472,9 @@ describe("getFlowMetrics", () => {
         statusCategory: StatusCategory.InProgress,
       };
 
-      const [result] = getFlowMetrics([inProgressEpic, story1, story2], false);
+      const [result] = getFlowMetrics([inProgressEpic, story1, story2], {
+        includeWaitTime: false,
+      });
 
       expect(result.metrics).toEqual({
         started: story1Started,

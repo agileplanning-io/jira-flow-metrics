@@ -1,6 +1,10 @@
 import { DatasetsRepository } from "@entities/datasets";
 import { IssuesRepository } from "@entities/issues";
-import { LabelFilterType, getFlowMetrics } from "@jbrunton/flow-metrics";
+import {
+  CycleTimePolicy,
+  LabelFilterType,
+  getFlowMetrics,
+} from "@jbrunton/flow-metrics";
 import {
   Body,
   Controller,
@@ -98,14 +102,15 @@ export class DatasetsController {
   ) {
     let issues = await this.issues.getIssues(datasetId);
 
-    issues = getFlowMetrics(
-      issues,
-      ["true", "1"].includes(includeWaitTime),
+    const policy: CycleTimePolicy = {
+      includeWaitTime: ["true", "1"].includes(includeWaitTime),
       statuses,
       labels,
       labelFilterType,
       components,
-    );
+    };
+
+    issues = getFlowMetrics(issues, policy);
 
     return issues.map((issue) => {
       const parent = issue.parentKey
