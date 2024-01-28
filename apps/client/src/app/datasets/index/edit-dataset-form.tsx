@@ -48,7 +48,6 @@ export const EditDatasetForm: FC<EditDatasetFormProps> = ({
   );
 
   const labels = makeOptions(dataset.labels);
-  const components = makeOptions(dataset.components);
 
   const onStagesChanged = (keys: Key[]) => {
     const statuses: string[] = flatten(
@@ -84,15 +83,6 @@ export const EditDatasetForm: FC<EditDatasetFormProps> = ({
       setUpdatedCycleTimePolicy({
         ...updatedCycleTimePolicy,
         labels,
-      });
-    }
-  };
-
-  const onComponentsChanged = (components: string[]) => {
-    if (updatedCycleTimePolicy) {
-      setUpdatedCycleTimePolicy({
-        ...updatedCycleTimePolicy,
-        components,
       });
     }
   };
@@ -167,17 +157,6 @@ export const EditDatasetForm: FC<EditDatasetFormProps> = ({
                   />
                 </Form.Item>
               </Space.Compact>
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item label="Components">
-              <Select
-                mode="multiple"
-                allowClear={true}
-                options={components}
-                value={updatedCycleTimePolicy.components}
-                onChange={onComponentsChanged}
-              />
             </Form.Item>
           </Col>
         </Row>

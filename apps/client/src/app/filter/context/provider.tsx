@@ -1,4 +1,8 @@
-import { HierarchyLevel, IssueFilter } from "@jbrunton/flow-metrics";
+import {
+  HierarchyLevel,
+  IssueFilter,
+  LabelFilterType,
+} from "@jbrunton/flow-metrics";
 import { FilterContext } from "./context";
 import { useSearchParams } from "react-router-dom";
 import { equals, pick } from "rambda";
@@ -20,6 +24,11 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
     statuses: searchParams.getAll("filterStatuses") ?? undefined,
     issueTypes: searchParams.getAll("issueTypes") ?? undefined,
     assignees: searchParams.getAll("assignees") ?? undefined,
+    labels: searchParams.getAll("labels") ?? undefined,
+    labelFilterType:
+      (searchParams.get("labelFilterType") as LabelFilterType) ??
+      LabelFilterType.Include,
+    components: searchParams.getAll("components") ?? undefined,
   };
 
   const setFilter = (newFilter: IssueFilter) => {
@@ -30,6 +39,9 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
       "issueTypes",
       "assignees",
       "dates",
+      "labels",
+      "labelFilterType",
+      "components",
     ];
     const changed = !equals(
       pick(fieldsToCompare, newFilter),
@@ -46,6 +58,9 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
             .setAll("filterStatuses", newFilter.statuses)
             .setAll("issueTypes", newFilter.issueTypes)
             .setAll("assignees", newFilter.assignees)
+            .setAll("labels", newFilter.labels)
+            .set("labelFilterType", newFilter.labelFilterType)
+            .setAll("components", newFilter.components)
             .getParams();
         },
         { replace: true },
