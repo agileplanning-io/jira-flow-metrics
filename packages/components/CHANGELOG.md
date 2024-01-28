@@ -1,5 +1,11 @@
 # @jbrunton/flow-components
 
+## 0.0.11
+
+### Patch Changes
+
+- 48864f7: feat: add WorkflowStagesTable
+
 ## 0.0.10
 
 ### Patch Changes
