@@ -21,7 +21,7 @@ import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { useSearchParams } from "react-router-dom";
 import { WorkflowStagesTable } from "@jbrunton/flow-components";
 
-export const DatasetOptionsForm = () => {
+export const CycleTimePolicyForm = () => {
   const [workflowStages, setWorkflowStages] = useState<WorkflowStage[]>();
   const [searchParams] = useSearchParams();
   const { dataset, cycleTimePolicy, setCycleTimePolicy, issues } =
@@ -38,7 +38,7 @@ export const DatasetOptionsForm = () => {
     )
     .map((stage) => stage.name);
 
-  const initialized = workflowStages && searchParams.get("datasetStatuses");
+  const initialized = workflowStages && searchParams.get("policyStatuses");
 
   useEffect(() => {
     if (!dataset || !selectedStages || initialized) return;
@@ -111,7 +111,7 @@ export const DatasetOptionsForm = () => {
   return (
     <ExpandableOptions
       header={{
-        title: "Dataset Options",
+        title: "Cycle Time Policy",
         options,
       }}
       extra={issues ? <Tag>{issues.length} issues</Tag> : null}

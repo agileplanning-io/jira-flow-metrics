@@ -15,10 +15,10 @@ export const DatasetProvider: React.FC<{ children: React.ReactNode }> = ({
   const cycleTimePolicy = {
     includeWaitTime:
       searchParams.get("includeWaitTime") === "true" ?? undefined,
-    statuses: searchParams.getAll("datasetStatuses") ?? undefined,
-    labels: searchParams.getAll("datasetLabels") ?? undefined,
+    statuses: searchParams.getAll("policyStatuses") ?? undefined,
+    labels: searchParams.getAll("policyLabels") ?? undefined,
     labelFilterType:
-      (searchParams.get("datasetLabelFilterType") as LabelFilterType) ??
+      (searchParams.get("policyLabelFilterType") as LabelFilterType) ??
       undefined,
   };
 
@@ -46,9 +46,9 @@ export const DatasetProvider: React.FC<{ children: React.ReactNode }> = ({
         (prev) => {
           return new SearchParamsBuilder(prev)
             .set("includeWaitTime", newCycleTimePolicy.includeWaitTime)
-            .setAll("datasetStatuses", newCycleTimePolicy.statuses)
-            .setAll("datasetLabels", newCycleTimePolicy.labels)
-            .set("datasetLabelFilterType", newCycleTimePolicy.labelFilterType)
+            .setAll("policyStatuses", newCycleTimePolicy.statuses)
+            .setAll("policyLabels", newCycleTimePolicy.labels)
+            .set("policyLabelFilterType", newCycleTimePolicy.labelFilterType)
             .getParams();
         },
         { replace: true },
