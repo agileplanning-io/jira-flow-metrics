@@ -54,12 +54,10 @@ export const DatasetOptionsForm = () => {
     initialized,
   ]);
 
-  const [components, setComponents] = useState<SelectProps["options"]>();
   const [labels, setLabels] = useState<SelectProps["options"]>();
 
   useEffect(() => {
     setLabels(makeOptions(dataset?.labels));
-    setComponents(makeOptions(dataset?.components));
   }, [dataset]);
 
   const options: ExpandableOptionsHeader["options"][number][] = [
@@ -85,12 +83,6 @@ export const DatasetOptionsForm = () => {
       value: cycleTimePolicy.labels.join(),
     });
   }
-  if (cycleTimePolicy?.components?.length) {
-    options.push({
-      label: "Components",
-      value: cycleTimePolicy.components.join(),
-    });
-  }
 
   const onStagesChanged = (keys: Key[]) => {
     const statuses: string[] = flatten(
@@ -114,10 +106,6 @@ export const DatasetOptionsForm = () => {
 
   const onLabelFilterTypeChanged = (labelFilterType: LabelFilterType) => {
     setCycleTimePolicy({ ...cycleTimePolicy, labelFilterType });
-  };
-
-  const onComponentsChanged = (components: string[]) => {
-    setCycleTimePolicy({ ...cycleTimePolicy, components });
   };
 
   return (
@@ -172,17 +160,6 @@ export const DatasetOptionsForm = () => {
                   />
                 </Form.Item>
               </Space.Compact>
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item label="Components">
-              <Select
-                mode="multiple"
-                allowClear={true}
-                options={components}
-                value={cycleTimePolicy.components}
-                onChange={onComponentsChanged}
-              />
             </Form.Item>
           </Col>
         </Row>

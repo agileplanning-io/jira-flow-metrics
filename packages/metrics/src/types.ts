@@ -90,5 +90,4 @@ export type CycleTimePolicy = {
   statuses?: string[];
   labels?: IssueFilter["labels"];
   labelFilterType?: IssueFilter["labelFilterType"];
-  components?: IssueFilter["components"];
 };

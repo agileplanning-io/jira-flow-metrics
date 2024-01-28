@@ -35,6 +35,12 @@ class CycleTimePolicyBody {
 
   @ApiProperty()
   statuses: string[];
+
+  @ApiProperty()
+  labelFilterType: LabelFilterType;
+
+  @ApiProperty()
+  labels: string[];
 }
 
 class UpdateDatasetBody {
@@ -106,11 +112,6 @@ export class DatasetsController {
       new ParseArrayPipe({ items: String, separator: ",", optional: true }),
     )
     labels?: string[],
-    @Query(
-      "components",
-      new ParseArrayPipe({ items: String, separator: ",", optional: true }),
-    )
-    components?: string[],
     @Query("labelFilterType") labelFilterType?: LabelFilterType,
   ) {
     let issues = await this.issues.getIssues(datasetId);
@@ -120,7 +121,6 @@ export class DatasetsController {
       statuses,
       labels,
       labelFilterType,
-      components,
     };
 
     issues = getFlowMetrics(issues, policy);

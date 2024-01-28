@@ -16,10 +16,10 @@ export const DatasetProvider: React.FC<{ children: React.ReactNode }> = ({
     includeWaitTime:
       searchParams.get("includeWaitTime") === "true" ?? undefined,
     statuses: searchParams.getAll("datasetStatuses") ?? undefined,
-    labels: searchParams.getAll("labels") ?? undefined,
+    labels: searchParams.getAll("datasetLabels") ?? undefined,
     labelFilterType:
-      (searchParams.get("labelFilterType") as LabelFilterType) ?? undefined,
-    components: searchParams.getAll("components") ?? undefined,
+      (searchParams.get("datasetLabelFilterType") as LabelFilterType) ??
+      undefined,
   };
 
   const { data: issues } = useIssues(
@@ -28,7 +28,6 @@ export const DatasetProvider: React.FC<{ children: React.ReactNode }> = ({
     cycleTimePolicy?.statuses,
     cycleTimePolicy?.labels,
     cycleTimePolicy?.labelFilterType,
-    cycleTimePolicy?.components,
   );
 
   const setCycleTimePolicy = (newCycleTimePolicy: CycleTimePolicy) => {
@@ -37,7 +36,6 @@ export const DatasetProvider: React.FC<{ children: React.ReactNode }> = ({
       "statuses",
       "labels",
       "labelFilterType",
-      "components",
     ];
     const changed = !equals(
       pick(fieldsToCompare, newCycleTimePolicy),
@@ -49,9 +47,8 @@ export const DatasetProvider: React.FC<{ children: React.ReactNode }> = ({
           return new SearchParamsBuilder(prev)
             .set("includeWaitTime", newCycleTimePolicy.includeWaitTime)
             .setAll("datasetStatuses", newCycleTimePolicy.statuses)
-            .setAll("labels", newCycleTimePolicy.labels)
-            .set("labelFilterType", newCycleTimePolicy.labelFilterType)
-            .setAll("components", newCycleTimePolicy.components)
+            .setAll("datasetLabels", newCycleTimePolicy.labels)
+            .set("datasetLabelFilterType", newCycleTimePolicy.labelFilterType)
             .getParams();
         },
         { replace: true },

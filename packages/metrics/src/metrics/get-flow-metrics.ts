@@ -17,8 +17,7 @@ export const getFlowMetrics = (
   issues: Issue[],
   policy: CycleTimePolicy,
 ): Issue[] => {
-  const { includeWaitTime, statuses, labels, labelFilterType, components } =
-    policy;
+  const { includeWaitTime, statuses, labels, labelFilterType } = policy;
 
   const stories = issues.filter(
     (issue) => issue.hierarchyLevel === HierarchyLevel.Story,
@@ -39,7 +38,6 @@ export const getFlowMetrics = (
   const filteredStories = filterIssues(updatedStories, {
     labels,
     labelFilterType,
-    components,
   });
 
   const epicKeys = new Set(epics.map((epic) => epic.key));
