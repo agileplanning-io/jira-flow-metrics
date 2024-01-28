@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { client } from "./client";
-import { TransitionStatus } from "@jbrunton/flow-metrics";
+import { CycleTimePolicy, TransitionStatus } from "@jbrunton/flow-metrics";
 import { WorkflowStage } from "./issues";
 
 export type DataSource = {
@@ -17,6 +17,7 @@ export type Dataset = {
   domainId: string;
   statuses: TransitionStatus[];
   workflow: WorkflowStage[];
+  defaultCycleTimePolicy: CycleTimePolicy;
   labels: string[];
   components: string[];
   lastSync?: {
@@ -153,6 +154,7 @@ export type UpdateDatasetParams = {
   id: string;
   name: string;
   workflow: { name: string; statuses: string[] }[];
+  defaultCycleTimePolicy: CycleTimePolicy;
 };
 
 const updateDataset = async ({

@@ -1,9 +1,8 @@
 import { useNavigationContext } from "../../navigation/context";
 import { DatasetContext, DatasetContextType } from "./context";
-import { DatasetOptions } from "../reports/components/filter-form/dataset-options-form";
 import { useIssues } from "@data/issues";
 import { useSearchParams } from "react-router-dom";
-import { LabelFilterType } from "@jbrunton/flow-metrics";
+import { CycleTimePolicy, LabelFilterType } from "@jbrunton/flow-metrics";
 import { equals, pick } from "rambda";
 import { SearchParamsBuilder } from "@lib/search-params-builder";
 
@@ -13,7 +12,7 @@ export const DatasetProvider: React.FC<{ children: React.ReactNode }> = ({
   const { dataset } = useNavigationContext();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const datasetOptions = {
+  const cycleTimePolicy = {
     includeWaitTime:
       searchParams.get("includeWaitTime") === "true" ?? undefined,
     statuses: searchParams.getAll("datasetStatuses") ?? undefined,
@@ -25,14 +24,14 @@ export const DatasetProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const { data: issues } = useIssues(
     dataset?.id,
-    datasetOptions?.includeWaitTime ?? false,
-    datasetOptions?.statuses,
-    datasetOptions?.labels,
-    datasetOptions?.labelFilterType,
-    datasetOptions?.components,
+    cycleTimePolicy?.includeWaitTime ?? false,
+    cycleTimePolicy?.statuses,
+    cycleTimePolicy?.labels,
+    cycleTimePolicy?.labelFilterType,
+    cycleTimePolicy?.components,
   );
 
-  const setDatasetOptions = (newDatasetOptions: DatasetOptions) => {
+  const setCycleTimePolicy = (newCycleTimePolicy: CycleTimePolicy) => {
     const fieldsToCompare = [
       "includeWaitTime",
       "statuses",
@@ -41,18 +40,18 @@ export const DatasetProvider: React.FC<{ children: React.ReactNode }> = ({
       "components",
     ];
     const changed = !equals(
-      pick(fieldsToCompare, newDatasetOptions),
-      pick(fieldsToCompare, datasetOptions),
+      pick(fieldsToCompare, newCycleTimePolicy),
+      pick(fieldsToCompare, cycleTimePolicy),
     );
     if (changed) {
       setSearchParams(
         (prev) => {
           return new SearchParamsBuilder(prev)
-            .set("includeWaitTime", newDatasetOptions.includeWaitTime)
-            .setAll("datasetStatuses", newDatasetOptions.statuses)
-            .setAll("labels", newDatasetOptions.labels)
-            .set("labelFilterType", newDatasetOptions.labelFilterType)
-            .setAll("components", newDatasetOptions.components)
+            .set("includeWaitTime", newCycleTimePolicy.includeWaitTime)
+            .setAll("datasetStatuses", newCycleTimePolicy.statuses)
+            .setAll("labels", newCycleTimePolicy.labels)
+            .set("labelFilterType", newCycleTimePolicy.labelFilterType)
+            .setAll("components", newCycleTimePolicy.components)
             .getParams();
         },
         { replace: true },
@@ -63,8 +62,8 @@ export const DatasetProvider: React.FC<{ children: React.ReactNode }> = ({
   const value: DatasetContextType = {
     dataset,
     issues,
-    datasetOptions,
-    setDatasetOptions,
+    cycleTimePolicy,
+    setCycleTimePolicy,
   };
 
   return (

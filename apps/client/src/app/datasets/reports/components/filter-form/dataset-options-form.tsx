@@ -1,5 +1,5 @@
 import { Key, useEffect, useState } from "react";
-import { LabelFilterType, TransitionStatus } from "@jbrunton/flow-metrics";
+import { LabelFilterType } from "@jbrunton/flow-metrics";
 import {
   Checkbox,
   Col,
@@ -8,7 +8,6 @@ import {
   Select,
   SelectProps,
   Space,
-  Table,
   Tag,
 } from "antd";
 import {
@@ -20,26 +19,19 @@ import { flatten } from "rambda";
 import { useDatasetContext } from "@app/datasets/context";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { useSearchParams } from "react-router-dom";
-
-export type DatasetOptions = {
-  statuses?: string[];
-  includeWaitTime: boolean;
-  labels?: string[];
-  components?: string[];
-  labelFilterType?: LabelFilterType;
-};
+import { WorkflowStagesTable } from "@jbrunton/flow-components";
 
 export const DatasetOptionsForm = () => {
   const [workflowStages, setWorkflowStages] = useState<WorkflowStage[]>();
   const [searchParams] = useSearchParams();
-  const { dataset, datasetOptions, setDatasetOptions, issues } =
+  const { dataset, cycleTimePolicy, setCycleTimePolicy, issues } =
     useDatasetContext();
 
   const selectedStages = dataset?.workflow
     .filter((stage) =>
       stage.statuses.every(
         (status) =>
-          datasetOptions?.statuses?.some(
+          cycleTimePolicy?.statuses?.some(
             (datasetStatus) => datasetStatus === status.name,
           ),
       ),
@@ -51,26 +43,12 @@ export const DatasetOptionsForm = () => {
   useEffect(() => {
     if (!dataset || !selectedStages || initialized) return;
 
-    const workflowStages = dataset.workflow;
-    setWorkflowStages(workflowStages);
-
-    const defaultSelectedStages = workflowStages.filter(
-      (stage) => stage.selectByDefault,
-    );
-    const defaultStatuses: string[] = flatten(
-      defaultSelectedStages.map((stage) =>
-        stage.statuses.map((status) => status.name),
-      ),
-    );
-    setDatasetOptions({
-      ...datasetOptions,
-      statuses: defaultStatuses,
-      labelFilterType: LabelFilterType.Include,
-    });
+    setWorkflowStages(dataset.workflow);
+    setCycleTimePolicy(dataset.defaultCycleTimePolicy);
   }, [
     dataset,
-    datasetOptions,
-    setDatasetOptions,
+    cycleTimePolicy,
+    setCycleTimePolicy,
     setWorkflowStages,
     selectedStages,
     initialized,
@@ -93,24 +71,24 @@ export const DatasetOptionsForm = () => {
     },
     {
       value: `${
-        datasetOptions?.includeWaitTime ? "Include" : "Exclude"
+        cycleTimePolicy?.includeWaitTime ? "Include" : "Exclude"
       } wait time`,
     },
   ];
 
-  if (datasetOptions?.labels?.length) {
+  if (cycleTimePolicy?.labels?.length) {
     options.push({
       label:
-        datasetOptions.labelFilterType === LabelFilterType.Include
+        cycleTimePolicy.labelFilterType === LabelFilterType.Include
           ? "Include labels"
           : "Exclude labels",
-      value: datasetOptions.labels.join(),
+      value: cycleTimePolicy.labels.join(),
     });
   }
-  if (datasetOptions?.components?.length) {
+  if (cycleTimePolicy?.components?.length) {
     options.push({
       label: "Components",
-      value: datasetOptions.components.join(),
+      value: cycleTimePolicy.components.join(),
     });
   }
 
@@ -120,23 +98,26 @@ export const DatasetOptionsForm = () => {
         .filter((stage) => keys.includes(stage.name))
         .map((stage) => stage.statuses.map((status) => status.name)) ?? [],
     );
-    setDatasetOptions({ ...datasetOptions, statuses });
+    setCycleTimePolicy({ ...cycleTimePolicy, statuses });
   };
 
   const onIncludeWaitTimeChanged = (e: CheckboxChangeEvent) => {
-    setDatasetOptions({ ...datasetOptions, includeWaitTime: e.target.checked });
+    setCycleTimePolicy({
+      ...cycleTimePolicy,
+      includeWaitTime: e.target.checked,
+    });
   };
 
   const onLabelsChanged = (labels: string[]) => {
-    setDatasetOptions({ ...datasetOptions, labels });
+    setCycleTimePolicy({ ...cycleTimePolicy, labels });
   };
 
   const onLabelFilterTypeChanged = (labelFilterType: LabelFilterType) => {
-    setDatasetOptions({ ...datasetOptions, labelFilterType });
+    setCycleTimePolicy({ ...cycleTimePolicy, labelFilterType });
   };
 
   const onComponentsChanged = (components: string[]) => {
-    setDatasetOptions({ ...datasetOptions, components });
+    setCycleTimePolicy({ ...cycleTimePolicy, components });
   };
 
   return (
@@ -151,49 +132,17 @@ export const DatasetOptionsForm = () => {
         <Row gutter={[8, 8]}>
           <Col span={24}>
             <Form.Item label="Selected Stages">
-              <Table
-                size="small"
-                rowKey="name"
-                showHeader={false}
-                rowSelection={{
-                  selectedRowKeys: selectedStages,
-                  onChange: onStagesChanged,
-                }}
-                dataSource={workflowStages}
-                pagination={false}
-                columns={[
-                  {
-                    title: "Stage",
-                    dataIndex: "name",
-                    key: "name",
-                  },
-                  {
-                    title: "Statuses",
-                    dataIndex: "statuses",
-                    key: "statuses",
-                    render: (statuses: TransitionStatus[]) => (
-                      <>
-                        {statuses.map((status) => (
-                          <Tag
-                            bordered={true}
-                            key={status.name}
-                            color="#f9f9f9"
-                            style={{ color: "#999", borderColor: "#eee" }}
-                          >
-                            {status.name}
-                          </Tag>
-                        ))}
-                      </>
-                    ),
-                  },
-                ]}
+              <WorkflowStagesTable
+                workflowStages={workflowStages}
+                selectedStages={selectedStages}
+                onSelectionChanged={onStagesChanged}
               />
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={[8, 8]}>
           <Checkbox
-            checked={datasetOptions.includeWaitTime}
+            checked={cycleTimePolicy.includeWaitTime}
             onChange={onIncludeWaitTimeChanged}
           >
             Include wait time
@@ -205,7 +154,7 @@ export const DatasetOptionsForm = () => {
               <Space.Compact style={{ width: "100%" }}>
                 <Form.Item style={{ width: "25%" }}>
                   <Select
-                    value={datasetOptions.labelFilterType}
+                    value={cycleTimePolicy.labelFilterType}
                     onChange={onLabelFilterTypeChanged}
                     options={[
                       { value: "include", label: "Include" },
@@ -218,7 +167,7 @@ export const DatasetOptionsForm = () => {
                     mode="multiple"
                     allowClear={true}
                     options={labels}
-                    value={datasetOptions.labels}
+                    value={cycleTimePolicy.labels}
                     onChange={onLabelsChanged}
                   />
                 </Form.Item>
@@ -231,7 +180,7 @@ export const DatasetOptionsForm = () => {
                 mode="multiple"
                 allowClear={true}
                 options={components}
-                value={datasetOptions.components}
+                value={cycleTimePolicy.components}
                 onChange={onComponentsChanged}
               />
             </Form.Item>

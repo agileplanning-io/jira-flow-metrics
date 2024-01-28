@@ -1,4 +1,4 @@
-import { TransitionStatus } from "@jbrunton/flow-metrics";
+import { CycleTimePolicy, TransitionStatus } from "@jbrunton/flow-metrics";
 import { Domain } from "./domains";
 
 export type WorkflowStage = {
@@ -20,6 +20,7 @@ export type Dataset = {
   labels: string[];
   components: string[];
   workflow?: WorkflowStage[];
+  defaultCycleTimePolicy?: CycleTimePolicy;
 };
 
 export type DataSource = {

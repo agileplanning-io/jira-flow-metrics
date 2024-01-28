@@ -29,12 +29,23 @@ class WorkflowStageBody {
   statuses: string[];
 }
 
+class CycleTimePolicyBody {
+  @ApiProperty()
+  includeWaitTime: boolean;
+
+  @ApiProperty()
+  statuses: string[];
+}
+
 class UpdateDatasetBody {
   @ApiProperty()
   name: string;
 
   @ApiProperty()
   workflow: WorkflowStageBody[];
+
+  @ApiProperty()
+  defaultCycleTimePolicy: CycleTimePolicyBody;
 }
 
 @Controller("datasets")
@@ -63,8 +74,10 @@ export class DatasetsController {
         stage.statuses.includes(status.name),
       ),
     }));
+    const defaultCycleTimePolicy = request.defaultCycleTimePolicy;
     const updatedDataset = await this.datasets.updateDataset(datasetId, {
       workflow,
+      defaultCycleTimePolicy,
     });
     return updatedDataset;
   }
