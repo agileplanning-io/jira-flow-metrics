@@ -297,7 +297,7 @@ describe("getFlowMetrics", () => {
 
         expect(result.metrics).toEqual({
           started: startedDate,
-          cycleTime: 1,
+          age: 1,
         });
       });
 
@@ -306,7 +306,7 @@ describe("getFlowMetrics", () => {
 
         expect(result.metrics).toEqual({
           started: startedDate,
-          cycleTime: 0.125,
+          age: 0.125,
         });
       });
     });

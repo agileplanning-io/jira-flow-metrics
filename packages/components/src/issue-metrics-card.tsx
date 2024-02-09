@@ -30,6 +30,11 @@ export const IssueMetricsCard: React.FC<IssueMetricsCardProps> = ({
             {formatNumber(issue.metrics.cycleTime)} days
           </Descriptions.Item>
         ) : null}
+        {!isNil(issue.metrics.age) ? (
+          <Descriptions.Item label="Age">
+            {formatNumber(issue.metrics.age)} days
+          </Descriptions.Item>
+        ) : null}
       </Descriptions>
     </Card>
   );

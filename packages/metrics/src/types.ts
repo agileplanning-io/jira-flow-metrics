@@ -39,6 +39,7 @@ export type IssueFlowMetrics = {
   started?: Date;
   completed?: Date;
   cycleTime?: number;
+  age?: number;
   includedInEpic?: boolean;
 };
 
