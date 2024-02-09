@@ -16,6 +16,7 @@ import { filterIssues } from "../util";
 export const getFlowMetrics = (
   issues: Issue[],
   policy: CycleTimePolicy,
+  now: Date = new Date(),
 ): Issue[] => {
   const { includeWaitTime, statuses, labels, labelFilterType } = policy;
 
@@ -54,7 +55,7 @@ export const getFlowMetrics = (
   });
 
   const updatedEpics = epics.map((epic) => {
-    const metrics = estimateEpicFlowMetrics(epic, filteredStories);
+    const metrics = estimateEpicFlowMetrics(epic, filteredStories, now);
     return {
       ...epic,
       metrics,
@@ -93,21 +94,6 @@ const getCompletedDateIndex = (
   });
 
   return index === -1 ? -1 : transitions.length - index - 1;
-};
-
-export const getCycleTime = (
-  started?: Date,
-  completed?: Date,
-): number | undefined => {
-  if (!completed) {
-    return undefined;
-  }
-
-  if (!started) {
-    return 0;
-  }
-
-  return getDifferenceInDays(completed, started);
 };
 
 const getStoryFlowMetrics = (
@@ -182,6 +168,7 @@ const getStoryFlowMetrics = (
 const estimateEpicFlowMetrics = (
   epic: Issue,
   issues: Issue[],
+  now: Date,
 ): IssueFlowMetrics => {
   const children = issues.filter((child) => child.parentKey === epic.key);
   const startedChildren = children.filter(isStarted);
@@ -205,11 +192,22 @@ const estimateEpicFlowMetrics = (
   const completed =
     epic.statusCategory === StatusCategory.Done ? completedDates[0] : undefined;
 
-  const cycleTime = getCycleTime(started, completed);
+  if (completed) {
+    const cycleTime = started ? getDifferenceInDays(completed, started) : 0;
+    return {
+      started,
+      completed,
+      cycleTime,
+    };
+  }
 
-  return {
-    started,
-    completed,
-    cycleTime,
-  };
+  if (started) {
+    const age = getDifferenceInDays(now, started);
+    return {
+      started,
+      age,
+    };
+  }
+
+  return {};
 };
