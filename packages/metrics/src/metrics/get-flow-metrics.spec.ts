@@ -275,7 +275,6 @@ describe("getFlowMetrics", () => {
       const startedDate = new Date("2023-01-01T10:30:00.000Z");
       const pausedDate = new Date("2023-01-01T13:30:00.000Z");
       const now = new Date("2023-01-02T10:30:00.000Z");
-      jest.setSystemTime(now);
 
       const issue = buildIssue({
         transitions: [
@@ -290,6 +289,10 @@ describe("getFlowMetrics", () => {
             toStatus: backlog,
           },
         ],
+      });
+
+      beforeEach(() => {
+        jest.setSystemTime(now);
       });
 
       it("returns the age of the issue", () => {
@@ -398,6 +401,7 @@ describe("getFlowMetrics", () => {
     const story2Started = new Date("2023-01-01T12:30:00.000Z");
     const story1Completed = new Date("2023-01-02T13:30:00.000Z");
     const story2Completed = new Date("2023-01-02T16:30:00.000Z");
+    const now = new Date("2023-01-02T19:30:00.000Z");
 
     const epic = buildIssue({
       issueType: "Epic",
@@ -440,6 +444,10 @@ describe("getFlowMetrics", () => {
       ],
     });
 
+    beforeEach(() => {
+      jest.setSystemTime(now);
+    });
+
     it("computes epic cycle time metrics based on stories", () => {
       const [result] = getFlowMetrics([epic, story1, story2], {
         includeWaitTime: false,
@@ -466,7 +474,7 @@ describe("getFlowMetrics", () => {
       });
     });
 
-    it("does not compute epic completed dates when the epic is not done", () => {
+    it("computes the age when the epic is not done", () => {
       const inProgressEpic = {
         ...epic,
         statusCategory: StatusCategory.InProgress,
@@ -479,7 +487,7 @@ describe("getFlowMetrics", () => {
       expect(result.metrics).toEqual({
         started: story1Started,
         completed: undefined,
-        cycleTime: undefined,
+        age: 1.375,
       });
     });
   });
