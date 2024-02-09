@@ -157,12 +157,12 @@ const getStoryFlowMetrics = (
       includeWaitTime
         ? getDifferenceInDays(now, lastTransition.date)
         : 0;
-    const cycleTime =
+    const age =
       timeInLastTransition +
       getCycleTime(story.transitions.slice(startedIndex));
     return {
       started: story.transitions[startedIndex].date,
-      cycleTime,
+      age,
     };
   }
 

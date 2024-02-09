@@ -1,4 +1,4 @@
-import { Issue } from "@jbrunton/flow-metrics";
+import { Issue, IssueFlowMetrics } from "@jbrunton/flow-metrics";
 import { Checkbox, Space, Table, Tag, Tooltip, Typography } from "antd";
 import { formatDate, formatNumber } from "@jbrunton/flow-lib";
 import { compareAsc, differenceInMinutes } from "date-fns";
@@ -172,9 +172,10 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
     }),
     configureSort({
       title: "Cycle Time",
-      dataIndex: ["metrics", "cycleTime"],
+      dataIndex: ["metrics"],
       key: "cycleTime",
-      render: (cycleTime) => {
+      render: (metrics: IssueFlowMetrics) => {
+        const cycleTime = metrics.cycleTime ?? metrics.age;
         if (!percentiles) {
           return formatNumber(cycleTime);
         }
@@ -206,7 +207,11 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
         );
       },
       sorter: (a, b, sortOrder) =>
-        compareNumbers(a.metrics.cycleTime, b.metrics.cycleTime, sortOrder),
+        compareNumbers(
+          a.metrics.cycleTime ?? a.metrics.age,
+          b.metrics.cycleTime ?? b.metrics.age,
+          sortOrder,
+        ),
     }),
     {
       title: "Resolution",
