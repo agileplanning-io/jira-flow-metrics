@@ -1,5 +1,17 @@
 # @jbrunton/flow-components
 
+## 0.0.12
+
+### Patch Changes
+
+- 9728330: feat: compute age for in progress epics
+- 7c4d018: feat: remove component filter from cycle time policy
+- 371654b: feat: label in progress story cycle times as 'age'
+- Updated dependencies [9728330]
+- Updated dependencies [7c4d018]
+- Updated dependencies [371654b]
+  - @jbrunton/flow-metrics@0.0.12
+
 ## 0.0.11
 
 ### Patch Changes
