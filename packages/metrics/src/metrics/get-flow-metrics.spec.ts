@@ -320,6 +320,12 @@ describe("getFlowMetrics", () => {
       const secondInProgressDate = new Date("2023-01-01T16:30:00.000Z");
       const secondInReviewDate = new Date("2023-01-01T19:30:00.000Z");
       const doneDate = new Date("2023-01-01T22:30:00.000Z");
+      const reopenedDate = new Date("2023-01-02T01:30:00.000Z");
+      const now = new Date("2023-01-02T04:30:00.000Z");
+
+      beforeEach(() => {
+        jest.setSystemTime(now);
+      });
 
       const issue = buildIssue({
         transitions: [
@@ -393,6 +399,42 @@ describe("getFlowMetrics", () => {
           }),
         );
       });
+
+      it("classes reopened issues as in progress", () => {
+        const issue = buildIssue({
+          transitions: [
+            {
+              date: startedDate,
+              fromStatus: backlog,
+              toStatus: inProgress,
+            },
+            {
+              date: doneDate,
+              fromStatus: inProgress,
+              toStatus: done,
+            },
+            {
+              date: reopenedDate,
+              fromStatus: done,
+              toStatus: inProgress,
+            },
+          ],
+        });
+
+        const [result] = getFlowMetrics([issue], {
+          includeWaitTime: false,
+          statuses: [inProgress.name],
+        });
+
+        expect(result.metrics).toEqual(
+          expect.objectContaining({
+            age: 0.625,
+            started: startedDate,
+          }),
+        );
+      });
+
+      it("classes issues moved straight to done as done", () => {});
     });
   });
 
