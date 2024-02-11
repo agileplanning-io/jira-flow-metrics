@@ -1,5 +1,11 @@
 # @jbrunton/flow-metrics
 
+## 0.0.13
+
+### Patch Changes
+
+- a2b03cf: fix: isCompleted definition
+
 ## 0.0.12
 
 ### Patch Changes
