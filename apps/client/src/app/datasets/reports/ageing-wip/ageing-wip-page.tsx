@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  CompletedIssue,
   HierarchyLevel,
   Issue,
   StartedIssue,
@@ -8,7 +9,7 @@ import {
 import { useFilterContext } from "../../../filter/context";
 import { AgeingWipChart } from "./components/ageing-wip-chart";
 import { isNil, omit } from "rambda";
-import { Checkbox, Col, Row } from "antd";
+import { Checkbox, Col, Collapse, Row } from "antd";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useDatasetContext } from "../../context";
 import { ExpandableOptions } from "../../../components/expandable-options";
@@ -17,6 +18,7 @@ import { Percentile, getCycleTimePercentiles } from "@jbrunton/flow-charts";
 import { filterCompletedIssues } from "@jbrunton/flow-metrics";
 import { isStarted } from "@jbrunton/flow-metrics";
 import { IssueDetailsDrawer } from "../scatterplot/components/issue-details-drawer";
+import { IssuesTable } from "@app/components/issues-table";
 
 export const AgeingWipPage = () => {
   const { issues } = useDatasetContext();
@@ -24,6 +26,7 @@ export const AgeingWipPage = () => {
 
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
   const [ageingIssues, setAgeingIssues] = useState<StartedIssue[]>([]);
+  const [benchmarkIssues, setBenchmarkIssues] = useState<CompletedIssue[]>([]);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -53,6 +56,8 @@ export const AgeingWipPage = () => {
   useEffect(() => {
     if (filter && issues) {
       const benchmarkIssues = filterCompletedIssues(issues, filter);
+      setBenchmarkIssues(benchmarkIssues);
+
       const ageingIssues = filterIssues(issues, omit(["dates"], filter))
         .filter(
           (issue) =>
@@ -77,7 +82,13 @@ export const AgeingWipPage = () => {
       const percentiles = getCycleTimePercentiles(benchmarkIssues);
       setPercentiles(percentiles ?? []);
     }
-  }, [issues, filter, includeStoppedIssues, setPercentiles]);
+  }, [
+    issues,
+    filter,
+    includeStoppedIssues,
+    setPercentiles,
+    setBenchmarkIssues,
+  ]);
 
   return (
     <>
@@ -136,6 +147,16 @@ export const AgeingWipPage = () => {
         onClose={() => setSelectedIssues([])}
         open={selectedIssues.length > 0}
       />
+
+      <Collapse ghost>
+        <Collapse.Panel key="benchmark-issues" header="Benchmark Issues">
+          <IssuesTable
+            issues={benchmarkIssues}
+            percentiles={percentiles}
+            defaultSortField="cycleTime"
+          />
+        </Collapse.Panel>
+      </Collapse>
     </>
   );
 };
