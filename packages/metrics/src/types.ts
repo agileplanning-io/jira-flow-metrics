@@ -45,6 +45,7 @@ export type IssueFlowMetrics = {
 
 export type StartedFlowMetrics = IssueFlowMetrics & {
   started: Date;
+  age: number;
 };
 
 export type CompletedFlowMetrics = IssueFlowMetrics & {
@@ -83,8 +84,7 @@ export const isStarted = (issue: Issue): issue is StartedIssue =>
   issue.metrics.started !== undefined;
 
 export const isCompleted = (issue: Issue): issue is CompletedIssue =>
-  issue.metrics.completed !== undefined &&
-  issue.metrics.cycleTime !== undefined;
+  issue.metrics.completed !== undefined;
 
 export type CycleTimePolicy = {
   includeWaitTime: boolean;

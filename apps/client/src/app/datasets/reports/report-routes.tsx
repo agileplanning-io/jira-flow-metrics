@@ -6,6 +6,7 @@ import { WipPage } from "./wip/wip-page";
 import { ForecastPage } from "./forecast/forecast-page";
 import { reportsCrumb } from "../components/reports-crumb";
 import { TimeSpentPage } from "./time-spent/time-spent-page";
+import { AgeingWipPage } from "./ageing-wip/ageing-wip-page";
 
 export const reportRoutes = (
   <Route path="reports">
@@ -40,6 +41,18 @@ export const reportRoutes = (
         crumb: ({ dataset }: NavigationContext) =>
           reportsCrumb(dataset?.id, "wip"),
         title: ({ dataset }: NavigationContext) => ["WIP", dataset?.name],
+      }}
+    />
+    <Route
+      path="ageing-wip"
+      element={<AgeingWipPage />}
+      handle={{
+        crumb: ({ dataset }: NavigationContext) =>
+          reportsCrumb(dataset?.id, "ageing-wip"),
+        title: ({ dataset }: NavigationContext) => [
+          "Ageing WIP",
+          dataset?.name,
+        ],
       }}
     />
     <Route
