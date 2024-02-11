@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import { AddDatasetModal } from "./add-dataset-modal";
 import { Dataset, useSyncDataset } from "@data/datasets";
 import {
+  ageingWipPath,
   forecastPath,
   issuesIndexPath,
   scatterplotPath,
@@ -89,6 +90,9 @@ export const DatasetsIndexPage = () => {
                   Throughput
                 </Link>
                 <Link to={wipPath({ datasetId: dataset.id })}>WIP</Link>
+                <Link to={ageingWipPath({ datasetId: dataset.id })}>
+                  Ageing WIP
+                </Link>
                 <Link to={forecastPath({ datasetId: dataset.id })}>
                   Forecast
                 </Link>

@@ -17,6 +17,7 @@ const paths = {
     scatterplot: "/datasets/:datasetId/reports/scatterplot",
     throughput: "/datasets/:datasetId/reports/throughput",
     wip: "/datasets/:datasetId/reports/wip",
+    ageingWip: "/datasets/:datasetId/reports/ageing-wip",
     forecast: "/datasets/:datasetId/reports/forecast",
     timeSpent: "/datasets/:datasetId/reports/time-spent",
   },
@@ -47,6 +48,10 @@ export const throughputPath = (
 
 export const wipPath = (params: Pick<NavigationContext, "datasetId">): string =>
   generatePath(paths.reports.wip, params);
+
+export const ageingWipPath = (
+  params: Pick<NavigationContext, "datasetId">,
+): string => generatePath(paths.reports.ageingWip, params);
 
 export const forecastPath = (
   params: Pick<NavigationContext, "datasetId">,

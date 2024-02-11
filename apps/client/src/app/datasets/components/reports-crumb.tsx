@@ -1,6 +1,7 @@
 import { ItemType } from "antd/es/breadcrumb/Breadcrumb";
 import { Link } from "react-router-dom";
 import {
+  ageingWipPath,
   forecastPath,
   issuesIndexPath,
   scatterplotPath,
@@ -15,6 +16,7 @@ export const reportsCrumb = (
     | "scatterplot"
     | "throughput"
     | "wip"
+    | "ageing-wip"
     | "forecast"
     | "issues"
     | "time-spent",
@@ -35,6 +37,11 @@ export const reportsCrumb = (
           key: "wip",
           title: "WIP",
           label: <Link to={wipPath({ datasetId })}>WIP</Link>,
+        },
+        {
+          key: "ageing-wip",
+          title: "Ageing WIP",
+          label: <Link to={ageingWipPath({ datasetId })}>Ageing WIP</Link>,
         },
         {
           key: "forecast",
