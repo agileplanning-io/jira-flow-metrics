@@ -1,4 +1,5 @@
 import { Percentile } from "@jbrunton/flow-charts";
+import { excludeOutliersFromSeq } from "@jbrunton/flow-lib";
 import { CompletedFlowMetrics, CompletedIssue } from "@jbrunton/flow-metrics";
 import { ChartData, ChartOptions } from "chart.js";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
@@ -12,6 +13,7 @@ export type HistogramProps = {
   setSelectedIssues: (issues: CompletedIssue[]) => void;
   percentiles?: Percentile[];
   showPercentileLabels: boolean;
+  hideOutliers: boolean;
 };
 
 type BucketedFlowMetrics = CompletedFlowMetrics & {
@@ -36,9 +38,10 @@ const bucketIssue = (issue: CompletedIssue): BucketedIssue => {
 
 export const Histogram: FC<HistogramProps> = ({
   issues,
+  setSelectedIssues,
   percentiles,
   showPercentileLabels,
-  setSelectedIssues,
+  hideOutliers,
 }): ReactElement => {
   const bucketedIssues: BucketedIssue[] = issues.map(bucketIssue);
   const buckets = range(
@@ -50,6 +53,8 @@ export const Histogram: FC<HistogramProps> = ({
   );
 
   const cumulativeCounts = cumsum(counts) as number[];
+
+  const maxXValue = hideOutliers ? getMaxXValue(issues) : undefined;
 
   const data: ChartData<"bar" | "line"> = {
     labels: buckets,
@@ -126,6 +131,9 @@ export const Histogram: FC<HistogramProps> = ({
       options={{
         onClick,
         scales: {
+          x: {
+            max: maxXValue,
+          },
           y: {
             position: "left",
           },
@@ -173,4 +181,15 @@ const getColorForPercentile = (percentile: number): string => {
   }
 
   return "#f44336";
+};
+
+const getMaxXValue = (issues: CompletedIssue[]): number => {
+  const filteredIssues = excludeOutliersFromSeq(
+    issues,
+    (issue) => issue.metrics.cycleTime,
+  );
+  const maxXValue = Math.max(
+    ...filteredIssues.map((issue) => issue.metrics.cycleTime),
+  );
+  return Math.ceil(maxXValue);
 };
