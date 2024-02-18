@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {
   ageingWipPath,
   forecastPath,
+  histogramPath,
   issuesIndexPath,
   scatterplotPath,
   throughputPath,
@@ -28,6 +29,11 @@ export const reportsCrumb = (
           key: "scatterplot",
           title: "Scatterplot",
           label: <Link to={scatterplotPath({ datasetId })}>Scatterplot</Link>,
+        },
+        {
+          key: "histogram",
+          title: "Histogram",
+          label: <Link to={histogramPath({ datasetId })}>Histogram</Link>,
         },
         {
           key: "throughput",
