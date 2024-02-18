@@ -19,7 +19,6 @@ export const HistogramPage = () => {
   const { issues } = useDatasetContext();
 
   const { filter } = useFilterContext();
-  const [excludedIssues, setExcludedIssues] = useState<string[]>([]);
 
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
   const [percentiles, setPercentiles] = useState<Percentile[] | undefined>();
@@ -34,6 +33,13 @@ export const HistogramPage = () => {
       return prev;
     });
 
+  const hideOutliers = searchParams.get("hideOutliers") === "true";
+  const setHideOutliers = (hideOutliers: boolean) =>
+    setSearchParams((prev) => {
+      prev.set("hideOutliers", hideOutliers.toString());
+      return prev;
+    });
+
   useEffect(() => {
     if (filter && issues) {
       const filteredIssues = filterCompletedIssues(issues, filter);
@@ -41,7 +47,7 @@ export const HistogramPage = () => {
       setFilteredIssues(filteredIssues);
       setPercentiles(percentiles);
     }
-  }, [issues, filter, setFilteredIssues, setPercentiles, excludedIssues]);
+  }, [issues, filter, setFilteredIssues, setPercentiles]);
 
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
 
@@ -65,6 +71,9 @@ export const HistogramPage = () => {
                 ? "Show percentile labels"
                 : "Hide percentile labels",
             },
+            {
+              value: hideOutliers ? "Hide outliers" : "Show outliers",
+            },
           ],
         }}
       >
@@ -76,24 +85,28 @@ export const HistogramPage = () => {
             >
               Show percentile labels
             </Checkbox>
+            <Checkbox
+              checked={hideOutliers}
+              onChange={(e) => setHideOutliers(e.target.checked)}
+            >
+              Hide outliers
+            </Checkbox>
           </Col>
         </Row>
       </ExpandableOptions>
 
       {filter.dates ? (
         <Histogram
-          issues={filteredIssues.filter(
-            (issue) => !excludedIssues.includes(issue.key),
-          )}
+          issues={filteredIssues}
           percentiles={percentiles}
           setSelectedIssues={setSelectedIssues}
           showPercentileLabels={showPercentileLabels}
+          hideOutliers={hideOutliers}
         />
       ) : null}
       <div style={{ margin: 16 }} />
       <IssuesTable
         issues={filteredIssues}
-        onExcludedIssuesChanged={setExcludedIssues}
         percentiles={percentiles}
         defaultSortField="cycleTime"
       />
