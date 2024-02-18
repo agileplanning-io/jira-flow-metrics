@@ -85,10 +85,9 @@ export const HistogramPage = () => {
           issues={filteredIssues.filter(
             (issue) => !excludedIssues.includes(issue.key),
           )}
-          // percentiles={percentiles}
-          // range={filter.dates}
+          percentiles={percentiles}
           setSelectedIssues={setSelectedIssues}
-          // showPercentileLabels={showPercentileLabels}
+          showPercentileLabels={showPercentileLabels}
         />
       ) : null}
       <div style={{ margin: 16 }} />
