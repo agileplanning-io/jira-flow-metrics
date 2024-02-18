@@ -12,6 +12,7 @@ import { Dataset, useSyncDataset } from "@data/datasets";
 import {
   ageingWipPath,
   forecastPath,
+  histogramPath,
   issuesIndexPath,
   scatterplotPath,
   throughputPath,
@@ -85,6 +86,9 @@ export const DatasetsIndexPage = () => {
               <Space size="large">
                 <Link to={scatterplotPath({ datasetId: dataset.id })}>
                   Scatterplot
+                </Link>
+                <Link to={histogramPath({ datasetId: dataset.id })}>
+                  Histogram
                 </Link>
                 <Link to={throughputPath({ datasetId: dataset.id })}>
                   Throughput

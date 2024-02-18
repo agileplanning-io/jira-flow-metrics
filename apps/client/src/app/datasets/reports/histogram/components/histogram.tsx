@@ -2,9 +2,10 @@ import { Percentile } from "@jbrunton/flow-charts";
 import { CompletedFlowMetrics, CompletedIssue } from "@jbrunton/flow-metrics";
 import { ChartData, ChartOptions } from "chart.js";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
+import { cumsum } from "mathjs";
 import { range, count } from "rambda";
 import { FC, ReactElement } from "react";
-import { Bar } from "react-chartjs-2";
+import { Chart } from "react-chartjs-2";
 
 export type HistogramProps = {
   issues: CompletedIssue[];
@@ -48,12 +49,26 @@ export const Histogram: FC<HistogramProps> = ({
     count(({ metrics }) => bucket === metrics.bucket, bucketedIssues),
   );
 
-  const data: ChartData<"bar"> = {
+  const cumulativeCounts = cumsum(counts) as number[];
+
+  const data: ChartData<"bar" | "line"> = {
     labels: buckets,
     datasets: [
       {
+        label: "Cumulative",
+        type: "line",
+        yAxisID: "y2",
+        backgroundColor: "#F1810E",
+        borderColor: "#F1810E",
+        data: cumulativeCounts,
+      },
+      {
         label: "Item Count",
         data: counts,
+        backgroundColor: "#0E7EF1",
+        barPercentage: 1,
+        categoryPercentage: 0.9,
+        yAxisID: "y",
       },
     ],
   };
@@ -75,6 +90,7 @@ export const Histogram: FC<HistogramProps> = ({
               )} days)`,
               display: showPercentileLabels,
               textAlign: "start",
+              rotation: 90,
               color: "#666666",
             },
             enter({ element }) {
@@ -104,10 +120,22 @@ export const Histogram: FC<HistogramProps> = ({
   };
 
   return (
-    <Bar
+    <Chart
+      type="bar"
       data={data}
       options={{
         onClick,
+        scales: {
+          y: {
+            position: "left",
+          },
+          y2: {
+            position: "right",
+            grid: {
+              display: false,
+            },
+          },
+        },
         plugins: {
           datalabels: {
             display: false,
@@ -116,6 +144,9 @@ export const Histogram: FC<HistogramProps> = ({
             annotations,
           },
           tooltip: {
+            mode: "index",
+            intersect: false,
+            position: "nearest",
             callbacks: {
               title: () => "",
               label: (item) => {
