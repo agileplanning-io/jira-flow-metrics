@@ -15,12 +15,38 @@ export function excludeOutliersFromSeq<T>(
 
   const values = data.map((x: T) => valueOf(x));
 
+  const { min, max } = getThresholds(values);
+
+  return data.filter((x) => {
+    const value = valueOf(x);
+    return min <= value && value <= max;
+  });
+}
+
+export function getOutliersFromSeq<T>(
+  data: T[],
+  valueOf: (_: T) => number,
+): T[] {
+  if (data.length === 0) {
+    return [];
+  }
+
+  const values = data.map((x: T) => valueOf(x));
+
+  const { min, max } = getThresholds(values);
+  return data.filter((x) => {
+    const value = valueOf(x);
+    return value < min || value > max;
+  });
+}
+
+const getThresholds = (values: number[]) => {
   const [q25, q75] = quantileSeq(values, [0.25, 0.75]) as [number, number];
   const iqr = q75 - q25;
   const cutoff = iqr * 1.5;
 
-  return data.filter((x) => {
-    const value = valueOf(x);
-    return q25 - cutoff <= value && value <= q75 + cutoff;
-  });
-}
+  return {
+    min: q25 - cutoff,
+    max: q75 + cutoff,
+  };
+};

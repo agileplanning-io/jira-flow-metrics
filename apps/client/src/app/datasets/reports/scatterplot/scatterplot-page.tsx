@@ -2,6 +2,7 @@ import {
   CompletedIssue,
   Issue,
   filterCompletedIssues,
+  filterIssues,
 } from "@jbrunton/flow-metrics";
 import {
   Scatterplot,
@@ -14,9 +15,10 @@ import { IssuesTable } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useDatasetContext } from "../../context";
-import { Checkbox, Col, Row } from "antd";
+import { Button, Checkbox, Col, Row } from "antd";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
+import { excludeOutliersFromSeq, getOutliersFromSeq } from "@jbrunton/flow-lib";
 
 export const ScatterplotPage = () => {
   const { issues } = useDatasetContext();
@@ -45,6 +47,18 @@ export const ScatterplotPage = () => {
       setPercentiles(percentiles);
     }
   }, [issues, filter, setFilteredIssues, setPercentiles, excludedIssues]);
+
+  const hideOutliers = () => {
+    const outliers = getOutliersFromSeq(
+      filteredIssues,
+      (issue) => issue.metrics.cycleTime,
+    );
+    console.info({ outliers });
+    setExcludedIssues((keys) => [
+      ...keys,
+      ...outliers.map((issue) => issue.key),
+    ]);
+  };
 
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
 
@@ -79,6 +93,8 @@ export const ScatterplotPage = () => {
             >
               Show percentile labels
             </Checkbox>
+
+            <Button onClick={hideOutliers}>Hide Outliers</Button>
           </Col>
         </Row>
       </ExpandableOptions>
