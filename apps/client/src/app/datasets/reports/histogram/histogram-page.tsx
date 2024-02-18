@@ -12,7 +12,6 @@ import { useDatasetContext } from "../../context";
 import { Checkbox, Col, Row } from "antd";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
-import { IssueDetailsDrawer } from "../scatterplot/components/issue-details-drawer";
 import { Histogram } from "./components/histogram";
 
 export const HistogramPage = () => {
@@ -106,15 +105,9 @@ export const HistogramPage = () => {
       ) : null}
       <div style={{ margin: 16 }} />
       <IssuesTable
-        issues={filteredIssues}
+        issues={selectedIssues}
         percentiles={percentiles}
         defaultSortField="cycleTime"
-      />
-
-      <IssueDetailsDrawer
-        selectedIssues={selectedIssues}
-        onClose={() => setSelectedIssues([])}
-        open={selectedIssues.length > 0}
       />
     </>
   );
