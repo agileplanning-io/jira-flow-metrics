@@ -7,6 +7,7 @@ import { ForecastPage } from "./forecast/forecast-page";
 import { reportsCrumb } from "../components/reports-crumb";
 import { TimeSpentPage } from "./time-spent/time-spent-page";
 import { AgeingWipPage } from "./ageing-wip/ageing-wip-page";
+import { HistogramPage } from "./histogram/histogram-page";
 
 export const reportRoutes = (
   <Route path="reports">
@@ -20,6 +21,15 @@ export const reportRoutes = (
           "Scatterplot",
           dataset?.name,
         ],
+      }}
+    />
+    <Route
+      path="histogram"
+      element={<HistogramPage />}
+      handle={{
+        crumb: ({ dataset }: NavigationContext) =>
+          reportsCrumb(dataset?.id, "histogram"),
+        title: ({ dataset }: NavigationContext) => ["Histogram", dataset?.name],
       }}
     />
     <Route

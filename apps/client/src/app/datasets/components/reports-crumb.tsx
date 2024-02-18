@@ -14,6 +14,7 @@ export const reportsCrumb = (
   datasetId: string | undefined,
   reportKey:
     | "scatterplot"
+    | "histogram"
     | "throughput"
     | "wip"
     | "ageing-wip"
