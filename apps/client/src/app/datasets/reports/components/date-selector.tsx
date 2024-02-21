@@ -118,7 +118,7 @@ const getDateRanges = (): DateRangeMenuOptions => {
   const now = startOfDay(new Date());
 
   const relativeItems = [
-    ...[7, 14, 30, 90].map((count) => getRelativeDateRange(count, now)),
+    ...[7, 14, 30, 90, 180].map((count) => getRelativeDateRange(count, now)),
   ];
 
   const calendarWeekItems = [
