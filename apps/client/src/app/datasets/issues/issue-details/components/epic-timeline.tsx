@@ -83,7 +83,7 @@ const getOptions = (
     }, labels.length);
 
     return {
-      summary: event.summary,
+      summary: `${event.issueKey}: ${event.summary}`,
       data: data,
       skipNull: true,
       backgroundColor: statusCategoryColors[event.category],

@@ -105,6 +105,14 @@ export const AgeingWipChart = ({
         annotations,
         clip: false,
       },
+      tooltip: {
+        callbacks: {
+          title: (items) => {
+            const issue = issues[items[0].dataIndex];
+            return `${issue.key}: ${issue.summary}`;
+          },
+        },
+      },
     },
   };
 
