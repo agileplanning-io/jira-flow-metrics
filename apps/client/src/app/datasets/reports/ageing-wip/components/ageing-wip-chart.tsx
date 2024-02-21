@@ -1,10 +1,11 @@
 import { ReactElement } from "react";
 import { Bar } from "react-chartjs-2";
-import { ChartData, ChartOptions } from "chart.js";
+import { ChartData, ChartOptions, Tooltip } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { Issue, StartedIssue } from "@jbrunton/flow-metrics";
 import { Percentile } from "@jbrunton/flow-charts";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
+import { ellipsize } from "@jbrunton/flow-lib";
 
 type AgeingWipChartProps = {
   issues: StartedIssue[];
@@ -13,13 +14,23 @@ type AgeingWipChartProps = {
   setSelectedIssues: (issues: Issue[]) => void;
 };
 
+Tooltip.positioners.custom = (_, eventPosition) => {
+  return {
+    x: eventPosition.x,
+    y: eventPosition.y,
+  };
+};
+
 export const AgeingWipChart = ({
   issues,
   percentiles,
   showPercentileLabels,
   setSelectedIssues,
 }: AgeingWipChartProps): ReactElement => {
-  const labels = issues.map((issue) => issue.key);
+  const labels = issues.map((issue) => [
+    issue.key,
+    ellipsize(issue?.summary ?? ""),
+  ]);
 
   const annotations = percentiles
     ? Object.fromEntries(
@@ -104,6 +115,15 @@ export const AgeingWipChart = ({
       annotation: {
         annotations,
         clip: false,
+      },
+      tooltip: {
+        callbacks: {
+          title: (items) => {
+            const issue = issues[items[0].dataIndex];
+            return `${issue.key}: ${issue.summary}`;
+          },
+        },
+        position: "custom",
       },
     },
   };

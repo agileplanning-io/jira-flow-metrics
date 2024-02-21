@@ -22,3 +22,6 @@ export const formatTime = (date?: Date): string | undefined => {
     return format(date, "PPp");
   }
 };
+
+export const ellipsize = (text: string, maxLength = 32) =>
+  text.length > maxLength ? `${text.slice(0, maxLength)}…` : text;
