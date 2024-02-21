@@ -39,6 +39,9 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({ summary }) => {
   const options: ChartOptions<"bar"> = {
     scales,
     plugins: {
+      legend: {
+        display: false,
+      },
       datalabels: {
         display: false,
       },
