@@ -115,7 +115,8 @@ export const Scatterplot = ({
           },
           label: (ctx) => {
             const issue = issues[ctx.dataIndex];
-            return `${issue.key}: ${issue.metrics.cycleTime?.toFixed(1)}`;
+            const description = `[${issue.key}: ${issue.summary}]`;
+            return `Age: ${issue.metrics.cycleTime?.toFixed(1)} ${description}`;
           },
         },
       },
