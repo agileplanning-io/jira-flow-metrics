@@ -1,5 +1,11 @@
 # @jbrunton/flow-charts
 
+## 0.0.18
+
+### Patch Changes
+
+- 8b0efdc: feat: improve tooltips
+
 ## 0.0.17
 
 ### Patch Changes
