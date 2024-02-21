@@ -1,10 +1,9 @@
 import { Tooltip, ChartOptions } from "chart.js";
-
 import { Bar } from "react-chartjs-2";
 import "chartjs-adapter-date-fns";
 import { Issue, Transition } from "@jbrunton/flow-metrics";
 import { FC, useEffect, useMemo, useState } from "react";
-import { formatDate } from "@jbrunton/flow-lib";
+import { ellipsize, formatDate } from "@jbrunton/flow-lib";
 import {
   dropWhile,
   equals,
@@ -93,9 +92,6 @@ const getOptions = (
       },
     };
   });
-
-  const ellipsize = (text: string) =>
-    text.length > 32 ? `${text.slice(0, 32)}…` : text;
 
   const data = {
     labels: labels.map((key) => {
