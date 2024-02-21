@@ -122,6 +122,10 @@ export const AgeingWipChart = ({
             const issue = issues[items[0].dataIndex];
             return `${issue.key}: ${issue.summary}`;
           },
+          afterLabel: (item) => {
+            const issue = issues[item.dataIndex];
+            return `Issue Type: ${issue.issueType}`;
+          },
         },
         position: "custom",
       },

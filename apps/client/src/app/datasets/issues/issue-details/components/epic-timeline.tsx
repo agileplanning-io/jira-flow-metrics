@@ -117,6 +117,10 @@ const getOptions = (
           title: (items) => data.datasets[items[0].datasetIndex].summary,
           label: (item) =>
             data.datasets[item.datasetIndex].data[item.dataIndex]?.[2],
+          afterLabel: (item) => {
+            const issue = issues[item.dataIndex];
+            return `Issue Type: ${issue.issueType}`;
+          },
         },
         position: "custom",
       },
