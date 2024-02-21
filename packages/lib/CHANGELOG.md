@@ -1,5 +1,11 @@
 # @jbrunton/flow-lib
 
+## 0.0.4
+
+### Patch Changes
+
+- 2be690f: feat: ellipsize function
+
 ## 0.0.3
 
 ### Patch Changes

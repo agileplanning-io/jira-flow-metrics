@@ -1,5 +1,12 @@
 # @jbrunton/flow-metrics
 
+## 0.0.14
+
+### Patch Changes
+
+- Updated dependencies [2be690f]
+  - @jbrunton/flow-lib@0.0.4
+
 ## 0.0.13
 
 ### Patch Changes
