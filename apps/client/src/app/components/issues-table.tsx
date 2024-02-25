@@ -15,6 +15,7 @@ import {
   IssueLink,
 } from "@app/datasets/components/issue-links";
 import { Percentile } from "@jbrunton/flow-charts";
+import { CheckboxChangeEvent } from "antd/es/checkbox";
 
 export type SortState = {
   columnKey: "created" | "started" | "completed" | "cycleTime" | undefined;
@@ -248,14 +249,22 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
           />
         );
       },
-      render: (issue: Issue) => (
-        <Checkbox
-          checked={!excludedIssueKeys.includes(issue.key)}
-          onChange={(event) =>
-            onSelectIssueChanged(issue.key, event.target.checked)
-          }
-        />
-      ),
+      render: (issue: Issue) => {
+        const included = !excludedIssueKeys.includes(issue.key);
+
+        const tooltip = included
+          ? `Uncheck to exclude from dataset`
+          : `Check to include in dataset`;
+
+        const onCheckboxChanged = (event: CheckboxChangeEvent) =>
+          onSelectIssueChanged(issue.key, event.target.checked);
+
+        return (
+          <Tooltip placement="right" title={tooltip}>
+            <Checkbox checked={included} onChange={onCheckboxChanged} />
+          </Tooltip>
+        );
+      },
       width: "46px",
     };
     columns.unshift(selectColumn);

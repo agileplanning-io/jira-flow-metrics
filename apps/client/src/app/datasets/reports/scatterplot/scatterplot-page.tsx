@@ -40,7 +40,9 @@ export const ScatterplotPage = () => {
   useEffect(() => {
     if (filter && issues) {
       const filteredIssues = filterCompletedIssues(issues, filter);
-      const percentiles = getCycleTimePercentiles(filteredIssues);
+      const percentiles = getCycleTimePercentiles(
+        filteredIssues.filter((issue) => !excludedIssues.includes(issue.key)),
+      );
       setFilteredIssues(filteredIssues);
       setPercentiles(percentiles);
     }
