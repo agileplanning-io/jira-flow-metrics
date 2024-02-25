@@ -1,5 +1,5 @@
 {
-  "name": "@jbrunton/flow-components",
+  "name": "@agileplanning-io/flow-components",
   "version": "0.0.14",
   "description": "",
   "main": "./dist/index.js",
@@ -19,8 +19,8 @@
   "dependencies": {
     "@emotion/styled": "^11.11.0",
     "@hello-pangea/dnd": "^16.5.0",
-    "@jbrunton/flow-lib": "workspace:*",
-    "@jbrunton/flow-metrics": "workspace:*",
+    "@agileplanning-io/flow-lib": "workspace:*",
+    "@agileplanning-io/flow-metrics": "workspace:*",
     "immer": "^10.0.3",
     "remeda": "^1.33.0",
     "tsup": "^8.0.1"

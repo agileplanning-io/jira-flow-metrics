@@ -1,5 +1,5 @@
 {
-  "name": "@jbrunton/flow-charts",
+  "name": "@agileplanning-io/flow-charts",
   "version": "0.0.19",
   "description": "",
   "main": "./dist/index.js",
@@ -17,8 +17,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@jbrunton/flow-lib": "workspace:*",
-    "@jbrunton/flow-metrics": "workspace:*",
+    "@agileplanning-io/flow-lib": "workspace:*",
+    "@agileplanning-io/flow-metrics": "workspace:*",
     "date-fns": "^2.30.0",
     "mathjs": "^11.11.2",
     "react": "^18.2.0",

@@ -1,4 +1,4 @@
-import { HierarchyLevel, Issue } from "@jbrunton/flow-metrics";
+import { HierarchyLevel, Issue } from "@agileplanning-io/flow-metrics";
 import { useEffect, useState } from "react";
 import { useFilterContext } from "../../../filter/context";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
@@ -9,9 +9,12 @@ import {
   TimeSpentRow,
   timeSpentInPeriod,
 } from "@usecases/time-spent/time-spent";
-import { IssueResolution, IssueStatus } from "@jbrunton/flow-components";
+import {
+  IssueResolution,
+  IssueStatus,
+} from "@agileplanning-io/flow-components";
 import { useNavigationContext } from "../../../navigation/context";
-import { DateFilterType, filterIssues } from "@jbrunton/flow-metrics";
+import { DateFilterType, filterIssues } from "@agileplanning-io/flow-metrics";
 import { IssueDetailsDrawer } from "../scatterplot/components/issue-details-drawer";
 import { ZoomInOutlined } from "@ant-design/icons";
 import { issueDetailsPath } from "@app/navigation/paths";

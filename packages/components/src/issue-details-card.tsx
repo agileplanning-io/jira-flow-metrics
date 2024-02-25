@@ -1,7 +1,7 @@
 import React from "react";
-import { Issue } from "@jbrunton/flow-metrics";
+import { Issue } from "@agileplanning-io/flow-metrics";
 import { Card, Descriptions, Space, Tag } from "antd";
-import { formatTime } from "@jbrunton/flow-lib";
+import { formatTime } from "@agileplanning-io/flow-lib";
 import { IssueResolution, IssueStatus } from "./issue-fields";
 import { IssueExternalLinkComponent, IssueLinkComponent } from "./issue-links";
 

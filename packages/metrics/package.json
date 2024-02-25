@@ -1,5 +1,5 @@
 {
-  "name": "@jbrunton/flow-metrics",
+  "name": "@agileplanning-io/flow-metrics",
   "version": "0.0.14",
   "description": "",
   "main": "./dist/index.js",
@@ -18,7 +18,7 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "repository": "https://github.com/jbrunton/jira-flow-metrics.git",
+  "repository": "https://github.com/agileplanning-io/jira-flow-metrics.git",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -37,6 +37,6 @@
     "eslint-plugin-prettier": "^5.0.0",
     "jira.js": "^2.19.1",
     "remeda": "^1.33.0",
-    "@jbrunton/flow-lib": "workspace:*"
+    "@agileplanning-io/flow-lib": "workspace:*"
   }
 }

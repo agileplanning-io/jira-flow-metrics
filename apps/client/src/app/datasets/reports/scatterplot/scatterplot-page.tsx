@@ -2,12 +2,12 @@ import {
   CompletedIssue,
   Issue,
   filterCompletedIssues,
-} from "@jbrunton/flow-metrics";
+} from "@agileplanning-io/flow-metrics";
 import {
   Scatterplot,
   Percentile,
   getCycleTimePercentiles,
-} from "@jbrunton/flow-charts";
+} from "@agileplanning-io/flow-charts";
 import { useEffect, useState } from "react";
 import { IssueDetailsDrawer } from "./components/issue-details-drawer";
 import { IssuesTable } from "../../../components/issues-table";

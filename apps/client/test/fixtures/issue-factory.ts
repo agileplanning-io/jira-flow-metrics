@@ -3,7 +3,7 @@ import {
   HierarchyLevel,
   Issue,
   StatusCategory,
-} from "@jbrunton/flow-metrics";
+} from "@agileplanning-io/flow-metrics";
 
 let issueCount = 100;
 

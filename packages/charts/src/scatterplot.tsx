@@ -1,5 +1,5 @@
 import { CSSProperties, ReactElement } from "react";
-import { CompletedIssue, Issue } from "@jbrunton/flow-metrics";
+import { CompletedIssue, Issue } from "@agileplanning-io/flow-metrics";
 import { ChartOptions } from "chart.js";
 import { Scatter } from "react-chartjs-2";
 import "chartjs-adapter-date-fns";
@@ -8,7 +8,7 @@ import {
   excludeOutliersFromSeq,
   formatDate,
   Interval,
-} from "@jbrunton/flow-lib";
+} from "@agileplanning-io/flow-lib";
 import { compareAsc, startOfDay } from "date-fns";
 import { mergeDeep, sort, uniqBy } from "remeda";
 import { AnnotationOptions } from "chartjs-plugin-annotation";

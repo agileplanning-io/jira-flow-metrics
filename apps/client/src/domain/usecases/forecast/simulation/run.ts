@@ -1,6 +1,6 @@
 import { times } from "rambda";
 import { RandomGenerator, selectValue } from "./select";
-import { categorizeWeekday } from "@jbrunton/flow-lib";
+import { categorizeWeekday } from "@agileplanning-io/flow-lib";
 
 export type InputMeasurements = {
   cycleTimes: number[];

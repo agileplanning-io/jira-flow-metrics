@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Issue } from "@jbrunton/flow-metrics";
+import { Issue } from "@agileplanning-io/flow-metrics";
 import { Tag } from "antd";
 import { categoryColors } from "./category-colors";
 

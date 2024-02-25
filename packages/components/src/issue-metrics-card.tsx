@@ -1,6 +1,6 @@
 import { Card, Descriptions } from "antd";
-import { Issue } from "@jbrunton/flow-metrics";
-import { formatNumber, formatTime } from "@jbrunton/flow-lib";
+import { Issue } from "@agileplanning-io/flow-metrics";
+import { formatNumber, formatTime } from "@agileplanning-io/flow-lib";
 import { isNil } from "remeda";
 
 export type IssueMetricsCardProps = {

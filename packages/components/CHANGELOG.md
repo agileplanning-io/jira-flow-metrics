@@ -1,19 +1,19 @@
-# @jbrunton/flow-components
+# @agileplanning-io/flow-components
 
 ## 0.0.14
 
 ### Patch Changes
 
 - Updated dependencies [2be690f]
-  - @jbrunton/flow-lib@0.0.4
-  - @jbrunton/flow-metrics@0.0.14
+  - @agileplanning-io/flow-lib@0.0.4
+  - @agileplanning-io/flow-metrics@0.0.14
 
 ## 0.0.13
 
 ### Patch Changes
 
 - Updated dependencies [a2b03cf]
-  - @jbrunton/flow-metrics@0.0.13
+  - @agileplanning-io/flow-metrics@0.0.13
 
 ## 0.0.12
 
@@ -25,7 +25,7 @@
 - Updated dependencies [9728330]
 - Updated dependencies [7c4d018]
 - Updated dependencies [371654b]
-  - @jbrunton/flow-metrics@0.0.12
+  - @agileplanning-io/flow-metrics@0.0.12
 
 ## 0.0.11
 
@@ -38,7 +38,7 @@
 ### Patch Changes
 
 - Updated dependencies [b028576]
-  - @jbrunton/flow-metrics@0.0.11
+  - @agileplanning-io/flow-metrics@0.0.11
 
 ## 0.0.9
 
@@ -46,14 +46,14 @@
 
 - b3ff67c: feat: epic preview link
 - Updated dependencies [cd86e4e]
-  - @jbrunton/flow-metrics@0.0.10
+  - @agileplanning-io/flow-metrics@0.0.10
 
 ## 0.0.8
 
 ### Patch Changes
 
 - Updated dependencies [6220d26]
-  - @jbrunton/flow-metrics@0.0.9
+  - @agileplanning-io/flow-metrics@0.0.9
 
 ## 0.0.7
 
@@ -72,14 +72,14 @@
 ### Patch Changes
 
 - Updated dependencies [e306bc1]
-  - @jbrunton/flow-metrics@0.0.8
+  - @agileplanning-io/flow-metrics@0.0.8
 
 ## 0.0.4
 
 ### Patch Changes
 
 - Updated dependencies [3defb29]
-  - @jbrunton/flow-metrics@0.0.7
+  - @agileplanning-io/flow-metrics@0.0.7
 
 ## 0.0.3
 
@@ -91,7 +91,7 @@
 
 ### Patch Changes
 
-- 82d775b: refactor: remove dependency on react-router-dom from @jbrunton/flow-components
+- 82d775b: refactor: remove dependency on react-router-dom from @agileplanning-io/flow-components
 
 ## 0.0.1
 
@@ -99,5 +99,5 @@
 
 - a603d5d: refactor: extract components package
 - Updated dependencies [a603d5d]
-  - @jbrunton/flow-metrics@0.0.6
-  - @jbrunton/flow-lib@0.0.3
+  - @agileplanning-io/flow-metrics@0.0.6
+  - @agileplanning-io/flow-lib@0.0.3

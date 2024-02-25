@@ -1,4 +1,4 @@
-# @jbrunton/flow-lib
+# @agileplanning-io/flow-lib
 
 ## 0.0.4
 

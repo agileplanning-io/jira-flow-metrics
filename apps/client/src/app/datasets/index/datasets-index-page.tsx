@@ -20,7 +20,7 @@ import {
   wipPath,
 } from "../../navigation/paths";
 import { RemoveDatasetModal } from "./remove-dataset-modal";
-import { formatDate } from "@jbrunton/flow-lib";
+import { formatDate } from "@agileplanning-io/flow-lib";
 import { useNavigationContext } from "../../navigation/context";
 import { EditDatasetForm } from "./edit-dataset-form";
 

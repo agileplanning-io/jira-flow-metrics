@@ -4,7 +4,7 @@ import {
   StatusCategory,
   TransitionContext,
   buildTransitions,
-} from "@jbrunton/flow-metrics";
+} from "@agileplanning-io/flow-metrics";
 
 let issueCount = 100;
 

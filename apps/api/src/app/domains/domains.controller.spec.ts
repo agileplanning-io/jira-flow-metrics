@@ -7,7 +7,7 @@ import { DataModule } from "@data/data-module";
 import { StorageModule } from "@data/storage/storage-module";
 import { TestStorageModule } from "@fixtures/data/storage/test-storage-module";
 import { DatasetsRepository } from "@entities/datasets";
-import { StatusCategory } from "@jbrunton/flow-metrics";
+import { StatusCategory } from "@agileplanning-io/flow-metrics";
 
 describe("DomainsController", () => {
   let app: INestApplication;

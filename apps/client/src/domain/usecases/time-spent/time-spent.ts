@@ -1,6 +1,6 @@
 import { isNil, pipe, reject, sortBy, sum } from "rambda";
-import { HierarchyLevel, Issue } from "@jbrunton/flow-metrics";
-import { Interval, getIntersectingInterval } from "@jbrunton/flow-lib";
+import { HierarchyLevel, Issue } from "@agileplanning-io/flow-metrics";
+import { Interval, getIntersectingInterval } from "@agileplanning-io/flow-lib";
 import { differenceInSeconds } from "date-fns";
 
 export type TimeSpentRow = Pick<Issue, "key" | "summary"> &

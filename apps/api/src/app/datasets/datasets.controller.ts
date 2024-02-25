@@ -4,7 +4,7 @@ import {
   CycleTimePolicy,
   LabelFilterType,
   getFlowMetrics,
-} from "@jbrunton/flow-metrics";
+} from "@agileplanning-io/flow-metrics";
 import {
   Body,
   Controller,

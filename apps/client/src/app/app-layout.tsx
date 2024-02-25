@@ -3,7 +3,7 @@ import { Breadcrumbs } from "./navigation/breadcrumbs";
 import { Button, Col, Layout, Row, Space, Typography } from "antd";
 import { Title } from "./navigation/title";
 import { useNavigationContext } from "./navigation/context";
-import { formatDate } from "@jbrunton/flow-lib";
+import { formatDate } from "@agileplanning-io/flow-lib";
 import { useSyncDataset } from "@data/datasets";
 import { useState } from "react";
 import { ArrowsAltOutlined, ShrinkOutlined } from "@ant-design/icons";

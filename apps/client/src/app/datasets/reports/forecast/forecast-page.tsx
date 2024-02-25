@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { CompletedIssue, filterCompletedIssues } from "@jbrunton/flow-metrics";
+import {
+  CompletedIssue,
+  filterCompletedIssues,
+} from "@agileplanning-io/flow-metrics";
 import { useFilterContext } from "../../../filter/context";
 import { ForecastChart } from "./components/forecast-chart";
 import {
@@ -17,7 +20,7 @@ import { RedoOutlined } from "@ant-design/icons";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useDatasetContext } from "../../context";
-import { formatDate } from "@jbrunton/flow-lib";
+import { formatDate } from "@agileplanning-io/flow-lib";
 import { SummaryRow, forecast } from "@usecases/forecast/forecast";
 import { newSeed, useForecastChartParams } from "./hooks/use-chart-params";
 

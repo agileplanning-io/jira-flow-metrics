@@ -1,5 +1,5 @@
 import { Key, useEffect, useState } from "react";
-import { LabelFilterType } from "@jbrunton/flow-metrics";
+import { LabelFilterType } from "@agileplanning-io/flow-metrics";
 import {
   Checkbox,
   Col,
@@ -19,7 +19,7 @@ import { flatten } from "rambda";
 import { useDatasetContext } from "@app/datasets/context";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { useSearchParams } from "react-router-dom";
-import { WorkflowStagesTable } from "@jbrunton/flow-components";
+import { WorkflowStagesTable } from "@agileplanning-io/flow-components";
 
 export const CycleTimePolicyForm = () => {
   const [workflowStages, setWorkflowStages] = useState<WorkflowStage[]>();

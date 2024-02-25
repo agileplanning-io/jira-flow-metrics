@@ -12,10 +12,13 @@ import {
   Space,
 } from "antd";
 import { FC, Key, useCallback, useState } from "react";
-import { WorkflowBoard, WorkflowStagesTable } from "@jbrunton/flow-components";
+import {
+  WorkflowBoard,
+  WorkflowStagesTable,
+} from "@agileplanning-io/flow-components";
 import { WorkflowStage } from "@data/issues";
 import { flatten } from "rambda";
-import { LabelFilterType } from "@jbrunton/flow-metrics";
+import { LabelFilterType } from "@agileplanning-io/flow-metrics";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 
 export type EditDatasetFormProps = {

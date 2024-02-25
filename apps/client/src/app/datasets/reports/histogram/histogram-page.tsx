@@ -1,5 +1,11 @@
-import { CompletedIssue, filterCompletedIssues } from "@jbrunton/flow-metrics";
-import { Percentile, getCycleTimePercentiles } from "@jbrunton/flow-charts";
+import {
+  CompletedIssue,
+  filterCompletedIssues,
+} from "@agileplanning-io/flow-metrics";
+import {
+  Percentile,
+  getCycleTimePercentiles,
+} from "@agileplanning-io/flow-charts";
 import { useEffect, useState } from "react";
 import { IssuesTable } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
