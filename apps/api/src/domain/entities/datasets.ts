@@ -1,4 +1,4 @@
-import { CycleTimePolicy, TransitionStatus } from "@jbrunton/flow-metrics";
+import { CycleTimePolicy, TransitionStatus } from "@agileplanning-io/flow-metrics";
 import { Domain } from "./domains";
 
 export type WorkflowStage = {

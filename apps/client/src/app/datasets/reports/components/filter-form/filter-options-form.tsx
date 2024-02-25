@@ -4,17 +4,17 @@ import {
   Issue,
   LabelFilterType,
   filterIssues,
-} from "@jbrunton/flow-metrics";
+} from "@agileplanning-io/flow-metrics";
 import { Col, Form, Row, Select, SelectProps, Space, Tag } from "antd";
 import { DateSelector } from "../date-selector";
 import { flatten, isNil, map, pipe, reject, uniq } from "rambda";
 import { useFilterContext } from "../../../../filter/context";
-import { Interval, defaultDateRange } from "@jbrunton/flow-lib";
+import { Interval, defaultDateRange } from "@agileplanning-io/flow-lib";
 import {
   ExpandableOptions,
   ExpandableOptionsHeader,
 } from "../../../../components/expandable-options";
-import { formatDate } from "@jbrunton/flow-lib";
+import { formatDate } from "@agileplanning-io/flow-lib";
 
 export type FilterOptions = {
   hierarchyLevel?: HierarchyLevel;

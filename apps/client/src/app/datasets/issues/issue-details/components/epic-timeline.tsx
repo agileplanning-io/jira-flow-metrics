@@ -1,9 +1,9 @@
 import { Tooltip, ChartOptions } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import "chartjs-adapter-date-fns";
-import { Issue, Transition } from "@jbrunton/flow-metrics";
+import { Issue, Transition } from "@agileplanning-io/flow-metrics";
 import { FC, useEffect, useMemo, useState } from "react";
-import { ellipsize, formatDate } from "@jbrunton/flow-lib";
+import { ellipsize, formatDate } from "@agileplanning-io/flow-lib";
 import {
   dropWhile,
   equals,

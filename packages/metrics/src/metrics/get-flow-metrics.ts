@@ -10,7 +10,7 @@ import {
   isStarted,
 } from "../types";
 import { compareAsc, compareDesc } from "date-fns";
-import { getDifferenceInDays } from "@jbrunton/flow-lib";
+import { getDifferenceInDays } from "@agileplanning-io/flow-lib";
 import { filterIssues } from "../util";
 
 export const getFlowMetrics = (

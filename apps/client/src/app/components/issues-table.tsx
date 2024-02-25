@@ -1,12 +1,12 @@
-import { Issue, IssueFlowMetrics } from "@jbrunton/flow-metrics";
+import { Issue, IssueFlowMetrics } from "@agileplanning-io/flow-metrics";
 import { Checkbox, Space, Table, Tag, Tooltip, Typography } from "antd";
-import { formatDate, formatNumber } from "@jbrunton/flow-lib";
+import { formatDate, formatNumber } from "@agileplanning-io/flow-lib";
 import { compareAsc, differenceInMinutes } from "date-fns";
 import { ColumnType, ColumnsType, SortOrder } from "antd/es/table/interface";
 import { useEffect, useState } from "react";
 import { useNavigationContext } from "../navigation/context";
 import { isNil } from "rambda";
-import { IssueResolution, IssueStatus } from "@jbrunton/flow-components";
+import { IssueResolution, IssueStatus } from "@agileplanning-io/flow-components";
 import { IssueDetailsDrawer } from "@app/datasets/reports/scatterplot/components/issue-details-drawer";
 import { QuestionCircleOutlined, ZoomInOutlined } from "@ant-design/icons";
 import { issueDetailsPath } from "@app/navigation/paths";
@@ -14,7 +14,7 @@ import {
   IssueExternalLink,
   IssueLink,
 } from "@app/datasets/components/issue-links";
-import { Percentile } from "@jbrunton/flow-charts";
+import { Percentile } from "@agileplanning-io/flow-charts";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 
 export type SortState = {

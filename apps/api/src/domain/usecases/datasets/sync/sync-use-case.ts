@@ -8,10 +8,10 @@ import {
   HierarchyLevel,
   StatusCategory,
   CycleTimePolicy,
-} from "@jbrunton/flow-metrics";
+} from "@agileplanning-io/flow-metrics";
 import { DomainsRepository } from "@entities/domains";
 import { sortStatuses } from "./sort-statuses";
-import { TransitionStatus } from "@jbrunton/flow-metrics";
+import { TransitionStatus } from "@agileplanning-io/flow-metrics";
 import { flatten, uniq } from "rambda";
 
 @Injectable()

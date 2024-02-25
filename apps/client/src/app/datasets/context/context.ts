@@ -4,7 +4,7 @@ import {
   CycleTimePolicy,
   Issue,
   LabelFilterType,
-} from "@jbrunton/flow-metrics";
+} from "@agileplanning-io/flow-metrics";
 
 export type DatasetContextType = {
   dataset?: Dataset;

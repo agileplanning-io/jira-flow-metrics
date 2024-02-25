@@ -1,8 +1,8 @@
-import { CompletedIssue } from "@jbrunton/flow-metrics";
+import { CompletedIssue } from "@agileplanning-io/flow-metrics";
 import { getLongTailCutoff, run } from "./simulation/run";
 import { addDays, compareAsc, getISODay } from "date-fns";
 import { groupBy } from "rambda";
-import { formatDate } from "@jbrunton/flow-lib";
+import { formatDate } from "@agileplanning-io/flow-lib";
 import { newGenerator } from "./simulation/select";
 import { measure } from "./input/measurements";
 

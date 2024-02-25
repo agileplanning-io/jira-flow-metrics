@@ -1,7 +1,7 @@
 import { Table, Tag } from "antd";
 import { FC, Key } from "react";
 import { WorkflowStage } from "./workflow-board/state";
-import { TransitionStatus } from "@jbrunton/flow-metrics";
+import { TransitionStatus } from "@agileplanning-io/flow-metrics";
 
 export type WorkflowStagesTableProps = {
   workflowStages: WorkflowStage[] | undefined;

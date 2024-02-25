@@ -2,10 +2,10 @@ import { ReactElement } from "react";
 import { Bar } from "react-chartjs-2";
 import { ChartData, ChartOptions, Tooltip } from "chart.js";
 import "chartjs-adapter-date-fns";
-import { Issue, StartedIssue } from "@jbrunton/flow-metrics";
-import { Percentile } from "@jbrunton/flow-charts";
+import { Issue, StartedIssue } from "@agileplanning-io/flow-metrics";
+import { Percentile } from "@agileplanning-io/flow-charts";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
-import { ellipsize } from "@jbrunton/flow-lib";
+import { ellipsize } from "@agileplanning-io/flow-lib";
 
 type AgeingWipChartProps = {
   issues: StartedIssue[];

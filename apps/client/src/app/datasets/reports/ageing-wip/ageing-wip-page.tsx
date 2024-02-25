@@ -5,7 +5,7 @@ import {
   Issue,
   StartedIssue,
   filterIssues,
-} from "@jbrunton/flow-metrics";
+} from "@agileplanning-io/flow-metrics";
 import { useFilterContext } from "../../../filter/context";
 import { AgeingWipChart } from "./components/ageing-wip-chart";
 import { isNil, omit } from "rambda";
@@ -14,9 +14,9 @@ import { FilterOptionsForm } from "../components/filter-form/filter-options-form
 import { useDatasetContext } from "../../context";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
-import { Percentile, getCycleTimePercentiles } from "@jbrunton/flow-charts";
-import { filterCompletedIssues } from "@jbrunton/flow-metrics";
-import { isStarted } from "@jbrunton/flow-metrics";
+import { Percentile, getCycleTimePercentiles } from "@agileplanning-io/flow-charts";
+import { filterCompletedIssues } from "@agileplanning-io/flow-metrics";
+import { isStarted } from "@agileplanning-io/flow-metrics";
 import { IssueDetailsDrawer } from "../scatterplot/components/issue-details-drawer";
 import { IssuesTable } from "@app/components/issues-table";
 

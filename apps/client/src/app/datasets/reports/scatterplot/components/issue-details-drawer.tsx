@@ -1,11 +1,11 @@
 import { Button, Drawer, Layout, Space } from "antd";
 import React, { ReactElement, useState } from "react";
-import { HierarchyLevel, Issue } from "@jbrunton/flow-metrics";
+import { HierarchyLevel, Issue } from "@agileplanning-io/flow-metrics";
 import {
   IssueDetailsCard,
   IssueMetricsCard,
   IssueTransitionsCard,
-} from "@jbrunton/flow-components";
+} from "@agileplanning-io/flow-components";
 import { useNavigationContext } from "@app/navigation/context";
 import { issueDetailsPath } from "@app/navigation/paths";
 import {

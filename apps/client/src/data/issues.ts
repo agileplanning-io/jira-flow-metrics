@@ -6,7 +6,7 @@ import {
   IssueFlowMetrics,
   LabelFilterType,
   TransitionStatus,
-} from "@jbrunton/flow-metrics";
+} from "@agileplanning-io/flow-metrics";
 
 const issuesQueryKey = "issues";
 

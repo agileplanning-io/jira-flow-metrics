@@ -1,11 +1,11 @@
-# @jbrunton/flow-metrics
+# @agileplanning-io/flow-metrics
 
 ## 0.0.14
 
 ### Patch Changes
 
 - Updated dependencies [2be690f]
-  - @jbrunton/flow-lib@0.0.4
+  - @agileplanning-io/flow-lib@0.0.4
 
 ## 0.0.13
 
@@ -49,7 +49,7 @@
 
 ### Patch Changes
 
-- 3defb29: feat: add filter functions to @jbrunton/flow-metrics
+- 3defb29: feat: add filter functions to @agileplanning-io/flow-metrics
 
 ## 0.0.6
 

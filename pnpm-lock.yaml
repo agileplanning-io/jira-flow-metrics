@@ -25,7 +25,7 @@ importers:
       '@dagrejs/graphlib':
         specifier: ^2.1.13
         version: 2.1.13
-      '@jbrunton/flow-metrics':
+      '@agileplanning-io/flow-metrics':
         specifier: workspace:*
         version: link:../../packages/metrics
       '@nestjs/common':
@@ -155,16 +155,16 @@ importers:
       '@hello-pangea/dnd':
         specifier: ^16.5.0
         version: 16.5.0(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)
-      '@jbrunton/flow-charts':
+      '@agileplanning-io/flow-charts':
         specifier: workspace:*
         version: link:../../packages/charts
-      '@jbrunton/flow-components':
+      '@agileplanning-io/flow-components':
         specifier: workspace:*
         version: link:../../packages/components
-      '@jbrunton/flow-lib':
+      '@agileplanning-io/flow-lib':
         specifier: workspace:*
         version: link:../../packages/lib
-      '@jbrunton/flow-metrics':
+      '@agileplanning-io/flow-metrics':
         specifier: workspace:*
         version: link:../../packages/metrics
       '@tanstack/react-query':
@@ -279,10 +279,10 @@ importers:
 
   packages/charts:
     dependencies:
-      '@jbrunton/flow-lib':
+      '@agileplanning-io/flow-lib':
         specifier: workspace:*
         version: link:../lib
-      '@jbrunton/flow-metrics':
+      '@agileplanning-io/flow-metrics':
         specifier: workspace:*
         version: link:../metrics
       date-fns:
@@ -334,10 +334,10 @@ importers:
       '@hello-pangea/dnd':
         specifier: ^16.5.0
         version: 16.5.0(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)
-      '@jbrunton/flow-lib':
+      '@agileplanning-io/flow-lib':
         specifier: workspace:*
         version: link:../lib
-      '@jbrunton/flow-metrics':
+      '@agileplanning-io/flow-metrics':
         specifier: workspace:*
         version: link:../metrics
       immer:
@@ -414,7 +414,7 @@ importers:
 
   packages/metrics:
     dependencies:
-      '@jbrunton/flow-lib':
+      '@agileplanning-io/flow-lib':
         specifier: workspace:*
         version: link:../lib
       date-fns:

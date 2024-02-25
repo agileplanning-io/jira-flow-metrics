@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { HierarchyLevel, Issue, filterIssues } from "@jbrunton/flow-metrics";
+import { HierarchyLevel, Issue, filterIssues } from "@agileplanning-io/flow-metrics";
 import { IssuesTable } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
 import { WipResult, calculateWip } from "@usecases/wip/wip";

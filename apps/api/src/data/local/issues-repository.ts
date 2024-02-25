@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { DataError } from "node-json-db";
 import { IssuesRepository } from "@entities/issues";
 import { DataCache } from "@data/storage/storage";
-import { Issue } from "@jbrunton/flow-metrics";
+import { Issue } from "@agileplanning-io/flow-metrics";
 
 @Injectable()
 export class LocalIssuesRepository extends IssuesRepository {

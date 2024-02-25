@@ -1,5 +1,5 @@
 import { quantileSeq } from "mathjs";
-import { CompletedIssue } from "@jbrunton/flow-metrics";
+import { CompletedIssue } from "@agileplanning-io/flow-metrics";
 
 export type Percentile = {
   percentile: number;

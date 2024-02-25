@@ -2,11 +2,11 @@ import {
   HierarchyLevel,
   IssueFilter,
   LabelFilterType,
-} from "@jbrunton/flow-metrics";
+} from "@agileplanning-io/flow-metrics";
 import { FilterContext } from "./context";
 import { useSearchParams } from "react-router-dom";
 import { equals, pick } from "rambda";
-import { Interval } from "@jbrunton/flow-lib";
+import { Interval } from "@agileplanning-io/flow-lib";
 import { endOfDay, parse } from "date-fns";
 import { SearchParamsBuilder } from "@lib/search-params-builder";
 

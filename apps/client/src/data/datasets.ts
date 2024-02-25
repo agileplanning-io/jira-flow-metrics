@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { client } from "./client";
-import { CycleTimePolicy, TransitionStatus } from "@jbrunton/flow-metrics";
+import { CycleTimePolicy, TransitionStatus } from "@agileplanning-io/flow-metrics";
 import { WorkflowStage } from "./issues";
 
 export type DataSource = {

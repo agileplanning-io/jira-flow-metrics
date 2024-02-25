@@ -12,7 +12,7 @@ import {
   subDays,
 } from "date-fns";
 import { useState } from "react";
-import { Interval } from "@jbrunton/flow-lib";
+import { Interval } from "@agileplanning-io/flow-lib";
 
 export type DateSelectorProps = {
   dates?: Interval;

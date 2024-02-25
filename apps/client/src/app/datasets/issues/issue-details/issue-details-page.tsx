@@ -1,12 +1,12 @@
 import { Button, Col, Drawer, Layout, Row, Space } from "antd";
 import { IssuesTable } from "../../../components/issues-table";
-import { HierarchyLevel } from "@jbrunton/flow-metrics";
+import { HierarchyLevel } from "@agileplanning-io/flow-metrics";
 import { useNavigationContext } from "../../../navigation/context";
 import {
   IssueDetailsCard,
   IssueMetricsCard,
   IssueTransitionsCard,
-} from "@jbrunton/flow-components";
+} from "@agileplanning-io/flow-components";
 import { useDatasetContext } from "../../context";
 import { useState } from "react";
 import { ZoomInOutlined } from "@ant-design/icons";

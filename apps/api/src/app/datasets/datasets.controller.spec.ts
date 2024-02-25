@@ -8,7 +8,7 @@ import { TestStorageModule } from "@fixtures/data/storage/test-storage-module";
 import { buildIssue } from "@fixtures/factories/issue-factory";
 import { IssuesRepository } from "@entities/issues";
 import { DatasetsRepository } from "@entities/datasets";
-import { StatusCategory } from "@jbrunton/flow-metrics";
+import { StatusCategory } from "@agileplanning-io/flow-metrics";
 
 jest.useFakeTimers().setSystemTime(Date.parse("2023-01-01T13:00:00.000Z"));
 

@@ -1,6 +1,6 @@
 import { Card, Timeline, Tooltip } from "antd";
-import { formatNumber, formatTime } from "@jbrunton/flow-lib";
-import { Issue } from "@jbrunton/flow-metrics";
+import { formatNumber, formatTime } from "@agileplanning-io/flow-lib";
+import { Issue } from "@agileplanning-io/flow-metrics";
 import { categoryColors } from "./category-colors";
 
 export type IssueTransitionsCardProps = {

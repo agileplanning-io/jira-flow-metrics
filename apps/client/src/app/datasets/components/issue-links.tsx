@@ -2,7 +2,7 @@ import { ExportOutlined } from "@ant-design/icons";
 import {
   IssueExternalLinkComponent,
   IssueLinkComponent,
-} from "@jbrunton/flow-components";
+} from "@agileplanning-io/flow-components";
 import { Tag } from "antd";
 import { Link } from "react-router-dom";
 
