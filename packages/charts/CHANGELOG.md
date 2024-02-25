@@ -1,5 +1,11 @@
 # @jbrunton/flow-charts
 
+## 0.0.19
+
+### Patch Changes
+
+- 4afc485: feat: exclude outliers from scatterplot
+
 ## 0.0.18
 
 ### Patch Changes
