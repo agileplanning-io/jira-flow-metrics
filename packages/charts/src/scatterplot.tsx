@@ -4,7 +4,11 @@ import { ChartOptions } from "chart.js";
 import { Scatter } from "react-chartjs-2";
 import "chartjs-adapter-date-fns";
 import "chartjs-plugin-datalabels";
-import { formatDate, Interval } from "@jbrunton/flow-lib";
+import {
+  excludeOutliersFromSeq,
+  formatDate,
+  Interval,
+} from "@jbrunton/flow-lib";
 import { compareAsc, startOfDay } from "date-fns";
 import { mergeDeep, sort, uniqBy } from "remeda";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
@@ -16,6 +20,7 @@ type ScatterplotProps = {
   range: Interval;
   showPercentileLabels: boolean;
   setSelectedIssues: (issues: Issue[]) => void;
+  hideOutliers: boolean;
   options?: ChartOptions<"scatter">;
   style?: CSSProperties;
 };
@@ -26,6 +31,7 @@ export const Scatterplot = ({
   percentiles,
   showPercentileLabels,
   setSelectedIssues,
+  hideOutliers,
   options: overrideOptions,
   style,
 }: ScatterplotProps): ReactElement => {
@@ -33,6 +39,8 @@ export const Scatterplot = ({
     x: issue.metrics.completed,
     y: issue.metrics.cycleTime,
   }));
+
+  const maxYValue = hideOutliers ? getMaxYValue(issues) : undefined;
 
   const onClick: ChartOptions<"scatter">["onClick"] = (_, elements) => {
     if (elements.length) {
@@ -124,6 +132,7 @@ export const Scatterplot = ({
     scales: {
       y: {
         beginAtZero: true,
+        max: maxYValue,
       },
       x: {
         type: "time",
@@ -154,4 +163,15 @@ const getColorForPercentile = (percentile: number): string => {
   }
 
   return "#f44336";
+};
+
+const getMaxYValue = (issues: CompletedIssue[]): number => {
+  const filteredIssues = excludeOutliersFromSeq(
+    issues,
+    (issue) => issue.metrics.cycleTime,
+  );
+  const maxXValue = Math.max(
+    ...filteredIssues.map((issue) => issue.metrics.cycleTime),
+  );
+  return Math.ceil(maxXValue);
 };
