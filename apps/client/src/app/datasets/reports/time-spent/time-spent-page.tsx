@@ -9,7 +9,10 @@ import {
   TimeSpentRow,
   timeSpentInPeriod,
 } from "@usecases/time-spent/time-spent";
-import { IssueResolution, IssueStatus } from "@agileplanning-io/flow-components";
+import {
+  IssueResolution,
+  IssueStatus,
+} from "@agileplanning-io/flow-components";
 import { useNavigationContext } from "../../../navigation/context";
 import { DateFilterType, filterIssues } from "@agileplanning-io/flow-metrics";
 import { IssueDetailsDrawer } from "../scatterplot/components/issue-details-drawer";

@@ -12,7 +12,10 @@ import {
   Space,
 } from "antd";
 import { FC, Key, useCallback, useState } from "react";
-import { WorkflowBoard, WorkflowStagesTable } from "@agileplanning-io/flow-components";
+import {
+  WorkflowBoard,
+  WorkflowStagesTable,
+} from "@agileplanning-io/flow-components";
 import { WorkflowStage } from "@data/issues";
 import { flatten } from "rambda";
 import { LabelFilterType } from "@agileplanning-io/flow-metrics";

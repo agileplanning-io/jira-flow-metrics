@@ -1,6 +1,9 @@
 import { Percentile } from "@agileplanning-io/flow-charts";
 import { excludeOutliersFromSeq } from "@agileplanning-io/flow-lib";
-import { CompletedFlowMetrics, CompletedIssue } from "@agileplanning-io/flow-metrics";
+import {
+  CompletedFlowMetrics,
+  CompletedIssue,
+} from "@agileplanning-io/flow-metrics";
 import { ChartData, ChartOptions } from "chart.js";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
 import { cumsum } from "mathjs";

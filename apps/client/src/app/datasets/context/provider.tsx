@@ -2,7 +2,10 @@ import { useNavigationContext } from "../../navigation/context";
 import { DatasetContext, DatasetContextType } from "./context";
 import { useIssues } from "@data/issues";
 import { useSearchParams } from "react-router-dom";
-import { CycleTimePolicy, LabelFilterType } from "@agileplanning-io/flow-metrics";
+import {
+  CycleTimePolicy,
+  LabelFilterType,
+} from "@agileplanning-io/flow-metrics";
 import { equals, pick } from "rambda";
 import { SearchParamsBuilder } from "@lib/search-params-builder";
 

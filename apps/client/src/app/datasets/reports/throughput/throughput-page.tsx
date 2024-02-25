@@ -4,7 +4,11 @@ import {
   Issue,
   filterCompletedIssues,
 } from "@agileplanning-io/flow-metrics";
-import { Interval, TimeUnit, getOverlappingInterval } from "@agileplanning-io/flow-lib";
+import {
+  Interval,
+  TimeUnit,
+  getOverlappingInterval,
+} from "@agileplanning-io/flow-lib";
 import { ThroughputChart } from "./components/throughput-chart";
 import { Col, Form, Row, Select } from "antd";
 import {

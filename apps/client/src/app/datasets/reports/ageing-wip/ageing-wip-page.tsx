@@ -14,7 +14,10 @@ import { FilterOptionsForm } from "../components/filter-form/filter-options-form
 import { useDatasetContext } from "../../context";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
-import { Percentile, getCycleTimePercentiles } from "@agileplanning-io/flow-charts";
+import {
+  Percentile,
+  getCycleTimePercentiles,
+} from "@agileplanning-io/flow-charts";
 import { filterCompletedIssues } from "@agileplanning-io/flow-metrics";
 import { isStarted } from "@agileplanning-io/flow-metrics";
 import { IssueDetailsDrawer } from "../scatterplot/components/issue-details-drawer";

@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { CompletedIssue, filterCompletedIssues } from "@agileplanning-io/flow-metrics";
+import {
+  CompletedIssue,
+  filterCompletedIssues,
+} from "@agileplanning-io/flow-metrics";
 import { useFilterContext } from "../../../filter/context";
 import { ForecastChart } from "./components/forecast-chart";
 import {
