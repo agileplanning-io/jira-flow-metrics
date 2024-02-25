@@ -1,5 +1,14 @@
 # @agileplanning-io/flow-charts
 
+## 0.0.20
+
+### Patch Changes
+
+- 8268ac3: chore: migrate to agileplanning-io
+- Updated dependencies [8268ac3]
+  - @agileplanning-io/flow-metrics@0.0.15
+  - @agileplanning-io/flow-lib@0.0.5
+
 ## 0.0.19
 
 ### Patch Changes
