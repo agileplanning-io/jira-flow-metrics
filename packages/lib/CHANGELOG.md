@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-lib
 
+## 0.0.5
+
+### Patch Changes
+
+- 8268ac3: chore: migrate to agileplanning-io
+
 ## 0.0.4
 
 ### Patch Changes
