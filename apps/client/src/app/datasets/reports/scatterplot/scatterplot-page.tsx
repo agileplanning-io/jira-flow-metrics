@@ -14,9 +14,10 @@ import { IssuesTable } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useDatasetContext } from "../../context";
-import { Checkbox, Col, Row } from "antd";
+import { Checkbox, Col, Popover, Row, Space } from "antd";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 
 export const ScatterplotPage = () => {
   const { issues } = useDatasetContext();
@@ -34,6 +35,13 @@ export const ScatterplotPage = () => {
   const setShowPercentileLabels = (showPercentileLabels: boolean) =>
     setSearchParams((prev) => {
       prev.set("showPercentileLabels", showPercentileLabels.toString());
+      return prev;
+    });
+
+  const hideOutliers = searchParams.get("hideOutliers") === "true";
+  const setHideOutliers = (hideOutliers: boolean) =>
+    setSearchParams((prev) => {
+      prev.set("hideOutliers", hideOutliers.toString());
       return prev;
     });
 
@@ -70,17 +78,39 @@ export const ScatterplotPage = () => {
                 ? "Show percentile labels"
                 : "Hide percentile labels",
             },
+            {
+              value: hideOutliers ? "Hide outliers" : "Show outliers",
+            },
           ],
         }}
       >
         <Row gutter={[8, 8]}>
           <Col span={6}>
-            <Checkbox
-              checked={showPercentileLabels}
-              onChange={(e) => setShowPercentileLabels(e.target.checked)}
-            >
-              Show percentile labels
-            </Checkbox>
+            <Space direction="vertical">
+              <Checkbox
+                checked={showPercentileLabels}
+                onChange={(e) => setShowPercentileLabels(e.target.checked)}
+              >
+                Show percentile labels
+              </Checkbox>
+              <Checkbox
+                checked={hideOutliers}
+                onChange={(e) => setHideOutliers(e.target.checked)}
+              >
+                Hide outliers
+                <Popover
+                  placement="right"
+                  content={
+                    "Outliers are calculated using the Tukey Fence method"
+                  }
+                >
+                  {" "}
+                  <a href="#">
+                    <QuestionCircleOutlined />
+                  </a>
+                </Popover>
+              </Checkbox>
+            </Space>
           </Col>
         </Row>
       </ExpandableOptions>
@@ -94,8 +124,10 @@ export const ScatterplotPage = () => {
           range={filter.dates}
           setSelectedIssues={setSelectedIssues}
           showPercentileLabels={showPercentileLabels}
+          hideOutliers={hideOutliers}
         />
       ) : null}
+
       <div style={{ margin: 16 }} />
       <IssuesTable
         issues={filteredIssues}
