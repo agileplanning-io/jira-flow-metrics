@@ -1,8 +1,4 @@
-import {
-  CompletedIssue,
-  Issue,
-  filterCompletedIssues,
-} from "@jbrunton/flow-metrics";
+import { CompletedIssue, filterCompletedIssues } from "@jbrunton/flow-metrics";
 import { Percentile, getCycleTimePercentiles } from "@jbrunton/flow-charts";
 import { useEffect, useState } from "react";
 import { IssuesTable } from "../../../components/issues-table";
@@ -13,11 +9,13 @@ import { Checkbox, Col, Row } from "antd";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
 import { Histogram } from "./components/histogram";
+import { IssueDetailsDrawer } from "../scatterplot/components/issue-details-drawer";
 
 export const HistogramPage = () => {
   const { issues } = useDatasetContext();
 
   const { filter } = useFilterContext();
+  const [excludedIssues, setExcludedIssues] = useState<string[]>([]);
 
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
   const [percentiles, setPercentiles] = useState<Percentile[] | undefined>();
@@ -42,13 +40,15 @@ export const HistogramPage = () => {
   useEffect(() => {
     if (filter && issues) {
       const filteredIssues = filterCompletedIssues(issues, filter);
-      const percentiles = getCycleTimePercentiles(filteredIssues);
       setFilteredIssues(filteredIssues);
+      const percentiles = getCycleTimePercentiles(
+        filteredIssues.filter((issue) => !excludedIssues.includes(issue.key)),
+      );
       setPercentiles(percentiles);
     }
-  }, [issues, filter, setFilteredIssues, setPercentiles]);
+  }, [issues, filter, setFilteredIssues, setPercentiles, excludedIssues]);
 
-  const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
+  const [selectedIssues, setSelectedIssues] = useState<CompletedIssue[]>([]);
 
   return (
     <>
@@ -96,7 +96,9 @@ export const HistogramPage = () => {
 
       {filter.dates ? (
         <Histogram
-          issues={filteredIssues}
+          issues={filteredIssues.filter(
+            (issue) => !excludedIssues.includes(issue.key),
+          )}
           percentiles={percentiles}
           setSelectedIssues={setSelectedIssues}
           showPercentileLabels={showPercentileLabels}
@@ -105,9 +107,15 @@ export const HistogramPage = () => {
       ) : null}
       <div style={{ margin: 16 }} />
       <IssuesTable
-        issues={selectedIssues}
+        issues={filteredIssues}
         percentiles={percentiles}
+        onExcludedIssuesChanged={setExcludedIssues}
         defaultSortField="cycleTime"
+      />
+      <IssueDetailsDrawer
+        selectedIssues={selectedIssues}
+        open={selectedIssues.length > 0}
+        onClose={() => setSelectedIssues([])}
       />
     </>
   );
