@@ -20,7 +20,7 @@ import {
 } from "@agileplanning-io/flow-charts";
 import { filterCompletedIssues } from "@agileplanning-io/flow-metrics";
 import { isStarted } from "@agileplanning-io/flow-metrics";
-import { IssueDetailsDrawer } from "../scatterplot/components/issue-details-drawer";
+import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { IssuesTable } from "@app/components/issues-table";
 
 export const AgeingWipPage = () => {

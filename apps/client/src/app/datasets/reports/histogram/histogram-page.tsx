@@ -15,7 +15,7 @@ import { useDatasetContext } from "../../context";
 import { Checkbox, Col, Popover, Row, Space } from "antd";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
-import { IssueDetailsDrawer } from "../scatterplot/components/issue-details-drawer";
+import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 
 export const HistogramPage = () => {

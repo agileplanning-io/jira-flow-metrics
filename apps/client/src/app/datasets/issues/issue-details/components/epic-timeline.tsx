@@ -15,7 +15,7 @@ import {
   uniq,
 } from "rambda";
 import { addHours } from "date-fns";
-import { IssueDetailsDrawer } from "@app/datasets/reports/scatterplot/components/issue-details-drawer";
+import { IssueDetailsDrawer } from "@app/datasets/reports/components/issue-details-drawer";
 import { IssuesTable } from "@app/components/issues-table";
 
 const statusCategoryColors = {

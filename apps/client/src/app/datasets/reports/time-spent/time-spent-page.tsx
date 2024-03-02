@@ -15,7 +15,7 @@ import {
 } from "@agileplanning-io/flow-components";
 import { useNavigationContext } from "../../../navigation/context";
 import { DateFilterType, filterIssues } from "@agileplanning-io/flow-metrics";
-import { IssueDetailsDrawer } from "../scatterplot/components/issue-details-drawer";
+import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { ZoomInOutlined } from "@ant-design/icons";
 import { issueDetailsPath } from "@app/navigation/paths";
 import {
