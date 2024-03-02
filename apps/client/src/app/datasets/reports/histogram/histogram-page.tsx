@@ -3,6 +3,7 @@ import {
   filterCompletedIssues,
 } from "@agileplanning-io/flow-metrics";
 import {
+  Histogram,
   Percentile,
   getCycleTimePercentiles,
 } from "@agileplanning-io/flow-charts";
@@ -14,8 +15,7 @@ import { useDatasetContext } from "../../context";
 import { Checkbox, Col, Popover, Row, Space } from "antd";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
-import { Histogram } from "./components/histogram";
-import { IssueDetailsDrawer } from "../scatterplot/components/issue-details-drawer";
+import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 
 export const HistogramPage = () => {

@@ -9,7 +9,7 @@ import {
   getCycleTimePercentiles,
 } from "@agileplanning-io/flow-charts";
 import { useEffect, useState } from "react";
-import { IssueDetailsDrawer } from "./components/issue-details-drawer";
+import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { IssuesTable } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";

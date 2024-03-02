@@ -1,4 +1,3 @@
-import { Percentile } from "@agileplanning-io/flow-charts";
 import { excludeOutliersFromSeq } from "@agileplanning-io/flow-lib";
 import {
   CompletedFlowMetrics,
@@ -7,9 +6,10 @@ import {
 import { ChartData, ChartOptions } from "chart.js";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
 import { cumsum } from "mathjs";
-import { range, count } from "rambda";
+import { range, countBy } from "remeda";
 import { FC, ReactElement } from "react";
 import { Chart } from "react-chartjs-2";
+import { Percentile } from "./percentiles";
 
 export type HistogramProps = {
   issues: CompletedIssue[];
@@ -52,7 +52,7 @@ export const Histogram: FC<HistogramProps> = ({
     Math.max(...bucketedIssues.map(({ metrics }) => metrics.bucket)) + 1,
   );
   const counts = buckets.map((bucket) =>
-    count(({ metrics }) => bucket === metrics.bucket, bucketedIssues),
+    countBy(bucketedIssues, ({ metrics }) => bucket === metrics.bucket),
   );
 
   const cumulativeCounts = cumsum(counts) as number[];

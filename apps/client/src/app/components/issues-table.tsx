@@ -10,7 +10,7 @@ import {
   IssueResolution,
   IssueStatus,
 } from "@agileplanning-io/flow-components";
-import { IssueDetailsDrawer } from "@app/datasets/reports/scatterplot/components/issue-details-drawer";
+import { IssueDetailsDrawer } from "@app/datasets/reports/components/issue-details-drawer";
 import { QuestionCircleOutlined, ZoomInOutlined } from "@ant-design/icons";
 import { issueDetailsPath } from "@app/navigation/paths";
 import {
