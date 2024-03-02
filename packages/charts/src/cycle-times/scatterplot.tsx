@@ -8,11 +8,12 @@ import {
   excludeOutliersFromSeq,
   formatDate,
   Interval,
+  Percentile,
 } from "@agileplanning-io/flow-lib";
 import { compareAsc, startOfDay } from "date-fns";
 import { mergeDeep, sort, uniqBy } from "remeda";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
-import { Percentile, getColorForPercentile } from "./percentiles";
+import { getColorForPercentile } from "./percentiles";
 
 type ScatterplotProps = {
   issues: CompletedIssue[];
@@ -69,7 +70,7 @@ export const Scatterplot = ({
               backgroundColor: "#FFFFFF",
               padding: 4,
               position: "start",
-              content: `${p.percentile.toString()}% (${p.cycleTime.toFixed(
+              content: `${p.percentile.toString()}% (${p.value.toFixed(
                 1,
               )} days)`,
               display: showPercentileLabels,
@@ -85,7 +86,7 @@ export const Scatterplot = ({
               return true;
             },
             scaleID: "y",
-            value: p.cycleTime,
+            value: p.value,
           };
           return [p.percentile.toString(), options];
         }),

@@ -1,6 +1,10 @@
 import { Issue, IssueFlowMetrics } from "@agileplanning-io/flow-metrics";
 import { Checkbox, Space, Table, Tag, Tooltip, Typography } from "antd";
-import { formatDate, formatNumber } from "@agileplanning-io/flow-lib";
+import {
+  Percentile,
+  formatDate,
+  formatNumber,
+} from "@agileplanning-io/flow-lib";
 import { compareAsc, differenceInMinutes } from "date-fns";
 import { ColumnType, ColumnsType, SortOrder } from "antd/es/table/interface";
 import { useEffect, useState } from "react";
@@ -17,7 +21,6 @@ import {
   IssueExternalLink,
   IssueLink,
 } from "@app/datasets/components/issue-links";
-import { Percentile } from "@agileplanning-io/flow-charts";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 
 export type SortState = {
@@ -185,7 +188,7 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
         }
         const percentile = isNil(cycleTime)
           ? undefined
-          : percentiles.find((p) => cycleTime >= p.cycleTime)?.percentile;
+          : percentiles.find((p) => cycleTime >= p.value)?.percentile;
         const color =
           percentile === undefined
             ? "blue"
