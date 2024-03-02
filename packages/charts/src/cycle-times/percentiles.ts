@@ -1,10 +1,5 @@
-import { quantileSeq } from "mathjs";
 import { CompletedIssue } from "@agileplanning-io/flow-metrics";
-
-export type Percentile = {
-  percentile: number;
-  cycleTime: number;
-};
+import { Percentile, getPercentiles } from "@agileplanning-io/flow-lib";
 
 export const getCycleTimePercentiles = (
   issues: CompletedIssue[],
@@ -20,15 +15,17 @@ export const getCycleTimePercentiles = (
       ? [0.5]
       : [];
 
-  const percentiles = quantiles
-    .map((quantile) => {
-      const percentile = quantile * 100;
-      return {
-        percentile,
-        cycleTime: quantileSeq(cycleTimes, quantile) as number,
-      };
-    })
-    .reverse();
+  return getPercentiles(cycleTimes, quantiles);
+};
 
-  return percentiles.length > 0 ? percentiles : undefined;
+export const getColorForPercentile = (percentile: number): string => {
+  if (percentile <= 50) {
+    return "#03a9f4";
+  }
+
+  if (percentile <= 70) {
+    return "#ff9800";
+  }
+
+  return "#f44336";
 };

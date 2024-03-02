@@ -3,9 +3,8 @@ import { Bar } from "react-chartjs-2";
 import { ChartData, ChartOptions, Tooltip } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { Issue, StartedIssue } from "@agileplanning-io/flow-metrics";
-import { Percentile } from "@agileplanning-io/flow-charts";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
-import { ellipsize } from "@agileplanning-io/flow-lib";
+import { ellipsize, Percentile } from "@agileplanning-io/flow-lib";
 
 type AgeingWipChartProps = {
   issues: StartedIssue[];
@@ -45,7 +44,7 @@ export const AgeingWipChart = ({
               padding: 4,
               position: "start",
               yAdjust: -10,
-              content: `${p.percentile.toString()}% (${p.cycleTime.toFixed(
+              content: `${p.percentile.toString()}% (${p.value.toFixed(
                 1,
               )} days)`,
               display: showPercentileLabels,
@@ -61,7 +60,7 @@ export const AgeingWipChart = ({
               return true;
             },
             scaleID: "x",
-            value: p.cycleTime,
+            value: p.value,
           };
           return [p.percentile.toString(), options];
         }),
@@ -77,7 +76,7 @@ export const AgeingWipChart = ({
         backgroundColor: (ctx) => {
           const issue = issues[ctx.dataIndex];
           const percentile = percentiles.find(
-            (p) => issue.metrics.age >= p.cycleTime,
+            (p) => issue.metrics.age >= p.value,
           )?.percentile;
           return getColorForPercentile(percentile ?? 0);
         },

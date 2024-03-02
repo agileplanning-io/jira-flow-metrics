@@ -5,7 +5,6 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import {
   Scatterplot,
-  Percentile,
   getCycleTimePercentiles,
 } from "@agileplanning-io/flow-charts";
 import { useEffect, useState } from "react";
@@ -18,6 +17,7 @@ import { Checkbox, Col, Popover, Row, Space } from "antd";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
 import { QuestionCircleOutlined } from "@ant-design/icons";
+import { Percentile } from "@agileplanning-io/flow-lib";
 
 export const ScatterplotPage = () => {
   const { issues } = useDatasetContext();

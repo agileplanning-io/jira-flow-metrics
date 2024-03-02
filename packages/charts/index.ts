@@ -1,3 +1,3 @@
-export * from "./src/scatterplot";
-export * from "./src/histogram";
-export * from "./src/percentiles";
+export * from "./src/cycle-times/scatterplot";
+export * from "./src/cycle-times/histogram";
+export * from "./src/cycle-times/percentiles";

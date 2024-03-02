@@ -14,14 +14,12 @@ import { FilterOptionsForm } from "../components/filter-form/filter-options-form
 import { useDatasetContext } from "../../context";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
-import {
-  Percentile,
-  getCycleTimePercentiles,
-} from "@agileplanning-io/flow-charts";
+import { getCycleTimePercentiles } from "@agileplanning-io/flow-charts";
 import { filterCompletedIssues } from "@agileplanning-io/flow-metrics";
 import { isStarted } from "@agileplanning-io/flow-metrics";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { IssuesTable } from "@app/components/issues-table";
+import { Percentile } from "@agileplanning-io/flow-lib";
 
 export const AgeingWipPage = () => {
   const { issues } = useDatasetContext();

@@ -4,7 +4,6 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import {
   Histogram,
-  Percentile,
   getCycleTimePercentiles,
 } from "@agileplanning-io/flow-charts";
 import { useEffect, useState } from "react";
@@ -17,6 +16,7 @@ import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { QuestionCircleOutlined } from "@ant-design/icons";
+import { Percentile } from "@agileplanning-io/flow-lib";
 
 export const HistogramPage = () => {
   const { issues } = useDatasetContext();

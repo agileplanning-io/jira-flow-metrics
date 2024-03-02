@@ -1,4 +1,4 @@
-import { excludeOutliersFromSeq } from "@agileplanning-io/flow-lib";
+import { Percentile, excludeOutliersFromSeq } from "@agileplanning-io/flow-lib";
 import {
   CompletedFlowMetrics,
   CompletedIssue,
@@ -9,7 +9,7 @@ import { cumsum } from "mathjs";
 import { range, countBy } from "remeda";
 import { FC, ReactElement } from "react";
 import { Chart } from "react-chartjs-2";
-import { Percentile } from "./percentiles";
+import { getColorForPercentile } from "./percentiles";
 
 export type HistogramProps = {
   issues: CompletedIssue[];
@@ -93,7 +93,7 @@ export const Histogram: FC<HistogramProps> = ({
               backgroundColor: "#FFFFFF",
               padding: 4,
               position: "start",
-              content: `${p.percentile.toString()}% (${p.cycleTime.toFixed(
+              content: `${p.percentile.toString()}% (${p.value.toFixed(
                 1,
               )} days)`,
               display: showPercentileLabels,
@@ -110,7 +110,7 @@ export const Histogram: FC<HistogramProps> = ({
               return true;
             },
             scaleID: "x",
-            value: p.cycleTime,
+            value: p.value,
           };
           return [p.percentile.toString(), options];
         }),
@@ -172,18 +172,6 @@ export const Histogram: FC<HistogramProps> = ({
       }}
     />
   );
-};
-
-const getColorForPercentile = (percentile: number): string => {
-  if (percentile <= 50) {
-    return "#03a9f4";
-  }
-
-  if (percentile <= 70) {
-    return "#ff9800";
-  }
-
-  return "#f44336";
 };
 
 const getMaxXValue = (issues: CompletedIssue[]): number => {
