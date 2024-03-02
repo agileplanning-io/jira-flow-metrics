@@ -9,7 +9,7 @@ import { cumsum } from "mathjs";
 import { range, countBy } from "remeda";
 import { FC, ReactElement } from "react";
 import { Chart } from "react-chartjs-2";
-import { Percentile } from "./percentiles";
+import { Percentile, getColorForPercentile } from "./percentiles";
 
 export type HistogramProps = {
   issues: CompletedIssue[];
@@ -172,18 +172,6 @@ export const Histogram: FC<HistogramProps> = ({
       }}
     />
   );
-};
-
-const getColorForPercentile = (percentile: number): string => {
-  if (percentile <= 50) {
-    return "#03a9f4";
-  }
-
-  if (percentile <= 70) {
-    return "#ff9800";
-  }
-
-  return "#f44336";
 };
 
 const getMaxXValue = (issues: CompletedIssue[]): number => {

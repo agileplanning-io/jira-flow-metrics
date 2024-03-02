@@ -12,7 +12,7 @@ import {
 import { compareAsc, startOfDay } from "date-fns";
 import { mergeDeep, sort, uniqBy } from "remeda";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
-import { Percentile } from "./percentiles";
+import { Percentile, getColorForPercentile } from "./percentiles";
 
 type ScatterplotProps = {
   issues: CompletedIssue[];
@@ -151,18 +151,6 @@ export const Scatterplot = ({
   );
 
   return <Scatter data={{ datasets }} options={options} style={style} />;
-};
-
-const getColorForPercentile = (percentile: number): string => {
-  if (percentile <= 50) {
-    return "#03a9f4";
-  }
-
-  if (percentile <= 70) {
-    return "#ff9800";
-  }
-
-  return "#f44336";
 };
 
 const getMaxYValue = (issues: CompletedIssue[]): number => {
