@@ -1,13 +1,9 @@
-import {
-  CompletedIssue,
-  Issue,
-  filterCompletedIssues,
-} from "@agileplanning-io/flow-metrics";
+import { Issue, filterCompletedIssues } from "@agileplanning-io/flow-metrics";
 import {
   Scatterplot,
   getCycleTimePercentiles,
 } from "@agileplanning-io/flow-charts";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { IssuesTable } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
@@ -17,16 +13,12 @@ import { Checkbox, Col, Popover, Row, Space } from "antd";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import { Percentile } from "@agileplanning-io/flow-lib";
 
 export const ScatterplotPage = () => {
   const { issues } = useDatasetContext();
 
   const { filter } = useFilterContext();
   const [excludedIssues, setExcludedIssues] = useState<string[]>([]);
-
-  const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
-  const [percentiles, setPercentiles] = useState<Percentile[] | undefined>();
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -45,16 +37,18 @@ export const ScatterplotPage = () => {
       return prev;
     });
 
-  useEffect(() => {
-    if (filter && issues) {
-      const filteredIssues = filterCompletedIssues(issues, filter);
-      const percentiles = getCycleTimePercentiles(
+  const filteredIssues = useMemo(
+    () => (issues ? filterCompletedIssues(issues, filter) : []),
+    [issues, filter],
+  );
+
+  const percentiles = useMemo(
+    () =>
+      getCycleTimePercentiles(
         filteredIssues.filter((issue) => !excludedIssues.includes(issue.key)),
-      );
-      setFilteredIssues(filteredIssues);
-      setPercentiles(percentiles);
-    }
-  }, [issues, filter, setFilteredIssues, setPercentiles, excludedIssues]);
+      ),
+    [filteredIssues, excludedIssues],
+  );
 
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
 
