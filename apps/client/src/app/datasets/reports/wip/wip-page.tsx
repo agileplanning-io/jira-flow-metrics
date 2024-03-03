@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import {
   HierarchyLevel,
   Issue,
+  WipResult,
+  calculateWip,
   filterIssues,
 } from "@agileplanning-io/flow-metrics";
 import { IssuesTable } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
-import { WipResult, calculateWip } from "@usecases/wip/wip";
-import { WipChart } from "./components/wip-chart";
+import { WipChart } from "@agileplanning-io/flow-charts/src/wip/wip-chart";
 import { omit } from "rambda";
 import { Checkbox, Col, Row } from "antd";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";

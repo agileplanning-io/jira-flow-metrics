@@ -34,7 +34,8 @@
     "test",
     "../../packages/charts/src/throughput-chart.tsx",
     "../../packages/metrics/src/throughput/throughput.ts",
-    "src/app/datasets/reports/ageing-wip/components/ageing-wip-chart.tsx"
+    "src/app/datasets/reports/ageing-wip/components/ageing-wip-chart.tsx",
+    "../../packages/charts/src/wip/wip-chart.tsx"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
