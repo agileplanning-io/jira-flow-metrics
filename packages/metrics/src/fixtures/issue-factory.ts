@@ -1,4 +1,9 @@
-import { HierarchyLevel, Issue, StatusCategory } from "../types";
+import {
+  CompletedIssue,
+  HierarchyLevel,
+  Issue,
+  StatusCategory,
+} from "../types";
 import { TransitionContext, buildTransitions } from "../parse/issue_builder";
 
 let issueCount = 100;
@@ -42,4 +47,17 @@ export const buildIssue = (params: IssueParams): Issue => {
     ...result,
     transitions,
   };
+};
+
+type BuildCompletedIssueParams = Partial<Omit<CompletedIssue, "metrics">> & {
+  metrics: {
+    completed: Date;
+    cycleTime: number;
+  };
+};
+
+export const buildCompletedIssue = (
+  params: BuildCompletedIssueParams,
+): CompletedIssue => {
+  return buildIssue(params) as CompletedIssue;
 };

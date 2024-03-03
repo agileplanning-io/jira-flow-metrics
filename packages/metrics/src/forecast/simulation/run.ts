@@ -45,22 +45,6 @@ export function runOnce({
   return time;
 }
 
-export function getColorForPercentile(percentile: number): string {
-  if (percentile > 0.95) {
-    return "#009600";
-  }
-  if (percentile > 0.85) {
-    return "#00C900";
-  }
-  if (percentile > 0.7) {
-    return "#C9C900";
-  }
-  if (percentile > 0.5) {
-    return "#FF9B00";
-  }
-  return "#f44336";
-}
-
 export function getLongTailCutoff(rowCount: number): number {
   if (rowCount < 50) {
     return 0;

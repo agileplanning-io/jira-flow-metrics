@@ -29,16 +29,6 @@
       "@lib/*": ["src/lib/*"]
     }
   },
-  "include": [
-    "src",
-    "test",
-    "../../packages/charts/src/throughput-chart.tsx",
-    "../../packages/metrics/src/throughput/throughput.ts",
-    "src/app/datasets/reports/ageing-wip/components/ageing-wip-chart.tsx",
-    "../../packages/charts/src/wip/wip-chart.tsx",
-    "../../packages/charts/src/forecast-chart.tsx",
-    "../../packages/metrics/src/forecast",
-    "../../packages/metrics/src/time-spent"
-  ],
+  "include": ["src", "test"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

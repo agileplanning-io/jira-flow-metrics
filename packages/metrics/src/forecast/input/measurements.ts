@@ -1,8 +1,8 @@
-import { CompletedIssue } from "@agileplanning-io/flow-metrics";
 import { eachDayOfInterval, endOfDay, getISODay, startOfDay } from "date-fns";
 import { InputMeasurements } from "../simulation/run";
 import { excludeOutliersFromSeq } from "@agileplanning-io/flow-lib";
 import { categorizeWeekday } from "@agileplanning-io/flow-lib";
+import { CompletedIssue } from "../../types";
 
 export const computeThroughput = (
   issues: CompletedIssue[],

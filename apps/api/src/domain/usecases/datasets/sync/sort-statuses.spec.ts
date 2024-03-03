@@ -1,7 +1,10 @@
-import { Issue, StatusCategory } from "@agileplanning-io/flow-metrics";
+import {
+  Issue,
+  StatusCategory,
+  buildIssue,
+} from "@agileplanning-io/flow-metrics";
 import { sortStatuses } from "./sort-statuses";
 import { addHours } from "date-fns";
-import { buildIssue } from "@fixtures/factories/issue-factory";
 
 describe("sortStatuses", () => {
   const created = { name: "Created", category: StatusCategory.ToDo };
