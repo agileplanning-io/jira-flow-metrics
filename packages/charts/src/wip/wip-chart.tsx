@@ -2,8 +2,7 @@ import { ReactElement } from "react";
 import { Line } from "react-chartjs-2";
 import { ChartOptions } from "chart.js";
 import "chartjs-adapter-date-fns";
-import { Issue } from "@agileplanning-io/flow-metrics";
-import { WipResult } from "@usecases/wip/wip";
+import { Issue, WipResult } from "@agileplanning-io/flow-metrics";
 
 type WipChartProps = {
   result: WipResult;
