@@ -1,24 +1,18 @@
 import { range } from "rambda";
-import { quantileSeq } from "mathjs";
 import { CompletedIssue } from "@agileplanning-io/flow-metrics";
 import {
   Interval,
+  Percentile,
   TimeUnit,
   addTime,
   difference,
+  getPercentiles,
 } from "@agileplanning-io/flow-lib";
 
 export type CalculateThroughputParams = {
   issues: CompletedIssue[];
   interval: Interval;
   timeUnit: TimeUnit;
-};
-
-export type Percentile = {
-  percentile: number;
-  throughput: number;
-  color: string;
-  dashed: boolean;
 };
 
 type ThroughputDatum = {
@@ -58,7 +52,7 @@ export const calculateThroughput = ({
     };
   });
 
-  const percentiles = getPercentiles(data);
+  const percentiles = getThroughputPercentiles(data);
 
   return {
     data,
@@ -66,7 +60,7 @@ export const calculateThroughput = ({
   };
 };
 
-const getPercentiles = (data: ThroughputDatum[]): Percentile[] => {
+const getThroughputPercentiles = (data: ThroughputDatum[]): Percentile[] => {
   const throughputCounts = data.map((item) => item.count);
 
   const quantiles =
@@ -78,29 +72,7 @@ const getPercentiles = (data: ThroughputDatum[]): Percentile[] => {
       ? [0.5]
       : [];
 
-  const percentiles = quantiles.map((quantile) => {
-    const percentile = quantile * 100;
-    return {
-      percentile,
-      color: getColorForPercentile(percentile),
-      dashed: ![15, 85].includes(percentile),
-      throughput: Math.ceil(
-        quantileSeq(throughputCounts, 1 - quantile) as number,
-      ),
-    };
-  });
+  const percentiles = getPercentiles(throughputCounts, quantiles);
 
   return percentiles;
-};
-
-const getColorForPercentile = (percentile: number): string => {
-  if (percentile >= 70) {
-    return "#03a9f4";
-  }
-
-  if (percentile >= 50) {
-    return "#ff9800";
-  }
-
-  return "#f44336";
 };
