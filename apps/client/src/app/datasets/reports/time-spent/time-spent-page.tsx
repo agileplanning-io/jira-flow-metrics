@@ -1,14 +1,15 @@
-import { HierarchyLevel, Issue } from "@agileplanning-io/flow-metrics";
+import {
+  HierarchyLevel,
+  Issue,
+  TimeSpentRow,
+  timeSpentInPeriod,
+} from "@agileplanning-io/flow-metrics";
 import { useEffect, useState } from "react";
 import { useFilterContext } from "../../../filter/context";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useDatasetContext } from "../../context";
 import { Space, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
-import {
-  TimeSpentRow,
-  timeSpentInPeriod,
-} from "@usecases/time-spent/time-spent";
 import {
   IssueResolution,
   IssueStatus,

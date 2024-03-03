@@ -4,3 +4,4 @@ export * from "./src/util";
 export * from "./src/types";
 export * from "./src/throughput";
 export * from "./src/wip";
+export * from "./src/time-spent";

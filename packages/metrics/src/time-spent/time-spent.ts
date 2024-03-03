@@ -1,7 +1,7 @@
-import { isNil, pipe, reject, sortBy, sum } from "rambda";
-import { HierarchyLevel, Issue } from "@agileplanning-io/flow-metrics";
+import { compact, identity, pipe, reject, sortBy, sumBy } from "remeda";
 import { Interval, getIntersectingInterval } from "@agileplanning-io/flow-lib";
 import { differenceInSeconds } from "date-fns";
+import { HierarchyLevel, Issue } from "../types";
 
 export type TimeSpentRow = Pick<Issue, "key" | "summary"> &
   Partial<
@@ -30,7 +30,7 @@ export const timeSpentInPeriod = (
         if (!issue.metrics.includedInEpic) {
           return [issue.key, 0];
         }
-        const overlaps = reject(isNil)(
+        const overlaps = compact(
           issue.transitions.map((transition) =>
             transition.toStatus.category === "In Progress"
               ? getIntersectingInterval(period, {
@@ -40,11 +40,10 @@ export const timeSpentInPeriod = (
               : undefined,
           ),
         );
-        const timeInPeriod = sum(
-          overlaps.map(
-            (interval) =>
-              differenceInSeconds(interval.end, interval.start) / secondsInDay,
-          ),
+        const timeInPeriod = sumBy(
+          overlaps,
+          (interval) =>
+            differenceInSeconds(interval.end, interval.start) / secondsInDay,
         );
         return [issue.key, timeInPeriod];
       }),
@@ -54,7 +53,7 @@ export const timeSpentInPeriod = (
     (issue) => issue.hierarchyLevel === HierarchyLevel.Epic,
   );
 
-  const totalTime = sum(Object.values(timesInPeriod));
+  const totalTime = sumBy(Object.values(timesInPeriod), identity);
 
   const aggregateChildren = ({
     summary,
@@ -64,21 +63,25 @@ export const timeSpentInPeriod = (
   }: Pick<Required<TimeSpentRow>, "summary" | "key" | "rowType" | "children"> &
     Pick<TimeSpentRow, "externalUrl">): TimeSpentRow => {
     const filteredChildren = pipe(
+      children,
       sortBy<TimeSpentRow>((child) => -(child.percentInPeriod ?? 0)),
       reject<TimeSpentRow>((child) => !child.timeInPeriod),
-    )(children);
+    );
     return {
       summary,
       key,
       rowType,
-      timeInPeriod: sum(
-        reject(isNil)(filteredChildren.map((child) => child.timeInPeriod)),
+      timeInPeriod: sumBy(
+        compact(filteredChildren),
+        (child) => child.timeInPeriod ?? 0,
       ),
-      percentInPeriod: sum(
-        reject(isNil)(filteredChildren.map((child) => child.percentInPeriod)),
+      percentInPeriod: sumBy(
+        compact(filteredChildren),
+        (child) => child.percentInPeriod ?? 0,
       ),
-      issueCount: sum(
-        filteredChildren.map((child) => child.children?.length ?? 1),
+      issueCount: sumBy(
+        filteredChildren,
+        (child) => child.children?.length ?? 1,
       ),
       children: filteredChildren,
     };
