@@ -3,10 +3,9 @@ import { Line } from "react-chartjs-2";
 import { ChartOptions } from "chart.js";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
 import "chartjs-adapter-date-fns";
-import { ThroughputResult } from "@usecases/throughput/throughput";
 import { TimeUnit } from "@agileplanning-io/flow-lib";
-import { Issue } from "@agileplanning-io/flow-metrics";
-import { getColorForPercentile } from "@agileplanning-io/flow-charts";
+import { Issue, ThroughputResult } from "@agileplanning-io/flow-metrics";
+import { getColorForPercentile } from "../..";
 
 type ThroughputChartProps = {
   result: ThroughputResult;

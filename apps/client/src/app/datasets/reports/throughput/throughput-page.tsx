@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import {
   CompletedIssue,
   Issue,
+  ThroughputResult,
+  calculateThroughput,
   filterCompletedIssues,
 } from "@agileplanning-io/flow-metrics";
 import {
@@ -9,12 +11,8 @@ import {
   TimeUnit,
   getOverlappingInterval,
 } from "@agileplanning-io/flow-lib";
-import { ThroughputChart } from "./components/throughput-chart";
+import { ThroughputChart } from "@agileplanning-io/flow-charts";
 import { Col, Form, Row, Select } from "antd";
-import {
-  ThroughputResult,
-  calculateThroughput,
-} from "@usecases/throughput/throughput";
 import { IssuesTable } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
 import { ExpandableOptions } from "../../../components/expandable-options";

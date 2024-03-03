@@ -1,5 +1,4 @@
-import { range } from "rambda";
-import { CompletedIssue } from "@agileplanning-io/flow-metrics";
+import { range } from "remeda";
 import {
   Interval,
   Percentile,
@@ -8,6 +7,7 @@ import {
   difference,
   getPercentiles,
 } from "@agileplanning-io/flow-lib";
+import { CompletedIssue } from "../types";
 
 export type CalculateThroughputParams = {
   issues: CompletedIssue[];
