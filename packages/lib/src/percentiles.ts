@@ -5,7 +5,10 @@ export type Percentile = {
   value: number;
 };
 
-export const getPercentiles = (values: number[], quantiles: number[]) => {
+export const getPercentiles = (
+  values: number[],
+  quantiles: number[],
+): Percentile[] => {
   const percentiles = quantiles
     .map((quantile) => {
       const percentile = quantile * 100;
@@ -16,5 +19,5 @@ export const getPercentiles = (values: number[], quantiles: number[]) => {
     })
     .reverse();
 
-  return percentiles.length > 0 ? percentiles : undefined;
+  return percentiles;
 };

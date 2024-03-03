@@ -3,9 +3,9 @@ import { Line } from "react-chartjs-2";
 import { ChartOptions } from "chart.js";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
 import "chartjs-adapter-date-fns";
-import { ThroughputResult } from "@usecases/throughput/throughput";
 import { TimeUnit } from "@agileplanning-io/flow-lib";
-import { Issue } from "@agileplanning-io/flow-metrics";
+import { Issue, ThroughputResult } from "@agileplanning-io/flow-metrics";
+import { getColorForPercentile } from "../util/styles";
 
 type ThroughputChartProps = {
   result: ThroughputResult;
@@ -37,20 +37,20 @@ export const ThroughputChart = ({
     result.percentiles.map((p) => {
       const options: AnnotationOptions = {
         type: "line",
-        borderColor: p.color,
+        borderColor: getColorForPercentile(p.percentile),
         borderWidth: 1,
-        borderDash: p.dashed ? [4, 4] : undefined,
+        borderDash: ![15, 85].includes(p.percentile) ? [4, 4] : undefined,
         label: {
           backgroundColor: "#FFF",
           padding: 4,
           position: "start",
-          content: `${p.percentile.toString()}%`,
+          content: `${(100 - p.percentile).toString()}%`,
           display: true,
           textAlign: "start",
           color: "#666666",
         },
         scaleID: "y",
-        value: p.throughput,
+        value: p.value,
       };
       return [p.percentile.toString(), options];
     }),
