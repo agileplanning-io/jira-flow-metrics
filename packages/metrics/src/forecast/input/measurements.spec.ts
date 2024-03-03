@@ -1,5 +1,4 @@
-import { buildCompletedIssue } from "test/fixtures/issue-factory";
-import { describe, expect, it } from "vitest";
+import { buildCompletedIssue } from "../../fixtures";
 import { computeThroughput, measure } from "./measurements";
 
 describe("computeThroughput", () => {

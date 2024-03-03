@@ -5,10 +5,9 @@ import * as request from "supertest";
 import { INestApplication } from "@nestjs/common";
 import { StorageModule } from "@data/storage/storage-module";
 import { TestStorageModule } from "@fixtures/data/storage/test-storage-module";
-import { buildIssue } from "@fixtures/factories/issue-factory";
 import { IssuesRepository } from "@entities/issues";
 import { DatasetsRepository } from "@entities/datasets";
-import { StatusCategory } from "@agileplanning-io/flow-metrics";
+import { StatusCategory, buildIssue } from "@agileplanning-io/flow-metrics";
 
 jest.useFakeTimers().setSystemTime(Date.parse("2023-01-01T13:00:00.000Z"));
 
@@ -69,6 +68,7 @@ describe("DatasetsController", () => {
 
       expect(body).toEqual([
         {
+          assignee: "Test User",
           created: "2023-01-01T07:00:00.000Z",
           externalUrl: "https://jira.example.com/browse/TEST-101",
           hierarchyLevel: "Story",
@@ -77,6 +77,7 @@ describe("DatasetsController", () => {
           status: "Backlog",
           statusCategory: "To Do",
           summary: "Some issue 101",
+          issueType: "Story",
           labels: [],
           components: [],
           transitions: [

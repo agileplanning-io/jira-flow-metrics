@@ -1,4 +1,4 @@
-import { times } from "rambda";
+import { times } from "remeda";
 import { RandomGenerator, selectValue } from "./select";
 import { categorizeWeekday } from "@agileplanning-io/flow-lib";
 
@@ -45,22 +45,6 @@ export function runOnce({
   return time;
 }
 
-export function getColorForPercentile(percentile: number): string {
-  if (percentile > 0.95) {
-    return "#009600";
-  }
-  if (percentile > 0.85) {
-    return "#00C900";
-  }
-  if (percentile > 0.7) {
-    return "#C9C900";
-  }
-  if (percentile > 0.5) {
-    return "#FF9B00";
-  }
-  return "#f44336";
-}
-
 export function getLongTailCutoff(rowCount: number): number {
   if (rowCount < 50) {
     return 0;
@@ -79,6 +63,6 @@ export type RunParams = RunOnceParams & {
 };
 
 export function run({ runCount, ...params }: RunParams): number[] {
-  const results = times(() => runOnce(params), runCount).sort((a, b) => a - b);
+  const results = times(runCount, () => runOnce(params)).sort((a, b) => a - b);
   return results;
 }

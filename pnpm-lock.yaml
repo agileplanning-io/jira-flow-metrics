@@ -22,12 +22,12 @@ importers:
 
   apps/api:
     dependencies:
-      '@dagrejs/graphlib':
-        specifier: ^2.1.13
-        version: 2.1.13
       '@agileplanning-io/flow-metrics':
         specifier: workspace:*
         version: link:../../packages/metrics
+      '@dagrejs/graphlib':
+        specifier: ^2.1.13
+        version: 2.1.13
       '@nestjs/common':
         specifier: ^10.0.0
         version: 10.0.0(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
@@ -146,15 +146,6 @@ importers:
 
   apps/client:
     dependencies:
-      '@ant-design/icons':
-        specifier: ^5.2.6
-        version: 5.2.6(react-dom@18.2.0)(react@18.2.0)
-      '@emotion/styled':
-        specifier: ^11.11.0
-        version: 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.15)(react@18.2.0)
-      '@hello-pangea/dnd':
-        specifier: ^16.5.0
-        version: 16.5.0(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)
       '@agileplanning-io/flow-charts':
         specifier: workspace:*
         version: link:../../packages/charts
@@ -167,12 +158,18 @@ importers:
       '@agileplanning-io/flow-metrics':
         specifier: workspace:*
         version: link:../../packages/metrics
+      '@ant-design/icons':
+        specifier: ^5.2.6
+        version: 5.2.6(react-dom@18.2.0)(react@18.2.0)
+      '@emotion/styled':
+        specifier: ^11.11.0
+        version: 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.15)(react@18.2.0)
+      '@hello-pangea/dnd':
+        specifier: ^16.5.0
+        version: 16.5.0(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^4.35.3
         version: 4.35.3(react-dom@18.2.0)(react@18.2.0)
-      '@types/seedrandom':
-        specifier: ^3.0.7
-        version: 3.0.7
       antd:
         specifier: ^5.10.1
         version: 5.10.1(date-fns@2.30.0)(react-dom@18.2.0)(react@18.2.0)
@@ -221,9 +218,6 @@ importers:
       react-router-dom:
         specifier: ^6.16.0
         version: 6.16.0(react-dom@18.2.0)(react@18.2.0)
-      seedrandom:
-        specifier: ^3.0.5
-        version: 3.0.5
     devDependencies:
       '@tsconfig/vite-react':
         specifier: ^3.0.0
@@ -328,18 +322,18 @@ importers:
 
   packages/components:
     dependencies:
-      '@emotion/styled':
-        specifier: ^11.11.0
-        version: 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.15)(react@18.2.0)
-      '@hello-pangea/dnd':
-        specifier: ^16.5.0
-        version: 16.5.0(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)
       '@agileplanning-io/flow-lib':
         specifier: workspace:*
         version: link:../lib
       '@agileplanning-io/flow-metrics':
         specifier: workspace:*
         version: link:../metrics
+      '@emotion/styled':
+        specifier: ^11.11.0
+        version: 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.15)(react@18.2.0)
+      '@hello-pangea/dnd':
+        specifier: ^16.5.0
+        version: 16.5.0(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)
       immer:
         specifier: ^10.0.3
         version: 10.0.3
@@ -435,6 +429,9 @@ importers:
       remeda:
         specifier: ^1.33.0
         version: 1.33.0
+      seedrandom:
+        specifier: ^3.0.5
+        version: 3.0.5
     devDependencies:
       '@tsconfig/recommended':
         specifier: ^1.0.3
@@ -442,6 +439,9 @@ importers:
       '@types/jest':
         specifier: ^29.5.2
         version: 29.5.2
+      '@types/seedrandom':
+        specifier: ^3.0.7
+        version: 3.0.7
       jest:
         specifier: ^29.5.0
         version: 29.5.0(@types/node@20.3.1)(ts-node@10.9.1)
@@ -2726,7 +2726,7 @@ packages:
 
   /@types/seedrandom@3.0.7:
     resolution: {integrity: sha512-2kwVU6ijXQblfsC8uqhBxslJC2wJfgTE1hINNkj29TL37fc8Uli5Ew43xTv2tShH3FeoKv8jkH2WgeVLd5QWzA==}
-    dev: false
+    dev: true
 
   /@types/semver@7.5.6:
     resolution: {integrity: sha512-dn1l8LaMea/IjDoHNd9J52uBbInB796CDffS6VdIxvqYCPSG0V0DzHp76GpaWnlhg88uYyPbXCDIowa86ybd5A==}

@@ -25,18 +25,20 @@
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.3",
     "@types/jest": "^29.5.2",
+    "@types/seedrandom": "^3.0.7",
     "jest": "^29.5.0",
     "ts-jest": "^29.1.0",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@agileplanning-io/flow-lib": "workspace:*",
     "date-fns": "^2.30.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
     "jira.js": "^2.19.1",
     "remeda": "^1.33.0",
-    "@agileplanning-io/flow-lib": "workspace:*"
+    "seedrandom": "^3.0.5"
   }
 }

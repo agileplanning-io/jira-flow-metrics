@@ -1,4 +1,3 @@
-import { describe, it, expect, vitest } from "vitest";
 import { newGenerator, selectValue } from "./select";
 
 describe("newGenerator", () => {
@@ -14,7 +13,7 @@ describe("newGenerator", () => {
 describe("selectValue", () => {
   it("selects a number at random given the random genrator", () => {
     const values = [1, 2, 3, 5, 8];
-    const generator = vitest.fn();
+    const generator = jest.fn();
     generator.mockReturnValueOnce(4).mockReturnValueOnce(2);
 
     expect(selectValue(values, generator)).toEqual(8);
