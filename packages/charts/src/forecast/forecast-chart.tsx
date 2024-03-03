@@ -1,7 +1,7 @@
 import { Bar } from "react-chartjs-2";
 import { ChartData, ChartOptions } from "chart.js";
-import { SummaryRow } from "@usecases/forecast/forecast";
-import { getColorForPercentile } from "@usecases/forecast/simulation/run";
+import { SummaryRow } from "@agileplanning-io/flow-metrics";
+import { getColorForPercentile } from "../util/styles";
 
 export type ForecastChartProps = {
   summary: SummaryRow[];
@@ -16,7 +16,7 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({ summary }) => {
       {
         data: summary.map(({ count }) => count),
         backgroundColor: summary.map((row) =>
-          getColorForPercentile(row.endPercentile),
+          getColorForPercentile(100 - row.endPercentile * 100),
         ),
         borderColor: "rgb(255, 99, 132)",
       },

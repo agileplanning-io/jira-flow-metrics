@@ -1,4 +1,4 @@
-import { times } from "rambda";
+import { times } from "remeda";
 import { RandomGenerator, selectValue } from "./select";
 import { categorizeWeekday } from "@agileplanning-io/flow-lib";
 
@@ -79,6 +79,6 @@ export type RunParams = RunOnceParams & {
 };
 
 export function run({ runCount, ...params }: RunParams): number[] {
-  const results = times(() => runOnce(params), runCount).sort((a, b) => a - b);
+  const results = times(runCount, () => runOnce(params)).sort((a, b) => a - b);
   return results;
 }

@@ -1,4 +1,3 @@
-import { describe, it, expect, vitest } from "vitest";
 import { InputMeasurements, run, runOnce } from "./run";
 import { summarize } from "../forecast";
 import { getISODay } from "date-fns";
@@ -14,7 +13,7 @@ describe("runOnce", () => {
     };
     const startWeekday = 1;
 
-    const generator = vitest.fn();
+    const generator = jest.fn();
     generator
       .mockReturnValueOnce(1) // cycle time sample (3.5)
       .mockReturnValueOnce(0) // throughput sample #1
@@ -51,7 +50,7 @@ describe("runOnce", () => {
     };
     const startWeekday = 1;
 
-    const generator = vitest.fn();
+    const generator = jest.fn();
     generator
       .mockReturnValueOnce(1) // throughput sample #1
       .mockReturnValueOnce(0) // throughput sample #2
@@ -86,7 +85,7 @@ describe("run", () => {
     };
     const startDate = new Date("2020-01-06T00:00:00.000Z");
 
-    const generator = vitest.fn();
+    const generator = jest.fn();
     generator
       .mockReturnValueOnce(1) // cycle time sample #1 (3.5)
       .mockReturnValueOnce(0) // throughput sample #1

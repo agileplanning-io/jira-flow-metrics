@@ -1,10 +1,10 @@
-import { CompletedIssue } from "@agileplanning-io/flow-metrics";
 import { getLongTailCutoff, run } from "./simulation/run";
 import { addDays, compareAsc, getISODay } from "date-fns";
-import { groupBy } from "rambda";
+import { groupBy } from "remeda";
 import { formatDate } from "@agileplanning-io/flow-lib";
 import { newGenerator } from "./simulation/select";
 import { measure } from "./input/measurements";
+import { CompletedIssue } from "../types";
 
 export type ForecastParams = {
   selectedIssues: CompletedIssue[];
@@ -53,7 +53,7 @@ export function summarize(
   startDate: Date,
   includeLongTail: boolean,
 ): SummaryRow[] {
-  const timeByDays = groupBy((run) => Math.ceil(run).toString(), runs);
+  const timeByDays = groupBy(runs, (run) => Math.ceil(run).toString());
   const rowCount = Object.keys(timeByDays).length;
   const longtail = getLongTailCutoff(rowCount);
   const minPercentile = longtail;

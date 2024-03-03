@@ -5,3 +5,4 @@ export * from "./src/types";
 export * from "./src/throughput";
 export * from "./src/wip";
 export * from "./src/time-spent";
+export * from "./src/forecast";
