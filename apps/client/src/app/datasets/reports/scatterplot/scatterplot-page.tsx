@@ -37,10 +37,10 @@ export const ScatterplotPage = () => {
       return prev;
     });
 
-  const filteredIssues = useMemo(
-    () => (issues ? filterCompletedIssues(issues, filter) : []),
-    [issues, filter],
-  );
+  const filteredIssues = useMemo(() => {
+    console.info("filter");
+    return issues ? filterCompletedIssues(issues, filter) : [];
+  }, [issues, filter]);
 
   const percentiles = useMemo(
     () =>
