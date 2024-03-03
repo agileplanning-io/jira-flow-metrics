@@ -13,7 +13,7 @@ import {
 import { compareAsc, startOfDay } from "date-fns";
 import { mergeDeep, sort, uniqBy } from "remeda";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
-import { getColorForPercentile } from "./percentiles";
+import { getColorForPercentile } from "../util/styles";
 
 type ScatterplotProps = {
   issues: CompletedIssue[];

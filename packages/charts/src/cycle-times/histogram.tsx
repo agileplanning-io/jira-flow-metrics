@@ -9,7 +9,7 @@ import { cumsum } from "mathjs";
 import { range, countBy } from "remeda";
 import { FC, ReactElement } from "react";
 import { Chart } from "react-chartjs-2";
-import { getColorForPercentile } from "./percentiles";
+import { getColorForPercentile } from "../util/styles";
 
 export type HistogramProps = {
   issues: CompletedIssue[];
