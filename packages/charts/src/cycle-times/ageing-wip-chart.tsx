@@ -1,6 +1,6 @@
 import { ReactElement } from "react";
 import { Bar } from "react-chartjs-2";
-import { ChartData, ChartOptions, Tooltip } from "chart.js";
+import { ChartData, ChartOptions, ScriptableContext, Tooltip } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { Issue, StartedIssue } from "@agileplanning-io/flow-metrics";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
@@ -73,7 +73,7 @@ export const AgeingWipChart = ({
       {
         label: "Age",
         data: issues.map(({ metrics }) => metrics.age ?? null),
-        backgroundColor: (ctx) => {
+        backgroundColor: (ctx: ScriptableContext<"bar">) => {
           const issue = issues[ctx.dataIndex];
           const percentile = percentiles.find(
             (p) => issue.metrics.age >= p.value,

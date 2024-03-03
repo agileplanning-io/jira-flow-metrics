@@ -7,14 +7,16 @@ import {
   filterIssues,
 } from "@agileplanning-io/flow-metrics";
 import { useFilterContext } from "../../../filter/context";
-import { AgeingWipChart } from "./components/ageing-wip-chart";
 import { isNil, omit } from "rambda";
 import { Checkbox, Col, Collapse, Row } from "antd";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useDatasetContext } from "../../context";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
-import { getCycleTimePercentiles } from "@agileplanning-io/flow-charts";
+import {
+  AgeingWipChart,
+  getCycleTimePercentiles,
+} from "@agileplanning-io/flow-charts";
 import { filterCompletedIssues } from "@agileplanning-io/flow-metrics";
 import { isStarted } from "@agileplanning-io/flow-metrics";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
