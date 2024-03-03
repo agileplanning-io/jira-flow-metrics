@@ -44,7 +44,7 @@ export const ThroughputChart = ({
           backgroundColor: "#FFF",
           padding: 4,
           position: "start",
-          content: `${p.percentile.toString()}%`,
+          content: `${(100 - p.percentile).toString()}%`,
           display: true,
           textAlign: "start",
           color: "#666666",
