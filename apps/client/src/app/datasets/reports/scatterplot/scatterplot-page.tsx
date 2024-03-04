@@ -37,18 +37,16 @@ export const ScatterplotPage = () => {
       return prev;
     });
 
-  const filteredIssues = useMemo(() => {
-    console.info("filter");
-    return issues ? filterCompletedIssues(issues, filter) : [];
-  }, [issues, filter]);
-
-  const percentiles = useMemo(
-    () =>
-      getCycleTimePercentiles(
+  const [filteredIssues, percentiles] = useMemo(() => {
+    if (issues && filter) {
+      const filteredIssues = filterCompletedIssues(issues, filter);
+      const percentiles = getCycleTimePercentiles(
         filteredIssues.filter((issue) => !excludedIssues.includes(issue.key)),
-      ),
-    [filteredIssues, excludedIssues],
-  );
+      );
+      return [filteredIssues, percentiles];
+    }
+    return [[], []];
+  }, [issues, filter, excludedIssues]);
 
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
 

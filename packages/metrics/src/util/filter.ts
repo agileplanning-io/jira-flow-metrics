@@ -120,5 +120,6 @@ export const filterCompletedIssues = (
   issues: Issue[],
   filter: IssueFilter,
 ): CompletedIssue[] => {
+  console.info("filter");
   return filterIssues(issues, filter).filter(isCompleted);
 };
