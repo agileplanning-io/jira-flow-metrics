@@ -8,7 +8,7 @@ import {
 import { useParams } from "@lib/params";
 import { z } from "zod";
 
-const cycleTimePolicySchema = z.object({
+const cycleTimePolicyParamsSchema = z.object({
   includeWaitTime: z.boolean().catch(false),
   policyStatuses: z.array(z.string()).optional(),
   policyLabels: z.array(z.string()).optional(),
@@ -17,92 +17,48 @@ const cycleTimePolicySchema = z.object({
     .optional(),
 });
 
-type CycleTimePolicySchema = z.infer<typeof cycleTimePolicySchema>;
+type CycleTimePolicyParams = z.infer<typeof cycleTimePolicyParamsSchema>;
 
 export const DatasetProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { dataset } = useNavigationContext();
-  // const [searchParams, setSearchParams] = useSearchParams();
 
-  // const cycleTimePolicy = useMemo(
-  //   () => ({
-  //     includeWaitTime:
-  //       searchParams.get("includeWaitTime") === "true" ?? undefined,
-  //     statuses: searchParams.getAll("policyStatuses") ?? undefined,
-  //     labels: searchParams.getAll("policyLabels") ?? undefined,
-  //     labelFilterType:
-  //       (searchParams.get("policyLabelFilterType") as LabelFilterType) ??
-  //       undefined,
-  //   }),
-  //   [searchParams],
-  // );
+  const [params, setParams] = useParams(cycleTimePolicyParamsSchema);
 
-  const [cycleTimePolicy, setCycleTimePolicy] = useParams(
-    cycleTimePolicySchema,
-  );
-
-  console.info("DatasetProvier", { cycleTimePolicy });
+  const cycleTimePolicy = toPolicy(params);
 
   const { data: issues } = useIssues(
     dataset?.id,
     cycleTimePolicy.includeWaitTime,
-    cycleTimePolicy.policyStatuses,
-    cycleTimePolicy.policyLabels,
-    cycleTimePolicy.policyLabelFilterType,
+    cycleTimePolicy.statuses,
+    cycleTimePolicy.labels,
+    cycleTimePolicy.labelFilterType,
   );
-
-  // const setCycleTimePolicy = (newCycleTimePolicy: CycleTimePolicy) => {
-  //   const fieldsToCompare = [
-  //     "includeWaitTime",
-  //     "statuses",
-  //     "labels",
-  //     "labelFilterType",
-  //   ];
-  //   const changed = !equals(
-  //     pick(fieldsToCompare, newCycleTimePolicy),
-  //     pick(fieldsToCompare, cycleTimePolicy),
-  //   );
-  //   if (changed) {
-  //     setSearchParams(
-  //       (prev) => {
-  //         return new SearchParamsBuilder(prev)
-  //           .set("includeWaitTime", newCycleTimePolicy.includeWaitTime)
-  //           .setAll("policyStatuses", newCycleTimePolicy.statuses)
-  //           .setAll("policyLabels", newCycleTimePolicy.labels)
-  //           .set("policyLabelFilterType", newCycleTimePolicy.labelFilterType)
-  //           .getParams();
-  //       },
-  //       { replace: true },
-  //     );
-  //   }
-  // };
 
   const value: DatasetContextType = {
     dataset,
     issues,
-    cycleTimePolicy: toCycleTimePolicy(cycleTimePolicy),
+    cycleTimePolicy,
     setCycleTimePolicy: (policy: CycleTimePolicy) =>
-      setCycleTimePolicy(fromPolicy(policy)),
+      setParams(fromPolicy(policy)),
   };
-
-  console.info("dataset provider", value);
 
   return (
     <DatasetContext.Provider value={value}>{children}</DatasetContext.Provider>
   );
 };
 
-const toCycleTimePolicy = (policy: CycleTimePolicySchema): CycleTimePolicy => {
+function toPolicy(params: CycleTimePolicyParams): CycleTimePolicy {
   return {
-    includeWaitTime: policy.includeWaitTime,
-    labelFilterType: policy.policyLabelFilterType,
-    labels: policy.policyLabels,
-    statuses: policy.policyStatuses,
+    includeWaitTime: params.includeWaitTime,
+    labelFilterType: params.policyLabelFilterType,
+    labels: params.policyLabels,
+    statuses: params.policyStatuses,
   };
-};
+}
 
-const fromPolicy = (policy: CycleTimePolicy): CycleTimePolicySchema => {
+const fromPolicy = (policy: CycleTimePolicy): CycleTimePolicyParams => {
   return {
     includeWaitTime: policy.includeWaitTime,
     policyLabelFilterType: policy.labelFilterType,
