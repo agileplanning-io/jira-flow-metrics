@@ -2,6 +2,63 @@ import { equals, pick } from "rambda";
 import { useSearchParams } from "react-router-dom";
 import { z } from "zod";
 
+export type LinkToParams = {
+  to: string;
+  params: Record<string, unknown>;
+};
+
+export const linkTo = ({ to, params }: LinkToParams): string => {
+  const query = encodeParams(params).toString();
+  return `${to}/?${query}`;
+};
+
+export function useParams<T extends z.AnyZodObject>(
+  schema: T,
+): [z.infer<typeof schema>, (params: z.infer<typeof schema>) => void] {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const params = schema.parse(decodeParams(searchParams));
+  const schemaKeys = Object.keys(schema.shape);
+
+  const setParams = (newParams: z.infer<typeof schema>) => {
+    const unchanged = equals(
+      pick(schemaKeys, newParams),
+      pick(schemaKeys, params),
+    );
+
+    if (unchanged) {
+      return;
+    }
+
+    setSearchParams(
+      (prev) => {
+        const encodedParams = encodeParams(newParams);
+        for (const [k, v] of encodedParams.entries()) {
+          prev.set(k, v);
+        }
+        return prev;
+      },
+      { replace: true },
+    );
+  };
+
+  return [params, setParams];
+}
+
+export function useParam<T extends z.AnyZodObject, K extends keyof z.infer<T>>(
+  schema: T,
+  key: K,
+): [z.infer<T>[K], (value: z.infer<T>[K]) => void] {
+  const [params, setParams] = useParams(schema);
+  return [
+    params[key],
+    (value: z.infer<T>[K]) =>
+      setParams({
+        ...params,
+        [key]: value,
+      }),
+  ];
+}
+
 const decodeParam = (value: string) => {
   try {
     return JSON.parse(decodeURIComponent(value));
@@ -32,52 +89,3 @@ const encodeParams = (params: Record<string, unknown>): URLSearchParams => {
   });
   return new URLSearchParams(encodedEntries);
 };
-
-export type LinkToParams = {
-  to: string;
-  params: Record<string, unknown>;
-};
-
-export const linkTo = ({ to, params }: LinkToParams): string => {
-  const query = encodeParams(params).toString();
-  return `${to}/?${query}`;
-};
-
-export function useParams<T extends z.AnyZodObject>(
-  schema: T,
-): [z.infer<typeof schema>, (params: z.infer<typeof schema>) => void] {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const params = schema.parse(decodeParams(searchParams));
-  const keys = Object.keys(schema.shape);
-  const setParams = (newParams: z.infer<typeof schema>) => {
-    const changed = !equals(pick(keys, newParams), pick(keys, params));
-    if (changed) {
-      setSearchParams(
-        (prev) => {
-          const encodedParams = encodeParams(newParams);
-          for (const [k, v] of encodedParams.entries()) {
-            prev.set(k, v);
-          }
-          return prev;
-        },
-        { replace: true },
-      );
-    }
-  };
-  return [params, setParams];
-}
-
-export function useParam<T extends z.AnyZodObject, K extends keyof z.infer<T>>(
-  schema: T,
-  key: K,
-): [z.infer<T>[K], (value: z.infer<T>[K]) => void] {
-  const [params, setParams] = useParams(schema);
-  return [
-    params[key],
-    (value: z.infer<T>[K]) =>
-      setParams({
-        ...params,
-        [key]: value,
-      }),
-  ];
-}
