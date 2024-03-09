@@ -14,7 +14,7 @@ import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { z } from "zod";
-import { useParams } from "@lib/params";
+import { useParam, useParams } from "@lib/params";
 
 const scatterplotParams = z.object({
   showPercentileLabels: z.boolean().default(false),
@@ -28,13 +28,11 @@ export const ScatterplotPage = () => {
   const [excludedIssues, setExcludedIssues] = useState<string[]>([]);
 
   const [params, setParams] = useParams(scatterplotParams);
-
-  const showPercentileLabels = params.showPercentileLabels;
-  const setShowPercentileLabels = (showPercentileLabels: boolean) =>
-    setParams({
-      ...params,
-      showPercentileLabels,
-    });
+  const [showPercentileLabels, setShowPercentileLabels] = useParam(
+    params,
+    setParams,
+    "showPercentileLabels",
+  );
 
   const hideOutliers = params.hideOutliers;
   const setHideOutliers = (hideOutliers: boolean) =>
