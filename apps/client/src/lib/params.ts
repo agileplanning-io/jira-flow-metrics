@@ -1,6 +1,6 @@
 import { equals, pick } from "rambda";
 import { useSearchParams } from "react-router-dom";
-import { ZodSchema, z, ZodObject } from "zod";
+import { z } from "zod";
 
 const decodeParam = (value: string) => {
   try {
@@ -55,22 +55,14 @@ export function useParams<T extends z.AnyZodObject>(
       setSearchParams(
         (prev) => {
           const encodedParams = encodeParams(newParams);
-          Object.entries(asObject(encodedParams)).forEach(([k, v]) => {
-            console.info("set param", k, v);
+          for (const [k, v] of encodedParams.entries()) {
             prev.set(k, v);
-          });
-          console.info("updating params", { params, newParams });
+          }
           return prev;
-          // return prev;
         },
         { replace: true },
       );
     }
-    //setSearchParams(encodeParams(params));
   };
   return [params, setParams];
 }
-
-const asObject = (params: URLSearchParams) => {
-  return Object.fromEntries(params.entries());
-};

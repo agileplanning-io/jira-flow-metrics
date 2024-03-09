@@ -94,7 +94,6 @@ export const CycleTimePolicyForm = () => {
   };
 
   const onIncludeWaitTimeChanged = (e: CheckboxChangeEvent) => {
-    console.info("onIncludeWaitTimeChanged", e.target.checked);
     setCycleTimePolicy({
       ...cycleTimePolicy,
       includeWaitTime: e.target.checked,
