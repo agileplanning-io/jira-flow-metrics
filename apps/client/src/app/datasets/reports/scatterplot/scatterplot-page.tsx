@@ -13,6 +13,13 @@ import { Checkbox, Col, Popover, Row, Space } from "antd";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
 import { QuestionCircleOutlined } from "@ant-design/icons";
+import { z } from "zod";
+import { useParams } from "@lib/params";
+
+const scatterplotParams = z.object({
+  showPercentileLabels: z.boolean().default(false),
+  hideOutliers: z.boolean().default(false),
+});
 
 export const ScatterplotPage = () => {
   const { issues } = useDatasetContext();
@@ -20,21 +27,20 @@ export const ScatterplotPage = () => {
   const { filter } = useFilterContext();
   const [excludedIssues, setExcludedIssues] = useState<string[]>([]);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [params, setParams] = useParams(scatterplotParams);
 
-  const showPercentileLabels =
-    searchParams.get("showPercentileLabels") === "true";
+  const showPercentileLabels = params.showPercentileLabels;
   const setShowPercentileLabels = (showPercentileLabels: boolean) =>
-    setSearchParams((prev) => {
-      prev.set("showPercentileLabels", showPercentileLabels.toString());
-      return prev;
+    setParams({
+      ...params,
+      showPercentileLabels,
     });
 
-  const hideOutliers = searchParams.get("hideOutliers") === "true";
+  const hideOutliers = params.hideOutliers;
   const setHideOutliers = (hideOutliers: boolean) =>
-    setSearchParams((prev) => {
-      prev.set("hideOutliers", hideOutliers.toString());
-      return prev;
+    setParams({
+      ...params,
+      hideOutliers,
     });
 
   const [filteredIssues, percentiles] = useMemo(() => {
