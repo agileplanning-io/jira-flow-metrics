@@ -20,22 +20,22 @@ export const ScatterplotPage = () => {
   const { filter } = useFilterContext();
   const [excludedIssues, setExcludedIssues] = useState<string[]>([]);
 
-  // const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const showPercentileLabels = false;
-  //   searchParams.get("showPercentileLabels") === "true";
-  // const setShowPercentileLabels = (showPercentileLabels: boolean) =>
-  //   setSearchParams((prev) => {
-  //     prev.set("showPercentileLabels", showPercentileLabels.toString());
-  //     return prev;
-  //   });
+  const showPercentileLabels =
+    searchParams.get("showPercentileLabels") === "true";
+  const setShowPercentileLabels = (showPercentileLabels: boolean) =>
+    setSearchParams((prev) => {
+      prev.set("showPercentileLabels", showPercentileLabels.toString());
+      return prev;
+    });
 
-  const hideOutliers = false; //searchParams.get("hideOutliers") === "true";
-  // const setHideOutliers = (hideOutliers: boolean) =>
-  //   setSearchParams((prev) => {
-  //     prev.set("hideOutliers", hideOutliers.toString());
-  //     return prev;
-  //   });
+  const hideOutliers = searchParams.get("hideOutliers") === "true";
+  const setHideOutliers = (hideOutliers: boolean) =>
+    setSearchParams((prev) => {
+      prev.set("hideOutliers", hideOutliers.toString());
+      return prev;
+    });
 
   const [filteredIssues, percentiles] = useMemo(() => {
     if (issues && filter) {
@@ -49,8 +49,6 @@ export const ScatterplotPage = () => {
   }, [issues, filter, excludedIssues]);
 
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
-
-  console.info("render");
 
   return (
     <>
@@ -81,7 +79,7 @@ export const ScatterplotPage = () => {
         <Row gutter={[8, 8]}>
           <Col span={6}>
             <Space direction="vertical">
-              {/* <Checkbox
+              <Checkbox
                 checked={showPercentileLabels}
                 onChange={(e) => setShowPercentileLabels(e.target.checked)}
               >
@@ -103,7 +101,7 @@ export const ScatterplotPage = () => {
                     <QuestionCircleOutlined />
                   </a>
                 </Popover>
-              </Checkbox> */}
+              </Checkbox>
             </Space>
           </Col>
         </Row>
