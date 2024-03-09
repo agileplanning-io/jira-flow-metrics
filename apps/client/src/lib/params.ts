@@ -67,14 +67,14 @@ export function useParams<T extends z.AnyZodObject>(
   return [params, setParams];
 }
 
-export function useParam<T extends object, K extends keyof T>(
-  params: T,
-  setParams: (params: T) => void,
+export function useParam<T extends z.AnyZodObject, K extends keyof z.infer<T>>(
+  schema: T,
   key: K,
-) {
+): [z.infer<T>[K], (value: z.infer<T>[K]) => void] {
+  const [params, setParams] = useParams(schema);
   return [
     params[key],
-    (value: K) =>
+    (value: z.infer<T>[K]) =>
       setParams({
         ...params,
         [key]: value,

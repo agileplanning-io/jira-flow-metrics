@@ -11,10 +11,9 @@ import { FilterOptionsForm } from "../components/filter-form/filter-options-form
 import { useDatasetContext } from "../../context";
 import { Checkbox, Col, Popover, Row, Space } from "antd";
 import { ExpandableOptions } from "../../../components/expandable-options";
-import { useSearchParams } from "react-router-dom";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { z } from "zod";
-import { useParam, useParams } from "@lib/params";
+import { useParam } from "@lib/params";
 
 const scatterplotParams = z.object({
   showPercentileLabels: z.boolean().default(false),
@@ -27,19 +26,15 @@ export const ScatterplotPage = () => {
   const { filter } = useFilterContext();
   const [excludedIssues, setExcludedIssues] = useState<string[]>([]);
 
-  const [params, setParams] = useParams(scatterplotParams);
   const [showPercentileLabels, setShowPercentileLabels] = useParam(
-    params,
-    setParams,
+    scatterplotParams,
     "showPercentileLabels",
   );
 
-  const hideOutliers = params.hideOutliers;
-  const setHideOutliers = (hideOutliers: boolean) =>
-    setParams({
-      ...params,
-      hideOutliers,
-    });
+  const [hideOutliers, setHideOutliers] = useParam(
+    scatterplotParams,
+    "hideOutliers",
+  );
 
   const [filteredIssues, percentiles] = useMemo(() => {
     if (issues && filter) {
