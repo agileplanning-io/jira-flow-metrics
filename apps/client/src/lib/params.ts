@@ -29,16 +29,9 @@ export function useParams<T extends z.AnyZodObject>(
       return;
     }
 
-    setSearchParams(
-      (prev) => {
-        const encodedParams = encodeParams(newParams);
-        for (const [k, v] of encodedParams.entries()) {
-          prev.set(k, v);
-        }
-        return prev;
-      },
-      { replace: true },
-    );
+    setSearchParams(updateParams(newParams), {
+      replace: true,
+    });
   };
 
   return [params, setParams];
@@ -89,3 +82,12 @@ const encodeParams = (params: Record<string, unknown>): URLSearchParams => {
   });
   return new URLSearchParams(encodedEntries);
 };
+
+function updateParams(updated: Record<string, unknown>) {
+  return (prev: URLSearchParams): URLSearchParams => {
+    Array.from(encodeParams(updated).entries()).forEach((entry) =>
+      prev.set(...entry),
+    );
+    return prev;
+  };
+}
