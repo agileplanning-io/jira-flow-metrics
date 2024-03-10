@@ -28,6 +28,10 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({ summary }) => {
       time: {
         unit: "day",
       },
+      title: {
+        text: "Completion Date",
+        display: true,
+      },
       position: "bottom",
     },
     y: {
