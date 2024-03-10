@@ -69,7 +69,9 @@ const decodeParams = (params: URLSearchParams): unknown => {
 };
 
 const encodeParam = (value: unknown): string => {
-  if (typeof value === "string") {
+  if (value === undefined) {
+    return "";
+  } else if (typeof value === "string") {
     return value;
   } else {
     return encodeURIComponent(JSON.stringify(value));
