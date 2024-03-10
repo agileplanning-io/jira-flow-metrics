@@ -7,22 +7,32 @@ import { renderHook } from "@testing-library/react-hooks";
 import { ReactNode } from "react";
 
 describe("useParams", () => {
-  it("parses params", () => {
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <MemoryRouter initialEntries={["/?foo=bar"]}>
+  const withRouter =
+    (initialEntries: string[]) =>
+    ({ children }: { children: React.ReactNode }) => (
+      <MemoryRouter initialEntries={initialEntries}>
         <Routes>
           <Route path="/" element={children} />
         </Routes>
       </MemoryRouter>
     );
 
-    const paramSchema = z.object({
+  it("parses params", () => {
+    const wrapper = withRouter(["/?foo=foo&bar=123&baz=true"]);
+
+    const schema = z.object({
       foo: z.string(),
+      bar: z.number(),
+      baz: z.boolean(),
     });
 
-    const { result } = renderHook(() => useParams(paramSchema), { wrapper });
+    const { result } = renderHook(() => useParams(schema), { wrapper });
     const [params] = result.current;
 
-    expect(params.foo).toEqual("bar");
+    expect(params).toMatchObject({
+      foo: "foo",
+      bar: 123,
+      baz: true,
+    });
   });
 });
