@@ -136,6 +136,10 @@ export const Histogram: FC<HistogramProps> = ({
         scales: {
           x: {
             max: maxXValue,
+            title: {
+              text: "Cycle Time (days)",
+              display: true,
+            },
           },
           y: {
             position: "left",
@@ -161,10 +165,12 @@ export const Histogram: FC<HistogramProps> = ({
             callbacks: {
               title: () => "",
               label: (item) => {
+                const isCumulative = item.datasetIndex === 0;
                 const count = item.parsed.y as number;
                 const bucket = item.parsed.x as number;
                 const percent = ((count / issues.length) * 100).toFixed(1);
-                return `${count} (${percent}%) items completed in ${bucket} days`;
+                const description = isCumulative ? `within` : `in exactly`;
+                return `${count} (${percent}%) items completed ${description} ${bucket} days`;
               },
             },
           },

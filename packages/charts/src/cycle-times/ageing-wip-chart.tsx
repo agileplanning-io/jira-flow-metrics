@@ -107,6 +107,14 @@ export const AgeingWipChart = ({
       },
     },
     indexAxis: "y",
+    scales: {
+      x: {
+        title: {
+          text: "Issue age (days)",
+          display: true,
+        },
+      },
+    },
     plugins: {
       datalabels: {
         display: false,

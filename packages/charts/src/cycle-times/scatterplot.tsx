@@ -125,7 +125,9 @@ export const Scatterplot = ({
           label: (ctx) => {
             const issue = issues[ctx.dataIndex];
             const description = `[${issue.key}: ${issue.summary}]`;
-            return `Age: ${issue.metrics.cycleTime?.toFixed(1)} ${description}`;
+            return `Cycle Time: ${issue.metrics.cycleTime?.toFixed(
+              1,
+            )} ${description}`;
           },
         },
       },
@@ -141,6 +143,10 @@ export const Scatterplot = ({
         max: maxDate,
         time: {
           unit: "day",
+        },
+        title: {
+          text: "Completion Date",
+          display: true,
         },
       },
     },
