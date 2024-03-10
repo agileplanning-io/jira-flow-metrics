@@ -12,17 +12,20 @@ import { SearchParamsBuilder } from "@lib/search-params-builder";
 import { z } from "zod";
 import { useParams } from "@lib/params";
 
+function optionalParam<T extends z.ZodSchema>(schema: T) {
+  return z.preprocess(
+    (val) => (val === "" ? undefined : val),
+    schema.optional(),
+  );
+}
+
 const filterParamsSchema = z.object({
   dates: z.tuple([z.coerce.date(), z.coerce.date()]).optional(),
-  hierarchyLevel: z
-    .enum([HierarchyLevel.Story, HierarchyLevel.Epic])
-    .catch(HierarchyLevel.Story)
-    .optional(),
-  resolutions: z.array(z.string()).optional(),
-  filterStatuses: z.preprocess(
-    (val) => (val === "" ? [] : val),
-    z.array(z.string()).optional(),
+  hierarchyLevel: optionalParam(
+    z.enum([HierarchyLevel.Story, HierarchyLevel.Epic]),
   ),
+  resolutions: z.array(z.string()).optional(),
+  filterStatuses: optionalParam(z.array(z.string())),
   issueTypes: z.array(z.string()).optional(),
   assignees: z.array(z.string()).optional(),
   labels: z.array(z.string()).optional(),
@@ -41,6 +44,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
   const [params, setParams] = useParams(filterParamsSchema);
 
   const filter = toFilter(params);
+  console.info(filter);
   const setFilter = (filter: IssueFilter) => setParams(fromFilter(filter));
   // const [searchParams, setSearchParams] = useSearchParams();
 
@@ -116,6 +120,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
 // };
 
 const toFilter = (filter: FilterParams): IssueFilter => ({
+  ...filter,
   dates: filter.dates
     ? {
         start: filter.dates[0],
