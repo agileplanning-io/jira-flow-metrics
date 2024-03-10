@@ -1,17 +1,17 @@
 import { Route } from "react-router-dom";
 import { DomainsIndexPage } from "./domains-index-page";
 import { NavigationContext } from "../navigation/context";
-import { DatasetsIndexPage } from "@app/datasets/index/datasets-index-page";
+import { ProjectsIndexPage } from "@app/projects/index/projects-index-page";
 
 export const domainRoutes = (
   <Route path="domains">
     <Route index element={<DomainsIndexPage />} handle={{ title: "Domains" }} />
     <Route
-      path=":domainId/datasets"
-      element={<DatasetsIndexPage />}
+      path=":domainId/projects"
+      element={<ProjectsIndexPage />}
       index
       handle={{
-        title: ({ domain }: NavigationContext) => ["Datasets", domain?.host],
+        title: ({ domain }: NavigationContext) => ["Projects", domain?.host],
       }}
     />
   </Route>

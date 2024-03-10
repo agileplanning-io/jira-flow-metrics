@@ -1,19 +1,19 @@
 import { Modal, Typography } from "antd";
+import { Project, useRemoveProject } from "@data/projects";
 import { useEffect } from "react";
-import { Domain, useRemoveDomain } from "@data/domains";
 
-export type RemoveDomainModalParams = {
+export type RemoveProjectModalParams = {
   isOpen: boolean;
   close: () => void;
-  domain?: Domain;
+  project?: Project;
 };
 
-export const RemoveDomainModal: React.FC<RemoveDomainModalParams> = ({
+export const RemoveProjectModal: React.FC<RemoveProjectModalParams> = ({
   isOpen,
   close,
-  domain,
+  project,
 }) => {
-  const removeProject = useRemoveDomain(domain?.id);
+  const removeProject = useRemoveProject(project?.id);
 
   useEffect(() => {
     if (removeProject.isSuccess) {
@@ -23,15 +23,15 @@ export const RemoveDomainModal: React.FC<RemoveDomainModalParams> = ({
 
   return (
     <Modal
-      title="Remove domain?"
+      title="Remove project?"
       open={isOpen}
       onOk={() => removeProject.mutate()}
       onCancel={close}
       confirmLoading={removeProject.isLoading}
     >
       <p>
-        Are you sure you want to remove the domain{" "}
-        <Typography.Text code>{domain?.host}</Typography.Text>?
+        Are you sure you want to remove the project{" "}
+        <Typography.Text code>{project?.name}</Typography.Text>?
       </p>
     </Modal>
   );

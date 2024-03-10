@@ -4,30 +4,30 @@ import { Button, Col, Layout, Row, Space, Typography } from "antd";
 import { Title } from "./navigation/title";
 import { useNavigationContext } from "./navigation/context";
 import { formatDate } from "@agileplanning-io/flow-lib";
-import { useSyncDataset } from "@data/datasets";
+import { useSyncProject } from "@data/projects";
 import { useState } from "react";
 import { ArrowsAltOutlined, ShrinkOutlined } from "@ant-design/icons";
 import { FilterProvider } from "./filter/context/provider";
 
 const FooterContent = () => {
-  const { dataset } = useNavigationContext();
-  const syncDataset = useSyncDataset();
+  const { project } = useNavigationContext();
+  const syncProject = useSyncProject();
 
-  if (dataset) {
+  if (project) {
     return (
       <Space>
-        <Typography.Text type="secondary">{dataset.name}</Typography.Text>
+        <Typography.Text type="secondary">{project.name}</Typography.Text>
         &middot;
         <Typography.Text type="secondary">
-          last synced: {formatDate(dataset.lastSync?.date) ?? "never"}
+          last synced: {formatDate(project.lastSync?.date) ?? "never"}
         </Typography.Text>
         &middot;
         <Button
           type="dashed"
           size="small"
-          disabled={syncDataset.isLoading}
-          loading={syncDataset.isLoading}
-          onClick={() => syncDataset.mutate(dataset?.id)}
+          disabled={syncProject.isLoading}
+          loading={syncProject.isLoading}
+          onClick={() => syncProject.mutate(project?.id)}
         >
           Sync
         </Button>

@@ -42,7 +42,7 @@ export const ExpandableOptions: FC<ExpandableOptionsProps> = ({
       onChange={(keys) => setExpandedKeys(keys as string[])}
       items={[
         {
-          key: "dataset",
+          key: "project",
           label: header,
           children,
           extra,

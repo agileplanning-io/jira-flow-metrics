@@ -8,7 +8,7 @@ import {
   StatusCategory,
   JiraIssueBuilder,
 } from "@agileplanning-io/flow-metrics";
-import { JiraIssuesRepository } from "@usecases/datasets/sync/jira-issues-repository";
+import { JiraIssuesRepository } from "@usecases/projects/sync/jira-issues-repository";
 import { createJiraClient } from "../client/jira-client";
 import { Domain } from "@entities/domains";
 

@@ -1,4 +1,7 @@
-import { StatusCategory, TransitionStatus } from "@agileplanning-io/flow-metrics";
+import {
+  StatusCategory,
+  TransitionStatus,
+} from "@agileplanning-io/flow-metrics";
 import { DraggableLocation } from "@hello-pangea/dnd";
 import { produce } from "immer";
 import { flatten } from "remeda";
@@ -20,7 +23,7 @@ export type WorkflowStage = {
   statuses: TransitionStatus[];
 };
 
-export type Dataset = {
+export type Project = {
   workflow: WorkflowStage[];
   statuses: TransitionStatus[];
 };
@@ -152,12 +155,12 @@ export const stateToWorkflow = (state: WorkflowState): WorkflowStage[] => {
   });
 };
 
-export const datasetToState = (dataset: Dataset): WorkflowState => {
+export const projectToState = (project: Project): WorkflowState => {
   const taskId = (status: TransitionStatus) => `task:${status.name}`;
   const colId = (stage: WorkflowStage) => `col:${stage.name}`;
 
   const tasks = Object.fromEntries(
-    dataset.statuses.map((status) => [
+    project.statuses.map((status) => [
       taskId(status),
       {
         id: taskId(status),
@@ -166,7 +169,7 @@ export const datasetToState = (dataset: Dataset): WorkflowState => {
     ]),
   );
 
-  const workflowColumns: WorkflowStageColumn[] = dataset.workflow.map(
+  const workflowColumns: WorkflowStageColumn[] = project.workflow.map(
     (stage) => ({
       id: colId(stage),
       title: stage.name,
@@ -191,7 +194,7 @@ export const datasetToState = (dataset: Dataset): WorkflowState => {
     workflowColumns.map((stage) => [stage.id, stage]),
   );
 
-  const columnOrder = dataset.workflow.map((stage) => colId(stage));
+  const columnOrder = project.workflow.map((stage) => colId(stage));
 
   const workflowState: WorkflowState = {
     tasks,

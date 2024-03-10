@@ -1,4 +1,4 @@
-import { DataSourcesRepository, DatasetsRepository } from "@entities/datasets";
+import { DataSourcesRepository, ProjectsRepository } from "@entities/projects";
 import { Domain, DomainsRepository } from "@entities/domains";
 import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
@@ -16,7 +16,7 @@ class CreateDomainBody {
   token: string;
 }
 
-class CreateDatasetBody {
+class CreateProjectBody {
   @ApiProperty()
   name: string;
 
@@ -28,7 +28,7 @@ class CreateDatasetBody {
 export class DomainsController {
   constructor(
     private readonly domains: DomainsRepository,
-    private readonly datasets: DatasetsRepository,
+    private readonly projects: ProjectsRepository,
     private readonly dataSources: DataSourcesRepository,
   ) {}
 
@@ -47,22 +47,22 @@ export class DomainsController {
 
   @Delete(":domainId")
   async deleteDomain(@Param("domainId") domainId) {
-    await this.datasets.removeDatasets(domainId);
+    await this.projects.removeProjects(domainId);
     await this.domains.removeDomain(domainId);
   }
 
-  @Get(":domainId/datasets")
-  async getDatasets(@Param("domainId") domainId: string) {
-    const datasets = await this.datasets.getDatasets(domainId);
-    return datasets.map((dataset) => omit(["issues"], dataset));
+  @Get(":domainId/projects")
+  async getProjects(@Param("domainId") domainId: string) {
+    const projects = await this.projects.getProjects(domainId);
+    return projects.map((project) => omit(["issues"], project));
   }
 
-  @Post(":domainId/datasets")
-  async createDataset(
+  @Post(":domainId/projects")
+  async createProject(
     @Param("domainId") domainId: string,
-    @Body() body: CreateDatasetBody,
+    @Body() body: CreateProjectBody,
   ) {
-    return this.datasets.addDataset({
+    return this.projects.addProject({
       domainId,
       ...body,
       statuses: [],

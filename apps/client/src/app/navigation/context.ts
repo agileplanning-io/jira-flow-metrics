@@ -1,5 +1,5 @@
 import { useLocation, useParams } from "react-router-dom";
-import { Dataset, useDataset, useDatasets } from "@data/datasets";
+import { Project, useProject, useProjects } from "@data/projects";
 import { Domain, useDomains } from "@data/domains";
 
 export type NavigationContext = {
@@ -7,32 +7,32 @@ export type NavigationContext = {
   domains?: Domain[];
   domainId?: string;
   domain?: Domain;
-  datasetId?: string;
-  dataset?: Dataset;
-  datasets?: Dataset[];
+  projectId?: string;
+  project?: Project;
+  projects?: Project[];
   issueKey?: string;
 };
 
 export const useNavigationContext = (): NavigationContext => {
   const { pathname: path } = useLocation();
-  const { datasetId, domainId: domainIdParam, issueKey } = useParams();
-  const { data: dataset } = useDataset(datasetId);
+  const { projectId, domainId: domainIdParam, issueKey } = useParams();
+  const { data: project } = useProject(projectId);
 
-  const domainId = domainIdParam ?? dataset?.domainId;
+  const domainId = domainIdParam ?? project?.domainId;
 
   const { data: domains } = useDomains();
   const domain = domains?.find((domain) => domain.id === domainId);
 
-  const { data: datasets } = useDatasets(domainId ?? dataset?.domainId);
+  const { data: projects } = useProjects(domainId ?? project?.domainId);
 
   return {
     domainId,
     path,
     domains,
     domain,
-    dataset,
-    datasetId,
-    datasets,
+    project,
+    projectId,
+    projects,
     issueKey,
   };
 };

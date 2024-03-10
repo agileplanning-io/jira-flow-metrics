@@ -1,9 +1,9 @@
 import { Link, Navigate, Route } from "react-router-dom";
 import { NavigationHandle } from "./navigation/breadcrumbs";
 import { domainRoutes } from "./domains/domain-routes";
-import { datasetRoutes } from "./datasets/dataset-routes";
+import { projectRoutes } from "./projects/project-routes";
 import { AppLayout } from "./app-layout";
-import { datasetsIndexPath } from "./navigation/paths";
+import { projectsIndexPath } from "./navigation/paths";
 
 const rootHandle: NavigationHandle = {
   crumb({ domain, domains, path }) {
@@ -19,7 +19,7 @@ const rootHandle: NavigationHandle = {
       const domainOptions = domains.map((domain) => ({
         key: domain.id,
         label: (
-          <Link to={datasetsIndexPath({ domainId: domain.id })}>
+          <Link to={projectsIndexPath({ domainId: domain.id })}>
             {domain.host}
           </Link>
         ),
@@ -42,6 +42,6 @@ export const appRoutes = (
   <Route path="/" element={<AppLayout />} handle={rootHandle}>
     <Route index element={<Navigate to="/domains" />} />
     {domainRoutes}
-    {datasetRoutes}
+    {projectRoutes}
   </Route>
 );
