@@ -1,12 +1,12 @@
 import { Global, Module } from "@nestjs/common";
-import { DataSourcesRepository, DatasetsRepository } from "@entities/datasets";
-import { LocalDatasetsRepository } from "./local/repositories/datasets-repository";
+import { DataSourcesRepository, ProjectsRepository } from "@entities/projects";
+import { LocalProjectsRepository } from "./local/repositories/projects-repository";
 import { DomainsRepository } from "@entities/domains";
 import { LocalDomainsRepository } from "./local/repositories/domains-repository";
 import { HttpJiraDataSourcesRepository } from "./http/repositories/data-sources-repository";
 import { IssuesRepository } from "@entities/issues";
 import { LocalIssuesRepository } from "./local/issues-repository";
-import { JiraIssuesRepository } from "@usecases/datasets/sync/jira-issues-repository";
+import { JiraIssuesRepository } from "@usecases/projects/sync/jira-issues-repository";
 import { HttpJiraIssuesRepository } from "./http/repositories/jira-issues-repository";
 import { StorageModule } from "./storage/storage-module";
 
@@ -19,8 +19,8 @@ import { StorageModule } from "./storage/storage-module";
       useClass: LocalDomainsRepository,
     },
     {
-      provide: DatasetsRepository,
-      useClass: LocalDatasetsRepository,
+      provide: ProjectsRepository,
+      useClass: LocalProjectsRepository,
     },
     {
       provide: IssuesRepository,
@@ -37,7 +37,7 @@ import { StorageModule } from "./storage/storage-module";
   ],
   exports: [
     DomainsRepository,
-    DatasetsRepository,
+    ProjectsRepository,
     DataSourcesRepository,
     IssuesRepository,
     JiraIssuesRepository,

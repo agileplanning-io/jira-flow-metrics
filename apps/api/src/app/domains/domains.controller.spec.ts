@@ -6,13 +6,13 @@ import { DomainsRepository } from "@entities/domains";
 import { DataModule } from "@data/data-module";
 import { StorageModule } from "@data/storage/storage-module";
 import { TestStorageModule } from "@fixtures/data/storage/test-storage-module";
-import { DatasetsRepository } from "@entities/datasets";
+import { ProjectsRepository } from "@entities/projects";
 import { StatusCategory } from "@agileplanning-io/flow-metrics";
 
 describe("DomainsController", () => {
   let app: INestApplication;
   let domains: DomainsRepository;
-  let datasets: DatasetsRepository;
+  let projects: ProjectsRepository;
 
   const domainId = "EIleBQKUNZj6";
 
@@ -27,7 +27,7 @@ describe("DomainsController", () => {
     await app.init();
 
     domains = await module.resolve(DomainsRepository);
-    datasets = await module.resolve(DatasetsRepository);
+    projects = await module.resolve(ProjectsRepository);
   });
 
   describe("GET /domains", () => {
@@ -76,11 +76,11 @@ describe("DomainsController", () => {
     });
   });
 
-  describe("GET /domains/:domainId/datasets", () => {
-    it("returns stored datasets", async () => {
-      const dataset = await datasets.addDataset({
+  describe("GET /domains/:domainId/projects", () => {
+    it("returns stored projects", async () => {
+      const project = await projects.addProject({
         domainId,
-        name: "My Dataset",
+        name: "My Project",
         jql: "proj = MyProject",
         workflow: [
           {
@@ -99,23 +99,23 @@ describe("DomainsController", () => {
       });
 
       await request(app.getHttpServer())
-        .get(`/domains/${domainId}/datasets`)
-        .expect(200, [dataset]);
+        .get(`/domains/${domainId}/projects`)
+        .expect(200, [project]);
     });
   });
 
-  describe("POST /domains/:domainId/datasets", () => {
-    it("stores datasets", async () => {
+  describe("POST /domains/:domainId/projects", () => {
+    it("stores projects", async () => {
       const params = {
-        name: "My Dataset",
+        name: "My Project",
         jql: "proj = MyProject",
       };
 
       await request(app.getHttpServer())
-        .post(`/domains/${domainId}/datasets`)
+        .post(`/domains/${domainId}/projects`)
         .send(params)
         .expect(201, {
-          id: "LO9BX58c5htj",
+          id: "KEPzzuIqHfHc",
           domainId,
           statuses: [],
           labels: [],

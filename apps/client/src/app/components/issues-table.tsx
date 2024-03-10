@@ -14,13 +14,13 @@ import {
   IssueResolution,
   IssueStatus,
 } from "@agileplanning-io/flow-components";
-import { IssueDetailsDrawer } from "@app/datasets/reports/components/issue-details-drawer";
+import { IssueDetailsDrawer } from "@app/projects/reports/components/issue-details-drawer";
 import { QuestionCircleOutlined, ZoomInOutlined } from "@ant-design/icons";
 import { issueDetailsPath } from "@app/navigation/paths";
 import {
   IssueExternalLink,
   IssueLink,
-} from "@app/datasets/components/issue-links";
+} from "@app/projects/components/issue-links";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 
 export type SortState = {
@@ -51,7 +51,7 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
   percentiles,
   flowMetricsOnly,
 }) => {
-  const { datasetId } = useNavigationContext();
+  const { projectId } = useNavigationContext();
 
   const [excludedIssueKeys, setExcludedIssueKeys] = useState<string[]>(
     defaultExcludedIssueKeys ?? [],
@@ -119,7 +119,7 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
       title: "Key",
       key: "key",
       render: (_, issue) => {
-        const path = issueDetailsPath({ issueKey: issue.key, datasetId });
+        const path = issueDetailsPath({ issueKey: issue.key, projectId });
         return <IssueLink text={issue.key} path={path} />;
       },
     },
@@ -259,8 +259,8 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
         const included = !excludedIssueKeys.includes(issue.key);
 
         const tooltip = included
-          ? `Uncheck to exclude from dataset`
-          : `Check to include in dataset`;
+          ? `Uncheck to exclude from project`
+          : `Check to include in project`;
 
         const onCheckboxChanged = (event: CheckboxChangeEvent) =>
           onSelectIssueChanged(issue.key, event.target.checked);
@@ -281,7 +281,7 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
 
     if (!issue.metrics.includedInEpic) {
       return (
-        <Tooltip title="Excluded from epic metrics by dataset filters">
+        <Tooltip title="Excluded from epic metrics by project filters">
           N/A <QuestionCircleOutlined />
         </Tooltip>
       );
@@ -339,7 +339,7 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
         if (!parent) {
           return null;
         }
-        const path = issueDetailsPath({ issueKey: issue.parentKey, datasetId });
+        const path = issueDetailsPath({ issueKey: issue.parentKey, projectId });
         return (
           <Space>
             <a onClick={() => setSelectedIssue(parent)}>

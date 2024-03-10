@@ -4,7 +4,7 @@ import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { AddDomainModal } from "./add-domain-modal";
 import { Link } from "react-router-dom";
-import { datasetsIndexPath } from "../navigation/paths";
+import { projectsIndexPath } from "../navigation/paths";
 import { RemoveDomainModal } from "./remove-domain-modal";
 
 export const DomainsIndexPage = () => {
@@ -35,7 +35,7 @@ export const DomainsIndexPage = () => {
             title: "Host",
             key: "host",
             render: (_, domain) => (
-              <Link to={datasetsIndexPath({ domainId: domain.id })}>
+              <Link to={projectsIndexPath({ domainId: domain.id })}>
                 {domain.host}
               </Link>
             ),

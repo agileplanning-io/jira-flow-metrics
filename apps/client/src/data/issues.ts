@@ -35,14 +35,14 @@ const parseIssue = (issue: Issue): Issue => {
 };
 
 const getIssues = async (
-  datasetId: string | undefined,
+  projectId: string | undefined,
   includeWaitTime: boolean,
   statuses?: string[],
   labels?: string[],
   labelFilterType?: LabelFilterType,
   components?: string[],
 ): Promise<Issue[]> => {
-  let url = `/datasets/${datasetId}/issues?includeWaitTime=${includeWaitTime}`;
+  let url = `/projects/${projectId}/issues?includeWaitTime=${includeWaitTime}`;
   if (statuses) {
     url += `&statuses=${statuses.join()}`;
   }
@@ -64,7 +64,7 @@ const parseDate = (date: string | Date | undefined): Date | undefined => {
 };
 
 export const useIssues = (
-  datasetId: string | undefined,
+  projectId: string | undefined,
   includeWaitTime: boolean,
   statuses?: string[],
   labels?: string[],
@@ -74,7 +74,7 @@ export const useIssues = (
   return useQuery({
     queryKey: [
       issuesQueryKey,
-      datasetId,
+      projectId,
       includeWaitTime,
       statuses,
       labels,
@@ -83,14 +83,14 @@ export const useIssues = (
     ],
     queryFn: () =>
       getIssues(
-        datasetId,
+        projectId,
         includeWaitTime,
         statuses,
         labels,
         labelFilterType,
         components,
       ),
-    enabled: datasetId !== undefined && includeWaitTime !== undefined,
+    enabled: projectId !== undefined && includeWaitTime !== undefined,
   });
 };
 
@@ -100,22 +100,22 @@ export type WorkflowStage = {
   statuses: TransitionStatus[];
 };
 
-export type DatasetWorkflows = {
+export type ProjectWorkflows = {
   [HierarchyLevel.Story]: WorkflowStage[];
   [HierarchyLevel.Epic]: WorkflowStage[];
 };
 
-const getDatasetWorkflows = async (
-  datasetId?: string,
-): Promise<DatasetWorkflows> => {
-  const response = await axios.get(`/datasets/${datasetId}/workflows`);
+const getProjectWorkflows = async (
+  projectId?: string,
+): Promise<ProjectWorkflows> => {
+  const response = await axios.get(`/projects/${projectId}/workflows`);
   return response.data;
 };
 
-export const useDatasetWorkflows = (datasetId?: string) => {
+export const useProjectWorkflows = (projectId?: string) => {
   return useQuery({
-    queryKey: [issuesQueryKey, datasetId],
-    queryFn: () => getDatasetWorkflows(datasetId),
-    enabled: datasetId !== undefined,
+    queryKey: [issuesQueryKey, projectId],
+    queryFn: () => getProjectWorkflows(projectId),
+    enabled: projectId !== undefined,
   });
 };

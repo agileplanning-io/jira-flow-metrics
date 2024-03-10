@@ -6,10 +6,10 @@ import {
   OnDragEndResponder,
 } from "@hello-pangea/dnd";
 import {
-  Dataset,
+  Project,
   WorkflowStage,
   addColumn,
-  datasetToState,
+  projectToState,
   deleteColumn,
   moveToColumn,
   renameColumn,
@@ -25,11 +25,11 @@ const Container = styled.div`
 `;
 
 export const WorkflowBoard: FC<{
-  dataset: Dataset;
+  project: Project;
   onWorkflowChanged: (workflow: WorkflowStage[]) => void;
   disabled: boolean;
-}> = ({ dataset, onWorkflowChanged, disabled }) => {
-  const [state, setState] = useState(() => datasetToState(dataset));
+}> = ({ project, onWorkflowChanged, disabled }) => {
+  const [state, setState] = useState(() => projectToState(project));
 
   useEffect(() => {
     onWorkflowChanged(stateToWorkflow(state));
