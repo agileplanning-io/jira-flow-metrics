@@ -17,6 +17,7 @@ export function useParams<T extends z.AnyZodObject>(
 ): [z.infer<typeof schema>, (params: z.infer<typeof schema>) => void] {
   const [searchParams, setSearchParams] = useSearchParams();
   const params = schema.parse(decodeParams(searchParams));
+  console.info(params, Object.fromEntries(searchParams.entries()));
   const schemaKeys = Object.keys(schema.shape);
 
   const setParams = (newParams: z.infer<typeof schema>) => {
