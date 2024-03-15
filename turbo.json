@@ -7,6 +7,9 @@
     },
     "lint": {},
     "test": {},
+    "seed": {
+      "cache": false
+    },
     "dev": {
       "cache": false,
       "persistent": true

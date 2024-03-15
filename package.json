@@ -15,6 +15,7 @@
     "test": "turbo test",
     "build": "turbo build",
     "dev": "turbo dev",
+    "seed": "turbo seed",
     "clean": "turbo clean && rm -rf node_modules && rm -rf dist",
     "publish-packages": "turbo run build lint && changeset version && changeset publish"
   }
