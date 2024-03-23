@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-components
 
+## 0.0.16
+
+### Patch Changes
+
+- 7133862: refactor: rename datasets -> projects
+
 ## 0.0.15
 
 ### Patch Changes

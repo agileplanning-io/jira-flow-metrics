@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-charts
 
+## 0.0.21
+
+### Patch Changes
+
+- 463d53e: feat: label axes
+
 ## 0.0.20
 
 ### Patch Changes
