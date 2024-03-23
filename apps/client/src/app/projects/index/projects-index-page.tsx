@@ -80,8 +80,8 @@ export const ProjectsIndexPage = () => {
             ),
           },
           {
-            title: "Reports",
-            key: "reports",
+            title: "Flow Metrics",
+            key: "flow-metrics",
             render: (_, project) => (
               <Space size="large">
                 <Link to={scatterplotPath({ projectId: project.id })}>
@@ -97,6 +97,14 @@ export const ProjectsIndexPage = () => {
                 <Link to={ageingWipPath({ projectId: project.id })}>
                   Ageing WIP
                 </Link>
+              </Space>
+            ),
+          },
+          {
+            title: "Planning",
+            key: "planning",
+            render: (_, project) => (
+              <Space size="large">
                 <Link to={forecastPath({ projectId: project.id })}>
                   Forecast
                 </Link>
@@ -106,6 +114,7 @@ export const ProjectsIndexPage = () => {
               </Space>
             ),
           },
+
           {
             title: "Sync",
             key: "sync",
