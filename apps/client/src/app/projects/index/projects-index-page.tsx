@@ -121,11 +121,12 @@ export const ProjectsIndexPage = () => {
                 >
                   Sync
                 </Button>
-                {project.lastSync ? (
-                  <span>Last synced: {formatDate(project.lastSync.date)}</span>
-                ) : (
-                  <span>Never</span>
-                )}
+                <span>
+                  Last synced:{" "}
+                  {project.lastSync
+                    ? formatDate(project.lastSync.date)
+                    : "never"}
+                </span>
               </Space>
             ),
           },
