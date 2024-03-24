@@ -18,7 +18,7 @@ export const getFlowMetrics = (
   policy: CycleTimePolicy,
   now: Date = new Date(),
 ): Issue[] => {
-  const { includeWaitTime, statuses, labels, labelFilterType } = policy;
+  const { includeWaitTime, statuses } = policy.stories;
 
   const stories = issues.filter(
     (issue) => issue.hierarchyLevel === HierarchyLevel.Story,
@@ -29,17 +29,20 @@ export const getFlowMetrics = (
   );
 
   const updatedStories = stories.map((story) => {
-    const metrics = getStoryFlowMetrics(story, includeWaitTime, statuses);
+    const metrics = getStatusFlowMetrics(story, includeWaitTime, statuses);
     return {
       ...story,
       metrics,
     };
   });
 
-  const filteredStories = filterIssues(updatedStories, {
-    labels,
-    labelFilterType,
-  });
+  const filteredStories =
+    policy.epics.type === "computed"
+      ? filterIssues(updatedStories, {
+          labels: policy.epics.labelsFilter?.labels,
+          labelFilterType: policy.epics.labelsFilter?.labelFilterType,
+        })
+      : updatedStories;
 
   const epicKeys = new Set(epics.map((epic) => epic.key));
   const includedStoryKeys = new Set(
@@ -55,7 +58,14 @@ export const getFlowMetrics = (
   });
 
   const updatedEpics = epics.map((epic) => {
-    const metrics = estimateEpicFlowMetrics(epic, filteredStories, now);
+    const metrics =
+      policy.epics.type === "computed"
+        ? getComputedFlowMetrics(epic, filteredStories, now)
+        : getStatusFlowMetrics(
+            epic,
+            policy.epics.includeWaitTime,
+            policy.epics.statuses,
+          );
     return {
       ...epic,
       metrics,
@@ -117,7 +127,7 @@ const getCompletedDateIndex = (
   return index === -1 ? -1 : transitions.length - index - 1;
 };
 
-const getStoryFlowMetrics = (
+const getStatusFlowMetrics = (
   story: Issue,
   includeWaitTime: boolean,
   statuses?: string[],
@@ -186,7 +196,7 @@ const getStoryFlowMetrics = (
   };
 };
 
-const estimateEpicFlowMetrics = (
+const getComputedFlowMetrics = (
   epic: Issue,
   issues: Issue[],
   now: Date,

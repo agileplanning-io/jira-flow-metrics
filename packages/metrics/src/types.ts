@@ -86,9 +86,20 @@ export const isStarted = (issue: Issue): issue is StartedIssue =>
 export const isCompleted = (issue: Issue): issue is CompletedIssue =>
   issue.metrics.completed !== undefined;
 
-export type CycleTimePolicy = {
+export type LabelFilterPolicy = Pick<IssueFilter, "labels" | "labelFilterType">;
+
+export type StatusCycleTimePolicy = {
+  type: "status";
   includeWaitTime: boolean;
   statuses?: string[];
-  labels?: IssueFilter["labels"];
-  labelFilterType?: IssueFilter["labelFilterType"];
+};
+
+export type ComputedCycleTimePolicy = {
+  type: "computed";
+  labelsFilter?: LabelFilterPolicy;
+};
+
+export type CycleTimePolicy = {
+  stories: StatusCycleTimePolicy;
+  epics: StatusCycleTimePolicy | ComputedCycleTimePolicy;
 };

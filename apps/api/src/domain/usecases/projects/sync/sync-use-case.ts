@@ -114,7 +114,7 @@ const buildDefaultCycleTimePolicy = (
 ): CycleTimePolicy => {
   if (
     currentCycleTimePolicy &&
-    currentCycleTimePolicy.statuses.every(isValidStatus(sortedStatuses))
+    currentCycleTimePolicy.stories.statuses.every(isValidStatus(sortedStatuses))
   ) {
     return currentCycleTimePolicy;
   }
@@ -126,8 +126,14 @@ const buildDefaultCycleTimePolicy = (
   const statuses = statusesInWorkflow(defaultSelectedStages);
 
   return {
-    includeWaitTime: false,
-    statuses,
+    stories: {
+      type: "status",
+      includeWaitTime: false,
+      statuses,
+    },
+    epics: {
+      type: "computed",
+    },
   };
 };
 

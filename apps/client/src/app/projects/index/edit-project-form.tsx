@@ -20,6 +20,11 @@ import { WorkflowStage } from "@data/issues";
 import { flatten } from "rambda";
 import { LabelFilterType } from "@agileplanning-io/flow-metrics";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
+import {
+  ComputedCycleTimePolicy,
+  fromCycleTimePolicy,
+  toCycleTimePolicy,
+} from "../context/context";
 
 export type EditProjectFormProps = {
   project: Project;
@@ -33,9 +38,10 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
   const [updatedWorkflow, setUpdatedWorkflow] =
     useState<UpdateProjectParams["workflow"]>();
 
-  const [updatedCycleTimePolicy, setUpdatedCycleTimePolicy] = useState<
-    UpdateProjectParams["defaultCycleTimePolicy"]
-  >(project?.defaultCycleTimePolicy);
+  const [updatedCycleTimePolicy, setUpdatedCycleTimePolicy] =
+    useState<ComputedCycleTimePolicy>(
+      fromCycleTimePolicy(project?.defaultCycleTimePolicy),
+    );
 
   const updateProject = useUpdateProject();
 
@@ -101,7 +107,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
           id: project.id,
           name: project.name,
           workflow: updatedWorkflow,
-          defaultCycleTimePolicy: updatedCycleTimePolicy,
+          defaultCycleTimePolicy: toCycleTimePolicy(updatedCycleTimePolicy),
         },
         {
           onSuccess: onClose,
