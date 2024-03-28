@@ -36,16 +36,26 @@ describe("ProjectsController", () => {
       domainId: "123",
       name: "My Project",
       jql: "proj=PROJ",
-      workflow: [
-        {
-          name: "In Progress",
-          selectByDefault: true,
-          statuses: [
-            { name: "In Progress", category: StatusCategory.InProgress },
+      workflow: {
+        stories: {
+          stages: [
+            {
+              name: "In Progress",
+              selectByDefault: true,
+              statuses: [
+                { name: "In Progress", category: StatusCategory.InProgress },
+              ],
+            },
           ],
         },
-      ],
-      statuses: [{ name: "In Progress", category: StatusCategory.InProgress }],
+        epics: {
+          stages: [],
+        },
+      },
+      statuses: {
+        stories: [{ name: "In Progress", category: StatusCategory.InProgress }],
+        epics: [],
+      },
       labels: [],
       components: [],
     });
