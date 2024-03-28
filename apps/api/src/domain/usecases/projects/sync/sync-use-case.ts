@@ -1,4 +1,9 @@
-import { ProjectsRepository, WorkflowStage } from "@entities/projects";
+import {
+  ProjectsRepository,
+  WorkflowStage,
+  Workflow,
+  ProjectStatuses,
+} from "@entities/projects";
 import { IssuesRepository } from "@entities/issues";
 import { Injectable } from "@nestjs/common";
 import { JiraIssuesRepository } from "./jira-issues-repository";
@@ -13,6 +18,7 @@ import { DomainsRepository } from "@entities/domains";
 import { sortStatuses } from "./sort-statuses";
 import { TransitionStatus } from "@agileplanning-io/flow-metrics";
 import { flatten, uniq } from "rambda";
+import { Issue } from "@agileplanning-io/flow-metrics";
 
 @Injectable()
 export class SyncUseCase {
@@ -44,20 +50,16 @@ export class SyncUseCase {
 
     await this.issues.setIssues(projectId, issues);
 
-    const stories = issues.filter(
-      (issue) => issue.hierarchyLevel === HierarchyLevel.Story,
-    );
     const canonicalStatuses = statusBuilder.getStatuses();
 
-    const sortedStatuses = sortStatuses(stories).map((name) =>
-      canonicalStatuses.find((status) => status.name === name),
-    );
+    const statuses = buildProjectStatuses(issues, canonicalStatuses);
 
-    const workflow = buildWorkflow(project.workflow, sortedStatuses);
+    const workflow = buildWorkflow(project.workflow, statuses);
+
     const defaultCycleTimePolicy = buildDefaultCycleTimePolicy(
       project.defaultCycleTimePolicy,
       workflow,
-      sortedStatuses,
+      statuses,
     );
 
     const labels = uniq(flatten<string>(issues.map((issue) => issue.labels)));
@@ -70,7 +72,7 @@ export class SyncUseCase {
         date: new Date(),
         issueCount: issues.length,
       },
-      statuses: sortedStatuses,
+      statuses,
       components,
       labels,
       workflow,
@@ -82,54 +84,62 @@ export class SyncUseCase {
 }
 
 const buildWorkflow = (
-  currentWorkflow: WorkflowStage[] | undefined,
-  sortedStatuses: TransitionStatus[],
-): WorkflowStage[] => {
-  if (
-    currentWorkflow &&
-    statusesInWorkflow(currentWorkflow).every(isValidStatus(sortedStatuses))
-  ) {
+  currentWorkflow: Workflow | undefined,
+  statuses: ProjectStatuses,
+): Workflow => {
+  if (currentWorkflow && isValidWorkflow(currentWorkflow, statuses)) {
     return currentWorkflow;
   }
 
-  const getWorkflowStage = (category: StatusCategory): WorkflowStage => ({
-    name: category,
-    selectByDefault: category === StatusCategory.InProgress,
-    statuses: sortedStatuses.filter((status) => status.category === category),
-  });
+  const getWorkflowStage =
+    (statuses: TransitionStatus[]) =>
+    (category: StatusCategory): WorkflowStage => ({
+      name: category,
+      selectByDefault: category === StatusCategory.InProgress,
+      statuses: statuses.filter((status) => status.category === category),
+    });
 
-  const workflow = [
+  const categories = [
     StatusCategory.ToDo,
     StatusCategory.InProgress,
     StatusCategory.Done,
-  ].map(getWorkflowStage);
+  ];
+
+  const workflow: Workflow = {
+    stories: {
+      stages: categories.map(getWorkflowStage(statuses.stories)),
+    },
+    epics: {
+      stages: categories.map(getWorkflowStage(statuses.epics)),
+    },
+  };
 
   return workflow;
 };
 
 const buildDefaultCycleTimePolicy = (
   currentCycleTimePolicy: CycleTimePolicy | undefined,
-  workflow: WorkflowStage[],
-  sortedStatuses: TransitionStatus[],
+  workflow: Workflow,
+  statuses: ProjectStatuses,
 ): CycleTimePolicy => {
   if (
     currentCycleTimePolicy &&
-    currentCycleTimePolicy.stories.statuses.every(isValidStatus(sortedStatuses))
+    isValidCycleTimePolicy(currentCycleTimePolicy, statuses)
   ) {
     return currentCycleTimePolicy;
   }
 
-  const defaultSelectedStages = workflow.filter(
+  const defaultSelectedStages = workflow.stories.stages.filter(
     (stage) => stage.selectByDefault,
   );
 
-  const statuses = statusesInWorkflow(defaultSelectedStages);
+  const storyStatuses = statusesInWorkflowStages(defaultSelectedStages);
 
   return {
     stories: {
       type: "status",
       includeWaitTime: false,
-      statuses,
+      statuses: storyStatuses,
     },
     epics: {
       type: "computed",
@@ -137,8 +147,61 @@ const buildDefaultCycleTimePolicy = (
   };
 };
 
-const statusesInWorkflow = (workflow: WorkflowStage[]): string[] =>
-  flatten(workflow.map((stage) => stage.statuses.map((status) => status.name)));
+const statusesInWorkflowStages = (stages: WorkflowStage[]): string[] =>
+  flatten(stages.map((stage) => stage.statuses.map((status) => status.name)));
+
+const isValidWorkflow = (
+  workflow: Workflow,
+  statuses: ProjectStatuses,
+): boolean => {
+  return (
+    statusesInWorkflowStages(workflow.stories.stages).every(
+      isValidStatus(statuses.stories),
+    ) &&
+    statusesInWorkflowStages(workflow.epics.stages).every(
+      isValidStatus(statuses.epics),
+    )
+  );
+};
+
+const isValidCycleTimePolicy = (
+  policy: CycleTimePolicy,
+  statuses: ProjectStatuses,
+): boolean => {
+  const validStoryPolicy = policy.stories.statuses.every(
+    isValidStatus(statuses.stories),
+  );
+  const validEpicPolicy =
+    (policy.epics.type === "status" &&
+      policy.epics.statuses.every(isValidStatus(statuses.epics))) ||
+    policy.epics.type === "computed";
+
+  return validStoryPolicy && validEpicPolicy;
+};
 
 const isValidStatus = (validStatuses: TransitionStatus[]) => (status: string) =>
   validStatuses.map((status) => status.name).includes(status);
+
+const buildProjectStatuses = (
+  issues: Issue[],
+  canonicalStatuses: TransitionStatus[],
+): ProjectStatuses => {
+  const stories = issues.filter(
+    (issue) => issue.hierarchyLevel === HierarchyLevel.Story,
+  );
+  const epics = issues.filter(
+    (issue) => issue.hierarchyLevel === HierarchyLevel.Epic,
+  );
+
+  const storyStatuses = sortStatuses(stories).map((name) =>
+    canonicalStatuses.find((status) => status.name === name),
+  );
+  const epicStatuses = sortStatuses(epics).map((name) =>
+    canonicalStatuses.find((status) => status.name === name),
+  );
+
+  return {
+    stories: storyStatuses,
+    epics: epicStatuses,
+  };
+};

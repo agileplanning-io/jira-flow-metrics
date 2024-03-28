@@ -65,7 +65,10 @@ export class DomainsController {
     return this.projects.addProject({
       domainId,
       ...body,
-      statuses: [],
+      statuses: {
+        stories: [],
+        epics: [],
+      },
       labels: [],
       components: [],
     });

@@ -43,7 +43,10 @@ const createProject = async (projects: ProjectsRepository) => {
       domainId,
       name: "My Project",
       jql: "project = MYPROJ",
-      statuses: [backlog, inProgress, done],
+      statuses: {
+        stories: [backlog, inProgress, done],
+        epics: [],
+      },
       labels: [],
       components: [],
       defaultCycleTimePolicy: {
@@ -56,23 +59,30 @@ const createProject = async (projects: ProjectsRepository) => {
           type: "computed",
         },
       },
-      workflow: [
-        {
-          name: backlog.name,
-          statuses: [backlog],
-          selectByDefault: false,
+      workflow: {
+        stories: {
+          stages: [
+            {
+              name: backlog.name,
+              statuses: [backlog],
+              selectByDefault: false,
+            },
+            {
+              name: inProgress.name,
+              statuses: [inProgress, inReview],
+              selectByDefault: true,
+            },
+            {
+              name: done.name,
+              statuses: [done],
+              selectByDefault: false,
+            },
+          ],
         },
-        {
-          name: inProgress.name,
-          statuses: [inProgress, inReview],
-          selectByDefault: true,
+        epics: {
+          stages: [],
         },
-        {
-          name: done.name,
-          statuses: [done],
-          selectByDefault: false,
-        },
-      ],
+      },
     });
   }
 };

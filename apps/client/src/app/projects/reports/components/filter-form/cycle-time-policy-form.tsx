@@ -28,7 +28,7 @@ export const CycleTimePolicyForm = () => {
   const { project, cycleTimePolicy, setCycleTimePolicy, issues } =
     useProjectContext();
 
-  const selectedStages = project?.workflow
+  const selectedStages = project?.workflow.stories.stages
     .filter((stage) =>
       stage.statuses.every(
         (status) =>
@@ -44,7 +44,7 @@ export const CycleTimePolicyForm = () => {
   useEffect(() => {
     if (!project || !selectedStages || initialized) return;
 
-    setWorkflowStages(project.workflow);
+    setWorkflowStages(project.workflow.stories.stages);
     setCycleTimePolicy(fromCycleTimePolicy(project.defaultCycleTimePolicy));
   }, [
     project,
@@ -87,7 +87,7 @@ export const CycleTimePolicyForm = () => {
 
   const onStagesChanged = (keys: Key[]) => {
     const statuses: string[] = flatten(
-      project?.workflow
+      project?.workflow.stories.stages
         .filter((stage) => keys.includes(stage.name))
         .map((stage) => stage.statuses.map((status) => status.name)) ?? [],
     );
