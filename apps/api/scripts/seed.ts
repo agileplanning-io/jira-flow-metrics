@@ -188,8 +188,8 @@ const destroyData = async (app: INestApplicationContext) => {
   const domains = await app.resolve(DomainsRepository);
   const projects = await app.resolve(ProjectsRepository);
 
-  await domains.removeDomain(domainId);
   await projects.removeProjects(domainId);
+  await domains.removeDomain(domainId);
 };
 
 async function bootstrap() {
