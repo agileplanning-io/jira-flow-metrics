@@ -29,18 +29,32 @@ class WorkflowStageBody {
   statuses: string[];
 }
 
-class CycleTimePolicyBody {
+class StoryCycleTimePolicyBody {
   @ApiProperty()
   includeWaitTime: boolean;
 
   @ApiProperty()
   statuses: string[];
+}
+
+class LabelsFilterPolicyBody {
+  @ApiProperty()
+  stories: StoryCycleTimePolicyBody;
 
   @ApiProperty()
   labelFilterType: LabelFilterType;
+}
+
+class EpicCycleTimePolicyBody {
+  labelsFilter: LabelsFilterPolicyBody;
+}
+
+class CycleTimePolicyBody {
+  @ApiProperty()
+  stories: StoryCycleTimePolicyBody;
 
   @ApiProperty()
-  labels: string[];
+  epics: EpicCycleTimePolicyBody;
 }
 
 class UpdateProjectBody {
@@ -73,6 +87,7 @@ export class ProjectsController {
     @Body() request: UpdateProjectBody,
   ) {
     const project = await this.projects.getProject(projectId);
+
     const workflow = request.workflow.map((stage) => ({
       name: stage.name,
       selectByDefault: stage.selectByDefault,
@@ -80,11 +95,23 @@ export class ProjectsController {
         stage.statuses.includes(status.name),
       ),
     }));
-    const defaultCycleTimePolicy = request.defaultCycleTimePolicy;
+
+    const defaultCycleTimePolicy: CycleTimePolicy = {
+      stories: {
+        type: "status",
+        ...request.defaultCycleTimePolicy.stories,
+      },
+      epics: {
+        type: "computed",
+        ...request.defaultCycleTimePolicy.epics,
+      },
+    };
+
     const updatedProject = await this.projects.updateProject(projectId, {
       workflow,
       defaultCycleTimePolicy,
     });
+
     return updatedProject;
   }
 
@@ -117,10 +144,18 @@ export class ProjectsController {
     let issues = await this.issues.getIssues(projectId);
 
     const policy: CycleTimePolicy = {
-      includeWaitTime: ["true", "1"].includes(includeWaitTime),
-      statuses,
-      labels,
-      labelFilterType,
+      stories: {
+        type: "status",
+        includeWaitTime: ["true", "1"].includes(includeWaitTime),
+        statuses,
+      },
+      epics: {
+        type: "computed",
+        labelsFilter: {
+          labels,
+          labelFilterType,
+        },
+      },
     };
 
     issues = getFlowMetrics(issues, policy);

@@ -20,6 +20,7 @@ import { useProjectContext } from "@app/projects/context";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { useSearchParams } from "react-router-dom";
 import { WorkflowStagesTable } from "@agileplanning-io/flow-components";
+import { fromCycleTimePolicy } from "@app/projects/context/context";
 
 export const CycleTimePolicyForm = () => {
   const [workflowStages, setWorkflowStages] = useState<WorkflowStage[]>();
@@ -44,7 +45,7 @@ export const CycleTimePolicyForm = () => {
     if (!project || !selectedStages || initialized) return;
 
     setWorkflowStages(project.workflow);
-    setCycleTimePolicy(project.defaultCycleTimePolicy);
+    setCycleTimePolicy(fromCycleTimePolicy(project.defaultCycleTimePolicy));
   }, [
     project,
     cycleTimePolicy,

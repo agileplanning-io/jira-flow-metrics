@@ -47,8 +47,14 @@ const createProject = async (projects: ProjectsRepository) => {
       labels: [],
       components: [],
       defaultCycleTimePolicy: {
-        includeWaitTime: false,
-        statuses: [inProgress.name, inReview.name],
+        stories: {
+          type: "status",
+          includeWaitTime: false,
+          statuses: [inProgress.name, inReview.name],
+        },
+        epics: {
+          type: "computed",
+        },
       },
       workflow: [
         {

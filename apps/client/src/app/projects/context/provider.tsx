@@ -1,11 +1,12 @@
 import { useNavigationContext } from "../../navigation/context";
-import { ProjectContext, ProjectContextType } from "./context";
+import {
+  ComputedCycleTimePolicy,
+  ProjectContext,
+  ProjectContextType,
+} from "./context";
 import { useIssues } from "@data/issues";
 import { useSearchParams } from "react-router-dom";
-import {
-  CycleTimePolicy,
-  LabelFilterType,
-} from "@agileplanning-io/flow-metrics";
+import { LabelFilterType } from "@agileplanning-io/flow-metrics";
 import { equals, pick } from "rambda";
 import { SearchParamsBuilder } from "@lib/search-params-builder";
 
@@ -33,7 +34,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     cycleTimePolicy?.labelFilterType,
   );
 
-  const setCycleTimePolicy = (newCycleTimePolicy: CycleTimePolicy) => {
+  const setCycleTimePolicy = (newCycleTimePolicy: ComputedCycleTimePolicy) => {
     const fieldsToCompare = [
       "includeWaitTime",
       "statuses",
