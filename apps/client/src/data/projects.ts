@@ -18,8 +18,14 @@ export type Project = {
   name: string;
   jql: string;
   domainId: string;
-  statuses: TransitionStatus[];
-  workflow: WorkflowStage[];
+  statuses: {
+    stories: TransitionStatus[];
+  };
+  workflow: {
+    stories: {
+      stages: WorkflowStage[];
+    };
+  };
   defaultCycleTimePolicy: CycleTimePolicy;
   labels: string[];
   components: string[];

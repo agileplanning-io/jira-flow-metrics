@@ -24,8 +24,14 @@ export type WorkflowStage = {
 };
 
 export type Project = {
-  workflow: WorkflowStage[];
-  statuses: TransitionStatus[];
+  workflow: {
+    stories: {
+      stages: WorkflowStage[];
+    };
+  };
+  statuses: {
+    stories: TransitionStatus[];
+  };
 };
 
 export type WorkflowState = {
@@ -160,7 +166,7 @@ export const projectToState = (project: Project): WorkflowState => {
   const colId = (stage: WorkflowStage) => `col:${stage.name}`;
 
   const tasks = Object.fromEntries(
-    project.statuses.map((status) => [
+    project.statuses.stories.map((status) => [
       taskId(status),
       {
         id: taskId(status),
@@ -169,13 +175,12 @@ export const projectToState = (project: Project): WorkflowState => {
     ]),
   );
 
-  const workflowColumns: WorkflowStageColumn[] = project.workflow.map(
-    (stage) => ({
+  const workflowColumns: WorkflowStageColumn[] =
+    project.workflow.stories.stages.map((stage) => ({
       id: colId(stage),
       title: stage.name,
       statusIds: stage.statuses.map((status) => taskId(status)),
-    }),
-  );
+    }));
 
   const usedStatusIds = new Set(
     flatten(workflowColumns.map((column) => column.statusIds)),
@@ -194,7 +199,9 @@ export const projectToState = (project: Project): WorkflowState => {
     workflowColumns.map((stage) => [stage.id, stage]),
   );
 
-  const columnOrder = project.workflow.map((stage) => colId(stage));
+  const columnOrder = project.workflow.stories.stages.map((stage) =>
+    colId(stage),
+  );
 
   const workflowState: WorkflowState = {
     tasks,
