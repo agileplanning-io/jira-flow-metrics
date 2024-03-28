@@ -60,7 +60,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
 
   const onStagesChanged = (keys: Key[]) => {
     const statuses: string[] = flatten(
-      project?.workflow
+      project?.workflow.stories.stages
         .filter((stage) => keys.includes(stage.name))
         .map((stage) => stage.statuses.map((status) => status.name)) ?? [],
     );
@@ -131,7 +131,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
 
       <Form.Item label="Default Cycle Time Policy">
         <WorkflowStagesTable
-          workflowStages={project.workflow}
+          workflowStages={project.workflow.stories.stages}
           selectedStages={updatedCycleTimePolicy.statuses}
           onSelectionChanged={onStagesChanged}
         />

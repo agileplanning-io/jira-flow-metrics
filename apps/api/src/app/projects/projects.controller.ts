@@ -88,10 +88,10 @@ export class ProjectsController {
   ) {
     const project = await this.projects.getProject(projectId);
 
-    const workflow = request.workflow.map((stage) => ({
+    const storyStages = request.workflow.map((stage) => ({
       name: stage.name,
       selectByDefault: stage.selectByDefault,
-      statuses: project.statuses.filter((status) =>
+      statuses: project.statuses.stories.filter((status) =>
         stage.statuses.includes(status.name),
       ),
     }));
@@ -108,7 +108,14 @@ export class ProjectsController {
     };
 
     const updatedProject = await this.projects.updateProject(projectId, {
-      workflow,
+      workflow: {
+        stories: {
+          stages: storyStages,
+        },
+        epics: {
+          stages: [],
+        },
+      },
       defaultCycleTimePolicy,
     });
 
