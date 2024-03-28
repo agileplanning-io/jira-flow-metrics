@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-metrics
 
+## 0.0.16
+
+### Patch Changes
+
+- eba1d0b: feat: epic cycle time policies for getFlowMetrics()
+
 ## 0.0.15
 
 ### Patch Changes
