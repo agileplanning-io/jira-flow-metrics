@@ -146,34 +146,50 @@ export class ProjectsController {
   @Get(":projectId/issues")
   async getIssues(
     @Param("projectId") projectId: string,
-    @Query("includeWaitTime") includeWaitTime: string,
+    @Query("storyPolicyIncludeWaitTime") storyPolicyIncludeWaitTime: string,
     @Query(
-      "statuses",
+      "storyPolicyStatuses",
       new ParseArrayPipe({ items: String, separator: ",", optional: true }),
     )
-    statuses?: string[],
+    storyPolicyStatuses: string[] | undefined,
+    @Query("epicPolicyType") epicPolicyType: string,
+    @Query("epicPolicyIncludeWaitTime") epicPolicyIncludeWaitTime: string,
     @Query(
-      "labels",
+      "epicPolicyStatuses",
+      new ParseArrayPipe({ items: String, separator: ",", optional: true }),
+    )
+    epicPolicyStatuses?: string[],
+    @Query(
+      "epicPolicyLabels",
       new ParseArrayPipe({ items: String, separator: ",", optional: true }),
     )
     labels?: string[],
-    @Query("labelFilterType") labelFilterType?: LabelFilterType,
+    @Query("epicPolicyLabelFilterType") labelFilterType?: LabelFilterType,
   ) {
     let issues = await this.issues.getIssues(projectId);
 
     const policy: CycleTimePolicy = {
       stories: {
         type: "status",
-        includeWaitTime: ["true", "1"].includes(includeWaitTime),
-        statuses,
+        includeWaitTime: ["true", "1"].includes(storyPolicyIncludeWaitTime),
+        statuses: storyPolicyStatuses,
       },
-      epics: {
-        type: "computed",
-        labelsFilter: {
-          labels,
-          labelFilterType,
-        },
-      },
+      epics:
+        epicPolicyType === "computed"
+          ? {
+              type: "computed",
+              labelsFilter: {
+                labels,
+                labelFilterType,
+              },
+            }
+          : {
+              type: "status",
+              statuses: epicPolicyStatuses,
+              includeWaitTime: ["true", "1"].includes(
+                epicPolicyIncludeWaitTime,
+              ),
+            },
     };
 
     issues = getFlowMetrics(issues, policy);

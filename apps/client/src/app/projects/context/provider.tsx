@@ -1,14 +1,12 @@
 import { useNavigationContext } from "../../navigation/context";
-import {
-  ComputedCycleTimePolicy,
-  ProjectContext,
-  ProjectContextType,
-} from "./context";
+import { ProjectContext, ProjectContextType } from "./context";
 import { useIssues } from "@data/issues";
 import { useSearchParams } from "react-router-dom";
-import { LabelFilterType } from "@agileplanning-io/flow-metrics";
-import { equals, pick } from "rambda";
+import { CycleTimePolicy } from "@agileplanning-io/flow-metrics";
+import { equals, flatten } from "rambda";
 import { SearchParamsBuilder } from "@lib/search-params-builder";
+import { useEffect, useRef } from "react";
+import { parseCycleTimePolicy, toParams } from "./params";
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -16,49 +14,54 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const { project } = useNavigationContext();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const cycleTimePolicy = {
-    includeWaitTime:
-      searchParams.get("includeWaitTime") === "true" ?? undefined,
-    statuses: searchParams.getAll("policyStatuses") ?? undefined,
-    labels: searchParams.getAll("policyLabels") ?? undefined,
-    labelFilterType:
-      (searchParams.get("policyLabelFilterType") as LabelFilterType) ??
-      undefined,
-  };
+  const cycleTimePolicy = project
+    ? parseCycleTimePolicy(searchParams, project, setSearchParams)
+    : undefined;
 
-  const { data: issues } = useIssues(
-    project?.id,
-    cycleTimePolicy?.includeWaitTime ?? false,
-    cycleTimePolicy?.statuses,
-    cycleTimePolicy?.labels,
-    cycleTimePolicy?.labelFilterType,
-  );
+  const { data: issues } = useIssues(project?.id, cycleTimePolicy);
 
-  const setCycleTimePolicy = (newCycleTimePolicy: ComputedCycleTimePolicy) => {
-    const fieldsToCompare = [
-      "includeWaitTime",
-      "statuses",
-      "labels",
-      "labelFilterType",
-    ];
-    const changed = !equals(
-      pick(fieldsToCompare, newCycleTimePolicy),
-      pick(fieldsToCompare, cycleTimePolicy),
-    );
+  const setCycleTimePolicy = (newCycleTimePolicy: CycleTimePolicy) => {
+    const changed = !equals(newCycleTimePolicy, cycleTimePolicy);
     if (changed) {
-      setSearchParams(
-        (prev) => {
-          return new SearchParamsBuilder(prev)
-            .set("includeWaitTime", newCycleTimePolicy.includeWaitTime)
-            .setAll("policyStatuses", newCycleTimePolicy.statuses)
-            .setAll("policyLabels", newCycleTimePolicy.labels)
-            .set("policyLabelFilterType", newCycleTimePolicy.labelFilterType)
-            .getParams();
-        },
-        { replace: true },
-      );
+      setSearchParams((prev) => toParams(prev, newCycleTimePolicy), {
+        replace: true,
+      });
     }
   };
+
+  const initialized = useRef(false);
+
+  useEffect(() => {
+    if (!project || initialized.current) {
+      return;
+    }
+
+    const defaultBuilder = new SearchParamsBuilder(searchParams);
+    if (!searchParams.get("epicPolicyType")) {
+      defaultBuilder.set("epicPolicyType", "computed");
+    }
+    if (!searchParams.get("policyStoryStatuses")) {
+      const statuses: string[] = flatten(
+        project?.workflow.stories.stages
+          .filter((stage) => stage.selectByDefault)
+          .map((stage) => stage.statuses.map((status) => status.name)) ??
+          undefined,
+      );
+      defaultBuilder.setAll("policyStoryStatuses", statuses);
+    }
+    if (!searchParams.get("policyEpicStatuses")) {
+      const statuses: string[] = flatten(
+        project?.workflow.epics.stages
+          .filter((stage) => stage.selectByDefault)
+          .map((stage) => stage.statuses.map((status) => status.name)) ??
+          undefined,
+      );
+      defaultBuilder.setAll("policyEpicStatuses", statuses);
+    }
+    const defaultSearchParams = defaultBuilder.getParams();
+    setSearchParams(defaultSearchParams);
+    initialized.current = true;
+  }, [initialized, project, cycleTimePolicy, searchParams, setSearchParams]);
 
   const value: ProjectContextType = {
     project,
