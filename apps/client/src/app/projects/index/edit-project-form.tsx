@@ -35,8 +35,11 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
   project,
   onClose,
 }) => {
-  const [updatedWorkflow, setUpdatedWorkflow] =
-    useState<UpdateProjectParams["workflow"]>();
+  const [updatedStoryWorkflow, setUpdatedStoryWorkflow] =
+    useState<UpdateProjectParams["storyWorkflow"]>();
+
+  const [updatedEpicWorkflow, setUpdatedEpicWorkflow] =
+    useState<UpdateProjectParams["epicWorkflow"]>();
 
   const [updatedCycleTimePolicy, setUpdatedCycleTimePolicy] =
     useState<ComputedCycleTimePolicy>(
@@ -45,20 +48,31 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
 
   const updateProject = useUpdateProject();
 
-  const onWorkflowChanged = useCallback(
+  const onStoryWorkflowChanged = useCallback(
     (workflow: WorkflowStage[]) =>
-      setUpdatedWorkflow(
+      setUpdatedStoryWorkflow(
         workflow.map((stage) => ({
           ...stage,
           statuses: stage.statuses.map((status) => status.name),
         })),
       ),
-    [setUpdatedWorkflow],
+    [setUpdatedStoryWorkflow],
+  );
+
+  const onEpicWorkflowChanged = useCallback(
+    (workflow: WorkflowStage[]) =>
+      setUpdatedEpicWorkflow(
+        workflow.map((stage) => ({
+          ...stage,
+          statuses: stage.statuses.map((status) => status.name),
+        })),
+      ),
+    [setUpdatedEpicWorkflow],
   );
 
   const labels = makeOptions(project.labels);
 
-  const onStagesChanged = (keys: Key[]) => {
+  const onStoryStagesChanged = (keys: Key[]) => {
     const statuses: string[] = flatten(
       project?.workflow.stories.stages
         .filter((stage) => keys.includes(stage.name))
@@ -101,12 +115,13 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
   }
 
   const applyChanges = () => {
-    if (updatedWorkflow && updatedCycleTimePolicy) {
+    if (updatedStoryWorkflow && updatedEpicWorkflow && updatedCycleTimePolicy) {
       updateProject.mutate(
         {
           id: project.id,
           name: project.name,
-          workflow: updatedWorkflow,
+          storyWorkflow: updatedStoryWorkflow,
+          epicWorkflow: updatedEpicWorkflow,
           defaultCycleTimePolicy: toCycleTimePolicy(updatedCycleTimePolicy),
         },
         {
@@ -121,13 +136,25 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
       <Form.Item label="Name">
         <Input value={project.name} />
       </Form.Item>
-      <Form.Item label="Workflow" style={{ overflowX: "auto" }}>
+
+      <Form.Item label="Story Workflow" style={{ overflowX: "auto" }}>
         <WorkflowBoard
           project={{
             statuses: project.statuses.stories,
             workflow: project.workflow.stories.stages,
           }}
-          onWorkflowChanged={onWorkflowChanged}
+          onWorkflowChanged={onStoryWorkflowChanged}
+          disabled={updateProject.isLoading}
+        />
+      </Form.Item>
+
+      <Form.Item label="Epic Workflow" style={{ overflowX: "auto" }}>
+        <WorkflowBoard
+          project={{
+            statuses: project.statuses.epics,
+            workflow: project.workflow.epics.stages,
+          }}
+          onWorkflowChanged={onEpicWorkflowChanged}
           disabled={updateProject.isLoading}
         />
       </Form.Item>
@@ -136,7 +163,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
         <WorkflowStagesTable
           workflowStages={project.workflow.stories.stages}
           selectedStages={updatedCycleTimePolicy.statuses}
-          onSelectionChanged={onStagesChanged}
+          onSelectionChanged={onStoryStagesChanged}
         />
         <Checkbox
           checked={updatedCycleTimePolicy.includeWaitTime}
@@ -178,7 +205,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
         type="primary"
         onClick={applyChanges}
         loading={updateProject.isLoading}
-        disabled={updatedWorkflow === undefined || updateProject.isLoading}
+        disabled={updatedStoryWorkflow === undefined || updateProject.isLoading}
       >
         Apply Changes
       </Button>
