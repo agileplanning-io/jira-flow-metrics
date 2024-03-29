@@ -62,7 +62,10 @@ class UpdateProjectBody {
   name: string;
 
   @ApiProperty()
-  workflow: WorkflowStageBody[];
+  storyWorkflow: WorkflowStageBody[];
+
+  @ApiProperty()
+  epicWorkflow: WorkflowStageBody[];
 
   @ApiProperty()
   defaultCycleTimePolicy: CycleTimePolicyBody;
@@ -88,10 +91,18 @@ export class ProjectsController {
   ) {
     const project = await this.projects.getProject(projectId);
 
-    const storyStages = request.workflow.map((stage) => ({
+    const storyStages = request.storyWorkflow.map((stage) => ({
       name: stage.name,
       selectByDefault: stage.selectByDefault,
       statuses: project.statuses.stories.filter((status) =>
+        stage.statuses.includes(status.name),
+      ),
+    }));
+
+    const epicStages = request.epicWorkflow.map((stage) => ({
+      name: stage.name,
+      selectByDefault: stage.selectByDefault,
+      statuses: project.statuses.epics.filter((status) =>
         stage.statuses.includes(status.name),
       ),
     }));
@@ -113,7 +124,7 @@ export class ProjectsController {
           stages: storyStages,
         },
         epics: {
-          stages: [],
+          stages: epicStages,
         },
       },
       defaultCycleTimePolicy,

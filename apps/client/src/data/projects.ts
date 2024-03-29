@@ -20,9 +20,13 @@ export type Project = {
   domainId: string;
   statuses: {
     stories: TransitionStatus[];
+    epics: TransitionStatus[];
   };
   workflow: {
     stories: {
+      stages: WorkflowStage[];
+    };
+    epics: {
       stages: WorkflowStage[];
     };
   };
@@ -162,7 +166,8 @@ export const useCreateProject = () => {
 export type UpdateProjectParams = {
   id: string;
   name: string;
-  workflow: { name: string; statuses: string[] }[];
+  storyWorkflow: { name: string; statuses: string[] }[];
+  epicWorkflow: { name: string; statuses: string[] }[];
   defaultCycleTimePolicy: CycleTimePolicy;
 };
 
