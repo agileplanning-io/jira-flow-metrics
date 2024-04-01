@@ -45,8 +45,14 @@ const projectsQueryKey = (domainId?: string) => [
   "projects",
 ];
 
-export const invalidateDataSourceQueries = () =>
-  client.invalidateQueries([projectsQueryKey]);
+const projectQueryKey = (projectId?: string) => ["projects", projectId];
+
+const dataSourcesQueryKey = (domainId: string | undefined, query: string) => [
+  "domains",
+  domainId,
+  "datasources",
+  query,
+];
 
 const getDataSources = async (
   domainId: string | undefined,
@@ -64,7 +70,7 @@ const getDataSources = async (
 
 export const useDataSources = (domainId: string | undefined, query: string) => {
   return useQuery({
-    queryKey: [...projectsQueryKey(domainId), query],
+    queryKey: dataSourcesQueryKey(domainId, query),
     queryFn: () => getDataSources(domainId, query),
     enabled: domainId !== undefined,
   });
@@ -87,26 +93,28 @@ const getProject = async (projectId?: string): Promise<Project> => {
 
 export const useProject = (projectId?: string) => {
   return useQuery({
-    queryKey: ["projects", projectId],
+    queryKey: projectQueryKey(projectId),
     queryFn: () => getProject(projectId),
     enabled: projectId !== undefined,
   });
 };
 
+const parseProject = (project: Project) => {
+  const lastSync = project.lastSync;
+  return {
+    ...project,
+    lastSync: lastSync
+      ? {
+          ...lastSync,
+          date: new Date(lastSync.date),
+        }
+      : undefined,
+  };
+};
+
 const getProjects = async (domainId?: string): Promise<Project[]> => {
   const response = await axios.get(`/domains/${domainId}/projects`);
-  return response.data.map((project: Project) => {
-    const lastSync = project.lastSync;
-    return {
-      ...project,
-      lastSync: lastSync
-        ? {
-            ...lastSync,
-            date: new Date(lastSync.date),
-          }
-        : undefined,
-    };
-  });
+  return response.data.map(parseProject);
 };
 
 export const useProjects = (domainId?: string) => {
@@ -130,13 +138,13 @@ export const useSyncProject = () => {
   });
 };
 
-const removeProject = async (projectId: string): Promise<void> => {
+const removeProject = async (projectId?: string): Promise<void> => {
   await axios.delete(`/projects/${projectId}`);
 };
 
 export const useRemoveProject = (projectId?: string) => {
   return useMutation({
-    mutationFn: () => removeProject(projectId ?? ""),
+    mutationFn: () => removeProject(projectId),
     onSuccess: () => {
       client.invalidateQueries();
     },
@@ -182,6 +190,23 @@ const updateProject = async ({
 export const useUpdateProject = () => {
   return useMutation({
     mutationFn: updateProject,
-    onSuccess: () => client.invalidateQueries(),
+    onSuccess: (response) => {
+      const project = parseProject(response);
+      client.setQueryData(projectQueryKey(project.id), project);
+
+      const projects = client.getQueryData<Project[]>(
+        projectsQueryKey(project.domainId),
+      );
+      if (!projects) {
+        return;
+      }
+
+      const projectIndex = projects?.findIndex(
+        (cached) => cached.id !== project.id,
+      );
+      if (projectIndex !== undefined && projectIndex >= 0) {
+        projects[projectIndex] = project;
+      }
+    },
   });
 };

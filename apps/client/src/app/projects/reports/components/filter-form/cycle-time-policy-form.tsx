@@ -58,27 +58,32 @@ export const CycleTimePolicyForm = () => {
         cycleTimePolicy?.stories.includeWaitTime ? "Include" : "Exclude"
       } story wait time`,
     },
+    {
+      label: "epic policy type",
+      value: cycleTimePolicy?.epics.type,
+    },
   ];
 
   if (cycleTimePolicy.epics.type === "status") {
     options.push(
-      ...[
-        {
-          label: "epic stages",
-          value: selectedEpicStages
-            ? `Stages=${selectedEpicStages}`
-            : "StatusCategory=In Progress",
-        },
-        {
-          value: `${
-            cycleTimePolicy.epics.includeWaitTime ? "Include" : "Exclude"
-          } epic wait time`,
-        },
-      ],
+      {
+        label: "epic stages",
+        value: selectedEpicStages
+          ? `Stages=${selectedEpicStages}`
+          : "StatusCategory=In Progress",
+      },
+      {
+        value: `${
+          cycleTimePolicy.epics.includeWaitTime ? "Include" : "Exclude"
+        } epic wait time`,
+      },
     );
   }
 
-  if (cycleTimePolicy?.epics.type === "computed") {
+  if (
+    cycleTimePolicy?.epics.type === "computed" &&
+    cycleTimePolicy.epics.labelsFilter?.labels?.length
+  ) {
     options.push({
       label:
         cycleTimePolicy?.epics.labelsFilter?.labelFilterType ===
