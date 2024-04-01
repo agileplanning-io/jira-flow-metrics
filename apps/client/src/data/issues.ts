@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import {
+  CycleTimePolicy,
   HierarchyLevel,
   Issue,
   IssueFlowMetrics,
-  LabelFilterType,
   TransitionStatus,
 } from "@agileplanning-io/flow-metrics";
 
@@ -36,25 +36,31 @@ const parseIssue = (issue: Issue): Issue => {
 
 const getIssues = async (
   projectId: string | undefined,
-  includeWaitTime: boolean,
-  statuses?: string[],
-  labels?: string[],
-  labelFilterType?: LabelFilterType,
-  components?: string[],
+  policy?: CycleTimePolicy,
 ): Promise<Issue[]> => {
-  let url = `/projects/${projectId}/issues?includeWaitTime=${includeWaitTime}`;
-  if (statuses) {
-    url += `&statuses=${statuses.join()}`;
+  if (!policy) return Promise.resolve([]);
+
+  let url = `/projects/${projectId}/issues?epicPolicyType=${policy.epics.type}`;
+
+  url += `&storyPolicyIncludeWaitTime=${policy.stories.includeWaitTime}`;
+  if (policy.stories.statuses) {
+    url += `&storyPolicyStatuses=${policy.stories.statuses.join()}`;
   }
-  if (labels && labels.length > 0) {
-    url += `&labels=${labels.join()}`;
+
+  if (policy.epics.type === "status") {
+    url += `&epicPolicyIncludeWaitTime=${policy.epics.includeWaitTime}`;
+    if (policy.epics.statuses) {
+      url += `&epicPolicyStatuses=${policy.epics.statuses.join()}`;
+    }
+  } else {
+    if (policy.epics.labelsFilter?.labels) {
+      url += `&epicPolicyLabels=${policy.epics.labelsFilter?.labels.join()}`;
+    }
+    if (policy.epics.labelsFilter?.labelFilterType) {
+      url += `&epicPolicyLabelFilterType=${policy.epics.labelsFilter?.labelFilterType}`;
+    }
   }
-  if (labelFilterType) {
-    url += `&labelFilterType=${labelFilterType}`;
-  }
-  if (components && components.length > 0) {
-    url += `&components=${components.join()}`;
-  }
+
   const response = await axios.get(url);
   return response.data.map(parseIssue);
 };
@@ -65,32 +71,12 @@ const parseDate = (date: string | Date | undefined): Date | undefined => {
 
 export const useIssues = (
   projectId: string | undefined,
-  includeWaitTime: boolean,
-  statuses?: string[],
-  labels?: string[],
-  labelFilterType?: LabelFilterType,
-  components?: string[],
+  policy?: CycleTimePolicy,
 ) => {
   return useQuery({
-    queryKey: [
-      issuesQueryKey,
-      projectId,
-      includeWaitTime,
-      statuses,
-      labels,
-      labelFilterType,
-      components,
-    ],
-    queryFn: () =>
-      getIssues(
-        projectId,
-        includeWaitTime,
-        statuses,
-        labels,
-        labelFilterType,
-        components,
-      ),
-    enabled: projectId !== undefined && includeWaitTime !== undefined,
+    queryKey: [issuesQueryKey, projectId, JSON.stringify(policy)],
+    queryFn: () => getIssues(projectId, policy),
+    enabled: projectId !== undefined && policy !== undefined,
   });
 };
 

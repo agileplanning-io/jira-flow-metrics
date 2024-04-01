@@ -1,10 +1,15 @@
 import { format } from "date-fns";
 
 export class SearchParamsBuilder {
+  private changed = false;
+
   constructor(private readonly params: URLSearchParams) {}
 
-  set(name: string, value?: string | boolean | Date | number) {
-    if (value) {
+  set(
+    name: string,
+    value?: string | boolean | Date | number,
+  ): SearchParamsBuilder {
+    if (value !== undefined) {
       if (typeof value === "string") {
         this.params.set(name, value);
       } else if (typeof value === "boolean") {
@@ -17,18 +22,36 @@ export class SearchParamsBuilder {
     } else {
       this.params.delete(name);
     }
+    this.changed = true;
     return this;
   }
 
-  setAll(name: string, value?: string[]) {
+  setAll(name: string, value?: string[]): SearchParamsBuilder {
+    if (!this.params.has(name) && !value) {
+      return this;
+    }
+
     this.params.delete(name);
     if (value && value.length) {
       value.forEach((v) => this.params.append(name, v));
     }
+    this.changed = true;
     return this;
   }
 
-  getParams() {
+  get(name: string): string | null {
+    return this.params.get(name);
+  }
+
+  getAll(name: string): string[] | null {
+    return this.params.has(name) ? this.params.getAll(name) ?? [] : null;
+  }
+
+  getParams(): URLSearchParams {
     return this.params;
+  }
+
+  getChanged(): boolean {
+    return this.changed;
   }
 }

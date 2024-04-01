@@ -18,13 +18,11 @@ import {
 } from "@agileplanning-io/flow-components";
 import { WorkflowStage } from "@data/issues";
 import { flatten } from "rambda";
-import { LabelFilterType } from "@agileplanning-io/flow-metrics";
-import { CheckboxChangeEvent } from "antd/es/checkbox";
 import {
-  ComputedCycleTimePolicy,
-  fromCycleTimePolicy,
-  toCycleTimePolicy,
-} from "../context/context";
+  CycleTimePolicy,
+  LabelFilterType,
+} from "@agileplanning-io/flow-metrics";
+import { CheckboxChangeEvent } from "antd/es/checkbox";
 
 export type EditProjectFormProps = {
   project: Project;
@@ -42,9 +40,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
     useState<UpdateProjectParams["epicWorkflow"]>();
 
   const [updatedCycleTimePolicy, setUpdatedCycleTimePolicy] =
-    useState<ComputedCycleTimePolicy>(
-      fromCycleTimePolicy(project?.defaultCycleTimePolicy),
-    );
+    useState<CycleTimePolicy>(project?.defaultCycleTimePolicy);
 
   const updateProject = useUpdateProject();
 
@@ -79,34 +75,40 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
         .map((stage) => stage.statuses.map((status) => status.name)) ?? [],
     );
     if (updatedCycleTimePolicy) {
-      setUpdatedCycleTimePolicy({ ...updatedCycleTimePolicy, statuses });
+      updatedCycleTimePolicy.stories.statuses = statuses;
+      setUpdatedCycleTimePolicy(updatedCycleTimePolicy);
     }
   };
 
   const onIncludeWaitTimeChanged = (e: CheckboxChangeEvent) => {
     if (updatedCycleTimePolicy) {
-      setUpdatedCycleTimePolicy({
-        ...updatedCycleTimePolicy,
-        includeWaitTime: e.target.checked,
-      });
+      updatedCycleTimePolicy.stories.includeWaitTime = e.target.checked;
+      setUpdatedCycleTimePolicy(updatedCycleTimePolicy);
     }
   };
 
   const onLabelFilterTypeChanged = (labelFilterType: LabelFilterType) => {
     if (updatedCycleTimePolicy) {
-      setUpdatedCycleTimePolicy({
-        ...updatedCycleTimePolicy,
-        labelFilterType,
-      });
+      if (
+        updatedCycleTimePolicy.epics.type === "computed" &&
+        updatedCycleTimePolicy.epics.labelsFilter
+      ) {
+        updatedCycleTimePolicy.epics.labelsFilter.labelFilterType =
+          labelFilterType;
+      }
+      setUpdatedCycleTimePolicy(updatedCycleTimePolicy);
     }
   };
 
   const onLabelsChanged = (labels: string[]) => {
     if (updatedCycleTimePolicy) {
-      setUpdatedCycleTimePolicy({
-        ...updatedCycleTimePolicy,
-        labels,
-      });
+      if (
+        updatedCycleTimePolicy.epics.type === "computed" &&
+        updatedCycleTimePolicy.epics.labelsFilter
+      ) {
+        updatedCycleTimePolicy.epics.labelsFilter.labels = labels;
+      }
+      setUpdatedCycleTimePolicy(updatedCycleTimePolicy);
     }
   };
 
@@ -122,7 +124,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
           name: project.name,
           storyWorkflow: updatedStoryWorkflow,
           epicWorkflow: updatedEpicWorkflow,
-          defaultCycleTimePolicy: toCycleTimePolicy(updatedCycleTimePolicy),
+          defaultCycleTimePolicy: updatedCycleTimePolicy,
         },
         {
           onSuccess: onClose,
@@ -162,11 +164,11 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
       <Form.Item label="Default Cycle Time Policy">
         <WorkflowStagesTable
           workflowStages={project.workflow.stories.stages}
-          selectedStages={updatedCycleTimePolicy.statuses}
+          selectedStages={updatedCycleTimePolicy.stories.statuses}
           onSelectionChanged={onStoryStagesChanged}
         />
         <Checkbox
-          checked={updatedCycleTimePolicy.includeWaitTime}
+          checked={updatedCycleTimePolicy.stories.includeWaitTime}
           onChange={onIncludeWaitTimeChanged}
         >
           Include wait time
@@ -178,7 +180,12 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
               <Space.Compact style={{ width: "100%" }}>
                 <Form.Item style={{ width: "25%" }}>
                   <Select
-                    value={updatedCycleTimePolicy.labelFilterType}
+                    value={
+                      updatedCycleTimePolicy.epics.type === "computed"
+                        ? updatedCycleTimePolicy.epics.labelsFilter
+                            ?.labelFilterType
+                        : undefined
+                    }
                     onChange={onLabelFilterTypeChanged}
                     options={[
                       { value: "include", label: "Include" },
@@ -191,7 +198,11 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
                     mode="multiple"
                     allowClear={true}
                     options={labels}
-                    value={updatedCycleTimePolicy.labels}
+                    value={
+                      updatedCycleTimePolicy.epics.type === "computed"
+                        ? updatedCycleTimePolicy.epics.labelsFilter?.labels
+                        : undefined
+                    }
                     onChange={onLabelsChanged}
                   />
                 </Form.Item>
