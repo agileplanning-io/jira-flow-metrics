@@ -34,13 +34,12 @@ const parseEpicStatusPolicy = (
 
   const statuses = builder.getAll("epicPolicyStatuses") ?? [];
 
-  if (!builder.get("epicPolicyIncludeWaitTime")) {
-    builder.set(
-      "epicPolicyIncludeWaitTime",
+  if (builder.get("epicPolicyIncludeWaitTime") === null) {
+    const includeWaitTime =
       project.defaultCycleTimePolicy.epics.type === "status"
         ? project.defaultCycleTimePolicy.epics.includeWaitTime
-        : false,
-    );
+        : false;
+    builder.set("epicPolicyIncludeWaitTime", includeWaitTime ?? false);
   }
 
   const includeWaitTime = builder.get("epicPolicyIncludeWaitTime") === "true";
@@ -116,7 +115,7 @@ const parseStoryPolicy = (
 
   const statuses = builder.getAll("storyPolicyStatuses") ?? [];
 
-  if (!builder.get("storyPolicyIncludeWaitTime")) {
+  if (builder.get("storyPolicyIncludeWaitTime") === null) {
     builder.set(
       "storyPolicyIncludeWaitTime",
       project.defaultCycleTimePolicy.stories.includeWaitTime,
