@@ -65,7 +65,7 @@ const parseEpicComputedPolicy = (
     );
   }
 
-  const labels = builder.getAll("epicPolicyLabels") ?? [];
+  const labels = builder.getAll("epicPolicyLabels") ?? undefined;
 
   if (!builder.get("epicPolicyLabelFilterType")) {
     builder.set(

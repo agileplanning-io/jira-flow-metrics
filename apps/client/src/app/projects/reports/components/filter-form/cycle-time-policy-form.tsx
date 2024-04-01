@@ -40,13 +40,18 @@ export const CycleTimePolicyForm = () => {
 
   const selectedEpicStages = project?.workflow.epics.stages
     .filter((stage) =>
-      stage.statuses.every(
-        (status) =>
-          cycleTimePolicy?.epics.type === "status" &&
-          cycleTimePolicy.epics.statuses?.some(
-            (projectStatus) => projectStatus === status.name,
-          ),
-      ),
+      stage.statuses.every((status) => {
+        if (cycleTimePolicy?.epics.type === "status") {
+          if (cycleTimePolicy.epics.statuses?.length) {
+            return cycleTimePolicy.epics.statuses?.some(
+              (projectStatus) => projectStatus === status.name,
+            );
+          } else {
+            return stage.selectByDefault;
+          }
+        }
+        return false;
+      }),
     )
     .map((stage) => stage.name);
 
@@ -127,9 +132,17 @@ export const CycleTimePolicyForm = () => {
     setCycleTimePolicy(policy);
   };
 
-  const onIncludeWaitTimeChanged = (e: CheckboxChangeEvent) => {
+  const onStoryIncludeWaitTimeChanged = (e: CheckboxChangeEvent) => {
     const policy = clone(cycleTimePolicy);
     policy.stories.includeWaitTime = e.target.checked;
+    setCycleTimePolicy(policy);
+  };
+
+  const onEpicIncludeWaitTimeChanged = (e: CheckboxChangeEvent) => {
+    const policy = clone(cycleTimePolicy);
+    if (policy.epics.type === "status") {
+      policy.epics.includeWaitTime = e.target.checked;
+    }
     setCycleTimePolicy(policy);
   };
 
@@ -183,7 +196,7 @@ export const CycleTimePolicyForm = () => {
             </Form.Item>
             <Checkbox
               checked={cycleTimePolicy.stories.includeWaitTime}
-              onChange={onIncludeWaitTimeChanged}
+              onChange={onStoryIncludeWaitTimeChanged}
             >
               Include wait time
             </Checkbox>
@@ -233,13 +246,21 @@ export const CycleTimePolicyForm = () => {
                 </Space.Compact>
               </Form.Item>
             ) : (
-              <Form.Item label="Selected Stages">
-                <WorkflowStagesTable
-                  workflowStages={project?.workflow.epics.stages}
-                  selectedStages={selectedEpicStages}
-                  onSelectionChanged={onEpicStagesChanged}
-                />
-              </Form.Item>
+              <>
+                <Form.Item label="Selected Stages">
+                  <WorkflowStagesTable
+                    workflowStages={project?.workflow.epics.stages}
+                    selectedStages={selectedEpicStages}
+                    onSelectionChanged={onEpicStagesChanged}
+                  />
+                </Form.Item>
+                <Checkbox
+                  checked={cycleTimePolicy.epics.includeWaitTime}
+                  onChange={onEpicIncludeWaitTimeChanged}
+                >
+                  Include wait time
+                </Checkbox>
+              </>
             )}
           </Col>
         </Row>
