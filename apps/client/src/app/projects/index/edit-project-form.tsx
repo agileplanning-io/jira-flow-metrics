@@ -1,28 +1,11 @@
 import { LoadingSpinner } from "@app/components/loading-spinner";
 import { Project, UpdateProjectParams, useUpdateProject } from "@data/projects";
-import {
-  Button,
-  Checkbox,
-  Col,
-  Form,
-  Input,
-  Row,
-  Select,
-  SelectProps,
-  Space,
-} from "antd";
-import { FC, Key, useCallback, useState } from "react";
-import {
-  WorkflowBoard,
-  WorkflowStagesTable,
-} from "@agileplanning-io/flow-components";
+import { Button, Form, Input } from "antd";
+import { FC, useCallback, useState } from "react";
+import { WorkflowBoard } from "@agileplanning-io/flow-components";
 import { WorkflowStage } from "@data/issues";
-import { flatten } from "rambda";
-import {
-  CycleTimePolicy,
-  LabelFilterType,
-} from "@agileplanning-io/flow-metrics";
-import { CheckboxChangeEvent } from "antd/es/checkbox";
+import { CycleTimePolicy } from "@agileplanning-io/flow-metrics";
+import { EditCycleTimePolicyForm } from "@app/components/edit-cycle-time-policy-form";
 
 export type EditProjectFormProps = {
   project: Project;
@@ -65,52 +48,6 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
       ),
     [setUpdatedEpicWorkflow],
   );
-
-  const labels = makeOptions(project.labels);
-
-  const onStoryStagesChanged = (keys: Key[]) => {
-    const statuses: string[] = flatten(
-      project?.workflow.stories.stages
-        .filter((stage) => keys.includes(stage.name))
-        .map((stage) => stage.statuses.map((status) => status.name)) ?? [],
-    );
-    if (updatedCycleTimePolicy) {
-      updatedCycleTimePolicy.stories.statuses = statuses;
-      setUpdatedCycleTimePolicy(updatedCycleTimePolicy);
-    }
-  };
-
-  const onIncludeWaitTimeChanged = (e: CheckboxChangeEvent) => {
-    if (updatedCycleTimePolicy) {
-      updatedCycleTimePolicy.stories.includeWaitTime = e.target.checked;
-      setUpdatedCycleTimePolicy(updatedCycleTimePolicy);
-    }
-  };
-
-  const onLabelFilterTypeChanged = (labelFilterType: LabelFilterType) => {
-    if (updatedCycleTimePolicy) {
-      if (
-        updatedCycleTimePolicy.epics.type === "computed" &&
-        updatedCycleTimePolicy.epics.labelsFilter
-      ) {
-        updatedCycleTimePolicy.epics.labelsFilter.labelFilterType =
-          labelFilterType;
-      }
-      setUpdatedCycleTimePolicy(updatedCycleTimePolicy);
-    }
-  };
-
-  const onLabelsChanged = (labels: string[]) => {
-    if (updatedCycleTimePolicy) {
-      if (
-        updatedCycleTimePolicy.epics.type === "computed" &&
-        updatedCycleTimePolicy.epics.labelsFilter
-      ) {
-        updatedCycleTimePolicy.epics.labelsFilter.labels = labels;
-      }
-      setUpdatedCycleTimePolicy(updatedCycleTimePolicy);
-    }
-  };
 
   if (!project) {
     return <LoadingSpinner />;
@@ -162,20 +99,12 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
       </Form.Item>
 
       <Form.Item label="Default Cycle Time Policy">
-        <WorkflowStagesTable
-          workflowStages={project.workflow.stories.stages}
-          selectedStages={updatedCycleTimePolicy.stories.statuses}
-          onSelectionChanged={onStoryStagesChanged}
+        <EditCycleTimePolicyForm
+          project={project}
+          cycleTimePolicy={updatedCycleTimePolicy}
+          setCycleTimePolicy={setUpdatedCycleTimePolicy}
         />
-        <Checkbox
-          checked={updatedCycleTimePolicy.stories.includeWaitTime}
-          onChange={onIncludeWaitTimeChanged}
-        >
-          Include wait time
-        </Checkbox>
-
-        <Row gutter={[8, 8]}>
-          <Col span={8}>
+        {/* <Col span={8}>
             <Form.Item label="Labels" style={{ width: "100%" }}>
               <Space.Compact style={{ width: "100%" }}>
                 <Form.Item style={{ width: "25%" }}>
@@ -208,8 +137,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
                 </Form.Item>
               </Space.Compact>
             </Form.Item>
-          </Col>
-        </Row>
+          </Col> */}
       </Form.Item>
 
       <Button
@@ -222,11 +150,4 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
       </Button>
     </Form>
   );
-};
-
-const makeOptions = (values?: string[]): SelectProps["options"] => {
-  return values?.map((value) => ({
-    label: value,
-    value: value,
-  }));
 };
