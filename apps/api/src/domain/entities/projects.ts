@@ -3,6 +3,7 @@ import {
   TransitionStatus,
 } from "@agileplanning-io/flow-metrics";
 import { Domain } from "./domains";
+import { flatten } from "rambda";
 
 export type WorkflowStage = {
   name: string;
@@ -19,6 +20,9 @@ export type WorkflowScheme = {
   stories: Workflow;
   epics: Workflow;
 };
+
+export const statusesInWorkflowStages = (stages: WorkflowStage[]): string[] =>
+  flatten(stages.map((stage) => stage.statuses.map((status) => status.name)));
 
 export type Project = {
   id: string;

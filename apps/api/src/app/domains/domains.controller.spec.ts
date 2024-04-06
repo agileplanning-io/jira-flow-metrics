@@ -70,8 +70,8 @@ describe("DomainsController", () => {
       const [domain] = await domains.getDomains();
 
       expect(domain).toEqual({
-        id: "EIleBQKUNZj6",
         ...domain,
+        id: "EIleBQKUNZj6",
       });
     });
   });

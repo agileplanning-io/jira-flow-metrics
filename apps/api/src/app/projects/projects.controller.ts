@@ -90,8 +90,9 @@ export class ProjectsController {
     @Body() request: UpdateProjectBody,
   ) {
     const project = await this.projects.getProject(projectId);
+    const scheme = project.workflowScheme;
 
-    if (!project.workflowScheme) {
+    if (!scheme) {
       // the project hasn't been synced yet so nothing else to do
       return;
     }
@@ -99,7 +100,7 @@ export class ProjectsController {
     const storyStages = request.storyWorkflow.map((stage) => ({
       name: stage.name,
       selectByDefault: stage.selectByDefault,
-      statuses: project.workflowScheme.stories.statuses.filter((status) =>
+      statuses: scheme.stories.statuses.filter((status) =>
         stage.statuses.includes(status.name),
       ),
     }));
@@ -107,7 +108,7 @@ export class ProjectsController {
     const epicStages = request.epicWorkflow.map((stage) => ({
       name: stage.name,
       selectByDefault: stage.selectByDefault,
-      statuses: project.workflowScheme.epics.statuses.filter((status) =>
+      statuses: scheme.epics.statuses.filter((status) =>
         stage.statuses.includes(status.name),
       ),
     }));
@@ -127,11 +128,11 @@ export class ProjectsController {
       workflowScheme: {
         stories: {
           stages: storyStages,
-          statuses: project.workflowScheme.stories.statuses,
+          statuses: scheme.stories.statuses,
         },
         epics: {
           stages: epicStages,
-          statuses: project.workflowScheme.epics.statuses,
+          statuses: scheme.epics.statuses,
         },
       },
       defaultCycleTimePolicy,

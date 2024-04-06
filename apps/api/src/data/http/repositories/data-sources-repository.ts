@@ -21,11 +21,12 @@ export class HttpJiraDataSourcesRepository extends DataSourcesRepository {
       type: "project",
     }));
 
-    const filters: DataSource[] = filtersPage.values.map((filter) => ({
-      name: filter.name,
-      jql: filter.jql,
-      type: "filter",
-    }));
+    const filters: DataSource[] =
+      filtersPage.values?.map((filter) => ({
+        name: filter.name,
+        jql: filter.jql ?? "",
+        type: "filter",
+      })) ?? [];
 
     return [...projects, ...filters];
   }
