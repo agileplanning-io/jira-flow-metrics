@@ -38,11 +38,11 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const defaultBuilder = new SearchParamsBuilder(searchParams);
     if (!searchParams.get("epicPolicyType")) {
-      defaultBuilder.set("epicPolicyType", "computed");
+      defaultBuilder.set("epicPolicyType", "status");
     }
     if (!searchParams.get("policyStoryStatuses")) {
       const statuses: string[] = flatten(
-        project?.workflow.stories.stages
+        project?.workflowScheme.stories.stages
           .filter((stage) => stage.selectByDefault)
           .map((stage) => stage.statuses.map((status) => status.name)) ??
           undefined,
@@ -51,7 +51,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     if (!searchParams.get("policyEpicStatuses")) {
       const statuses: string[] = flatten(
-        project?.workflow.epics.stages
+        project?.workflowScheme.epics.stages
           .filter((stage) => stage.selectByDefault)
           .map((stage) => stage.statuses.map((status) => status.name)) ??
           undefined,

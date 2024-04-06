@@ -2,7 +2,7 @@ import {
   ProjectsRepository,
   WorkflowStage,
   Workflow,
-  ProjectStatuses,
+  WorkflowScheme,
 } from "@entities/projects";
 import { IssuesRepository } from "@entities/issues";
 import { Injectable } from "@nestjs/common";
@@ -54,12 +54,15 @@ export class SyncUseCase {
 
     const statuses = buildProjectStatuses(issues, canonicalStatuses);
 
-    const workflow = buildWorkflow(project.workflow, statuses);
+    // TODO: this shouldn't typecheck since project.workflow may be undefined
+    const workflowScheme =
+      project.workflowScheme && isValidWorkflowScheme(project.workflowScheme)
+        ? project.workflowScheme
+        : buildDefaultWorkflowScheme(statuses);
 
     const defaultCycleTimePolicy = buildDefaultCycleTimePolicy(
       project.defaultCycleTimePolicy,
-      workflow,
-      statuses,
+      workflowScheme,
     );
 
     const labels = uniq(flatten<string>(issues.map((issue) => issue.labels)));
@@ -72,10 +75,9 @@ export class SyncUseCase {
         date: new Date(),
         issueCount: issues.length,
       },
-      statuses,
       components,
       labels,
-      workflow,
+      workflowScheme: workflowScheme,
       defaultCycleTimePolicy,
     });
 
@@ -83,15 +85,15 @@ export class SyncUseCase {
   }
 }
 
-const buildWorkflow = (
-  currentWorkflow: Workflow | undefined,
-  statuses: ProjectStatuses,
-): Workflow => {
-  if (currentWorkflow && isValidWorkflow(currentWorkflow, statuses)) {
-    return currentWorkflow;
-  }
+type ProjectStatuses = {
+  stories: TransitionStatus[];
+  epics: TransitionStatus[];
+};
 
-  const getWorkflowStage =
+const buildDefaultWorkflowScheme = (
+  statuses: ProjectStatuses,
+): WorkflowScheme => {
+  const buildWorkflowStage =
     (statuses: TransitionStatus[]) =>
     (category: StatusCategory): WorkflowStage => ({
       name: category,
@@ -105,44 +107,47 @@ const buildWorkflow = (
     StatusCategory.Done,
   ];
 
-  const workflow: Workflow = {
-    stories: {
-      stages: categories.map(getWorkflowStage(statuses.stories)),
-    },
-    epics: {
-      stages: categories.map(getWorkflowStage(statuses.epics)),
-    },
+  const buildWorkflow = (statuses: TransitionStatus[]) => ({
+    statuses,
+    stages: categories.map(buildWorkflowStage(statuses)),
+  });
+
+  const workflowScheme: WorkflowScheme = {
+    stories: buildWorkflow(statuses.stories),
+    epics: buildWorkflow(statuses.epics),
   };
 
-  return workflow;
+  return workflowScheme;
 };
 
 const buildDefaultCycleTimePolicy = (
   currentCycleTimePolicy: CycleTimePolicy | undefined,
-  workflow: Workflow,
-  statuses: ProjectStatuses,
+  scheme: WorkflowScheme,
 ): CycleTimePolicy => {
   if (
     currentCycleTimePolicy &&
-    isValidCycleTimePolicy(currentCycleTimePolicy, statuses)
+    isValidCycleTimePolicy(currentCycleTimePolicy, scheme)
   ) {
     return currentCycleTimePolicy;
   }
 
-  const defaultSelectedStages = workflow.stories.stages.filter(
-    (stage) => stage.selectByDefault,
-  );
-
-  const storyStatuses = statusesInWorkflowStages(defaultSelectedStages);
+  const getDefaultWorkflowStatuses = (workflow: Workflow) => {
+    const defaultStages = workflow.stages.filter(
+      (stage) => stage.selectByDefault,
+    );
+    return statusesInWorkflowStages(defaultStages);
+  };
 
   return {
     stories: {
       type: "status",
       includeWaitTime: false,
-      statuses: storyStatuses,
+      statuses: getDefaultWorkflowStatuses(scheme.stories),
     },
     epics: {
-      type: "computed",
+      type: "status",
+      includeWaitTime: false,
+      statuses: getDefaultWorkflowStatuses(scheme.epics),
     },
   };
 };
@@ -150,30 +155,26 @@ const buildDefaultCycleTimePolicy = (
 const statusesInWorkflowStages = (stages: WorkflowStage[]): string[] =>
   flatten(stages.map((stage) => stage.statuses.map((status) => status.name)));
 
-const isValidWorkflow = (
-  workflow: Workflow,
-  statuses: ProjectStatuses,
-): boolean => {
-  return (
-    statusesInWorkflowStages(workflow.stories.stages).every(
-      isValidStatus(statuses.stories),
-    ) &&
-    statusesInWorkflowStages(workflow.epics.stages).every(
-      isValidStatus(statuses.epics),
-    )
+const isValidWorkflowScheme = (scheme: WorkflowScheme): boolean => {
+  return isValidWorkflow(scheme.stories) && isValidWorkflow(scheme.epics);
+};
+
+const isValidWorkflow = (workflow: Workflow): boolean => {
+  return statusesInWorkflowStages(workflow.stages).every(
+    isValidStatus(workflow.statuses),
   );
 };
 
 const isValidCycleTimePolicy = (
   policy: CycleTimePolicy,
-  statuses: ProjectStatuses,
+  scheme: WorkflowScheme,
 ): boolean => {
   const validStoryPolicy = policy.stories.statuses.every(
-    isValidStatus(statuses.stories),
+    isValidStatus(scheme.stories.statuses),
   );
   const validEpicPolicy =
     (policy.epics.type === "status" &&
-      policy.epics.statuses.every(isValidStatus(statuses.epics))) ||
+      policy.epics.statuses.every(isValidStatus(scheme.epics.statuses))) ||
     policy.epics.type === "computed";
 
   return validStoryPolicy && validEpicPolicy;
@@ -185,7 +186,7 @@ const isValidStatus = (validStatuses: TransitionStatus[]) => (status: string) =>
 const buildProjectStatuses = (
   issues: Issue[],
   canonicalStatuses: TransitionStatus[],
-): ProjectStatuses => {
+) => {
   const stories = issues.filter(
     (issue) => issue.hierarchyLevel === HierarchyLevel.Story,
   );
