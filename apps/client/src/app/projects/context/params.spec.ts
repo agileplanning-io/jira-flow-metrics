@@ -195,25 +195,23 @@ const buildProject = (params: Partial<Project> = {}): Project => {
     name: "My Project",
     jql: "project = MYPROJ",
     domainId: "domain-id",
-    statuses: {
-      stories: [
-        { name: "To Do", category: StatusCategory.ToDo },
-        { name: "In Progress", category: StatusCategory.InProgress },
-        { name: "In Test", category: StatusCategory.InProgress },
-        { name: "Done", category: StatusCategory.Done },
-      ],
-      epics: [
-        { name: "To Do", category: StatusCategory.ToDo },
-        { name: "In Progress", category: StatusCategory.InProgress },
-        { name: "Done", category: StatusCategory.Done },
-      ],
-    },
-    workflow: {
+    workflowScheme: {
       stories: {
         stages: [],
+        statuses: [
+          { name: "To Do", category: StatusCategory.ToDo },
+          { name: "In Progress", category: StatusCategory.InProgress },
+          { name: "In Test", category: StatusCategory.InProgress },
+          { name: "Done", category: StatusCategory.Done },
+        ],
       },
       epics: {
         stages: [],
+        statuses: [
+          { name: "To Do", category: StatusCategory.ToDo },
+          { name: "In Progress", category: StatusCategory.InProgress },
+          { name: "Done", category: StatusCategory.Done },
+        ],
       },
     },
     defaultCycleTimePolicy: {

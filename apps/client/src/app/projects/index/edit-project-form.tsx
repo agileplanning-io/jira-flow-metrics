@@ -78,10 +78,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
 
       <Form.Item label="Story Workflow" style={{ overflowX: "auto" }}>
         <WorkflowBoard
-          project={{
-            statuses: project.statuses.stories,
-            workflow: project.workflow.stories.stages,
-          }}
+          workflow={project.workflowScheme.stories}
           onWorkflowChanged={onStoryWorkflowChanged}
           disabled={updateProject.isLoading}
         />
@@ -89,10 +86,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
 
       <Form.Item label="Epic Workflow" style={{ overflowX: "auto" }}>
         <WorkflowBoard
-          project={{
-            statuses: project.statuses.epics,
-            workflow: project.workflow.epics.stages,
-          }}
+          workflow={project.workflowScheme.epics}
           onWorkflowChanged={onEpicWorkflowChanged}
           disabled={updateProject.isLoading}
         />
@@ -104,40 +98,6 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
           cycleTimePolicy={updatedCycleTimePolicy}
           setCycleTimePolicy={setUpdatedCycleTimePolicy}
         />
-        {/* <Col span={8}>
-            <Form.Item label="Labels" style={{ width: "100%" }}>
-              <Space.Compact style={{ width: "100%" }}>
-                <Form.Item style={{ width: "25%" }}>
-                  <Select
-                    value={
-                      updatedCycleTimePolicy.epics.type === "computed"
-                        ? updatedCycleTimePolicy.epics.labelsFilter
-                            ?.labelFilterType
-                        : undefined
-                    }
-                    onChange={onLabelFilterTypeChanged}
-                    options={[
-                      { value: "include", label: "Include" },
-                      { value: "exclude", label: "Exclude" },
-                    ]}
-                  />
-                </Form.Item>
-                <Form.Item style={{ width: "75%" }}>
-                  <Select
-                    mode="multiple"
-                    allowClear={true}
-                    options={labels}
-                    value={
-                      updatedCycleTimePolicy.epics.type === "computed"
-                        ? updatedCycleTimePolicy.epics.labelsFilter?.labels
-                        : undefined
-                    }
-                    onChange={onLabelsChanged}
-                  />
-                </Form.Item>
-              </Space.Compact>
-            </Form.Item>
-          </Col> */}
       </Form.Item>
 
       <Button

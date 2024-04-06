@@ -7,6 +7,7 @@ import {
 import { useProjectContext } from "@app/projects/context";
 import { LoadingSpinner } from "@app/components/loading-spinner";
 import { EditCycleTimePolicyForm } from "@app/components/edit-cycle-time-policy-form";
+import { getSelectedStages } from "@data/workflows";
 
 export const CycleTimePolicyForm = () => {
   const { project, cycleTimePolicy, setCycleTimePolicy, issues } =
@@ -16,35 +17,15 @@ export const CycleTimePolicyForm = () => {
     return <LoadingSpinner />;
   }
 
-  // TODO: define API cycle time policies in terms of stages and remove this duplication with
-  // EditCycleTimePolicyForm
-  const selectedStoryStages = project?.workflow.stories.stages
-    .filter((stage) =>
-      stage.statuses.every(
-        (status) =>
-          cycleTimePolicy?.stories.statuses?.some(
-            (projectStatus) => projectStatus === status.name,
-          ),
-      ),
-    )
-    .map((stage) => stage.name);
+  const selectedStoryStages = getSelectedStages(
+    project.workflowScheme.stories,
+    cycleTimePolicy?.stories,
+  );
 
-  const selectedEpicStages = project?.workflow.epics.stages
-    .filter((stage) =>
-      stage.statuses.every((status) => {
-        if (cycleTimePolicy?.epics.type === "status") {
-          if (cycleTimePolicy.epics.statuses?.length) {
-            return cycleTimePolicy.epics.statuses?.some(
-              (projectStatus) => projectStatus === status.name,
-            );
-          } else {
-            return stage.selectByDefault;
-          }
-        }
-        return false;
-      }),
-    )
-    .map((stage) => stage.name);
+  const selectedEpicStages = getSelectedStages(
+    project.workflowScheme.epics,
+    cycleTimePolicy.epics.type === "status" ? cycleTimePolicy.epics : undefined,
+  );
 
   const options: ExpandableOptionsHeader["options"][number][] = [
     {

@@ -43,10 +43,6 @@ const createProject = async (projects: ProjectsRepository) => {
       domainId,
       name: "My Project",
       jql: "project = MYPROJ",
-      statuses: {
-        stories: [backlog, inProgress, done],
-        epics: [],
-      },
       labels: [],
       components: [],
       defaultCycleTimePolicy: {
@@ -59,8 +55,9 @@ const createProject = async (projects: ProjectsRepository) => {
           type: "computed",
         },
       },
-      workflow: {
+      workflowScheme: {
         stories: {
+          statuses: [backlog, inProgress, done],
           stages: [
             {
               name: backlog.name,
@@ -81,6 +78,7 @@ const createProject = async (projects: ProjectsRepository) => {
         },
         epics: {
           stages: [],
+          statuses: [],
         },
       },
     });

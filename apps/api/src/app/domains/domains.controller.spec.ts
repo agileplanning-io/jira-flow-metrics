@@ -82,7 +82,7 @@ describe("DomainsController", () => {
         domainId,
         name: "My Project",
         jql: "proj = MyProject",
-        workflow: {
+        workflowScheme: {
           stories: {
             stages: [
               {
@@ -93,16 +93,14 @@ describe("DomainsController", () => {
                 ],
               },
             ],
+            statuses: [
+              { name: "In Progress", category: StatusCategory.InProgress },
+            ],
           },
           epics: {
             stages: [],
+            statuses: [],
           },
-        },
-        statuses: {
-          stories: [
-            { name: "In Progress", category: StatusCategory.InProgress },
-          ],
-          epics: [],
         },
         labels: [],
         components: [],
@@ -127,10 +125,6 @@ describe("DomainsController", () => {
         .expect(201, {
           id: "KEPzzuIqHfHc",
           domainId,
-          statuses: {
-            stories: [],
-            epics: [],
-          },
           labels: [],
           components: [],
           ...params,

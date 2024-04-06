@@ -11,17 +11,13 @@ export type WorkflowStage = {
 };
 
 export type Workflow = {
-  stories: {
-    stages: WorkflowStage[];
-  };
-  epics: {
-    stages: WorkflowStage[];
-  };
+  stages: WorkflowStage[];
+  statuses: TransitionStatus[];
 };
 
-export type ProjectStatuses = {
-  stories: TransitionStatus[];
-  epics: TransitionStatus[];
+export type WorkflowScheme = {
+  stories: Workflow;
+  epics: Workflow;
 };
 
 export type Project = {
@@ -33,10 +29,9 @@ export type Project = {
     date: Date;
     issueCount: number;
   };
-  statuses: ProjectStatuses;
   labels: string[];
   components: string[];
-  workflow?: Workflow;
+  workflowScheme?: WorkflowScheme;
   defaultCycleTimePolicy?: CycleTimePolicy;
 };
 

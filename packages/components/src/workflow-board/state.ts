@@ -23,13 +23,13 @@ export type WorkflowStage = {
   statuses: TransitionStatus[];
 };
 
-export type Project = {
-  workflow: WorkflowStage[];
+export type Workflow = {
+  stages: WorkflowStage[];
   statuses: TransitionStatus[];
 };
 
 export type WorkflowState = {
-  tasks: Record<string, Status>;
+  statuses: Record<string, Status>;
   columns: Record<string, WorkflowStageColumn>;
   columnOrder: string[];
 };
@@ -47,27 +47,27 @@ export const reorderColumns = produce(
   },
 );
 
-type ReorderTasksParams = {
+type ReorderStatusesParams = {
   columnId: string;
-  taskId: string;
+  statusId: string;
   destination: DraggableLocation;
 };
 
-export const reorderTasks = produce(
+export const reorderStatuses = produce(
   (
     draft: WorkflowState,
-    { columnId, taskId, destination }: ReorderTasksParams,
+    { columnId, statusId, destination }: ReorderStatusesParams,
   ) => {
     const column = draft.columns[columnId];
-    const taskIndex = column.statusIds.indexOf(taskId);
-    column.statusIds.splice(taskIndex, 1);
-    column.statusIds.splice(destination.index, 0, taskId);
+    const statusIndex = column.statusIds.indexOf(statusId);
+    column.statusIds.splice(statusIndex, 1);
+    column.statusIds.splice(destination.index, 0, statusId);
   },
 );
 
 type AddColumnParams = {
   source: DraggableLocation;
-  taskIndex: number;
+  statusIndex: number;
 };
 
 export const deleteColumn = produce(
@@ -88,30 +88,32 @@ export const renameColumn = produce(
 );
 
 export const addColumn = produce(
-  (draft: WorkflowState, { source, taskIndex }: AddColumnParams) => {
+  (draft: WorkflowState, { source, statusIndex }: AddColumnParams) => {
     const sourceColumn = draft.columns[source.droppableId];
-    const taskId = sourceColumn.statusIds[taskIndex];
-    const task = draft.tasks[taskId];
+    const statusId = sourceColumn.statusIds[statusIndex];
+    const status = draft.statuses[statusId];
 
     const columnExists = (title: string) =>
       Object.values(draft.columns).some((column) => column.title === title);
 
     const buildNewColumn = (count?: number): WorkflowStageColumn => {
       const newTitle =
-        count === undefined ? task.status.name : `${task.status.name} ${count}`;
+        count === undefined
+          ? status.status.name
+          : `${status.status.name} ${count}`;
       if (columnExists(newTitle)) {
         return buildNewColumn((count ?? 1) + 1);
       }
       return {
         id: newTitle,
         title: newTitle,
-        statusIds: [task.id],
+        statusIds: [status.id],
       };
     };
 
     const newColumn = buildNewColumn();
 
-    sourceColumn.statusIds.splice(taskIndex, 1);
+    sourceColumn.statusIds.splice(statusIndex, 1);
 
     draft.columns[newColumn.id] = newColumn;
     draft.columnOrder.push(newColumn.id);
@@ -119,7 +121,7 @@ export const addColumn = produce(
 );
 
 type MoveToColumnParams = {
-  taskId: string;
+  statusId: string;
   source: DraggableLocation;
   destination: DraggableLocation;
 };
@@ -127,13 +129,13 @@ type MoveToColumnParams = {
 export const moveToColumn = produce(
   (
     draft: WorkflowState,
-    { taskId, source, destination }: MoveToColumnParams,
+    { statusId, source, destination }: MoveToColumnParams,
   ) => {
     draft.columns[source.droppableId].statusIds.splice(source.index, 1);
     draft.columns[destination.droppableId].statusIds.splice(
       destination.index,
       0,
-      taskId,
+      statusId,
     );
   },
 );
@@ -142,7 +144,7 @@ export const stateToWorkflow = (state: WorkflowState): WorkflowStage[] => {
   return state.columnOrder.map((columnId) => {
     const column = state.columns[columnId];
     const statuses = column.statusIds.map(
-      (statusId) => state.tasks[statusId].status,
+      (statusId) => state.statuses[statusId].status,
     );
     const selectByDefault = statuses.some(
       (status) => status.category === StatusCategory.InProgress,
@@ -155,34 +157,34 @@ export const stateToWorkflow = (state: WorkflowState): WorkflowStage[] => {
   });
 };
 
-export const projectToState = (project: Project): WorkflowState => {
-  const taskId = (status: TransitionStatus) => `task:${status.name}`;
+export const projectToState = (project: Workflow): WorkflowState => {
+  const statusId = (status: TransitionStatus) => `status:${status.name}`;
   const colId = (stage: WorkflowStage) => `col:${stage.name}`;
 
-  const tasks = Object.fromEntries(
+  const statuses = Object.fromEntries(
     project.statuses.map((status) => [
-      taskId(status),
+      statusId(status),
       {
-        id: taskId(status),
+        id: statusId(status),
         status: status,
       },
     ]),
   );
 
-  const workflowColumns: WorkflowStageColumn[] = project.workflow.map(
+  const workflowColumns: WorkflowStageColumn[] = project.stages.map(
     (stage) => ({
       id: colId(stage),
       title: stage.name,
-      statusIds: stage.statuses.map((status) => taskId(status)),
+      statusIds: stage.statuses.map((status) => statusId(status)),
     }),
   );
 
   const usedStatusIds = new Set(
     flatten(workflowColumns.map((column) => column.statusIds)),
   );
-  const unusedStatusIds = Object.values(tasks)
-    .filter((task) => !usedStatusIds.has(task.id))
-    .map((task) => task.id);
+  const unusedStatusIds = Object.values(statuses)
+    .filter((status) => !usedStatusIds.has(status.id))
+    .map((status) => status.id);
 
   workflowColumns.push({
     id: "unused",
@@ -194,10 +196,10 @@ export const projectToState = (project: Project): WorkflowState => {
     workflowColumns.map((stage) => [stage.id, stage]),
   );
 
-  const columnOrder = project.workflow.map((stage) => colId(stage));
+  const columnOrder = project.stages.map((stage) => colId(stage));
 
   const workflowState: WorkflowState = {
-    tasks,
+    statuses: statuses,
     columns,
     columnOrder,
   };

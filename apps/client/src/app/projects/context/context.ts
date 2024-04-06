@@ -1,10 +1,6 @@
 import { createContext } from "react";
 import { Project } from "@data/projects";
-import {
-  CycleTimePolicy,
-  Issue,
-  LabelFilterType,
-} from "@agileplanning-io/flow-metrics";
+import { CycleTimePolicy, Issue } from "@agileplanning-io/flow-metrics";
 
 export type ProjectContextType = {
   project?: Project;
@@ -21,10 +17,8 @@ export const ProjectContext = createContext<ProjectContextType>({
       includeWaitTime: false,
     },
     epics: {
-      type: "computed",
-      labelsFilter: {
-        labelFilterType: LabelFilterType.Include,
-      },
+      type: "status",
+      includeWaitTime: false,
     },
   },
 });

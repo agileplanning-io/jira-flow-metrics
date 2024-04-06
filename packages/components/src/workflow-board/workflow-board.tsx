@@ -6,7 +6,7 @@ import {
   OnDragEndResponder,
 } from "@hello-pangea/dnd";
 import {
-  Project,
+  Workflow,
   WorkflowStage,
   addColumn,
   projectToState,
@@ -14,7 +14,7 @@ import {
   moveToColumn,
   renameColumn,
   reorderColumns,
-  reorderTasks,
+  reorderStatuses,
   stateToWorkflow,
 } from "./state";
 import { WorkflowStageCard } from "./column";
@@ -25,10 +25,10 @@ const Container = styled.div`
 `;
 
 export const WorkflowBoard: FC<{
-  project: Project;
+  workflow: Workflow;
   onWorkflowChanged: (workflow: WorkflowStage[]) => void;
   disabled: boolean;
-}> = ({ project, onWorkflowChanged, disabled }) => {
+}> = ({ workflow: project, onWorkflowChanged, disabled }) => {
   const [state, setState] = useState(() => projectToState(project));
 
   useEffect(() => {
@@ -61,9 +61,9 @@ export const WorkflowBoard: FC<{
 
     if (source.droppableId === destination.droppableId) {
       setState(
-        reorderTasks(state, {
+        reorderStatuses(state, {
           columnId: source.droppableId,
-          taskId: draggableId,
+          statusId: draggableId,
           destination,
         }),
       );
@@ -74,7 +74,7 @@ export const WorkflowBoard: FC<{
       setState(
         addColumn(state, {
           source,
-          taskIndex: source.index,
+          statusIndex: source.index,
         }),
       );
       return;
@@ -84,7 +84,7 @@ export const WorkflowBoard: FC<{
       moveToColumn(state, {
         source,
         destination,
-        taskId: draggableId,
+        statusId: draggableId,
       }),
     );
   };
@@ -111,7 +111,7 @@ export const WorkflowBoard: FC<{
                 key="unused"
                 column={state.columns["unused"]}
                 tasks={state.columns["unused"].statusIds.map(
-                  (taskId) => state.tasks[taskId],
+                  (taskId) => state.statuses[taskId],
                 )}
                 index={0}
                 isDragDisabled={true}
@@ -130,7 +130,7 @@ export const WorkflowBoard: FC<{
               {state.columnOrder.map((columnId, index) => {
                 const column = state.columns[columnId];
                 const tasks = column.statusIds.map(
-                  (taskId) => state.tasks[taskId],
+                  (taskId) => state.statuses[taskId],
                 );
                 return (
                   <WorkflowStageCard

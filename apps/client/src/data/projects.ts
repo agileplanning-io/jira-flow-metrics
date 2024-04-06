@@ -13,23 +13,22 @@ export type DataSource = {
   type: "project" | "filter";
 };
 
+export type Workflow = {
+  stages: WorkflowStage[];
+  statuses: TransitionStatus[];
+};
+
+export type WorkflowScheme = {
+  stories: Workflow;
+  epics: Workflow;
+};
+
 export type Project = {
   id: string;
   name: string;
   jql: string;
   domainId: string;
-  statuses: {
-    stories: TransitionStatus[];
-    epics: TransitionStatus[];
-  };
-  workflow: {
-    stories: {
-      stages: WorkflowStage[];
-    };
-    epics: {
-      stages: WorkflowStage[];
-    };
-  };
+  workflowScheme: WorkflowScheme;
   defaultCycleTimePolicy: CycleTimePolicy;
   labels: string[];
   components: string[];
