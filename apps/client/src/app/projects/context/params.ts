@@ -67,11 +67,13 @@ const parseEpicComputedPolicy = (
   const labels = builder.getAll("epicPolicyLabels") ?? undefined;
 
   if (!builder.get("epicPolicyLabelFilterType")) {
-    builder.set(
-      "epicPolicyLabelFilterType",
+    const filterType =
       project.defaultCycleTimePolicy.epics.type === "computed"
         ? project.defaultCycleTimePolicy.epics.labelsFilter?.labelFilterType
-        : LabelFilterType.Include,
+        : undefined;
+    builder.set(
+      "epicPolicyLabelFilterType",
+      filterType ?? LabelFilterType.Include,
     );
   }
 
