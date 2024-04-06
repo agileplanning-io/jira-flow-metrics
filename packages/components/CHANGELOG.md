@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-components
 
+## 0.0.18
+
+### Patch Changes
+
+- 6077074: refactor: update workflow type
+
 ## 0.0.17
 
 ### Patch Changes
