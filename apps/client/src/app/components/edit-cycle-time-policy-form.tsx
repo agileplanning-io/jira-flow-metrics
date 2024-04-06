@@ -119,9 +119,10 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
   const onLabelsChanged = (labels: string[]) => {
     const policy = clone(cycleTimePolicy);
     if (policy.epics.type === "computed") {
-      if (policy.epics.labelsFilter) {
-        policy.epics.labelsFilter.labels = labels;
+      if (!policy.epics.labelsFilter) {
+        policy.epics.labelsFilter = {};
       }
+      policy.epics.labelsFilter.labels = labels;
     }
     setCycleTimePolicy(policy);
   };
@@ -129,9 +130,10 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
   const onLabelFilterTypeChanged = (labelFilterType: LabelFilterType) => {
     const policy = clone(cycleTimePolicy);
     if (policy.epics.type === "computed") {
-      if (policy.epics.labelsFilter) {
-        policy.epics.labelsFilter.labelFilterType = labelFilterType;
+      if (!policy.epics.labelsFilter) {
+        policy.epics.labelsFilter = {};
       }
+      policy.epics.labelsFilter.labelFilterType = labelFilterType;
     }
     setCycleTimePolicy(policy);
   };

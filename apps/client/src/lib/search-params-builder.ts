@@ -27,7 +27,8 @@ export class SearchParamsBuilder {
   }
 
   setAll(name: string, value?: string[]): SearchParamsBuilder {
-    if (!this.params.has(name) && !value) {
+    const isNilArray = !value || value.length === 0;
+    if (!this.params.has(name) && isNilArray) {
       return this;
     }
 
