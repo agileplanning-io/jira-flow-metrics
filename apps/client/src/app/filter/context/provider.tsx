@@ -23,6 +23,9 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
     resolutions: searchParams.getAll("resolutions") ?? undefined,
     statuses: searchParams.getAll("filterStatuses") ?? undefined,
     issueTypes: searchParams.getAll("issueTypes") ?? undefined,
+    issueTypeFilterType:
+      (searchParams.get("issueTypeFilterType") as FilterType) ??
+      FilterType.Include,
     assignees: searchParams.getAll("assignees") ?? undefined,
     labels: searchParams.getAll("labels") ?? undefined,
     labelFilterType:
@@ -36,6 +39,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
       "resolutions",
       "statuses",
       "issueTypes",
+      "issueTypeFilterType",
       "assignees",
       "dates",
       "labels",
@@ -56,6 +60,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
             .setAll("resolutions", newFilter.resolutions)
             .setAll("filterStatuses", newFilter.statuses)
             .setAll("issueTypes", newFilter.issueTypes)
+            .set("issueTypeFilterType", newFilter.issueTypeFilterType)
             .setAll("assignees", newFilter.assignees)
             .setAll("labels", newFilter.labels)
             .set("labelFilterType", newFilter.labelFilterType)

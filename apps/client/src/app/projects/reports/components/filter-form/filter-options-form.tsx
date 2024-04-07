@@ -138,6 +138,9 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
   const onLabelFilterTypeChanged = (labelFilterType: FilterType) =>
     setFilter({ ...filter, labelFilterType });
 
+  const onIssueTypeFilterTypeChanged = (issueTypeFilterType: FilterType) =>
+    setFilter({ ...filter, issueTypeFilterType });
+
   const onComponentsChanged = (components?: string[]) =>
     setFilter({ ...filter, components });
 
@@ -197,17 +200,7 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
               </Form.Item>
             </Col>
           ) : null}
-          <Col span={4}>
-            <Form.Item label="Issue Type">
-              <Select
-                mode="multiple"
-                allowClear={true}
-                options={issueTypes}
-                value={filter.issueTypes}
-                onChange={onIssueTypesChanged}
-              />
-            </Form.Item>
-          </Col>
+
           <Col span={4}>
             <Form.Item label="Assignees">
               <Select
@@ -255,6 +248,33 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
                 value={filter.components}
                 onChange={onComponentsChanged}
               />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={[8, 8]}>
+          <Col span={8}>
+            <Form.Item label="Issue Types" style={{ width: "100%" }}>
+              <Space.Compact style={{ width: "100%" }}>
+                <Form.Item style={{ width: "25%" }}>
+                  <Select
+                    value={filter.issueTypeFilterType}
+                    onChange={onIssueTypeFilterTypeChanged}
+                    options={[
+                      { value: "include", label: "Include" },
+                      { value: "exclude", label: "Exclude" },
+                    ]}
+                  />
+                </Form.Item>
+                <Form.Item style={{ width: "75%" }}>
+                  <Select
+                    mode="multiple"
+                    allowClear={true}
+                    options={issueTypes}
+                    value={filter.issueTypes}
+                    onChange={onIssueTypesChanged}
+                  />
+                </Form.Item>
+              </Space.Compact>
             </Form.Item>
           </Col>
         </Row>
