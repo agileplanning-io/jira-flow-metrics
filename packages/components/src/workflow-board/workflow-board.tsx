@@ -24,11 +24,19 @@ const Container = styled.div`
   display: flex;
 `;
 
-export const WorkflowBoard: FC<{
+export type WorkflowBoardProps = {
   workflow: Workflow;
   onWorkflowChanged: (workflow: WorkflowStage[]) => void;
   disabled: boolean;
-}> = ({ workflow: project, onWorkflowChanged, disabled }) => {
+  readonly: boolean;
+};
+
+export const WorkflowBoard: FC<WorkflowBoardProps> = ({
+  workflow: project,
+  onWorkflowChanged,
+  disabled,
+  readonly,
+}) => {
   const [state, setState] = useState(() => projectToState(project));
 
   useEffect(() => {
@@ -99,11 +107,11 @@ export const WorkflowBoard: FC<{
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Flex>
+      <Flex style={{ margin: "0 -4px" }}>
         <Droppable
           droppableId="unused-tasks"
           type="unused"
-          isDropDisabled={disabled}
+          isDropDisabled={disabled || readonly}
         >
           {(provided) => (
             <Container {...provided.droppableProps} ref={provided.innerRef}>
@@ -116,6 +124,7 @@ export const WorkflowBoard: FC<{
                 index={0}
                 isDragDisabled={true}
                 disabled={disabled}
+                readonly={readonly}
               />
             </Container>
           )}
@@ -140,6 +149,7 @@ export const WorkflowBoard: FC<{
                     index={index}
                     isDragDisabled={false}
                     disabled={disabled}
+                    readonly={readonly}
                     onDelete={onDeleteColumn}
                     onRenamed={onRenameColumn}
                   />
@@ -149,24 +159,27 @@ export const WorkflowBoard: FC<{
             </Container>
           )}
         </Droppable>
-        <Droppable droppableId="create-column" type="new-column">
-          {(provided) => (
-            <Container {...provided.droppableProps} ref={provided.innerRef}>
-              <WorkflowStageCard
-                key="new-column"
-                column={{
-                  id: "new-column",
-                  statusIds: [],
-                  title: "New Column",
-                }}
-                tasks={[]}
-                index={0}
-                isDragDisabled={true}
-                disabled={disabled}
-              />
-            </Container>
-          )}
-        </Droppable>
+        {!readonly ? (
+          <Droppable droppableId="create-column" type="new-column">
+            {(provided) => (
+              <Container {...provided.droppableProps} ref={provided.innerRef}>
+                <WorkflowStageCard
+                  key="new-column"
+                  column={{
+                    id: "new-column",
+                    statusIds: [],
+                    title: "New Column",
+                  }}
+                  tasks={[]}
+                  index={0}
+                  isDragDisabled={true}
+                  disabled={disabled}
+                  readonly={readonly}
+                />
+              </Container>
+            )}
+          </Droppable>
+        ) : null}
       </Flex>
     </DragDropContext>
   );

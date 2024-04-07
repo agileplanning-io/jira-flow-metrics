@@ -173,8 +173,8 @@ export const useCreateProject = () => {
 export type UpdateProjectParams = {
   id: string;
   name: string;
-  storyWorkflow: { name: string; statuses: string[] }[];
-  epicWorkflow: { name: string; statuses: string[] }[];
+  storyWorkflowStages: { name: string; statuses: string[] }[];
+  epicWorkflowStages: { name: string; statuses: string[] }[];
   defaultCycleTimePolicy: CycleTimePolicy;
 };
 

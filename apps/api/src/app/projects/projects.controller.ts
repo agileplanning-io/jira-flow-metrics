@@ -62,10 +62,10 @@ class UpdateProjectBody {
   name: string;
 
   @ApiProperty()
-  storyWorkflow: WorkflowStageBody[];
+  storyWorkflowStages: WorkflowStageBody[];
 
   @ApiProperty()
-  epicWorkflow: WorkflowStageBody[];
+  epicWorkflowStages: WorkflowStageBody[];
 
   @ApiProperty()
   defaultCycleTimePolicy: CycleTimePolicyBody;
@@ -97,7 +97,7 @@ export class ProjectsController {
       return;
     }
 
-    const storyStages = request.storyWorkflow.map((stage) => ({
+    const storyStages = request.storyWorkflowStages.map((stage) => ({
       name: stage.name,
       selectByDefault: stage.selectByDefault,
       statuses: scheme.stories.statuses.filter((status) =>
@@ -105,7 +105,7 @@ export class ProjectsController {
       ),
     }));
 
-    const epicStages = request.epicWorkflow.map((stage) => ({
+    const epicStages = request.epicWorkflowStages.map((stage) => ({
       name: stage.name,
       selectByDefault: stage.selectByDefault,
       statuses: scheme.epics.statuses.filter((status) =>
