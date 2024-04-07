@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { isNil } from "rambda";
 
 export class SearchParamsBuilder {
   private changed = false;
@@ -9,7 +10,7 @@ export class SearchParamsBuilder {
     name: string,
     value?: string | boolean | Date | number,
   ): SearchParamsBuilder {
-    if (value !== undefined) {
+    if (!isNil(value)) {
       if (typeof value === "string") {
         this.params.set(name, value);
       } else if (typeof value === "boolean") {

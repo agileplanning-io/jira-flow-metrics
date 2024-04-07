@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   CompletedIssue,
+  HierarchyLevel,
   Issue,
   ThroughputResult,
   calculateThroughput,
@@ -69,6 +70,7 @@ export const ThroughputPage = () => {
         showStatusFilter={false}
         showResolutionFilter={true}
         showHierarchyFilter={true}
+        defaultHierarchyLevel={HierarchyLevel.Story}
       />
 
       <ExpandableOptions

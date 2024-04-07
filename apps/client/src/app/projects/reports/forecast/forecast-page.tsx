@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   CompletedIssue,
+  HierarchyLevel,
   SummaryRow,
   filterCompletedIssues,
   forecast,
@@ -64,6 +65,7 @@ export const ForecastPage = () => {
         showStatusFilter={false}
         showResolutionFilter={true}
         showHierarchyFilter={true}
+        defaultHierarchyLevel={HierarchyLevel.Story}
       />
       <ExpandableOptions
         header={{
