@@ -143,6 +143,7 @@ export const TimeSpentPage = () => {
         showStatusFilter={false}
         showHierarchyFilter={false}
         showResolutionFilter={true}
+        defaultHierarchyLevel={HierarchyLevel.Story}
       />
 
       <Table
