@@ -45,6 +45,7 @@ const createProject = async (projects: ProjectsRepository) => {
       jql: "project = MYPROJ",
       labels: [],
       components: [],
+      issueTypes: [],
       defaultCycleTimePolicy: {
         stories: {
           type: "status",

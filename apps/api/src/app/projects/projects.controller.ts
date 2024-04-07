@@ -39,7 +39,7 @@ class StoryCycleTimePolicyBody {
 
 class LabelsFilterPolicyBody {
   @ApiProperty()
-  stories: StoryCycleTimePolicyBody;
+  labels: string[];
 
   @ApiProperty()
   labelFilterType: FilterType;
@@ -173,6 +173,12 @@ export class ProjectsController {
     )
     labels?: string[],
     @Query("epicPolicyLabelFilterType") labelFilterType?: FilterType,
+    @Query(
+      "epicPolicyIssueTypes",
+      new ParseArrayPipe({ items: String, separator: ",", optional: true }),
+    )
+    issueTypes?: string[],
+    @Query("epicPolicyIssueTypeFilterType") issueTypeFilterType?: FilterType,
   ) {
     let issues = await this.issues.getIssues(projectId);
 
@@ -189,6 +195,10 @@ export class ProjectsController {
               labelsFilter: {
                 labels,
                 labelFilterType,
+              },
+              issueTypesFilter: {
+                issueTypes,
+                issueTypeFilterType,
               },
             }
           : {

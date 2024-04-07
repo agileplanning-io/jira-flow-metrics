@@ -41,6 +41,9 @@ export const getFlowMetrics = (
       ? filterIssues(updatedStories, {
           labels: policy.epics.labelsFilter?.labels,
           labelFilterType: policy.epics.labelsFilter?.labelFilterType,
+          issueTypes: policy.epics.issueTypesFilter?.issueTypes,
+          issueTypeFilterType:
+            policy.epics.issueTypesFilter?.issueTypeFilterType,
         })
       : updatedStories;
 

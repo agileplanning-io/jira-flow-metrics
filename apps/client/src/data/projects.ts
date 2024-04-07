@@ -30,6 +30,7 @@ export type Project = {
   domainId: string;
   workflowScheme: WorkflowScheme;
   defaultCycleTimePolicy: CycleTimePolicy;
+  issueTypes: string[];
   labels: string[];
   components: string[];
   lastSync?: {

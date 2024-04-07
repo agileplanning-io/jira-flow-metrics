@@ -61,9 +61,11 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
   }, [project, selectedEpicStages, cycleTimePolicy, setCycleTimePolicy]);
 
   const [labels, setLabels] = useState<SelectProps["options"]>();
+  const [issueTypes, setIssueTypes] = useState<SelectProps["options"]>();
 
   useEffect(() => {
     setLabels(makeOptions(project?.labels));
+    setIssueTypes(makeOptions(project?.issueTypes));
   }, [project]);
 
   const onStoryStagesChanged = (keys: Key[]) => {
@@ -126,6 +128,28 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
     setCycleTimePolicy(policy);
   };
 
+  const onIssueTypesChanged = (issueTypes: string[]) => {
+    const policy = clone(cycleTimePolicy);
+    if (policy.epics.type === "computed") {
+      if (!policy.epics.issueTypesFilter) {
+        policy.epics.issueTypesFilter = {};
+      }
+      policy.epics.issueTypesFilter.issueTypes = issueTypes;
+    }
+    setCycleTimePolicy(policy);
+  };
+
+  const onIssueTypeFilterTypeChanged = (issueTypeFilterType: FilterType) => {
+    const policy = clone(cycleTimePolicy);
+    if (policy.epics.type === "computed") {
+      if (!policy.epics.issueTypesFilter) {
+        policy.epics.issueTypesFilter = {};
+      }
+      policy.epics.issueTypesFilter.issueTypeFilterType = issueTypeFilterType;
+    }
+    setCycleTimePolicy(policy);
+  };
+
   const epicCycleTimePolicyType = cycleTimePolicy.epics.type;
   const onEpicCycleTimePolicyChanged = (
     type: CycleTimePolicy["epics"]["type"],
@@ -167,37 +191,71 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
             />
           </Form.Item>
           {epicCycleTimePolicyType === "computed" ? (
-            <Form.Item label="Labels" style={{ width: "100%" }}>
-              <Space.Compact style={{ width: "100%" }}>
-                <Form.Item style={{ width: "25%" }}>
-                  <Select
-                    value={
-                      cycleTimePolicy.epics.type === "computed"
-                        ? cycleTimePolicy.epics.labelsFilter?.labelFilterType
-                        : undefined
-                    }
-                    onChange={onLabelFilterTypeChanged}
-                    options={[
-                      { value: "include", label: "Include" },
-                      { value: "exclude", label: "Exclude" },
-                    ]}
-                  />
-                </Form.Item>
-                <Form.Item style={{ width: "75%" }}>
-                  <Select
-                    mode="multiple"
-                    allowClear={true}
-                    options={labels}
-                    value={
-                      cycleTimePolicy.epics.type === "computed"
-                        ? cycleTimePolicy.epics.labelsFilter?.labels
-                        : undefined
-                    }
-                    onChange={onLabelsChanged}
-                  />
-                </Form.Item>
-              </Space.Compact>
-            </Form.Item>
+            <>
+              <Form.Item label="Labels" style={{ width: "100%" }}>
+                <Space.Compact style={{ width: "100%" }}>
+                  <Form.Item style={{ width: "25%" }}>
+                    <Select
+                      value={
+                        cycleTimePolicy.epics.type === "computed"
+                          ? cycleTimePolicy.epics.labelsFilter?.labelFilterType
+                          : undefined
+                      }
+                      onChange={onLabelFilterTypeChanged}
+                      options={[
+                        { value: "include", label: "Include" },
+                        { value: "exclude", label: "Exclude" },
+                      ]}
+                    />
+                  </Form.Item>
+                  <Form.Item style={{ width: "75%" }}>
+                    <Select
+                      mode="multiple"
+                      allowClear={true}
+                      options={labels}
+                      value={
+                        cycleTimePolicy.epics.type === "computed"
+                          ? cycleTimePolicy.epics.labelsFilter?.labels
+                          : undefined
+                      }
+                      onChange={onLabelsChanged}
+                    />
+                  </Form.Item>
+                </Space.Compact>
+              </Form.Item>
+              <Form.Item label="Issue Types" style={{ width: "100%" }}>
+                <Space.Compact style={{ width: "100%" }}>
+                  <Form.Item style={{ width: "25%" }}>
+                    <Select
+                      value={
+                        cycleTimePolicy.epics.type === "computed"
+                          ? cycleTimePolicy.epics.issueTypesFilter
+                              ?.issueTypeFilterType
+                          : undefined
+                      }
+                      onChange={onIssueTypeFilterTypeChanged}
+                      options={[
+                        { value: "include", label: "Include" },
+                        { value: "exclude", label: "Exclude" },
+                      ]}
+                    />
+                  </Form.Item>
+                  <Form.Item style={{ width: "75%" }}>
+                    <Select
+                      mode="multiple"
+                      allowClear={true}
+                      options={issueTypes}
+                      value={
+                        cycleTimePolicy.epics.type === "computed"
+                          ? cycleTimePolicy.epics.issueTypesFilter?.issueTypes
+                          : undefined
+                      }
+                      onChange={onIssueTypesChanged}
+                    />
+                  </Form.Item>
+                </Space.Compact>
+              </Form.Item>
+            </>
           ) : (
             <>
               <Form.Item label="Selected Stages">

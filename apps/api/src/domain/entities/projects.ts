@@ -35,6 +35,7 @@ export type Project = {
   };
   labels: string[];
   components: string[];
+  issueTypes: string[];
   workflowScheme?: WorkflowScheme;
   defaultCycleTimePolicy?: CycleTimePolicy;
 };

@@ -59,18 +59,28 @@ export const CycleTimePolicyForm = () => {
     );
   }
 
-  if (
-    cycleTimePolicy?.epics.type === "computed" &&
-    cycleTimePolicy.epics.labelsFilter?.labels?.length
-  ) {
-    options.push({
-      label:
-        cycleTimePolicy?.epics.labelsFilter?.labelFilterType ===
-        FilterType.Include
-          ? "Include labels"
-          : "Exclude labels",
-      value: cycleTimePolicy?.epics.labelsFilter?.labels?.join(),
-    });
+  if (cycleTimePolicy?.epics.type === "computed") {
+    if (cycleTimePolicy.epics.labelsFilter?.labels?.length) {
+      options.push({
+        label:
+          cycleTimePolicy?.epics.labelsFilter?.labelFilterType ===
+          FilterType.Exclude
+            ? "Exclude labels"
+            : "Include labels",
+        value: cycleTimePolicy?.epics.labelsFilter?.labels?.join(),
+      });
+    }
+
+    if (cycleTimePolicy.epics.issueTypesFilter?.issueTypes?.length) {
+      options.push({
+        label:
+          cycleTimePolicy?.epics.issueTypesFilter?.issueTypeFilterType ===
+          FilterType.Exclude
+            ? "Exclude issue types"
+            : "Include issue types",
+        value: cycleTimePolicy?.epics.issueTypesFilter?.issueTypes?.join(),
+      });
+    }
   }
 
   return (

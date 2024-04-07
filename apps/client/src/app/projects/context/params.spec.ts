@@ -66,6 +66,8 @@ describe("parseCycleTimePolicy", () => {
       epicPolicyType: "computed",
       epicPolicyLabels: "discovery",
       epicPolicyLabelFilterType: "include",
+      epicPolicyIssueTypes: "Spike",
+      epicPolicyIssueTypeFilterType: "exclude",
     });
 
     const project = buildProject();
@@ -80,6 +82,10 @@ describe("parseCycleTimePolicy", () => {
         labelsFilter: {
           labelFilterType: "include",
           labels: ["discovery"],
+        },
+        issueTypesFilter: {
+          issueTypeFilterType: "exclude",
+          issueTypes: ["Spike"],
         },
       },
       stories: {
@@ -137,6 +143,8 @@ describe("parseCycleTimePolicy", () => {
       epicPolicyType: "computed",
       epicPolicyLabelFilterType: "exclude",
       epicPolicyLabels: "tech-debt",
+      epicPolicyIssueTypeFilterType: "exclude",
+      epicPolicyIssueTypes: "Spike",
       storyPolicyStatuses: "In Progress",
       storyPolicyIncludeWaitTime: "false",
     });
@@ -223,10 +231,15 @@ const buildProject = (params: Partial<Project> = {}): Project => {
           labelFilterType: FilterType.Exclude,
           labels: ["tech-debt"],
         },
+        issueTypesFilter: {
+          issueTypeFilterType: FilterType.Exclude,
+          issueTypes: ["Spike"],
+        },
       },
     },
     labels: [],
     components: [],
+    issueTypes: [],
   };
   return {
     ...defaults,
