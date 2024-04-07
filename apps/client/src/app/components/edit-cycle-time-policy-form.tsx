@@ -1,7 +1,7 @@
 import { WorkflowStagesTable } from "@agileplanning-io/flow-components";
 import {
   CycleTimePolicy,
-  LabelFilterType,
+  FilterType,
   TransitionStatus,
 } from "@agileplanning-io/flow-metrics";
 import { Project } from "@data/projects";
@@ -115,7 +115,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
     setCycleTimePolicy(policy);
   };
 
-  const onLabelFilterTypeChanged = (labelFilterType: LabelFilterType) => {
+  const onLabelFilterTypeChanged = (labelFilterType: FilterType) => {
     const policy = clone(cycleTimePolicy);
     if (policy.epics.type === "computed") {
       if (!policy.epics.labelsFilter) {

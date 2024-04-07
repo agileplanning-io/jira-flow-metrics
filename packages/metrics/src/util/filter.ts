@@ -7,7 +7,7 @@ export enum DateFilterType {
   Intersects,
 }
 
-export enum LabelFilterType {
+export enum FilterType {
   Include = "include",
   Exclude = "exclude",
 }
@@ -22,7 +22,7 @@ export type IssueFilter = {
   assignees?: string[];
   labels?: string[];
   components?: string[];
-  labelFilterType?: LabelFilterType;
+  labelFilterType?: FilterType;
   dates?: Interval;
   dateFilterType?: DateFilterType;
 };

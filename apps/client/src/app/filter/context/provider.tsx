@@ -1,7 +1,7 @@
 import {
   HierarchyLevel,
   IssueFilter,
-  LabelFilterType,
+  FilterType,
 } from "@agileplanning-io/flow-metrics";
 import { FilterContext } from "./context";
 import { useSearchParams } from "react-router-dom";
@@ -26,8 +26,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
     assignees: searchParams.getAll("assignees") ?? undefined,
     labels: searchParams.getAll("labels") ?? undefined,
     labelFilterType:
-      (searchParams.get("labelFilterType") as LabelFilterType) ??
-      LabelFilterType.Include,
+      (searchParams.get("labelFilterType") as FilterType) ?? FilterType.Include,
     components: searchParams.getAll("components") ?? undefined,
   };
 
