@@ -1,5 +1,13 @@
 # @agileplanning-io/flow-metrics
 
+## 0.0.17
+
+### Patch Changes
+
+- 0b62aa1: refactor: rename LabelFilterType -> FilterType
+- 322a05b: feat: issue type filter type
+- 85a1469: feat: issue type filter for computed cycle time policies
+
 ## 0.0.16
 
 ### Patch Changes

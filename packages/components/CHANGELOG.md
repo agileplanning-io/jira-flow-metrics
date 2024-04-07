@@ -1,5 +1,18 @@
 # @agileplanning-io/flow-components
 
+## 0.0.19
+
+### Patch Changes
+
+- 0b62aa1: refactor: rename LabelFilterType -> FilterType
+- 322a05b: feat: issue type filter type
+- b8fab0e: fix: scroll on overflow
+- 8cdd834: feat: readonly mode for WorkflowBoard
+- Updated dependencies [0b62aa1]
+- Updated dependencies [322a05b]
+- Updated dependencies [85a1469]
+  - @agileplanning-io/flow-metrics@0.0.17
+
 ## 0.0.18
 
 ### Patch Changes
