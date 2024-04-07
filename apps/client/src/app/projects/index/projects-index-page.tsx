@@ -4,7 +4,7 @@ import {
   SettingOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import { Button, Drawer, Space, Table } from "antd";
+import { Button, Space, Table } from "antd";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AddProjectModal } from "./add-project-modal";
@@ -23,6 +23,7 @@ import { RemoveProjectModal } from "./remove-project-modal";
 import { formatDate } from "@agileplanning-io/flow-lib";
 import { useNavigationContext } from "../../navigation/context";
 import { EditProjectForm } from "./edit-project-form";
+import { FullScreenDrawer } from "@app/components/full-screen-drawer";
 
 export const ProjectsIndexPage = () => {
   const { domainId } = useNavigationContext();
@@ -173,14 +174,11 @@ export const ProjectsIndexPage = () => {
         isOpen={projectToRemove !== undefined}
         close={() => setProjectToRemove(undefined)}
       />
-      <Drawer
-        size="large"
-        placement="bottom"
+      <FullScreenDrawer
         title={`Edit ${projectToEdit?.name}`}
         open={projectToEdit !== undefined}
-        style={{ overflow: "hidden" }}
-        height="100%"
         onClose={() => setProjectToEdit(undefined)}
+        push={false}
       >
         {projectToEdit ? (
           <EditProjectForm
@@ -188,7 +186,7 @@ export const ProjectsIndexPage = () => {
             onClose={() => setProjectToEdit(undefined)}
           />
         ) : null}
-      </Drawer>
+      </FullScreenDrawer>
     </>
   );
 };

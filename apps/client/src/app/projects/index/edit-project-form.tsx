@@ -1,11 +1,20 @@
 import { LoadingSpinner } from "@app/components/loading-spinner";
-import { Project, UpdateProjectParams, useUpdateProject } from "@data/projects";
+import {
+  Project,
+  UpdateProjectParams,
+  Workflow,
+  useUpdateProject,
+} from "@data/projects";
 import { Button, Form, Input } from "antd";
 import { FC, useCallback, useState } from "react";
-import { WorkflowBoard } from "@agileplanning-io/flow-components";
+import {
+  WorkflowBoard,
+  WorkflowBoardProps,
+} from "@agileplanning-io/flow-components";
 import { WorkflowStage } from "@data/issues";
 import { CycleTimePolicy } from "@agileplanning-io/flow-metrics";
 import { EditCycleTimePolicyForm } from "@app/components/edit-cycle-time-policy-form";
+import { FullScreenDrawer } from "@app/components/full-screen-drawer";
 
 export type EditProjectFormProps = {
   project: Project;
@@ -17,10 +26,10 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
   onClose,
 }) => {
   const [updatedStoryWorkflow, setUpdatedStoryWorkflow] =
-    useState<UpdateProjectParams["storyWorkflow"]>();
+    useState<UpdateProjectParams["storyWorkflowStages"]>();
 
   const [updatedEpicWorkflow, setUpdatedEpicWorkflow] =
-    useState<UpdateProjectParams["epicWorkflow"]>();
+    useState<UpdateProjectParams["epicWorkflowStages"]>();
 
   const [updatedCycleTimePolicy, setUpdatedCycleTimePolicy] =
     useState<CycleTimePolicy>(project?.defaultCycleTimePolicy);
@@ -49,6 +58,14 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
     [setUpdatedEpicWorkflow],
   );
 
+  type WorkflowToEdit = {
+    workflow: Workflow;
+    title: string;
+    onWorkflowChanged: WorkflowBoardProps["onWorkflowChanged"];
+  };
+
+  const [workflowToEdit, setWorkflowToEdit] = useState<WorkflowToEdit>();
+
   if (!project) {
     return <LoadingSpinner />;
   }
@@ -59,8 +76,8 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
         {
           id: project.id,
           name: project.name,
-          storyWorkflow: updatedStoryWorkflow,
-          epicWorkflow: updatedEpicWorkflow,
+          storyWorkflowStages: updatedStoryWorkflow,
+          epicWorkflowStages: updatedEpicWorkflow,
           defaultCycleTimePolicy: updatedCycleTimePolicy,
         },
         {
@@ -71,43 +88,113 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
   };
 
   return (
-    <Form layout="vertical">
-      <Form.Item label="Name">
-        <Input value={project.name} />
-      </Form.Item>
+    <>
+      <h2>Project Details</h2>
 
-      <Form.Item label="Story Workflow" style={{ overflowX: "auto" }}>
-        <WorkflowBoard
-          workflow={project.workflowScheme.stories}
-          onWorkflowChanged={onStoryWorkflowChanged}
-          disabled={updateProject.isLoading}
-        />
-      </Form.Item>
+      <Form layout="vertical">
+        <Form.Item label="Name">
+          <Input value={project.name} />
+        </Form.Item>
+      </Form>
 
-      <Form.Item label="Epic Workflow" style={{ overflowX: "auto" }}>
-        <WorkflowBoard
-          workflow={project.workflowScheme.epics}
-          onWorkflowChanged={onEpicWorkflowChanged}
-          disabled={updateProject.isLoading}
-        />
-      </Form.Item>
+      <h2>Default Cycle Time Policy</h2>
 
-      <Form.Item label="Default Cycle Time Policy">
-        <EditCycleTimePolicyForm
-          project={project}
-          cycleTimePolicy={updatedCycleTimePolicy}
-          setCycleTimePolicy={setUpdatedCycleTimePolicy}
-        />
-      </Form.Item>
+      <EditCycleTimePolicyForm
+        project={project}
+        cycleTimePolicy={updatedCycleTimePolicy}
+        setCycleTimePolicy={setUpdatedCycleTimePolicy}
+      />
+
+      <h2>Workflows</h2>
+
+      <h3>
+        Story Workflow
+        <Button
+          style={{ width: "fit-content", marginTop: "8px" }}
+          type="link"
+          onClick={() =>
+            setWorkflowToEdit({
+              workflow: project.workflowScheme.stories,
+              title: "Edit Story Workflow",
+              onWorkflowChanged: onStoryWorkflowChanged,
+            })
+          }
+        >
+          Edit
+        </Button>
+      </h3>
+
+      <WorkflowBoard
+        workflow={project.workflowScheme.stories}
+        onWorkflowChanged={onStoryWorkflowChanged}
+        disabled={updateProject.isLoading}
+        readonly={true}
+      />
+
+      <h3>
+        Epic Workflow
+        <Button
+          style={{ width: "fit-content", marginTop: "8px" }}
+          type="link"
+          onClick={() =>
+            setWorkflowToEdit({
+              workflow: project.workflowScheme.epics,
+              title: "Edit Epic Workflow",
+              onWorkflowChanged: onEpicWorkflowChanged,
+            })
+          }
+        >
+          Edit
+        </Button>
+      </h3>
+
+      <WorkflowBoard
+        workflow={project.workflowScheme.epics}
+        onWorkflowChanged={onEpicWorkflowChanged}
+        disabled={updateProject.isLoading}
+        readonly={true}
+      />
 
       <Button
         type="primary"
+        style={{ width: "fit-content", marginTop: "8px" }}
         onClick={applyChanges}
         loading={updateProject.isLoading}
-        disabled={updatedStoryWorkflow === undefined || updateProject.isLoading}
+        disabled={updateProject.isLoading}
       >
         Apply Changes
       </Button>
-    </Form>
+
+      <FullScreenDrawer
+        title={workflowToEdit?.title}
+        open={workflowToEdit !== undefined}
+        onClose={() => setWorkflowToEdit(undefined)}
+        height="90%"
+      >
+        {workflowToEdit ? (
+          <>
+            <WorkflowBoard
+              workflow={workflowToEdit.workflow}
+              onWorkflowChanged={workflowToEdit.onWorkflowChanged}
+              disabled={updateProject.isLoading}
+              readonly={false}
+            />
+            <Button
+              type="primary"
+              style={{ width: "fit-content", marginTop: "8px" }}
+              onClick={applyChanges}
+              loading={updateProject.isLoading}
+              disabled={
+                updatedStoryWorkflow === undefined ||
+                updatedEpicWorkflow === undefined ||
+                updateProject.isLoading
+              }
+            >
+              Apply Changes
+            </Button>
+          </>
+        ) : null}
+      </FullScreenDrawer>
+    </>
   );
 };

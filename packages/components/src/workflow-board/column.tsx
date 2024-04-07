@@ -7,7 +7,7 @@ import { Button, Flex, Typography } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 
 const Container = styled.div<{ $isDragging: boolean }>`
-  margin: 8px;
+  margin: 4px;
   border: 1px solid lightgrey;
   background-color: white;
   border-radius: 2px;
@@ -33,6 +33,7 @@ export type WorkflowStageCardProps = {
   index: number;
   isDragDisabled: boolean;
   disabled: boolean;
+  readonly: boolean;
   onRenamed?: (columnId: string, newTitle: string) => void;
   onDelete?: (columnId: string) => void;
 };
@@ -43,6 +44,7 @@ export const WorkflowStageCard: FC<WorkflowStageCardProps> = ({
   tasks,
   isDragDisabled,
   disabled,
+  readonly,
   onRenamed,
   onDelete,
 }) => {
@@ -51,7 +53,7 @@ export const WorkflowStageCard: FC<WorkflowStageCardProps> = ({
     <Draggable
       draggableId={column.id}
       index={index}
-      isDragDisabled={disabled || isDragDisabled}
+      isDragDisabled={disabled || readonly || isDragDisabled}
     >
       {(provided, selection) => (
         <Container
@@ -63,7 +65,7 @@ export const WorkflowStageCard: FC<WorkflowStageCardProps> = ({
             <Typography.Text
               disabled={disabled}
               editable={
-                onRenamed && !disabled
+                onRenamed && !disabled && !readonly
                   ? {
                       text: title,
                       onChange: (title) => {
@@ -78,7 +80,7 @@ export const WorkflowStageCard: FC<WorkflowStageCardProps> = ({
             >
               {title}
             </Typography.Text>
-            {onDelete ? (
+            {onDelete && !readonly ? (
               <Button
                 size="small"
                 style={{ margin: 5, marginLeft: "auto" }}
@@ -101,7 +103,7 @@ export const WorkflowStageCard: FC<WorkflowStageCardProps> = ({
                     key={task.id}
                     task={task}
                     index={index}
-                    disabled={disabled}
+                    disabled={disabled || readonly}
                   />
                 ))}
                 {provided.placeholder}
