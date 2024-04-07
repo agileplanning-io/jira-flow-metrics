@@ -15,12 +15,24 @@ describe("filterIssues", () => {
     expect(filteredIssues).toEqual([story]);
   });
 
-  it("filters by issueType", () => {
-    const filteredIssues = filterIssues([story, bug], {
-      issueTypes: ["Bug"],
+  describe("issueType filters", () => {
+    it("filters the included issueTypes when issueTypeFilterType = include", () => {
+      const filteredIssues = filterIssues([story, bug], {
+        issueTypes: ["Story"],
+        issueTypeFilterType: FilterType.Include,
+      });
+
+      expect(filteredIssues).toEqual([story]);
     });
 
-    expect(filteredIssues).toEqual([bug]);
+    it("omits the excluded issueTypes when issueTypeFilterType = exclude", () => {
+      const filteredIssues = filterIssues([story, bug], {
+        issueTypes: ["Story"],
+        issueTypeFilterType: FilterType.Exclude,
+      });
+
+      expect(filteredIssues).toEqual([bug]);
+    });
   });
 
   describe("label filters", () => {
@@ -35,7 +47,7 @@ describe("filterIssues", () => {
       expect(filteredIssues).toEqual([labelledStory]);
     });
 
-    it("omits the excluded labels when labelFilterType = excluded", () => {
+    it("omits the excluded labels when labelFilterType = exclude", () => {
       const filteredIssues = filterIssues([story, labelledStory], {
         labels: ["my-label"],
         labelFilterType: FilterType.Exclude,

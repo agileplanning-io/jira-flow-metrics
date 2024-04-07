@@ -19,6 +19,7 @@ export type IssueFilter = {
   fromStatus?: string;
   toStatus?: string;
   issueTypes?: string[];
+  issueTypeFilterType?: FilterType;
   assignees?: string[];
   labels?: string[];
   components?: string[];
@@ -42,7 +43,14 @@ export const filterIssues = (issues: Issue[], filter: IssueFilter): Issue[] => {
     }
 
     if (filter.issueTypes && filter.issueTypes.length > 0) {
-      if (!issue.issueType || !filter.issueTypes.includes(issue.issueType)) {
+      const included =
+        issue.issueType && filter.issueTypes.includes(issue.issueType);
+      if (filter.issueTypeFilterType === FilterType.Include && !included) {
+        return false;
+      } else if (
+        filter.issueTypeFilterType === FilterType.Exclude &&
+        included
+      ) {
         return false;
       }
     }
