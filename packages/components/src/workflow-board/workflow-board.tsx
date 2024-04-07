@@ -107,7 +107,7 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Flex style={{ margin: "0 -4px" }}>
+      <Flex style={{ margin: "0 -4px", overflowX: "auto" }}>
         <Droppable
           droppableId="unused-tasks"
           type="unused"
