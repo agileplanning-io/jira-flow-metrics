@@ -17,9 +17,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const filter: IssueFilter = {
     dates: parseDates(searchParams),
-    hierarchyLevel:
-      (searchParams.get("hierarchyLevel") as HierarchyLevel) ??
-      HierarchyLevel.Story,
+    hierarchyLevel: searchParams.get("hierarchyLevel") as HierarchyLevel,
     resolutions: searchParams.getAll("resolutions") ?? undefined,
     statuses: searchParams.getAll("filterStatuses") ?? undefined,
     issueTypes: searchParams.getAll("issueTypes") ?? undefined,

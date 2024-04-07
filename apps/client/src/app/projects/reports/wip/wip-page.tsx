@@ -85,6 +85,7 @@ export const WipPage = () => {
         showStatusFilter={false}
         showResolutionFilter={false}
         showHierarchyFilter={true}
+        defaultHierarchyLevel={HierarchyLevel.Story}
       />
       <ExpandableOptions
         header={{

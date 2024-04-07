@@ -1,5 +1,6 @@
 import {
   CompletedIssue,
+  HierarchyLevel,
   filterCompletedIssues,
 } from "@agileplanning-io/flow-metrics";
 import {
@@ -66,6 +67,7 @@ export const HistogramPage = () => {
         showStatusFilter={false}
         showResolutionFilter={true}
         showHierarchyFilter={true}
+        defaultHierarchyLevel={HierarchyLevel.Story}
       />
 
       <ExpandableOptions

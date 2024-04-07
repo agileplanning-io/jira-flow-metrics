@@ -1,5 +1,6 @@
 import {
   CompletedIssue,
+  HierarchyLevel,
   Issue,
   filterCompletedIssues,
 } from "@agileplanning-io/flow-metrics";
@@ -67,6 +68,7 @@ export const ScatterplotPage = () => {
         showStatusFilter={false}
         showResolutionFilter={true}
         showHierarchyFilter={true}
+        defaultHierarchyLevel={HierarchyLevel.Story}
       />
 
       <ExpandableOptions

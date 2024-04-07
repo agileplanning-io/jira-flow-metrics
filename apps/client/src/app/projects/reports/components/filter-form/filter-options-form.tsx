@@ -32,6 +32,7 @@ type FilterOptionsProps = {
   showResolutionFilter: boolean;
   showStatusFilter: boolean;
   showHierarchyFilter: boolean;
+  defaultHierarchyLevel?: HierarchyLevel;
 };
 
 export const FilterOptionsForm: FC<FilterOptionsProps> = ({
@@ -41,6 +42,7 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
   showResolutionFilter,
   showStatusFilter,
   showHierarchyFilter,
+  defaultHierarchyLevel,
 }) => {
   const { filter, setFilter } = useFilterContext();
 
@@ -53,7 +55,11 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
 
   useEffect(() => {
     if (showDateSelector && !filter.dates) {
-      setFilter({ ...filter, dates: defaultDateRange() });
+      setFilter({
+        ...filter,
+        dates: defaultDateRange(),
+        hierarchyLevel: defaultHierarchyLevel,
+      });
     }
   });
 
