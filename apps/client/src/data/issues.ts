@@ -59,6 +59,12 @@ const getIssues = async (
     if (policy.epics.labelsFilter?.labelFilterType) {
       url += `&epicPolicyLabelFilterType=${policy.epics.labelsFilter?.labelFilterType}`;
     }
+    if (policy.epics.issueTypesFilter?.issueTypes) {
+      url += `&epicPolicyIssueTypes=${policy.epics.issueTypesFilter?.issueTypes.join()}`;
+    }
+    if (policy.epics.issueTypesFilter?.issueTypeFilterType) {
+      url += `&epicPolicyIssueTypeFilterType=${policy.epics.issueTypesFilter?.issueTypeFilterType}`;
+    }
   }
 
   const response = await axios.get(url);

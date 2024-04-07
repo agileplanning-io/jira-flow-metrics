@@ -67,6 +67,7 @@ export class DomainsController {
       ...body,
       labels: [],
       components: [],
+      issueTypes: [],
     });
   }
 

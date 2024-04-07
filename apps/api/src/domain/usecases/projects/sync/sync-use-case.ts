@@ -55,6 +55,9 @@ export class SyncUseCase {
     );
 
     const labels = uniq(flatten<string>(issues.map((issue) => issue.labels)));
+    const issueTypes = uniq(
+      flatten<string>(issues.map((issue) => issue.issueType)),
+    );
     const components = uniq(
       flatten<string>(issues.map((issue) => issue.components)),
     );
@@ -66,6 +69,7 @@ export class SyncUseCase {
       },
       components,
       labels,
+      issueTypes,
       workflowScheme: workflowScheme,
       defaultCycleTimePolicy,
     });

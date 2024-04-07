@@ -33,6 +33,7 @@ describe("SyncUseCase", () => {
       jql: "project = MYPROJ",
       labels: [],
       components: [],
+      issueTypes: [],
     };
 
     const domain: Domain = {
@@ -83,6 +84,7 @@ describe("SyncUseCase", () => {
     expect(projects.updateProject).toBeCalledWith(projectId, {
       labels: [],
       components: [],
+      issueTypes: ["Story"],
       lastSync: {
         date: now,
         issueCount: 1,

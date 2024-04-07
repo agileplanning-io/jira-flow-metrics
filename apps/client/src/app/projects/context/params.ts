@@ -78,11 +78,42 @@ const parseEpicComputedPolicy = (
     "epicPolicyLabelFilterType",
   ) as FilterType;
 
+  if (!builder.getAll("epicPolicyIssueTypes")) {
+    builder.setAll(
+      "epicPolicyIssueTypes",
+      project.defaultCycleTimePolicy.epics.type === "computed"
+        ? project.defaultCycleTimePolicy.epics.issueTypesFilter?.issueTypes
+        : undefined,
+    );
+  }
+
+  const issueTypes = builder.getAll("epicPolicyIssueTypes") ?? undefined;
+
+  if (!builder.get("epicPolicyIssueTypeFilterType")) {
+    const filterType =
+      project.defaultCycleTimePolicy.epics.type === "computed"
+        ? project.defaultCycleTimePolicy.epics.issueTypesFilter
+            ?.issueTypeFilterType
+        : undefined;
+    builder.set(
+      "epicPolicyIssueTypeFilterType",
+      filterType ?? FilterType.Include,
+    );
+  }
+
+  const issueTypeFilterType = builder.get(
+    "epicPolicyIssueTypeFilterType",
+  ) as FilterType;
+
   return {
     type: "computed",
     labelsFilter: {
       labels,
       labelFilterType,
+    },
+    issueTypesFilter: {
+      issueTypes,
+      issueTypeFilterType,
     },
   };
 };
@@ -169,6 +200,11 @@ export const toParams = (prev: URLSearchParams, policy: CycleTimePolicy) => {
       .set(
         "epicPolicyLabelFilterType",
         policy.epics.labelsFilter?.labelFilterType,
+      )
+      .setAll("epicPolicyIssueTypes", policy.epics.issueTypesFilter?.issueTypes)
+      .set(
+        "epicPolicyIssueTypeFilterType",
+        policy.epics.issueTypesFilter?.issueTypeFilterType,
       );
   }
 

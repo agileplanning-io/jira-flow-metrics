@@ -88,6 +88,11 @@ export const isCompleted = (issue: Issue): issue is CompletedIssue =>
 
 export type LabelFilterPolicy = Pick<IssueFilter, "labels" | "labelFilterType">;
 
+export type IssueTypeFilterPolicy = Pick<
+  IssueFilter,
+  "issueTypes" | "issueTypeFilterType"
+>;
+
 export type StatusCycleTimePolicy = {
   type: "status";
   includeWaitTime: boolean;
@@ -97,6 +102,7 @@ export type StatusCycleTimePolicy = {
 export type ComputedCycleTimePolicy = {
   type: "computed";
   labelsFilter?: LabelFilterPolicy;
+  issueTypesFilter?: IssueTypeFilterPolicy;
 };
 
 export type CycleTimePolicy = {
