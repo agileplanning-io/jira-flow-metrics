@@ -145,23 +145,18 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
     setFilter({ ...filter, components });
 
   return (
-    <ExpandableOptions
-      header={{ title: "Filter Options", options }}
-      extra={
-        filteredIssuesCount ? <Tag>{filteredIssuesCount} issues</Tag> : null
-      }
-    >
-      <Form layout="vertical">
+    <>
+      <Form layout="horizontal" style={{ padding: "12px 12px 0 12px" }}>
         <Row gutter={[8, 8]}>
           {showDateSelector ? (
-            <Col span={8}>
+            <Col span={9}>
               <Form.Item label="Dates">
                 <DateSelector dates={filter.dates} onChange={onDatesChanged} />
               </Form.Item>
             </Col>
           ) : null}
           {showHierarchyFilter ? (
-            <Col span={4}>
+            <Col span={5}>
               <Form.Item label="Hierarchy Level">
                 <Select
                   allowClear={true}
@@ -174,112 +169,130 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
               </Form.Item>
             </Col>
           ) : null}
-          {showResolutionFilter ? (
-            <Col span={4}>
-              <Form.Item label="Resolution">
-                <Select
-                  mode="multiple"
-                  allowClear={true}
-                  options={resolutions}
-                  value={filter.resolutions}
-                  onChange={onResolutionsChanged}
-                />
-              </Form.Item>
-            </Col>
-          ) : null}
-          {showStatusFilter ? (
-            <Col span={4}>
-              <Form.Item label="Status">
-                <Select
-                  mode="multiple"
-                  allowClear={true}
-                  options={statuses}
-                  value={filter.statuses}
-                  onChange={onStatusesChanged}
-                />
-              </Form.Item>
-            </Col>
-          ) : null}
-
-          <Col span={4}>
-            <Form.Item label="Assignees">
-              <Select
-                mode="multiple"
-                allowClear={true}
-                options={assignees}
-                value={filter.assignees}
-                onChange={onAssigneesChanged}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={[8, 8]}>
-          <Col span={8}>
-            <Form.Item label="Labels" style={{ width: "100%" }}>
-              <Space.Compact style={{ width: "100%" }}>
-                <Form.Item style={{ width: "25%" }}>
-                  <Select
-                    value={filter.labelFilterType}
-                    onChange={onLabelFilterTypeChanged}
-                    options={[
-                      { value: "include", label: "Include" },
-                      { value: "exclude", label: "Exclude" },
-                    ]}
-                  />
-                </Form.Item>
-                <Form.Item style={{ width: "75%" }}>
-                  <Select
-                    mode="multiple"
-                    allowClear={true}
-                    options={labels}
-                    value={filter.labels}
-                    onChange={onLabelsChanged}
-                  />
-                </Form.Item>
-              </Space.Compact>
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item label="Components">
-              <Select
-                mode="multiple"
-                allowClear={true}
-                options={components}
-                value={filter.components}
-                onChange={onComponentsChanged}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={[8, 8]}>
-          <Col span={8}>
-            <Form.Item label="Issue Types" style={{ width: "100%" }}>
-              <Space.Compact style={{ width: "100%" }}>
-                <Form.Item style={{ width: "25%" }}>
-                  <Select
-                    value={filter.issueTypeFilterType}
-                    onChange={onIssueTypeFilterTypeChanged}
-                    options={[
-                      { value: "include", label: "Include" },
-                      { value: "exclude", label: "Exclude" },
-                    ]}
-                  />
-                </Form.Item>
-                <Form.Item style={{ width: "75%" }}>
-                  <Select
-                    mode="multiple"
-                    allowClear={true}
-                    options={issueTypes}
-                    value={filter.issueTypes}
-                    onChange={onIssueTypesChanged}
-                  />
-                </Form.Item>
-              </Space.Compact>
-            </Form.Item>
-          </Col>
         </Row>
       </Form>
-    </ExpandableOptions>
+      <ExpandableOptions
+        header={{ title: "Filter Options", options }}
+        extra={
+          filteredIssuesCount ? (
+            <Tag style={{ marginRight: -4 }}>
+              {filteredIssuesCount} / {issues?.length} issues
+            </Tag>
+          ) : null
+        }
+      >
+        <Form
+          layout="horizontal"
+          labelCol={{ span: 2 }}
+          wrapperCol={{ span: 10 }}
+        >
+          {showStatusFilter ? (
+            <Form.Item label="Status" style={{ margin: "8px 0" }}>
+              <Row>
+                <Col span={8}>
+                  <Select
+                    mode="multiple"
+                    allowClear={true}
+                    options={statuses}
+                    value={filter.statuses}
+                    onChange={onStatusesChanged}
+                  />
+                </Col>
+              </Row>
+            </Form.Item>
+          ) : null}
+          {showResolutionFilter ? (
+            <Form.Item label="Resolution" style={{ margin: "8px 0" }}>
+              <Row>
+                <Col span={8}>
+                  <Select
+                    mode="multiple"
+                    allowClear={true}
+                    options={resolutions}
+                    value={filter.resolutions}
+                    onChange={onResolutionsChanged}
+                  />
+                </Col>
+              </Row>
+            </Form.Item>
+          ) : null}
+          <Form.Item label="Assignees" style={{ margin: "8px 0" }}>
+            <Row>
+              <Col span={8}>
+                <Select
+                  mode="multiple"
+                  allowClear={true}
+                  options={assignees}
+                  value={filter.assignees}
+                  onChange={onAssigneesChanged}
+                />
+              </Col>
+            </Row>
+          </Form.Item>
+
+          <Form.Item label="Labels" style={{ width: "100%", margin: "8px 0" }}>
+            <Space.Compact style={{ width: "100%" }}>
+              <Form.Item style={{ width: "25%", margin: 0 }}>
+                <Select
+                  value={filter.labelFilterType}
+                  onChange={onLabelFilterTypeChanged}
+                  options={[
+                    { value: "include", label: "Include" },
+                    { value: "exclude", label: "Exclude" },
+                  ]}
+                />
+              </Form.Item>
+              <Form.Item style={{ width: "75%", margin: 0 }}>
+                <Select
+                  mode="multiple"
+                  allowClear={true}
+                  options={labels}
+                  value={filter.labels}
+                  onChange={onLabelsChanged}
+                />
+              </Form.Item>
+            </Space.Compact>
+          </Form.Item>
+
+          <Form.Item label="Components" style={{ margin: "8px 0" }}>
+            <Select
+              mode="multiple"
+              allowClear={true}
+              options={components}
+              value={filter.components}
+              onChange={onComponentsChanged}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Issue Types"
+            style={{ width: "100%", margin: "8px 0" }}
+          >
+            <Space.Compact style={{ width: "100%" }}>
+              <Form.Item style={{ width: "25%", margin: 0 }}>
+                <Select
+                  value={filter.issueTypeFilterType}
+                  onChange={onIssueTypeFilterTypeChanged}
+                  options={[
+                    { value: "include", label: "Include" },
+                    { value: "exclude", label: "Exclude" },
+                  ]}
+                />
+              </Form.Item>
+              <Form.Item style={{ width: "75%", margin: 0 }}>
+                <Select
+                  mode="multiple"
+                  allowClear={true}
+                  options={issueTypes}
+                  value={filter.issueTypes}
+                  onChange={onIssueTypesChanged}
+                />
+              </Form.Item>
+            </Space.Compact>
+          </Form.Item>
+        </Form>
+      </ExpandableOptions>
+    </>
   );
 };
 

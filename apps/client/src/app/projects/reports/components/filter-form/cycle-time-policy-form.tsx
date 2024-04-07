@@ -1,5 +1,4 @@
 import { FilterType } from "@agileplanning-io/flow-metrics";
-import { Tag } from "antd";
 import {
   ExpandableOptions,
   ExpandableOptionsHeader,
@@ -10,8 +9,7 @@ import { EditCycleTimePolicyForm } from "@app/components/edit-cycle-time-policy-
 import { getSelectedStages } from "@data/workflows";
 
 export const CycleTimePolicyForm = () => {
-  const { project, cycleTimePolicy, setCycleTimePolicy, issues } =
-    useProjectContext();
+  const { project, cycleTimePolicy, setCycleTimePolicy } = useProjectContext();
 
   if (!cycleTimePolicy || !project) {
     return <LoadingSpinner />;
@@ -81,7 +79,6 @@ export const CycleTimePolicyForm = () => {
         title: "Cycle Time Policy",
         options,
       }}
-      extra={issues ? <Tag>{issues.length} issues</Tag> : null}
     >
       <EditCycleTimePolicyForm
         project={project}
