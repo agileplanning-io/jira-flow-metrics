@@ -1,4 +1,4 @@
-import { LabelFilterType } from "@agileplanning-io/flow-metrics";
+import { FilterType } from "@agileplanning-io/flow-metrics";
 import { Tag } from "antd";
 import {
   ExpandableOptions,
@@ -68,7 +68,7 @@ export const CycleTimePolicyForm = () => {
     options.push({
       label:
         cycleTimePolicy?.epics.labelsFilter?.labelFilterType ===
-        LabelFilterType.Include
+        FilterType.Include
           ? "Include labels"
           : "Exclude labels",
       value: cycleTimePolicy?.epics.labelsFilter?.labels?.join(),

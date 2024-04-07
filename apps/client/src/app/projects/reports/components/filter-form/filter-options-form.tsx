@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import {
   HierarchyLevel,
   Issue,
-  LabelFilterType,
+  FilterType,
   filterIssues,
 } from "@agileplanning-io/flow-metrics";
 import { Col, Form, Row, Select, SelectProps, Space, Tag } from "antd";
@@ -102,7 +102,7 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
   if (filter.labels?.length) {
     options.push({
       label:
-        filter.labelFilterType === LabelFilterType.Include
+        filter.labelFilterType === FilterType.Include
           ? "Include labels"
           : "Exclude labels",
       value: filter.labels.join(),
@@ -135,7 +135,7 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
   const onLabelsChanged = (labels?: string[]) =>
     setFilter({ ...filter, labels });
 
-  const onLabelFilterTypeChanged = (labelFilterType: LabelFilterType) =>
+  const onLabelFilterTypeChanged = (labelFilterType: FilterType) =>
     setFilter({ ...filter, labelFilterType });
 
   const onComponentsChanged = (components?: string[]) =>

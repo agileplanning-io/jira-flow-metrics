@@ -1,6 +1,6 @@
 import { buildIssue } from "../fixtures/issue-factory";
 import { HierarchyLevel } from "../types";
-import { LabelFilterType, filterIssues } from "./filter";
+import { FilterType, filterIssues } from "./filter";
 
 describe("filterIssues", () => {
   const story = buildIssue({ hierarchyLevel: HierarchyLevel.Story });
@@ -29,7 +29,7 @@ describe("filterIssues", () => {
     it("filters the included labels when labelFilterType = include", () => {
       const filteredIssues = filterIssues([story, labelledStory], {
         labels: ["my-label"],
-        labelFilterType: LabelFilterType.Include,
+        labelFilterType: FilterType.Include,
       });
 
       expect(filteredIssues).toEqual([labelledStory]);
@@ -38,7 +38,7 @@ describe("filterIssues", () => {
     it("omits the excluded labels when labelFilterType = excluded", () => {
       const filteredIssues = filterIssues([story, labelledStory], {
         labels: ["my-label"],
-        labelFilterType: LabelFilterType.Exclude,
+        labelFilterType: FilterType.Exclude,
       });
 
       expect(filteredIssues).toEqual([story]);

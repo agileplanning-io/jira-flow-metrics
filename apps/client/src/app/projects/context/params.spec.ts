@@ -1,7 +1,4 @@
-import {
-  LabelFilterType,
-  StatusCategory,
-} from "@agileplanning-io/flow-metrics";
+import { FilterType, StatusCategory } from "@agileplanning-io/flow-metrics";
 import { parseCycleTimePolicy, toParams } from "./params";
 import { describe, expect, it, vitest } from "vitest";
 import { groupBy } from "rambda";
@@ -18,7 +15,7 @@ describe("toParams", () => {
       epics: {
         type: "computed",
         labelsFilter: {
-          labelFilterType: LabelFilterType.Exclude,
+          labelFilterType: FilterType.Exclude,
           labels: ["tech-debt", "discovery"],
         },
       },
@@ -223,7 +220,7 @@ const buildProject = (params: Partial<Project> = {}): Project => {
       epics: {
         type: "computed",
         labelsFilter: {
-          labelFilterType: LabelFilterType.Exclude,
+          labelFilterType: FilterType.Exclude,
           labels: ["tech-debt"],
         },
       },

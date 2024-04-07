@@ -2,7 +2,7 @@ import { ProjectsRepository } from "@entities/projects";
 import { IssuesRepository } from "@entities/issues";
 import {
   CycleTimePolicy,
-  LabelFilterType,
+  FilterType,
   getFlowMetrics,
 } from "@agileplanning-io/flow-metrics";
 import {
@@ -42,7 +42,7 @@ class LabelsFilterPolicyBody {
   stories: StoryCycleTimePolicyBody;
 
   @ApiProperty()
-  labelFilterType: LabelFilterType;
+  labelFilterType: FilterType;
 }
 
 class EpicCycleTimePolicyBody {
@@ -172,7 +172,7 @@ export class ProjectsController {
       new ParseArrayPipe({ items: String, separator: ",", optional: true }),
     )
     labels?: string[],
-    @Query("epicPolicyLabelFilterType") labelFilterType?: LabelFilterType,
+    @Query("epicPolicyLabelFilterType") labelFilterType?: FilterType,
   ) {
     let issues = await this.issues.getIssues(projectId);
 

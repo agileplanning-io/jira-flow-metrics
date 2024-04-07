@@ -1,7 +1,7 @@
 import {
   ComputedCycleTimePolicy,
   CycleTimePolicy,
-  LabelFilterType,
+  FilterType,
   StatusCycleTimePolicy,
 } from "@agileplanning-io/flow-metrics";
 import { Project } from "@data/projects";
@@ -71,15 +71,12 @@ const parseEpicComputedPolicy = (
       project.defaultCycleTimePolicy.epics.type === "computed"
         ? project.defaultCycleTimePolicy.epics.labelsFilter?.labelFilterType
         : undefined;
-    builder.set(
-      "epicPolicyLabelFilterType",
-      filterType ?? LabelFilterType.Include,
-    );
+    builder.set("epicPolicyLabelFilterType", filterType ?? FilterType.Include);
   }
 
   const labelFilterType = builder.get(
     "epicPolicyLabelFilterType",
-  ) as LabelFilterType;
+  ) as FilterType;
 
   return {
     type: "computed",

@@ -6,7 +6,7 @@ import {
 } from "../types";
 import { getFlowMetrics } from "./get-flow-metrics";
 import { buildIssue } from "../fixtures/issue-factory";
-import { LabelFilterType } from "../util";
+import { FilterType } from "../util";
 
 jest.useFakeTimers();
 
@@ -570,7 +570,7 @@ describe("getFlowMetrics", () => {
             type: "computed",
             labelsFilter: {
               labels: story1.labels,
-              labelFilterType: LabelFilterType.Include,
+              labelFilterType: FilterType.Include,
             },
           },
         });
