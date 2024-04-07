@@ -201,7 +201,7 @@ export const useUpdateProject = () => {
       }
 
       const projectIndex = projects?.findIndex(
-        (cached) => cached.id !== project.id,
+        (cached) => cached.id === project.id,
       );
       if (projectIndex !== undefined && projectIndex >= 0) {
         projects[projectIndex] = project;
