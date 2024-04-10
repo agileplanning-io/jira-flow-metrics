@@ -10,7 +10,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const { project } = useNavigationContext();
   const [cycleTimePolicy, setCycleTimePolicy] =
-    useQueryState<CycleTimePolicy>("cycleTimePolicy");
+    useQueryState<CycleTimePolicy>("p");
 
   const { data: issues } = useIssues(project?.id, cycleTimePolicy);
 

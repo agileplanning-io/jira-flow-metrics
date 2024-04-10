@@ -5,7 +5,7 @@ import { useQueryState } from "@lib/use-query-state";
 export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [filter, setFilter] = useQueryState<IssueFilter>("filter");
+  const [filter, setFilter] = useQueryState<IssueFilter>("f");
 
   return (
     <FilterContext.Provider value={{ filter: filter ?? {}, setFilter }}>
