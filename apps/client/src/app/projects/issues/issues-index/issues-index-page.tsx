@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { IssuesTable, SortState } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
 import { Issue, filterIssues } from "@agileplanning-io/flow-metrics";
-import { omit, pipe, sortBy } from "rambda";
+import { omit, pipe, sortBy } from "remeda";
 import { Col, Form, Input } from "antd";
 import * as fuzzball from "fuzzball";
 import { useProjectContext } from "../../context";
@@ -24,7 +24,8 @@ export const IssuesIndexPage = () => {
   useEffect(() => {
     if (filter && issues) {
       const filteredIssues = pipe(
-        (issues) => filterIssues(issues, omit(["dates"], filter)),
+        issues,
+        (issues) => filterIssues(issues, omit(filter, ["dates"])),
         (issues) => {
           if (searchQuery.trim().length === 0) {
             return issues;
@@ -48,13 +49,13 @@ export const IssuesIndexPage = () => {
             .filter((issue) => issue.sortIndex >= 60);
 
           const sortedIssues = sortBy(
-            (issue) => -issue.sortIndex,
             searchedIssues,
+            (issue) => -issue.sortIndex,
           );
 
           return sortedIssues;
         },
-      )(issues);
+      );
       setFilteredIssues(filteredIssues);
     }
   }, [issues, filter, searchQuery, setFilteredIssues]);

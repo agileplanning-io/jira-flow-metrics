@@ -7,7 +7,7 @@ import {
   filterIssues,
 } from "@agileplanning-io/flow-metrics";
 import { useFilterContext } from "../../../filter/context";
-import { isNil, omit } from "rambda";
+import { isNil, omit } from "remeda";
 import { Checkbox, Col, Collapse, Row } from "antd";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
@@ -61,7 +61,7 @@ export const AgeingWipPage = () => {
       const benchmarkIssues = filterCompletedIssues(issues, filter);
       setBenchmarkIssues(benchmarkIssues);
 
-      const ageingIssues = filterIssues(issues, omit(["dates"], filter))
+      const ageingIssues = filterIssues(issues, omit(filter, ["dates"]))
         .filter(
           (issue) =>
             issue.hierarchyLevel === HierarchyLevel.Epic ||

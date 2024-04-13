@@ -1,6 +1,6 @@
 import { Edge, Graph, alg } from "@dagrejs/graphlib";
 import { Issue, Transition } from "@agileplanning-io/flow-metrics";
-import { flatten, isNil, reject, sortBy } from "rambda";
+import { flatten, compact, sortBy } from "remeda";
 
 type EdgeWithWeight = {
   edge: Edge;
@@ -51,12 +51,12 @@ const removeCycles = (graph: Graph) => {
         }
       });
     });
-    return reject(isNil)(flatten(edges));
+    return compact(flatten(edges));
   };
 
   for (const cycle of cycles) {
     const edges = getEdgesInCycle(cycle);
-    const leastWeighted = sortBy((edge) => edge.weight, edges)[0];
+    const leastWeighted = sortBy(edges, (edge) => edge.weight)[0];
     graph.removeEdge(leastWeighted.edge);
   }
 

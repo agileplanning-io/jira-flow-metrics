@@ -22,7 +22,7 @@
     "@agileplanning-io/flow-lib": "workspace:*",
     "@agileplanning-io/flow-metrics": "workspace:*",
     "immer": "^10.0.3",
-    "remeda": "^1.33.0",
+    "remeda": "^1.58.2",
     "tsup": "^8.0.1"
   },
   "devDependencies": {

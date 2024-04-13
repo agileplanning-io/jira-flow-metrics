@@ -9,7 +9,7 @@ import { compareAsc, differenceInMinutes } from "date-fns";
 import { ColumnType, ColumnsType, SortOrder } from "antd/es/table/interface";
 import { useEffect, useState } from "react";
 import { useNavigationContext } from "../navigation/context";
-import { isNil } from "rambda";
+import { isNil } from "remeda";
 import {
   IssueResolution,
   IssueStatus,

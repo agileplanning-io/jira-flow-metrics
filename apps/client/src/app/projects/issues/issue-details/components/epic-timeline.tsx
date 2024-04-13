@@ -8,12 +8,11 @@ import {
   dropWhile,
   equals,
   flatten,
-  isNil,
-  reject,
+  compact,
   sortBy,
   times,
   uniq,
-} from "rambda";
+} from "remeda";
 import { addHours } from "date-fns";
 import { IssueDetailsDrawer } from "@app/projects/reports/components/issue-details-drawer";
 import { IssuesTable } from "@app/components/issues-table";
@@ -51,35 +50,36 @@ const getOptions = (
 ) => {
   const groups = uniq(testData.map((event) => event.issueKey));
 
-  const labels = sortBy(
-    (group) =>
-      Math.min(
-        ...testData
-          .filter((e) => e.issueKey === group)
-          .map((event) => event.start.getTime()),
-      ),
-    groups,
+  const labels = sortBy(groups, (group) =>
+    Math.min(
+      ...testData
+        .filter((e) => e.issueKey === group)
+        .map((event) => event.start.getTime()),
+    ),
   );
 
-  const sortedIssues = reject(isNil)(
+  const sortedIssues = compact(
     labels.map((key) => issues.find((issue) => issue.key === key)),
   );
 
   const datasets = testData.map((event) => {
     const datasetIndex = labels.indexOf(event.issueKey);
 
-    const data: (null | [number, number, string])[] = times((index) => {
-      if (index !== datasetIndex) {
-        return null;
-      }
+    const data: (null | [number, number, string])[] = times(
+      labels.length,
+      (index) => {
+        if (index !== datasetIndex) {
+          return null;
+        }
 
-      const tooltipDates = event.isCompletedStatus
-        ? formatDate(event.start)
-        : `${formatDate(event.start)}-${formatDate(event.end)}`;
-      const tooltipLabel = `${event.status} (${tooltipDates})`;
+        const tooltipDates = event.isCompletedStatus
+          ? formatDate(event.start)
+          : `${formatDate(event.start)}-${formatDate(event.end)}`;
+        const tooltipLabel = `${event.status} (${tooltipDates})`;
 
-      return [event.startTime, event.endTime, tooltipLabel];
-    }, labels.length);
+        return [event.startTime, event.endTime, tooltipLabel];
+      },
+    );
 
     return {
       summary: `${event.issueKey}: ${event.summary}`,
@@ -231,8 +231,8 @@ const getTimelineEvents = (epic: Issue, issues: Issue[]): TimelineEvent[] => {
 
   const events = issues.map((issue) => {
     const transitions = dropWhile(
-      (t) => t.toStatus.category !== "In Progress",
       issue.transitions,
+      (t) => t.toStatus.category !== "In Progress",
     )
       .reduce<Transition[]>(mergeStatuses, [])
       .reduce<Transition[]>(dropDoneStatuses, []);
@@ -253,7 +253,9 @@ const getTimelineEvents = (epic: Issue, issues: Issue[]): TimelineEvent[] => {
         status: t.toStatus.name,
         category: t.toStatus.category,
         isCompletedStatus:
-          issue.metrics.completed && index === transitions.length - 1,
+          (issue.metrics.completed && index === transitions.length - 1) ??
+          false,
+        label: "", // TODO: when should this be computed?
       };
     });
 

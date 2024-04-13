@@ -6,7 +6,7 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { WorkflowScheme, WorkflowStage } from "@entities/projects";
 import { sortStatuses } from "./sort-statuses";
-import { isNil, reject } from "rambda";
+import { compact } from "remeda";
 
 export const buildDefaultWorkflowScheme = (
   issues: Issue[],
@@ -63,7 +63,7 @@ const buildProjectStatuses = (
   );
 
   return {
-    stories: reject(isNil)(storyStatuses),
-    epics: reject(isNil)(epicStatuses),
+    stories: compact(storyStatuses),
+    epics: compact(epicStatuses),
   };
 };

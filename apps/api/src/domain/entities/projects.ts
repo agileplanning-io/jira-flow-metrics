@@ -3,7 +3,7 @@ import {
   TransitionStatus,
 } from "@agileplanning-io/flow-metrics";
 import { Domain } from "./domains";
-import { flatten } from "rambda";
+import { flatten } from "remeda";
 
 export type WorkflowStage = {
   name: string;

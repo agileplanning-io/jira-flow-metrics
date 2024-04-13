@@ -33,12 +33,12 @@
     "immer": "^10.0.3",
     "mathjs": "^11.11.2",
     "qs": "^6.12.0",
-    "rambda": "^8.4.0",
     "rc-picker": "~3.14.5",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.16.0"
+    "react-router-dom": "^6.16.0",
+    "remeda": "^1.58.2"
   },
   "devDependencies": {
     "@testing-library/react": "^14.3.0",

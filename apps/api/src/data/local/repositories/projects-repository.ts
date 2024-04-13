@@ -7,7 +7,7 @@ import {
 import { DataError } from "node-json-db";
 import { DataCache } from "@data/storage/storage";
 import { createId } from "@data/local/id";
-import { pick } from "rambda";
+import { pick } from "remeda";
 
 @Injectable()
 export class LocalProjectsRepository extends ProjectsRepository {
@@ -36,7 +36,7 @@ export class LocalProjectsRepository extends ProjectsRepository {
   }
 
   async addProject(params: CreateProjectParams): Promise<Project> {
-    const id = createId(pick(["domainId", "name", "jql"], params));
+    const id = createId(pick(params, ["domainId", "name", "jql"]));
     const project = { ...params, id };
     await this.cache.push(projectPath(id), project);
     return project;

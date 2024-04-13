@@ -10,7 +10,7 @@ import {
   StatusCategory,
   buildIssue,
 } from "@agileplanning-io/flow-metrics";
-import { flatten, times } from "rambda";
+import { flatten, times } from "remeda";
 import { INestApplicationContext } from "@nestjs/common";
 import { addMinutes, subHours } from "date-fns";
 import { randomInt } from "crypto";
@@ -128,7 +128,7 @@ const buildEpic = (index: number) => {
     statusCategory: StatusCategory.Done,
   });
 
-  const children = times(() => {
+  const children = times(5, () => {
     const started = subHours(now, 12 * (index * 10 + randomInt(10)) + 12 * 6);
     const reviewDate = addMinutes(started, rand(1.2, 7 * 24 * 60));
     const completed = addMinutes(reviewDate, rand(1, 1 * 24 * 60));
@@ -164,7 +164,7 @@ const buildEpic = (index: number) => {
         },
       ],
     });
-  }, 5);
+  });
 
   return [epic, ...children];
 };
@@ -178,7 +178,7 @@ const seedData = async (app: INestApplicationContext) => {
   const project = await createProject(projects);
   console.info("Created project", project);
 
-  const issues: Issue[] = flatten(times((index) => buildEpic(index), 15));
+  const issues: Issue[] = flatten(times(15, (index) => buildEpic(index)));
   const issuesRepository = await app.resolve(IssuesRepository);
   await issuesRepository.setIssues(projectId, issues);
 };

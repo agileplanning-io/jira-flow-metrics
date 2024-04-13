@@ -7,7 +7,7 @@ import {
   StatusBuilder,
 } from "@agileplanning-io/flow-metrics";
 import { DomainsRepository } from "@entities/domains";
-import { flatten, uniq } from "rambda";
+import { compact, flatten, uniq } from "remeda";
 import { buildDefaultWorkflowScheme } from "./build-default-workflow";
 import { isValidWorkflowScheme } from "./validation-rules";
 import { buildDefaultCycleTimePolicy } from "./build-default-policy";
@@ -54,13 +54,11 @@ export class SyncUseCase {
       workflowScheme,
     );
 
-    const labels = uniq(flatten<string>(issues.map((issue) => issue.labels)));
+    const labels = uniq(flatten(issues.map((issue) => issue.labels)));
     const issueTypes = uniq(
-      flatten<string>(issues.map((issue) => issue.issueType)),
+      compact(flatten(issues.map((issue) => issue.issueType))),
     );
-    const components = uniq(
-      flatten<string>(issues.map((issue) => issue.components)),
-    );
+    const components = uniq(flatten(issues.map((issue) => issue.components)));
 
     await this.projects.updateProject(projectId, {
       lastSync: {

@@ -7,7 +7,7 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { Col, Form, Row, Select, SelectProps, Space, Tag } from "antd";
 import { DateSelector } from "../date-selector";
-import { flatten, isNil, map, pipe, reject, uniq } from "rambda";
+import { flatten, compact, uniq, pipe, map } from "remeda";
 import { useFilterContext } from "../../../../filter/context";
 import { Interval, defaultDateRange } from "@agileplanning-io/flow-lib";
 import {
@@ -315,10 +315,11 @@ const makeFilterOptions = (
 
 const getUniqueValues = (issues: Issue[], property: keyof Issue): string[] => {
   return pipe(
-    map((issue: Issue) => issue[property]),
-    reject(isNil),
-    uniq,
-  )(issues);
+    issues,
+    map((issue) => issue[property]?.toString()),
+    compact,
+    uniq(),
+  );
 };
 
 const makeLabelOptions = (issues: Issue[]): SelectProps["options"] => {

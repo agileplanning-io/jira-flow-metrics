@@ -9,7 +9,7 @@ import {
 import { IssuesTable } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
 import { WipChart } from "@agileplanning-io/flow-charts/src/wip/wip-chart";
-import { omit } from "rambda";
+import { omit } from "remeda";
 import { Checkbox, Col, Row } from "antd";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
@@ -40,7 +40,7 @@ export const WipPage = () => {
 
   useEffect(() => {
     if (filter && issues) {
-      const filteredIssues = filterIssues(issues, omit(["dates"], filter))
+      const filteredIssues = filterIssues(issues, omit(filter, ["dates"]))
         .filter(
           (issue) =>
             // why filter by epic here?
