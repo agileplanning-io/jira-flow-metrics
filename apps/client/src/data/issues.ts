@@ -7,6 +7,7 @@ import {
   IssueFlowMetrics,
   TransitionStatus,
 } from "@agileplanning-io/flow-metrics";
+import { qsStringify } from "@agileplanning-io/flow-lib";
 
 const issuesQueryKey = "issues";
 
@@ -39,33 +40,9 @@ const getIssues = async (
   policy?: CycleTimePolicy,
 ): Promise<Issue[]> => {
   if (!policy) return Promise.resolve([]);
+  const policyQuery = qsStringify({ policy });
 
-  let url = `/projects/${projectId}/issues?epicPolicyType=${policy.epics.type}`;
-
-  url += `&storyPolicyIncludeWaitTime=${policy.stories.includeWaitTime}`;
-  if (policy.stories.statuses) {
-    url += `&storyPolicyStatuses=${policy.stories.statuses.join()}`;
-  }
-
-  if (policy.epics.type === "status") {
-    url += `&epicPolicyIncludeWaitTime=${policy.epics.includeWaitTime}`;
-    if (policy.epics.statuses) {
-      url += `&epicPolicyStatuses=${policy.epics.statuses.join()}`;
-    }
-  } else {
-    if (policy.epics.labelsFilter?.labels) {
-      url += `&epicPolicyLabels=${policy.epics.labelsFilter?.labels.join()}`;
-    }
-    if (policy.epics.labelsFilter?.labelFilterType) {
-      url += `&epicPolicyLabelFilterType=${policy.epics.labelsFilter?.labelFilterType}`;
-    }
-    if (policy.epics.issueTypesFilter?.issueTypes) {
-      url += `&epicPolicyIssueTypes=${policy.epics.issueTypesFilter?.issueTypes.join()}`;
-    }
-    if (policy.epics.issueTypesFilter?.issueTypeFilterType) {
-      url += `&epicPolicyIssueTypeFilterType=${policy.epics.issueTypesFilter?.issueTypeFilterType}`;
-    }
-  }
+  const url = `/projects/${projectId}/issues?${policyQuery}`;
 
   const response = await axios.get(url);
   return response.data.map(parseIssue);
