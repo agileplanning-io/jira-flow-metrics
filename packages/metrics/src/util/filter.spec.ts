@@ -57,6 +57,28 @@ describe("filterIssues", () => {
     });
   });
 
+  describe("component filters", () => {
+    const apiStory = buildIssue({ components: ["API"] });
+
+    it("filters the included components when componentFilterType = include", () => {
+      const filteredIssues = filterIssues([story, apiStory], {
+        components: ["API"],
+        componentFilterType: FilterType.Include,
+      });
+
+      expect(filteredIssues).toEqual([apiStory]);
+    });
+
+    it("omits the excluded labels when labelFilterType = exclude", () => {
+      const filteredIssues = filterIssues([story, apiStory], {
+        components: ["API"],
+        componentFilterType: FilterType.Exclude,
+      });
+
+      expect(filteredIssues).toEqual([story]);
+    });
+  });
+
   describe("combined filters", () => {
     it("filters by components and status", () => {
       const issues = [
@@ -67,6 +89,7 @@ describe("filterIssues", () => {
 
       const filteredIssues = filterIssues(issues, {
         components: ["API"],
+        componentFilterType: FilterType.Include,
         statuses: ["Done"],
       });
 

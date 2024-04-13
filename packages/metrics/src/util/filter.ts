@@ -22,8 +22,9 @@ export type IssueFilter = {
   issueTypeFilterType?: FilterType;
   assignees?: string[];
   labels?: string[];
-  components?: string[];
   labelFilterType?: FilterType;
+  components?: string[];
+  componentFilterType?: FilterType;
   dates?: Interval;
   dateFilterType?: DateFilterType;
 };
@@ -73,7 +74,9 @@ export const filterIssues = (issues: Issue[], filter: IssueFilter): Issue[] => {
     if (filter.components && filter.components.length > 0) {
       const intersects =
         intersection(filter.components, issue.components).length > 0;
-      if (!intersects) {
+      if (filter.componentFilterType === "include" && !intersects) {
+        return false;
+      } else if (filter.componentFilterType === "exclude" && intersects) {
         return false;
       }
     }
