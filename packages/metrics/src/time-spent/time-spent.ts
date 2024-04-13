@@ -27,9 +27,6 @@ export const timeSpentInPeriod = (
     issues
       .filter((issue) => issue.hierarchyLevel === HierarchyLevel.Story)
       .map((issue) => {
-        if (!issue.metrics.includedInEpic) {
-          return [issue.key, 0];
-        }
         const overlaps = compact(
           issue.transitions.map((transition) =>
             transition.toStatus.category === "In Progress"
