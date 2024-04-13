@@ -5,18 +5,11 @@ import {
   FilterType,
   getFlowMetrics,
 } from "@agileplanning-io/flow-metrics";
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseArrayPipe,
-  Put,
-  Query,
-} from "@nestjs/common";
+import { qsParse } from "@agileplanning-io/flow-lib";
+import { Body, Controller, Delete, Get, Param, Put, Req } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
 import { SyncUseCase } from "@usecases/projects/sync/sync-use-case";
+import { URL } from "url";
 
 class WorkflowStageBody {
   @ApiProperty()
@@ -154,61 +147,12 @@ export class ProjectsController {
   @Get(":projectId/issues")
   async getIssues(
     @Param("projectId") projectId: string,
-    @Query("storyPolicyIncludeWaitTime") storyPolicyIncludeWaitTime: string,
-    @Query(
-      "storyPolicyStatuses",
-      new ParseArrayPipe({ items: String, separator: ",", optional: true }),
-    )
-    storyPolicyStatuses: string[] | undefined,
-    @Query("epicPolicyType") epicPolicyType: string,
-    @Query("epicPolicyIncludeWaitTime") epicPolicyIncludeWaitTime: string,
-    @Query(
-      "epicPolicyStatuses",
-      new ParseArrayPipe({ items: String, separator: ",", optional: true }),
-    )
-    epicPolicyStatuses?: string[],
-    @Query(
-      "epicPolicyLabels",
-      new ParseArrayPipe({ items: String, separator: ",", optional: true }),
-    )
-    labels?: string[],
-    @Query("epicPolicyLabelFilterType") labelFilterType?: FilterType,
-    @Query(
-      "epicPolicyIssueTypes",
-      new ParseArrayPipe({ items: String, separator: ",", optional: true }),
-    )
-    issueTypes?: string[],
-    @Query("epicPolicyIssueTypeFilterType") issueTypeFilterType?: FilterType,
+    @Req() request: Request,
   ) {
+    const url = new URL(request.url, "http://localhost");
+    const queryObject = qsParse(url.search);
+    const policy = queryObject["policy"] as CycleTimePolicy;
     let issues = await this.issues.getIssues(projectId);
-
-    const policy: CycleTimePolicy = {
-      stories: {
-        type: "status",
-        includeWaitTime: ["true", "1"].includes(storyPolicyIncludeWaitTime),
-        statuses: storyPolicyStatuses,
-      },
-      epics:
-        epicPolicyType === "computed"
-          ? {
-              type: "computed",
-              labelsFilter: {
-                labels,
-                labelFilterType,
-              },
-              issueTypesFilter: {
-                issueTypes,
-                issueTypeFilterType,
-              },
-            }
-          : {
-              type: "status",
-              statuses: epicPolicyStatuses,
-              includeWaitTime: ["true", "1"].includes(
-                epicPolicyIncludeWaitTime,
-              ),
-            },
-    };
 
     issues = getFlowMetrics(issues, policy);
 

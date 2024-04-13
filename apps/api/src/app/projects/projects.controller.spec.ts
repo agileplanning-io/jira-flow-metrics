@@ -7,7 +7,12 @@ import { StorageModule } from "@data/storage/storage-module";
 import { TestStorageModule } from "@fixtures/data/storage/test-storage-module";
 import { IssuesRepository } from "@entities/issues";
 import { ProjectsRepository } from "@entities/projects";
-import { StatusCategory, buildIssue } from "@agileplanning-io/flow-metrics";
+import {
+  CycleTimePolicy,
+  StatusCategory,
+  buildIssue,
+} from "@agileplanning-io/flow-metrics";
+import { qsStringify } from "@agileplanning-io/flow-lib";
 
 jest.useFakeTimers().setSystemTime(Date.parse("2023-01-01T13:00:00.000Z"));
 
@@ -73,8 +78,19 @@ describe("ProjectsController", () => {
         }),
       ]);
 
+      const policy: CycleTimePolicy = {
+        stories: {
+          type: "status",
+          includeWaitTime: false,
+        },
+        epics: {
+          type: "status",
+          includeWaitTime: false,
+        },
+      };
+
       const { body } = await request(app.getHttpServer())
-        .get(`/projects/${projectId}/issues`)
+        .get(`/projects/${projectId}/issues?${qsStringify({ policy })}`)
         .expect(200);
 
       expect(body).toEqual([
