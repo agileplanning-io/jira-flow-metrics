@@ -1,5 +1,16 @@
 # @agileplanning-io/flow-components
 
+## 0.0.20
+
+### Patch Changes
+
+- 769effc: chore: update remeda
+- Updated dependencies [57d1e1b]
+- Updated dependencies [769effc]
+- Updated dependencies [12168e4]
+  - @agileplanning-io/flow-metrics@1.0.0
+  - @agileplanning-io/flow-lib@1.0.0
+
 ## 0.0.19
 
 ### Patch Changes

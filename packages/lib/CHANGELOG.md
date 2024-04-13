@@ -1,5 +1,15 @@
 # @agileplanning-io/flow-lib
 
+## 1.0.0
+
+### Major Changes
+
+- 57d1e1b: refactor: extract query param parsing
+
+### Patch Changes
+
+- 769effc: chore: update remeda
+
 ## 0.0.5
 
 ### Patch Changes

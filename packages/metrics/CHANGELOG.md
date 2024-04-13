@@ -1,5 +1,19 @@
 # @agileplanning-io/flow-metrics
 
+## 1.0.0
+
+### Major Changes
+
+- 57d1e1b: refactor: extract query param parsing
+
+### Patch Changes
+
+- 769effc: chore: update remeda
+- 12168e4: fix: show individual issues in time spent report
+- Updated dependencies [57d1e1b]
+- Updated dependencies [769effc]
+  - @agileplanning-io/flow-lib@1.0.0
+
 ## 0.0.17
 
 ### Patch Changes
