@@ -23,15 +23,20 @@ import {
   IssueExternalLink,
   IssueLink,
 } from "@app/projects/components/issue-links";
+import { useOutletContext } from "react-router-dom";
+import { ProjectsContext } from "@app/projects/projects-layout";
 
 export const TimeSpentPage = () => {
   const { projectId } = useNavigationContext();
   const { issues } = useProjectContext();
+  const { hidePolicyForm } = useOutletContext<ProjectsContext>();
 
   const { filter } = useFilterContext();
 
   const [filteredIssues, setFilteredIssues] = useState<Issue[]>([]);
   const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
+
+  hidePolicyForm();
 
   useEffect(() => {
     if (filter && issues) {
