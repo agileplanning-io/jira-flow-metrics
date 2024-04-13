@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import qs from "qs";
 import { format, parse } from "date-fns";
-import { mergeDeepRight } from "rambda";
+import { mergeDeep } from "remeda";
 
 // inspired by https://www.inkoop.io/blog/syncing-query-parameters-with-react-state/
 
@@ -16,9 +16,7 @@ export const useQueryState = <T>(
       setParams((prev) => {
         const existingQuery = qsParse(prev.toString());
         const newQuery = { [key]: value };
-        const updatedQuery = qsStringify(
-          mergeDeepRight(existingQuery, newQuery),
-        );
+        const updatedQuery = qsStringify(mergeDeep(existingQuery, newQuery));
         return new URLSearchParams(updatedQuery);
       });
     },

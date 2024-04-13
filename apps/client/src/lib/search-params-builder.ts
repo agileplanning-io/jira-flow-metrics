@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { isNil } from "rambda";
+import { isNil } from "remeda";
 
 export class SearchParamsBuilder {
   private changed = false;

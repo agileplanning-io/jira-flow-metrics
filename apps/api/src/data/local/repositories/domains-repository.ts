@@ -6,7 +6,7 @@ import {
   DomainsRepository,
 } from "@entities/domains";
 import { DomainsCache } from "../../storage/storage";
-import { omit } from "rambda";
+import { omit } from "remeda";
 import { createId } from "@data/local/id";
 
 @Injectable()
@@ -33,7 +33,7 @@ export class LocalDomainsRepository extends DomainsRepository {
   }
 
   async addDomain(params: CreateDomainParams): Promise<Domain> {
-    const id = createId(omit(["token"], params));
+    const id = createId(omit(params, ["token"]));
     const domain = { ...params, id };
     await this.cache.push(`/domains/${id}`, domain);
     return domain;

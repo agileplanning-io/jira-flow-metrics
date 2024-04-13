@@ -8,7 +8,7 @@ import { Project } from "@data/projects";
 import { getSelectedStages } from "@data/workflows";
 import { Col, Form, Row, Select, Checkbox, SelectProps, Space } from "antd";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
-import { clone, flatten } from "rambda";
+import { clone, flatten } from "remeda";
 import { FC, Key, useEffect, useMemo, useState } from "react";
 
 type EditCycleTimePolicyForm = {

@@ -1,9 +1,14 @@
-import { DataSourcesRepository, ProjectsRepository } from "@entities/projects";
+import {
+  DataSourcesRepository,
+  Project,
+  ProjectsRepository,
+} from "@entities/projects";
 import { Domain, DomainsRepository } from "@entities/domains";
 import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
-import { omit } from "rambda";
+import { omit } from "remeda";
 import { URL } from "url";
+import { Issue } from "@agileplanning-io/flow-metrics";
 
 class CreateDomainBody {
   @ApiProperty()
@@ -52,9 +57,11 @@ export class DomainsController {
   }
 
   @Get(":domainId/projects")
-  async getProjects(@Param("domainId") domainId: string) {
+  async getProjects(@Param("domainId") domainId: string): Promise<Project[]> {
     const projects = await this.projects.getProjects(domainId);
-    return projects.map((project) => omit(["issues"], project));
+    return projects.map((project) =>
+      omit(project as ProjectWithIssues, ["issues"]),
+    );
   }
 
   @Post(":domainId/projects")
@@ -94,4 +101,8 @@ const domainToResponse = ({ id, host, email, token }: Domain) => {
     host,
     credentials: `${email} (***${tokenSuffix})`,
   };
+};
+
+type ProjectWithIssues = Project & {
+  issues: Issue[];
 };

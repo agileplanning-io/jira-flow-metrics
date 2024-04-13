@@ -1,5 +1,5 @@
 import { mapLimit } from "async";
-import { isNil, range, reject } from "rambda";
+import { compact, range } from "remeda";
 import { Injectable } from "@nestjs/common";
 import {
   Field,
@@ -23,7 +23,7 @@ export class HttpJiraIssuesRepository extends JiraIssuesRepository {
   async getFields(domain: Domain): Promise<Field[]> {
     const client = createJiraClient(domain);
     const jiraFields = await client.issueFields.getFields();
-    return reject(isNil)(
+    return compact(
       jiraFields.map((field) => {
         if (field.id === undefined) {
           console.warn(`Missing id for field ${field}`);
@@ -41,7 +41,7 @@ export class HttpJiraIssuesRepository extends JiraIssuesRepository {
   async getStatuses(domain: Domain): Promise<Status[]> {
     const client = createJiraClient(domain);
     const jiraStatuses = await client.workflowStatuses.getStatuses();
-    return reject(isNil)(
+    return compact(
       jiraStatuses.map((status) => {
         if (status.id === undefined) {
           console.warn(`Missing id for status ${status}`);
@@ -52,7 +52,7 @@ export class HttpJiraIssuesRepository extends JiraIssuesRepository {
 
         return {
           jiraId: status.id,
-          name: status.name,
+          name: status.name ?? `Unknown Status (${status.id})`,
           category,
         };
       }),

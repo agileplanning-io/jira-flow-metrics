@@ -65,12 +65,12 @@ importers:
       node-json-db:
         specifier: ^2.2.0
         version: 2.2.0
-      rambda:
-        specifier: ^8.3.0
-        version: 8.4.0
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.13
+      remeda:
+        specifier: ^1.58.2
+        version: 1.58.2
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -213,9 +213,6 @@ importers:
       qs:
         specifier: ^6.12.0
         version: 6.12.0
-      rambda:
-        specifier: ^8.4.0
-        version: 8.4.0
       rc-picker:
         specifier: ~3.14.5
         version: 3.14.6(date-fns@2.30.0)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0)
@@ -231,6 +228,9 @@ importers:
       react-router-dom:
         specifier: ^6.16.0
         version: 6.16.0(react-dom@18.2.0)(react@18.2.0)
+      remeda:
+        specifier: ^1.58.2
+        version: 1.58.2
     devDependencies:
       '@testing-library/react':
         specifier: ^14.3.0
@@ -311,8 +311,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0
       remeda:
-        specifier: ^1.33.0
-        version: 1.33.0
+        specifier: ^1.58.2
+        version: 1.58.2
     devDependencies:
       '@tsconfig/vite-react':
         specifier: ^3.0.0
@@ -363,8 +363,8 @@ importers:
         specifier: ^6.16.0
         version: 6.16.0(react-dom@18.2.0)(react@18.2.0)
       remeda:
-        specifier: ^1.33.0
-        version: 1.33.0
+        specifier: ^1.58.2
+        version: 1.58.2
       tsup:
         specifier: ^8.0.1
         version: 8.0.1(typescript@5.3.3)
@@ -406,8 +406,8 @@ importers:
         specifier: ^11.11.2
         version: 11.11.2
       remeda:
-        specifier: ^1.33.0
-        version: 1.33.0
+        specifier: ^1.58.2
+        version: 1.58.2
     devDependencies:
       '@tsconfig/recommended':
         specifier: ^1.0.3
@@ -449,8 +449,8 @@ importers:
         specifier: ^2.19.1
         version: 2.19.1
       remeda:
-        specifier: ^1.33.0
-        version: 1.33.0
+        specifier: ^1.58.2
+        version: 1.58.2
       seedrandom:
         specifier: ^3.0.5
         version: 3.0.5
@@ -9297,10 +9297,6 @@ packages:
     resolution: {integrity: sha512-tQkJl2GRWh83ui2DiPTJz9wEiMN20syf+5oKfB03yYP7ioZcJwsIK8FjrtLwH1m7C7e+Tt2yYBlrOpdT+dyeIQ==}
     dev: false
 
-  /rambda@8.4.0:
-    resolution: {integrity: sha512-HSbOiyvCQgHKPcKO8Sknjj341vVUmetRwOh+4h0t/DVmAfQS3v3HMtWHtu3l2Awdxu9B4iJP2uAJTwp7eLB7zw==}
-    dev: false
-
   /randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
     dependencies:
@@ -9994,8 +9990,8 @@ packages:
       set-function-name: 2.0.1
     dev: true
 
-  /remeda@1.33.0:
-    resolution: {integrity: sha512-GExMiOhTB0eg1Rc7hvBMBNxwlVRYIulGfIj5pkuuAfy9HB3ms4PmLvbhMMjQ2btoCit0iN7eQmHgwTaGZTVWwg==}
+  /remeda@1.58.2:
+    resolution: {integrity: sha512-nTIlq++W2X830DRx4tlFEVEKrD0Ir5gGRYW6aVZe3iwyLqUe5txCpaWYndyZD885/apAA+Z5thZwVWTIGiEGGg==}
     dev: false
 
   /repeat-string@1.6.1:
