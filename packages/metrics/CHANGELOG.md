@@ -1,5 +1,13 @@
 # @agileplanning-io/flow-metrics
 
+## 1.0.1
+
+### Patch Changes
+
+- 609c458: feat: component filter type
+- Updated dependencies [609c458]
+  - @agileplanning-io/flow-lib@1.0.1
+
 ## 1.0.0
 
 ### Major Changes
