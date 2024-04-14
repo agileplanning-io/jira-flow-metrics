@@ -150,6 +150,9 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
   const onComponentsChanged = (components?: string[]) =>
     setFilter({ ...filter, components });
 
+  const onComponentFilterTypeChanged = (componentFilterType: FilterType) =>
+    setFilter({ ...filter, componentFilterType });
+
   return (
     <>
       <Form layout="horizontal" style={{ padding: "12px 12px 0 12px" }}>
@@ -261,13 +264,27 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
           </Form.Item>
 
           <Form.Item label="Components" style={{ margin: "8px 0" }}>
-            <Select
-              mode="multiple"
-              allowClear={true}
-              options={components}
-              value={filter.components}
-              onChange={onComponentsChanged}
-            />
+            <Space.Compact style={{ width: "100%" }}>
+              <Form.Item style={{ width: "25%", margin: 0 }}>
+                <Select
+                  value={filter.componentFilterType}
+                  onChange={onComponentFilterTypeChanged}
+                  options={[
+                    { value: "include", label: "Include" },
+                    { value: "exclude", label: "Exclude" },
+                  ]}
+                />
+              </Form.Item>
+              <Form.Item style={{ width: "75%", margin: 0 }}>
+                <Select
+                  mode="multiple"
+                  allowClear={true}
+                  options={components}
+                  value={filter.components}
+                  onChange={onComponentsChanged}
+                />
+              </Form.Item>
+            </Space.Compact>
           </Form.Item>
 
           <Form.Item
