@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-lib
 
+## 1.0.1
+
+### Patch Changes
+
+- 609c458: feat: component filter type
+
 ## 1.0.0
 
 ### Major Changes
