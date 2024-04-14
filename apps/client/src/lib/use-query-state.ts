@@ -7,6 +7,7 @@ import { qsParse, qsStringify } from "@agileplanning-io/flow-lib";
 
 export const useQueryState = <T>(
   key: string,
+  parser?: (value: unknown) => T,
 ): [T | undefined, (value: T | undefined) => void] => {
   const [params, setParams] = useSearchParams();
 
@@ -25,5 +26,5 @@ export const useQueryState = <T>(
   const queryObject = qsParse(params.toString());
   const query = queryObject[key] as T | undefined;
 
-  return [query, setQuery];
+  return [parser ? parser(query) : query, setQuery];
 };

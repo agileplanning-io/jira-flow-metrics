@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   CompletedIssue,
+  DateFilterType,
   HierarchyLevel,
   Issue,
   StartedIssue,
@@ -22,6 +23,7 @@ import { isStarted } from "@agileplanning-io/flow-metrics";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { IssuesTable } from "@app/components/issues-table";
 import { Percentile } from "@agileplanning-io/flow-lib";
+import { fromClientFilter } from "@app/filter/context/context";
 
 export const AgeingWipPage = () => {
   const { issues } = useProjectContext();
@@ -58,7 +60,10 @@ export const AgeingWipPage = () => {
 
   useEffect(() => {
     if (filter && issues) {
-      const benchmarkIssues = filterCompletedIssues(issues, filter);
+      const benchmarkIssues = filterCompletedIssues(
+        issues,
+        fromClientFilter(filter, DateFilterType.Completed),
+      );
       setBenchmarkIssues(benchmarkIssues);
 
       const ageingIssues = filterIssues(issues, omit(filter, ["dates"]))

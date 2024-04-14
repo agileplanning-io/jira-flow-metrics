@@ -60,25 +60,23 @@ export const CycleTimePolicyForm = () => {
   }
 
   if (cycleTimePolicy?.epics.type === "computed") {
-    if (cycleTimePolicy.epics.labelsFilter?.labels?.length) {
+    if (cycleTimePolicy.epics.labelsFilter?.values?.length) {
       options.push({
         label:
-          cycleTimePolicy?.epics.labelsFilter?.labelFilterType ===
-          FilterType.Exclude
+          cycleTimePolicy?.epics.labelsFilter?.type === FilterType.Exclude
             ? "Exclude labels"
             : "Include labels",
-        value: cycleTimePolicy?.epics.labelsFilter?.labels?.join(),
+        value: cycleTimePolicy?.epics.labelsFilter?.values?.join(),
       });
     }
 
-    if (cycleTimePolicy.epics.issueTypesFilter?.issueTypes?.length) {
+    if (cycleTimePolicy.epics.issueTypesFilter?.values?.length) {
       options.push({
         label:
-          cycleTimePolicy?.epics.issueTypesFilter?.issueTypeFilterType ===
-          FilterType.Exclude
+          cycleTimePolicy?.epics.issueTypesFilter?.type === FilterType.Exclude
             ? "Exclude issue types"
             : "Include issue types",
-        value: cycleTimePolicy?.epics.issueTypesFilter?.issueTypes?.join(),
+        value: cycleTimePolicy?.epics.issueTypesFilter?.values?.join(),
       });
     }
   }

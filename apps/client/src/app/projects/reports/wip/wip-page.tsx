@@ -40,23 +40,19 @@ export const WipPage = () => {
 
   useEffect(() => {
     if (filter && issues) {
-      const filteredIssues = filterIssues(issues, omit(filter, ["dates"]))
-        .filter(
-          (issue) =>
-            // why filter by epic here?
-            issue.hierarchyLevel === HierarchyLevel.Epic ||
-            issue.metrics.includedInEpic,
-        )
-        .filter((issue) => {
-          if (includeStoppedIssues) {
-            return true;
-          }
+      const filteredIssues = filterIssues(
+        issues,
+        omit(filter, ["dates"]),
+      ).filter((issue) => {
+        if (includeStoppedIssues) {
+          return true;
+        }
 
-          const isStopped =
-            issue.metrics.started && issue.statusCategory === "To Do";
+        const isStopped =
+          issue.metrics.started && issue.statusCategory === "To Do";
 
-          return !isStopped;
-        });
+        return !isStopped;
+      });
       setFilteredIssues(filteredIssues);
     }
   }, [issues, filter, includeStoppedIssues, setFilteredIssues]);

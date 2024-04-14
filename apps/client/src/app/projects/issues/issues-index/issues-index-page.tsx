@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { IssuesTable, SortState } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
-import { Issue, filterIssues } from "@agileplanning-io/flow-metrics";
+import {
+  FilterType,
+  Issue,
+  filterIssues,
+} from "@agileplanning-io/flow-metrics";
 import { omit, pipe, sortBy } from "remeda";
 import { Col, Form, Input } from "antd";
 import * as fuzzball from "fuzzball";
@@ -10,7 +14,7 @@ import { FilterOptionsForm } from "../../reports/components/filter-form/filter-o
 
 export const IssuesIndexPage = () => {
   const { issues } = useProjectContext();
-  const { filter } = useFilterContext();
+  const { filter, setFilter } = useFilterContext();
 
   const [filteredIssues, setFilteredIssues] = useState<Issue[]>([]);
 
@@ -20,6 +24,13 @@ export const IssuesIndexPage = () => {
     columnKey: "created",
     sortOrder: "descend",
   });
+
+  useEffect(() => {
+    if (!filter) {
+      // Set a dummy filter to trigger the default one when parsing with zod
+      setFilter({ labels: { type: FilterType.Include, values: [] } });
+    }
+  }, [filter, setFilter]);
 
   useEffect(() => {
     if (filter && issues) {

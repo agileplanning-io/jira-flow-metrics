@@ -1,5 +1,6 @@
 import {
   CompletedIssue,
+  DateFilterType,
   HierarchyLevel,
   Issue,
   filterCompletedIssues,
@@ -19,6 +20,7 @@ import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { Percentile } from "@agileplanning-io/flow-lib";
+import { fromClientFilter } from "@app/filter/context/context";
 
 export const ScatterplotPage = () => {
   const { issues } = useProjectContext();
@@ -48,7 +50,10 @@ export const ScatterplotPage = () => {
 
   useEffect(() => {
     if (filter && issues) {
-      const filteredIssues = filterCompletedIssues(issues, filter);
+      const filteredIssues = filterCompletedIssues(
+        issues,
+        fromClientFilter(filter, DateFilterType.Completed),
+      );
       const percentiles = getCycleTimePercentiles(
         filteredIssues.filter((issue) => !excludedIssues.includes(issue.key)),
       );
@@ -117,7 +122,7 @@ export const ScatterplotPage = () => {
         </Row>
       </ExpandableOptions>
 
-      {filter.dates ? (
+      {filter?.dates ? (
         <Scatterplot
           issues={filteredIssues.filter(
             (issue) => !excludedIssues.includes(issue.key),

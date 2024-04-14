@@ -32,14 +32,14 @@ class StoryCycleTimePolicyBody {
 
 class LabelsFilterPolicyBody {
   @ApiProperty()
-  labels: string[];
+  values: string[];
 
   @ApiProperty()
-  labelFilterType: FilterType;
+  type: FilterType;
 }
 
 class EpicCycleTimePolicyBody {
-  labelsFilter: LabelsFilterPolicyBody;
+  labels: LabelsFilterPolicyBody;
 }
 
 class CycleTimePolicyBody {

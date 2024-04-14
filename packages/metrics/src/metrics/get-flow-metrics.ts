@@ -39,11 +39,8 @@ export const getFlowMetrics = (
   const filteredStories =
     policy.epics.type === "computed"
       ? filterIssues(updatedStories, {
-          labels: policy.epics.labelsFilter?.labels,
-          labelFilterType: policy.epics.labelsFilter?.labelFilterType,
-          issueTypes: policy.epics.issueTypesFilter?.issueTypes,
-          issueTypeFilterType:
-            policy.epics.issueTypesFilter?.issueTypeFilterType,
+          labels: policy.epics.labelsFilter,
+          issueTypes: policy.epics.issueTypesFilter,
         })
       : updatedStories;
 

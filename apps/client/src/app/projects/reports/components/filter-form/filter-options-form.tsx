@@ -4,6 +4,7 @@ import {
   Issue,
   FilterType,
   filterIssues,
+  ValuesFilter,
 } from "@agileplanning-io/flow-metrics";
 import { Col, Form, Row, Select, SelectProps, Space, Tag } from "antd";
 import { DateSelector } from "../date-selector";
@@ -15,14 +16,8 @@ import {
   ExpandableOptionsHeader,
 } from "../../../../components/expandable-options";
 import { formatDate } from "@agileplanning-io/flow-lib";
-
-export type FilterOptions = {
-  hierarchyLevel?: HierarchyLevel;
-  dates?: Interval;
-  resolutions?: string[];
-  statuses?: string[];
-  issueTypes?: string[];
-};
+import { ClientIssueFilter } from "@app/filter/context/context";
+import { LoadingSpinner } from "@app/components/loading-spinner";
 
 type FilterOptionsProps = {
   issues?: Issue[];
@@ -46,15 +41,19 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
 }) => {
   const { filter, setFilter } = useFilterContext();
 
-  const [resolutions, setResolutions] = useState<SelectProps["options"]>();
-  const [statuses, setStatuses] = useState<SelectProps["options"]>();
-  const [labels, setLabels] = useState<SelectProps["options"]>();
-  const [components, setComponents] = useState<SelectProps["options"]>();
-  const [issueTypes, setIssueTypes] = useState<SelectProps["options"]>();
-  const [assignees, setAssignees] = useState<SelectProps["options"]>();
+  const [resolutionOptions, setResolutionOptions] =
+    useState<SelectProps["options"]>();
+  const [statusOptions, setStatusOptions] = useState<SelectProps["options"]>();
+  const [labelOptions, setLabelOptions] = useState<SelectProps["options"]>();
+  const [componentOptions, setComponentOptions] =
+    useState<SelectProps["options"]>();
+  const [issueTypeOptions, setIssueTypeOptions] =
+    useState<SelectProps["options"]>();
+  const [assigneeOptions, setAssigneeOptions] =
+    useState<SelectProps["options"]>();
 
   useEffect(() => {
-    if (showDateSelector && !filter.dates) {
+    if (showDateSelector && !filter?.dates) {
       setFilter({
         ...filter,
         dates: defaultDateRange(),
@@ -69,89 +68,51 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
     }
 
     const filteredIssues = filterIssues(issues, {
-      hierarchyLevel: filter.hierarchyLevel,
+      hierarchyLevel: filter?.hierarchyLevel,
     });
 
-    setResolutions(makeFilterOptions(filteredIssues, "resolution"));
-    setIssueTypes(makeFilterOptions(filteredIssues, "issueType"));
-    setStatuses(makeFilterOptions(filteredIssues, "status"));
-    setAssignees(makeFilterOptions(filteredIssues, "assignee"));
-    setLabels(makeLabelOptions(filteredIssues));
-    setComponents(makeComponentOptions(filteredIssues));
-  }, [issues, filter, setResolutions, setIssueTypes, setStatuses]);
-
-  const options: ExpandableOptionsHeader["options"][number][] = [];
-
-  if (filter.dates) {
-    options.push({
-      label: "Dates",
-      value: `${formatDate(filter.dates.start)}-${formatDate(
-        filter.dates.end,
-      )}`,
-    });
-  }
-  if (filter.hierarchyLevel) {
-    options.push({ label: "Hierarchy level", value: filter.hierarchyLevel });
-  }
-  if (filter.resolutions?.length) {
-    options.push({ label: "Resolutions", value: filter.resolutions.join() });
-  }
-  if (filter.statuses?.length) {
-    options.push({ label: "Statuses", value: filter.statuses.join() });
-  }
-  if (filter.issueTypes?.length) {
-    options.push({ label: "Issue types", value: filter.issueTypes.join() });
-  }
-  if (filter.assignees?.length) {
-    options.push({ label: "Assignees", value: filter.assignees.join() });
-  }
-  if (filter.labels?.length) {
-    options.push({
-      label:
-        filter.labelFilterType === FilterType.Include
-          ? "Include labels"
-          : "Exclude labels",
-      value: filter.labels.join(),
-    });
-  }
-  if (filter.components?.length) {
-    options.push({
-      label: "Components",
-      value: filter.components.join(),
-    });
-  }
+    setResolutionOptions(makeFilterOptions(filteredIssues, "resolution"));
+    setIssueTypeOptions(makeFilterOptions(filteredIssues, "issueType"));
+    setStatusOptions(makeFilterOptions(filteredIssues, "status"));
+    setAssigneeOptions(makeFilterOptions(filteredIssues, "assignee"));
+    setLabelOptions(makeLabelOptions(filteredIssues));
+    setComponentOptions(makeComponentOptions(filteredIssues));
+  }, [
+    issues,
+    filter,
+    setResolutionOptions,
+    setIssueTypeOptions,
+    setStatusOptions,
+  ]);
 
   const onHierarchyLevelChanged = (hierarchyLevel: HierarchyLevel) =>
     setFilter({ ...filter, hierarchyLevel });
 
-  const onResolutionsChanged = (resolutions?: string[]) =>
+  const onResolutionsChanged = (resolutions: ValuesFilter) =>
     setFilter({ ...filter, resolutions });
 
-  const onStatusesChanged = (statuses?: string[]) =>
+  const onStatusesChanged = (statuses: ValuesFilter) =>
     setFilter({ ...filter, statuses });
 
-  const onIssueTypesChanged = (issueTypes?: string[]) =>
+  const onIssueTypesChanged = (issueTypes: ValuesFilter) =>
     setFilter({ ...filter, issueTypes });
 
-  const onAssigneesChanged = (assignees?: string[]) =>
+  const onAssigneesChanged = (assignees: ValuesFilter) =>
     setFilter({ ...filter, assignees });
 
   const onDatesChanged = (dates?: Interval) => setFilter({ ...filter, dates });
 
-  const onLabelsChanged = (labels?: string[]) =>
+  const onLabelsChanged = (labels: ValuesFilter) =>
     setFilter({ ...filter, labels });
 
-  const onLabelFilterTypeChanged = (labelFilterType: FilterType) =>
-    setFilter({ ...filter, labelFilterType });
-
-  const onIssueTypeFilterTypeChanged = (issueTypeFilterType: FilterType) =>
-    setFilter({ ...filter, issueTypeFilterType });
-
-  const onComponentsChanged = (components?: string[]) =>
+  const onComponentsChanged = (components: ValuesFilter) =>
     setFilter({ ...filter, components });
 
-  const onComponentFilterTypeChanged = (componentFilterType: FilterType) =>
-    setFilter({ ...filter, componentFilterType });
+  if (!filter) {
+    return <LoadingSpinner />;
+  }
+
+  const headerOptions = getHeaderOptions(filter);
 
   return (
     <>
@@ -181,7 +142,7 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
         </Row>
       </Form>
       <ExpandableOptions
-        header={{ title: "Filter Options", options }}
+        header={{ title: "Filter Options", options: headerOptions }}
         extra={
           filteredIssuesCount ? (
             <Tag style={{ marginRight: -4 }}>
@@ -196,123 +157,48 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
           wrapperCol={{ span: 10 }}
         >
           {showStatusFilter ? (
-            <Form.Item label="Status" style={{ margin: "8px 0" }}>
-              <Row>
-                <Col span={8}>
-                  <Select
-                    mode="multiple"
-                    allowClear={true}
-                    options={statuses}
-                    value={filter.statuses}
-                    onChange={onStatusesChanged}
-                  />
-                </Col>
-              </Row>
-            </Form.Item>
+            <ValuesFilterField
+              label="Statuses"
+              options={statusOptions}
+              filter={filter.statuses}
+              onChange={onStatusesChanged}
+            />
           ) : null}
           {showResolutionFilter ? (
-            <Form.Item label="Resolution" style={{ margin: "8px 0" }}>
-              <Row>
-                <Col span={8}>
-                  <Select
-                    mode="multiple"
-                    allowClear={true}
-                    options={resolutions}
-                    value={filter.resolutions}
-                    onChange={onResolutionsChanged}
-                  />
-                </Col>
-              </Row>
-            </Form.Item>
+            <ValuesFilterField
+              label="Resolutions"
+              filter={filter.resolutions}
+              onChange={onResolutionsChanged}
+              options={resolutionOptions}
+            />
           ) : null}
-          <Form.Item label="Assignees" style={{ margin: "8px 0" }}>
-            <Row>
-              <Col span={8}>
-                <Select
-                  mode="multiple"
-                  allowClear={true}
-                  options={assignees}
-                  value={filter.assignees}
-                  onChange={onAssigneesChanged}
-                />
-              </Col>
-            </Row>
-          </Form.Item>
+          <ValuesFilterField
+            label="Assignees"
+            filter={filter.assignees}
+            onChange={onAssigneesChanged}
+            options={assigneeOptions}
+          />
 
-          <Form.Item label="Labels" style={{ width: "100%", margin: "8px 0" }}>
-            <Space.Compact style={{ width: "100%" }}>
-              <Form.Item style={{ width: "25%", margin: 0 }}>
-                <Select
-                  value={filter.labelFilterType}
-                  onChange={onLabelFilterTypeChanged}
-                  options={[
-                    { value: "include", label: "Include" },
-                    { value: "exclude", label: "Exclude" },
-                  ]}
-                />
-              </Form.Item>
-              <Form.Item style={{ width: "75%", margin: 0 }}>
-                <Select
-                  mode="multiple"
-                  allowClear={true}
-                  options={labels}
-                  value={filter.labels}
-                  onChange={onLabelsChanged}
-                />
-              </Form.Item>
-            </Space.Compact>
-          </Form.Item>
+          <ValuesFilterField
+            label="Labels"
+            filter={filter.labels}
+            onChange={onLabelsChanged}
+            options={labelOptions}
+          />
 
-          <Form.Item label="Components" style={{ margin: "8px 0" }}>
-            <Space.Compact style={{ width: "100%" }}>
-              <Form.Item style={{ width: "25%", margin: 0 }}>
-                <Select
-                  value={filter.componentFilterType}
-                  onChange={onComponentFilterTypeChanged}
-                  options={[
-                    { value: "include", label: "Include" },
-                    { value: "exclude", label: "Exclude" },
-                  ]}
-                />
-              </Form.Item>
-              <Form.Item style={{ width: "75%", margin: 0 }}>
-                <Select
-                  mode="multiple"
-                  allowClear={true}
-                  options={components}
-                  value={filter.components}
-                  onChange={onComponentsChanged}
-                />
-              </Form.Item>
-            </Space.Compact>
-          </Form.Item>
+          <ValuesFilterField
+            label="Components"
+            filter={filter.components}
+            onChange={onComponentsChanged}
+            options={componentOptions}
+          />
 
-          <Form.Item
-            label="Issue Types"
-            style={{ width: "100%", margin: "8px 0" }}
-          >
-            <Space.Compact style={{ width: "100%" }}>
-              <Form.Item style={{ width: "25%", margin: 0 }}>
-                <Select
-                  value={filter.issueTypeFilterType}
-                  onChange={onIssueTypeFilterTypeChanged}
-                  options={[
-                    { value: "include", label: "Include" },
-                    { value: "exclude", label: "Exclude" },
-                  ]}
-                />
-              </Form.Item>
-              <Form.Item style={{ width: "75%", margin: 0 }}>
-                <Select
-                  mode="multiple"
-                  allowClear={true}
-                  options={issueTypes}
-                  value={filter.issueTypes}
-                  onChange={onIssueTypesChanged}
-                />
-              </Form.Item>
-            </Space.Compact>
-          </Form.Item>
+          <ValuesFilterField
+            label="Issue types"
+            filter={filter.issueTypes}
+            onChange={onIssueTypesChanged}
+            options={issueTypeOptions}
+          />
         </Form>
       </ExpandableOptions>
     </>
@@ -355,4 +241,106 @@ const makeComponentOptions = (issues: Issue[]): SelectProps["options"] => {
     label: option,
     value: option,
   }));
+};
+
+const getHeaderOptions = (
+  filter: ClientIssueFilter,
+): ExpandableOptionsHeader["options"][number][] => {
+  const options: ExpandableOptionsHeader["options"][number][] = [];
+
+  const makeOptions = (
+    filter: ValuesFilter,
+    name: string,
+  ): ExpandableOptionsHeader["options"][number] => ({
+    label:
+      filter.type === FilterType.Include
+        ? `Include ${name}`
+        : `Exclude ${name}`,
+    value: filter.values?.join(),
+  });
+
+  if (filter.dates) {
+    options.push({
+      label: "Dates",
+      value: `${formatDate(filter.dates.start)}-${formatDate(
+        filter.dates.end,
+      )}`,
+    });
+  }
+  if (filter.hierarchyLevel) {
+    options.push({ label: "Hierarchy level", value: filter.hierarchyLevel });
+  }
+  if (filter.resolutions?.values?.length) {
+    options.push(makeOptions(filter.resolutions, "resolutions"));
+  }
+  if (filter.statuses?.values?.length) {
+    options.push(makeOptions(filter.statuses, "statuses"));
+  }
+  if (filter.issueTypes?.values?.length) {
+    options.push(makeOptions(filter.issueTypes, "issue types"));
+  }
+  if (filter.assignees?.values?.length) {
+    options.push(makeOptions(filter.assignees, "assignees"));
+  }
+  if (filter.labels?.values?.length) {
+    options.push(makeOptions(filter.labels, "labels"));
+  }
+  if (filter.components?.values?.length) {
+    options.push(makeOptions(filter.components, "components"));
+  }
+  return options;
+};
+
+type ValuesFilterField = {
+  label: string;
+  filter?: ValuesFilter;
+  onChange: (filter: ValuesFilter) => void;
+  options: SelectProps["options"];
+};
+
+const ValuesFilterField: FC<ValuesFilterField> = ({
+  label,
+  options,
+  filter,
+  onChange,
+}) => {
+  const onTypeChanged = (type: FilterType) => {
+    if (filter) {
+      filter.type = type;
+      onChange(filter);
+    }
+  };
+
+  const onValuesChanged = (values: string[]) => {
+    if (filter) {
+      filter.values = values;
+      onChange(filter);
+    }
+  };
+
+  return (
+    <Form.Item label={label} style={{ width: "100%", margin: "8px 0" }}>
+      <Space.Compact style={{ width: "100%" }}>
+        <Form.Item style={{ width: "25%", margin: 0 }}>
+          <Select
+            value={filter?.type}
+            onChange={onTypeChanged}
+            options={[
+              { value: "include", label: "Include" },
+              { value: "exclude", label: "Exclude" },
+            ]}
+          />
+        </Form.Item>
+        <Form.Item style={{ width: "75%", margin: 0 }}>
+          <Select
+            mode="multiple"
+            allowClear={true}
+            options={options}
+            value={filter?.values}
+            onChange={onValuesChanged}
+          />
+        </Form.Item>
+      </Space.Compact>
+    </Form.Item>
+  );
 };
