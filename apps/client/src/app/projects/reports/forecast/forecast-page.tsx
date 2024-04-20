@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   CompletedIssue,
+  DateFilterType,
   HierarchyLevel,
   SummaryRow,
   filterCompletedIssues,
@@ -25,6 +26,7 @@ import { ExpandableOptions } from "../../../components/expandable-options";
 import { useProjectContext } from "../../context";
 import { formatDate } from "@agileplanning-io/flow-lib";
 import { newSeed, useForecastChartParams } from "./hooks/use-chart-params";
+import { fromClientFilter } from "@app/filter/context/context";
 
 export const ForecastPage = () => {
   const { issues } = useProjectContext();
@@ -37,7 +39,10 @@ export const ForecastPage = () => {
 
   useEffect(() => {
     if (filter && issues) {
-      const filteredIssues = filterCompletedIssues(issues, filter).sort(
+      const filteredIssues = filterCompletedIssues(
+        issues,
+        fromClientFilter(filter, DateFilterType.Completed),
+      ).sort(
         (i1, i2) =>
           i1.metrics.completed.getTime() - i2.metrics.completed.getTime(),
       );

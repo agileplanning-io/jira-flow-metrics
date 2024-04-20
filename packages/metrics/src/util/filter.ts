@@ -12,21 +12,44 @@ export enum FilterType {
   Exclude = "exclude",
 }
 
+export type ValuesFilter = {
+  values?: string[];
+  type?: FilterType;
+};
+
+export type DatesFilter = {
+  interval: Interval;
+  filterType: DateFilterType;
+};
+
 export type IssueFilter = {
   hierarchyLevel?: HierarchyLevel;
-  resolutions?: string[];
-  statuses?: string[];
-  fromStatus?: string;
-  toStatus?: string;
-  issueTypes?: string[];
-  issueTypeFilterType?: FilterType;
-  assignees?: string[];
-  labels?: string[];
-  labelFilterType?: FilterType;
-  components?: string[];
-  componentFilterType?: FilterType;
-  dates?: Interval;
-  dateFilterType?: DateFilterType;
+  resolutions?: ValuesFilter;
+  statuses?: ValuesFilter;
+  issueTypes?: ValuesFilter;
+  assignees?: ValuesFilter;
+  labels?: ValuesFilter;
+  components?: ValuesFilter;
+  dates?: DatesFilter;
+};
+
+const matchValuesFilter = (
+  filter?: ValuesFilter,
+  value?: string | string[],
+): boolean => {
+  if (filter?.values && filter.values.length > 0) {
+    const matches =
+      value &&
+      (Array.isArray(value)
+        ? intersection(filter.values, value).length > 0
+        : filter.values.includes(value));
+    if (filter.type === FilterType.Include && !matches) {
+      return false;
+    } else if (filter.type === FilterType.Exclude && matches) {
+      return false;
+    }
+  }
+  return true;
 };
 
 export const filterIssues = (issues: Issue[], filter: IssueFilter): Issue[] => {
@@ -37,70 +60,41 @@ export const filterIssues = (issues: Issue[], filter: IssueFilter): Issue[] => {
       }
     }
 
-    if (filter.resolutions && filter.resolutions.length > 0) {
-      if (!issue.resolution || !filter.resolutions.includes(issue.resolution)) {
-        return false;
-      }
+    if (!matchValuesFilter(filter.resolutions, issue.resolution)) {
+      return false;
     }
 
-    if (filter.issueTypes && filter.issueTypes.length > 0) {
-      const included =
-        issue.issueType && filter.issueTypes.includes(issue.issueType);
-      if (filter.issueTypeFilterType === FilterType.Include && !included) {
-        return false;
-      } else if (
-        filter.issueTypeFilterType === FilterType.Exclude &&
-        included
-      ) {
-        return false;
-      }
+    if (!matchValuesFilter(filter.issueTypes, issue.issueType)) {
+      return false;
     }
 
-    if (filter.assignees && filter.assignees.length > 0) {
-      if (!issue.assignee || !filter.assignees.includes(issue.assignee)) {
-        return false;
-      }
+    if (!matchValuesFilter(filter.assignees, issue.assignee)) {
+      return false;
     }
 
-    if (filter.labels && filter.labels.length > 0) {
-      const intersects = intersection(filter.labels, issue.labels).length > 0;
-      if (filter.labelFilterType === "include" && !intersects) {
-        return false;
-      } else if (filter.labelFilterType === "exclude" && intersects) {
-        return false;
-      }
+    if (!matchValuesFilter(filter.labels, issue.labels)) {
+      return false;
     }
 
-    if (filter.components && filter.components.length > 0) {
-      const intersects =
-        intersection(filter.components, issue.components).length > 0;
-      if (filter.componentFilterType === "include" && !intersects) {
-        return false;
-      } else if (filter.componentFilterType === "exclude" && intersects) {
-        return false;
-      }
+    if (!matchValuesFilter(filter.components, issue.components)) {
+      return false;
     }
 
-    if (filter.statuses && filter.statuses.length > 0) {
-      if (!filter.statuses.includes(issue.status)) {
-        return false;
-      }
+    if (!matchValuesFilter(filter.statuses, issue.status)) {
+      return false;
     }
 
     if (filter.dates) {
-      if (
-        filter.dateFilterType === undefined ||
-        filter.dateFilterType === DateFilterType.Completed
-      ) {
+      if (filter.dates.filterType === DateFilterType.Completed) {
         if (!issue.metrics.completed) {
           return false;
         }
 
-        if (issue.metrics.completed < filter.dates.start) {
+        if (issue.metrics.completed < filter.dates.interval.start) {
           return false;
         }
 
-        if (issue.metrics.completed > filter.dates.end) {
+        if (issue.metrics.completed > filter.dates.interval.end) {
           return false;
         }
       } else {
@@ -108,13 +102,13 @@ export const filterIssues = (issues: Issue[], filter: IssueFilter): Issue[] => {
           return false;
         }
 
-        if (issue.metrics.started > filter.dates.end) {
+        if (issue.metrics.started > filter.dates.interval.end) {
           return false;
         }
 
         if (
           issue.metrics.completed &&
-          issue.metrics.completed < filter.dates.start
+          issue.metrics.completed < filter.dates.interval.start
         ) {
           return false;
         }

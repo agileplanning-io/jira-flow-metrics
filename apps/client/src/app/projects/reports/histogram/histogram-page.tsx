@@ -1,5 +1,6 @@
 import {
   CompletedIssue,
+  DateFilterType,
   HierarchyLevel,
   filterCompletedIssues,
 } from "@agileplanning-io/flow-metrics";
@@ -18,6 +19,7 @@ import { useSearchParams } from "react-router-dom";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { Percentile } from "@agileplanning-io/flow-lib";
+import { fromClientFilter } from "@app/filter/context/context";
 
 export const HistogramPage = () => {
   const { issues } = useProjectContext();
@@ -47,7 +49,10 @@ export const HistogramPage = () => {
 
   useEffect(() => {
     if (filter && issues) {
-      const filteredIssues = filterCompletedIssues(issues, filter);
+      const filteredIssues = filterCompletedIssues(
+        issues,
+        fromClientFilter(filter, DateFilterType.Completed),
+      );
       setFilteredIssues(filteredIssues);
       const percentiles = getCycleTimePercentiles(
         filteredIssues.filter((issue) => !excludedIssues.includes(issue.key)),
@@ -116,7 +121,7 @@ export const HistogramPage = () => {
         </Row>
       </ExpandableOptions>
 
-      {filter.dates ? (
+      {filter?.dates ? (
         <Histogram
           issues={filteredIssues.filter(
             (issue) => !excludedIssues.includes(issue.key),

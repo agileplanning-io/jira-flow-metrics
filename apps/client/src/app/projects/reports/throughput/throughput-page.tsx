@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   CompletedIssue,
+  DateFilterType,
   HierarchyLevel,
   Issue,
   ThroughputResult,
@@ -20,6 +21,7 @@ import { ExpandableOptions } from "../../../components/expandable-options";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
 import { useSearchParams } from "react-router-dom";
+import { fromClientFilter } from "@app/filter/context/context";
 
 export const ThroughputPage = () => {
   const { issues } = useProjectContext();
@@ -39,10 +41,13 @@ export const ThroughputPage = () => {
 
     const interval: Interval = getOverlappingInterval(filter.dates, timeUnit);
 
-    const filteredIssues = filterCompletedIssues(issues, {
-      ...filter,
-      dates: interval,
-    });
+    const filteredIssues = filterCompletedIssues(
+      issues,
+      fromClientFilter(
+        { ...filter, dates: interval },
+        DateFilterType.Completed,
+      ),
+    );
     setFilteredIssues(filteredIssues);
 
     setThroughputResult(

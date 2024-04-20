@@ -112,7 +112,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
       if (!policy.epics.labelsFilter) {
         policy.epics.labelsFilter = {};
       }
-      policy.epics.labelsFilter.labels = labels;
+      policy.epics.labelsFilter.values = labels;
     }
     setCycleTimePolicy(policy);
   };
@@ -123,7 +123,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
       if (!policy.epics.labelsFilter) {
         policy.epics.labelsFilter = {};
       }
-      policy.epics.labelsFilter.labelFilterType = labelFilterType;
+      policy.epics.labelsFilter.type = labelFilterType;
     }
     setCycleTimePolicy(policy);
   };
@@ -134,7 +134,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
       if (!policy.epics.issueTypesFilter) {
         policy.epics.issueTypesFilter = {};
       }
-      policy.epics.issueTypesFilter.issueTypes = issueTypes;
+      policy.epics.issueTypesFilter.values = issueTypes;
     }
     setCycleTimePolicy(policy);
   };
@@ -145,7 +145,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
       if (!policy.epics.issueTypesFilter) {
         policy.epics.issueTypesFilter = {};
       }
-      policy.epics.issueTypesFilter.issueTypeFilterType = issueTypeFilterType;
+      policy.epics.issueTypesFilter.type = issueTypeFilterType;
     }
     setCycleTimePolicy(policy);
   };
@@ -198,7 +198,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
                     <Select
                       value={
                         cycleTimePolicy.epics.type === "computed"
-                          ? cycleTimePolicy.epics.labelsFilter?.labelFilterType
+                          ? cycleTimePolicy.epics.labelsFilter?.type
                           : undefined
                       }
                       onChange={onLabelFilterTypeChanged}
@@ -215,7 +215,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
                       options={labels}
                       value={
                         cycleTimePolicy.epics.type === "computed"
-                          ? cycleTimePolicy.epics.labelsFilter?.labels
+                          ? cycleTimePolicy.epics.labelsFilter?.values
                           : undefined
                       }
                       onChange={onLabelsChanged}
@@ -229,8 +229,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
                     <Select
                       value={
                         cycleTimePolicy.epics.type === "computed"
-                          ? cycleTimePolicy.epics.issueTypesFilter
-                              ?.issueTypeFilterType
+                          ? cycleTimePolicy.epics.issueTypesFilter?.type
                           : undefined
                       }
                       onChange={onIssueTypeFilterTypeChanged}
@@ -247,7 +246,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
                       options={issueTypes}
                       value={
                         cycleTimePolicy.epics.type === "computed"
-                          ? cycleTimePolicy.epics.issueTypesFilter?.issueTypes
+                          ? cycleTimePolicy.epics.issueTypesFilter?.values
                           : undefined
                       }
                       onChange={onIssueTypesChanged}

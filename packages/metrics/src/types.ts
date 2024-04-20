@@ -1,4 +1,4 @@
-import { IssueFilter } from "./util";
+import { ValuesFilter } from "./util";
 
 export enum StatusCategory {
   ToDo = "To Do",
@@ -86,13 +86,6 @@ export const isStarted = (issue: Issue): issue is StartedIssue =>
 export const isCompleted = (issue: Issue): issue is CompletedIssue =>
   issue.metrics.completed !== undefined;
 
-export type LabelFilterPolicy = Pick<IssueFilter, "labels" | "labelFilterType">;
-
-export type IssueTypeFilterPolicy = Pick<
-  IssueFilter,
-  "issueTypes" | "issueTypeFilterType"
->;
-
 export type StatusCycleTimePolicy = {
   type: "status";
   includeWaitTime: boolean;
@@ -101,8 +94,8 @@ export type StatusCycleTimePolicy = {
 
 export type ComputedCycleTimePolicy = {
   type: "computed";
-  labelsFilter?: LabelFilterPolicy;
-  issueTypesFilter?: IssueTypeFilterPolicy;
+  labelsFilter?: ValuesFilter;
+  issueTypesFilter?: ValuesFilter;
 };
 
 export type CycleTimePolicy = {

@@ -18,8 +18,10 @@ describe("filterIssues", () => {
   describe("issueType filters", () => {
     it("filters the included issueTypes when issueTypeFilterType = include", () => {
       const filteredIssues = filterIssues([story, bug], {
-        issueTypes: ["Story"],
-        issueTypeFilterType: FilterType.Include,
+        issueTypes: {
+          values: ["Story"],
+          type: FilterType.Include,
+        },
       });
 
       expect(filteredIssues).toEqual([story]);
@@ -27,8 +29,10 @@ describe("filterIssues", () => {
 
     it("omits the excluded issueTypes when issueTypeFilterType = exclude", () => {
       const filteredIssues = filterIssues([story, bug], {
-        issueTypes: ["Story"],
-        issueTypeFilterType: FilterType.Exclude,
+        issueTypes: {
+          values: ["Story"],
+          type: FilterType.Exclude,
+        },
       });
 
       expect(filteredIssues).toEqual([bug]);
@@ -40,8 +44,7 @@ describe("filterIssues", () => {
 
     it("filters the included labels when labelFilterType = include", () => {
       const filteredIssues = filterIssues([story, labelledStory], {
-        labels: ["my-label"],
-        labelFilterType: FilterType.Include,
+        labels: { values: ["my-label"], type: FilterType.Include },
       });
 
       expect(filteredIssues).toEqual([labelledStory]);
@@ -49,8 +52,7 @@ describe("filterIssues", () => {
 
     it("omits the excluded labels when labelFilterType = exclude", () => {
       const filteredIssues = filterIssues([story, labelledStory], {
-        labels: ["my-label"],
-        labelFilterType: FilterType.Exclude,
+        labels: { values: ["my-label"], type: FilterType.Exclude },
       });
 
       expect(filteredIssues).toEqual([story]);
@@ -62,8 +64,10 @@ describe("filterIssues", () => {
 
     it("filters the included components when componentFilterType = include", () => {
       const filteredIssues = filterIssues([story, apiStory], {
-        components: ["API"],
-        componentFilterType: FilterType.Include,
+        components: {
+          values: ["API"],
+          type: FilterType.Include,
+        },
       });
 
       expect(filteredIssues).toEqual([apiStory]);
@@ -71,11 +75,67 @@ describe("filterIssues", () => {
 
     it("omits the excluded labels when labelFilterType = exclude", () => {
       const filteredIssues = filterIssues([story, apiStory], {
-        components: ["API"],
-        componentFilterType: FilterType.Exclude,
+        components: {
+          values: ["API"],
+          type: FilterType.Exclude,
+        },
       });
 
       expect(filteredIssues).toEqual([story]);
+    });
+  });
+
+  describe("resolution filters", () => {
+    const doneStory = { ...story, resolution: "Done" };
+    const duplicateStory = { ...story, resolution: "Duplicate" };
+
+    it("includes resolutions", () => {
+      const filteredIssues = filterIssues([doneStory, duplicateStory], {
+        resolutions: {
+          values: ["Done"],
+          type: FilterType.Include,
+        },
+      });
+
+      expect(filteredIssues).toEqual([doneStory]);
+    });
+
+    it("excludes resolutions", () => {
+      const filteredIssues = filterIssues([doneStory, duplicateStory], {
+        resolutions: {
+          values: ["Done"],
+          type: FilterType.Exclude,
+        },
+      });
+
+      expect(filteredIssues).toEqual([duplicateStory]);
+    });
+  });
+
+  describe("assignee filters", () => {
+    const aliceStory = { ...story, assignee: "Alice" };
+    const bobStory = { ...story, assignee: "Bob" };
+
+    it("includes assignees", () => {
+      const filteredIssues = filterIssues([aliceStory, bobStory], {
+        assignees: {
+          values: ["Alice"],
+          type: FilterType.Include,
+        },
+      });
+
+      expect(filteredIssues).toEqual([aliceStory]);
+    });
+
+    it("excludes assignees", () => {
+      const filteredIssues = filterIssues([aliceStory, bobStory], {
+        assignees: {
+          values: ["Alice"],
+          type: FilterType.Exclude,
+        },
+      });
+
+      expect(filteredIssues).toEqual([bobStory]);
     });
   });
 
@@ -88,9 +148,14 @@ describe("filterIssues", () => {
       ];
 
       const filteredIssues = filterIssues(issues, {
-        components: ["API"],
-        componentFilterType: FilterType.Include,
-        statuses: ["Done"],
+        components: {
+          values: ["API"],
+          type: FilterType.Include,
+        },
+        statuses: {
+          values: ["Done"],
+          type: FilterType.Include,
+        },
       });
 
       expect(filteredIssues).toEqual([issues[0]]);

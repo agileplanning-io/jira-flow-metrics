@@ -25,6 +25,7 @@ import {
 } from "@app/projects/components/issue-links";
 import { useOutletContext } from "react-router-dom";
 import { ProjectsContext } from "@app/projects/projects-layout";
+import { fromClientFilter } from "@app/filter/context/context";
 
 export const TimeSpentPage = () => {
   const { projectId } = useNavigationContext();
@@ -40,11 +41,13 @@ export const TimeSpentPage = () => {
 
   useEffect(() => {
     if (filter && issues) {
-      const filteredIssues = filterIssues(issues, {
-        ...filter,
-        hierarchyLevel: HierarchyLevel.Story,
-        dateFilterType: DateFilterType.Intersects,
-      });
+      const filteredIssues = filterIssues(
+        issues,
+        fromClientFilter(
+          { ...filter, hierarchyLevel: HierarchyLevel.Story },
+          DateFilterType.Intersects,
+        ),
+      );
       setFilteredIssues([
         ...filteredIssues,
         ...issues.filter(
@@ -135,7 +138,7 @@ export const TimeSpentPage = () => {
     },
   ];
 
-  const result = filter.dates
+  const result = filter?.dates
     ? timeSpentInPeriod(filteredIssues, filter.dates)
     : [];
 
