@@ -1,6 +1,10 @@
 import { range } from "remeda";
 import { addDays, differenceInDays } from "date-fns";
-import { Interval } from "@agileplanning-io/flow-lib";
+import {
+  Interval,
+  Percentile,
+  getPercentiles,
+} from "@agileplanning-io/flow-lib";
 import { Issue } from "../types";
 
 export type CalculateWipParams = {
@@ -8,25 +12,26 @@ export type CalculateWipParams = {
   range: Interval;
 };
 
-export type WipResult = {
+type WipDatum = {
   date: Date;
   count: number;
   issues: Issue[];
-}[];
+};
+
+export type WipResult = {
+  data: WipDatum[];
+  percentiles: Percentile[];
+};
 
 export const calculateWip = ({
   issues,
   range: dateRange,
 }: CalculateWipParams): WipResult => {
-  if (!dateRange) {
-    return [];
-  }
-
   const dates = range(0, differenceInDays(dateRange.end, dateRange.start)).map(
     (index) => addDays(dateRange.start, index),
   );
 
-  const result: WipResult = dates.map((date) => {
+  const data: WipDatum[] = dates.map((date) => {
     const inProgress = issues.filter((issue) => {
       return (
         issue.metrics.started &&
@@ -42,5 +47,27 @@ export const calculateWip = ({
     };
   });
 
-  return result;
+  const percentiles = getWipPercentiles(data);
+
+  return {
+    data,
+    percentiles,
+  };
+};
+
+const getWipPercentiles = (data: WipDatum[]): Percentile[] => {
+  const counts = data.map((item) => item.count);
+
+  const quantiles =
+    counts.length > 20
+      ? [0.15, 0.3, 0.5, 0.7, 0.85]
+      : counts.length > 10
+      ? [0.3, 0.5, 0.7]
+      : counts.length >= 5
+      ? [0.5]
+      : [];
+
+  const percentiles = getPercentiles(counts, quantiles);
+
+  return percentiles;
 };
