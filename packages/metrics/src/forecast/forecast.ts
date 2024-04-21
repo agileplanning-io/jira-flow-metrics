@@ -1,7 +1,11 @@
 import { getLongTailCutoff, run } from "./simulation/run";
 import { addDays, compareAsc, getISODay } from "date-fns";
 import { groupBy } from "remeda";
-import { formatDate } from "@agileplanning-io/flow-lib";
+import {
+  Percentile,
+  formatDate,
+  getPercentiles,
+} from "@agileplanning-io/flow-lib";
 import { newGenerator } from "./simulation/select";
 import { measure } from "./input/measurements";
 import { CompletedIssue } from "../types";
@@ -48,32 +52,38 @@ export type SummaryRow = {
   tooltip: string;
 };
 
+export type SummaryResult = {
+  rows: SummaryRow[];
+  percentiles: Percentile[];
+  startDate: Date;
+};
+
 export function summarize(
   runs: number[],
   startDate: Date,
   includeLongTail: boolean,
-): SummaryRow[] {
+): SummaryResult {
   const timeByDays = groupBy(runs, (run) => Math.ceil(run).toString());
   const rowCount = Object.keys(timeByDays).length;
   const longtail = getLongTailCutoff(rowCount);
   const minPercentile = longtail;
   const maxPercentile = 1 - longtail;
-  const percentiles = {
+  const quantiles = {
     "50": 0.5,
     "70": 0.7,
     "85": 0.85,
     "95": 0.95,
   };
   let index = 0;
-  return Object.entries(timeByDays)
+  const rows = Object.entries(timeByDays)
     .map(([duration, runsWithDuration]) => {
       const count = runsWithDuration.length;
       const date = addDays(startDate, parseInt(duration));
       const startPercentile = index / runs.length;
       const endPercentile = (index + count) / runs.length;
 
-      const percentile = Object.entries(percentiles).find(([, percentile]) => {
-        return startPercentile <= percentile && percentile < endPercentile;
+      const percentile = Object.entries(quantiles).find(([, quantile]) => {
+        return startPercentile <= quantile && quantile < endPercentile;
       });
       const annotation = percentile ? `${percentile[0]}th` : undefined;
       const annotationText = percentile ? date.toISOString() : undefined;
@@ -105,4 +115,14 @@ export function summarize(
       );
     })
     .sort((row1, row2) => compareAsc(row1.date, row2.date));
+
+  const percentiles = getPercentiles(runs, Object.values(quantiles));
+
+  console.info("percentiles ***", percentiles);
+
+  return {
+    rows,
+    startDate,
+    percentiles,
+  };
 }

@@ -1,20 +1,22 @@
 import { Bar } from "react-chartjs-2";
 import { ChartData, ChartOptions } from "chart.js";
-import { SummaryRow } from "@agileplanning-io/flow-metrics";
+import { AnnotationOptions } from "chartjs-plugin-annotation";
+import { SummaryResult } from "@agileplanning-io/flow-metrics";
+import { addDays } from "date-fns";
 
 export type ForecastChartProps = {
-  summary: SummaryRow[];
+  summary: SummaryResult;
 };
 
 export const ForecastChart: React.FC<ForecastChartProps> = ({ summary }) => {
-  const labels = summary.map(({ date }) => date.toISOString());
+  const labels = summary.rows.map(({ date }) => date.toISOString());
 
   const data: ChartData<"bar"> = {
     labels,
     datasets: [
       {
-        data: summary.map(({ count }) => count),
-        backgroundColor: summary.map((row) =>
+        data: summary.rows.map(({ count }) => count),
+        backgroundColor: summary.rows.map((row) =>
           getColorForPercentile(row.endPercentile),
         ),
         borderColor: "rgb(255, 99, 132)",
@@ -39,6 +41,33 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({ summary }) => {
     },
   };
 
+  const annotations = Object.fromEntries(
+    summary.percentiles.map((p) => {
+      console.info({ percentile: p });
+      const options: AnnotationOptions = {
+        type: "line",
+        borderColor: getColorForPercentile(p.percentile / 100),
+        borderWidth: 1,
+        borderDash: ![15, 85].includes(p.percentile) ? [4, 4] : undefined,
+        label: {
+          backgroundColor: "#FFF",
+          padding: 4,
+          position: "start",
+          content: `${p.percentile.toString()}%`,
+          display: true,
+          textAlign: "start",
+          color: "#666666",
+          font: {
+            size: 16,
+          },
+        },
+        scaleID: "x",
+        value: addDays(summary.startDate, p.value).toISOString(),
+      };
+      return [p.percentile.toString(), options];
+    }),
+  );
+
   const options: ChartOptions<"bar"> = {
     scales,
     plugins: {
@@ -48,13 +77,16 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({ summary }) => {
       datalabels: {
         display: false,
       },
+      annotation: {
+        annotations,
+      },
       tooltip: {
         callbacks: {
           title: () => {
             return [];
           },
           label: (ctx) => {
-            return summary[ctx.dataIndex].tooltip;
+            return summary.rows[ctx.dataIndex].tooltip;
           },
         },
         displayColors: false,

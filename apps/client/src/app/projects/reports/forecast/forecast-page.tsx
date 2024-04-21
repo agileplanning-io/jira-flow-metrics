@@ -3,7 +3,7 @@ import {
   CompletedIssue,
   DateFilterType,
   HierarchyLevel,
-  SummaryRow,
+  SummaryResult,
   filterCompletedIssues,
   forecast,
 } from "@agileplanning-io/flow-metrics";
@@ -50,7 +50,7 @@ export const ForecastPage = () => {
     }
   }, [issues, filter, setFilteredIssues]);
 
-  const [summary, setSummary] = useState<SummaryRow[]>();
+  const [summary, setSummary] = useState<SummaryResult>();
 
   useEffect(() => {
     if (!filteredIssues || filteredIssues.length === 0) return;
@@ -195,7 +195,7 @@ export const ForecastPage = () => {
           </Row>
         </Form>
       </ExpandableOptions>
-      <ForecastChart summary={summary ?? []} />
+      {summary ? <ForecastChart summary={summary} /> : null}
     </>
   );
 };
