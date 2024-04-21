@@ -15,7 +15,7 @@ export const useForecastChartParams = (): {
   const chartParams = useMemo(
     () => ({
       issueCount: parseInt(searchParams.get("issueCount")) ?? 10,
-      startDate: parseStartDate(searchParams) ?? startOfDay(new Date()),
+      startDate: parseStartDate(searchParams),
       seed: parseInt(searchParams.get("seed")) ?? newSeed(),
 
       includeLongTail: searchParams.get("includeLongTail") === "true",

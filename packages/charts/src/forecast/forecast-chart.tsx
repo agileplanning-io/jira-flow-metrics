@@ -9,7 +9,9 @@ export type ForecastChartProps = {
 };
 
 export const ForecastChart: React.FC<ForecastChartProps> = ({ summary }) => {
-  const labels = summary.rows.map(({ date }) => date.toISOString());
+  const labels = summary.rows.map(({ time }) =>
+    typeof time === "number" ? time : time.toISOString(),
+  );
 
   const data: ChartData<"bar"> = {
     labels,
@@ -26,7 +28,7 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({ summary }) => {
 
   const scales: ChartOptions<"bar">["scales"] = {
     x: {
-      type: "time",
+      type: summary.startDate ? "time" : "linear",
       time: {
         unit: "day",
       },
@@ -62,7 +64,9 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({ summary }) => {
           },
         },
         scaleID: "x",
-        value: addDays(summary.startDate, p.value).toISOString(),
+        value: summary.startDate
+          ? addDays(summary.startDate, p.value).toISOString()
+          : p.value,
       };
       return [p.percentile.toString(), options];
     }),

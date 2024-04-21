@@ -13,7 +13,7 @@ import { CompletedIssue } from "../types";
 export type ForecastParams = {
   selectedIssues: CompletedIssue[];
   issueCount: number;
-  startDate: Date;
+  startDate?: Date;
   excludeOutliers: boolean;
   excludeLeadTimes: boolean;
   includeLongTail: boolean;
@@ -34,7 +34,7 @@ export const forecast = ({
     issueCount,
     measurements,
     runCount: 10000,
-    startWeekday: getISODay(startDate),
+    startWeekday: startDate ? getISODay(startDate) : 1,
     excludeLeadTimes,
     generator: newGenerator(seed),
   });
@@ -43,7 +43,7 @@ export const forecast = ({
 };
 
 export type SummaryRow = {
-  date: Date;
+  time: Date | number;
   count: number;
   annotation?: string;
   annotationText?: string;
@@ -55,12 +55,12 @@ export type SummaryRow = {
 export type SummaryResult = {
   rows: SummaryRow[];
   percentiles: Percentile[];
-  startDate: Date;
+  startDate?: Date;
 };
 
 export function summarize(
   runs: number[],
-  startDate: Date,
+  startDate: Date | undefined,
   includeLongTail: boolean,
 ): SummaryResult {
   const timeByDays = groupBy(runs, (run) => Math.ceil(run).toString());
@@ -69,6 +69,8 @@ export function summarize(
   const minPercentile = longtail;
   const maxPercentile = 1 - longtail;
   const quantiles = {
+    "15": 0.15,
+    "30": 0.3,
     "50": 0.5,
     "70": 0.7,
     "85": 0.85,
@@ -78,7 +80,10 @@ export function summarize(
   const rows = Object.entries(timeByDays)
     .map(([duration, runsWithDuration]) => {
       const count = runsWithDuration.length;
-      const date = addDays(startDate, parseInt(duration));
+      const date = startDate
+        ? addDays(startDate, parseInt(duration))
+        : undefined;
+      const time = date ?? parseInt(duration);
       const startPercentile = index / runs.length;
       const endPercentile = (index + count) / runs.length;
 
@@ -86,17 +91,24 @@ export function summarize(
         return startPercentile <= quantile && quantile < endPercentile;
       });
       const annotation = percentile ? `${percentile[0]}th` : undefined;
-      const annotationText = percentile ? date.toISOString() : undefined;
+      const annotationText = percentile
+        ? date
+          ? date.toISOString()
+          : duration
+        : undefined;
 
       index += count;
 
       const percentComplete = Math.floor((index / runs.length) * 100);
-      const tooltip = `${percentComplete}% of trials finished by ${formatDate(
-        date,
-      )}`;
+      const tooltip = [
+        `${percentComplete}% of trials finished`,
+        date ? "by" : "in",
+        date ? formatDate(date) : time,
+        date ? "" : "days",
+      ].join(" ");
 
       return {
-        date,
+        time,
         count,
         annotation,
         annotationText,
@@ -114,7 +126,7 @@ export function summarize(
         row.startPercentile <= maxPercentile
       );
     })
-    .sort((row1, row2) => compareAsc(row1.date, row2.date));
+    .sort((row1, row2) => compareAsc(row1.time, row2.time));
 
   const percentiles = getPercentiles(runs, Object.values(quantiles));
 

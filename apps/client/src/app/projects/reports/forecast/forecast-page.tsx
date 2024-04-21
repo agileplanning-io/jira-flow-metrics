@@ -120,7 +120,7 @@ export const ForecastPage = () => {
                 <DatePicker
                   style={{ width: "100%" }}
                   value={chartParams.startDate}
-                  allowClear={false}
+                  allowClear={true}
                   onChange={(e) => {
                     if (e) {
                       setChartParams({ ...chartParams, startDate: e });
