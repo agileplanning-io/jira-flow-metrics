@@ -3,8 +3,10 @@
   "compilerOptions": {
     "types": ["jest"],
     "lib": ["ES2021"],
-    "declaration": true
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "dist",
   },
   "include": ["."],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist"]
 }

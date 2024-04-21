@@ -6,8 +6,8 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup --clean --dts",
-    "dev": "tsup --watch --onSuccess 'tsup --dts-only'",
+    "build": "tsup --clean --onSuccess 'tsc --emitDeclarationOnly'",
+    "dev": "tsup --onSuccess 'tsc --emitDeclarationOnly'",
     "clean": "rm -rf node_modules && rm -rf dist"
   },
   "files": [
@@ -17,10 +17,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@emotion/styled": "^11.11.0",
-    "@hello-pangea/dnd": "^16.5.0",
     "@agileplanning-io/flow-lib": "workspace:*",
     "@agileplanning-io/flow-metrics": "workspace:*",
+    "@emotion/styled": "^11.11.0",
+    "@hello-pangea/dnd": "^16.5.0",
     "immer": "^10.0.3",
     "remeda": "^1.58.2",
     "tsup": "^8.0.1"
@@ -30,7 +30,9 @@
     "@tsconfig/vite-react": "^3.0.0",
     "@types/react": "^18.2.15",
     "antd": "^5.10.1",
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "typescript": "^5.4.5",
+    "vite-plugin-dts": "^3.8.3"
   },
   "peerDependencies": {
     "@ant-design/icons": "^5.2.6",

@@ -6,8 +6,8 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup --clean --dts",
-    "dev": "tsup --watch --onSuccess 'tsup --dts-only'",
+    "build": "tsup --clean --onSuccess 'tsc --emitDeclarationOnly'",
+    "dev": "tsup --onSuccess 'tsc --emitDeclarationOnly'",
     "clean": "rm -rf node_modules && rm -rf dist"
   },
   "files": [
