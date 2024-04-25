@@ -1,6 +1,6 @@
 import { ForecastParams } from "@agileplanning-io/flow-metrics";
 import { SearchParamsBuilder } from "@lib/search-params-builder";
-import { parse, startOfDay } from "date-fns";
+import { parse } from "date-fns";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 

@@ -94,12 +94,15 @@ export const Histogram: FC<HistogramProps> = ({
               padding: 4,
               position: "start",
               content: `${p.percentile.toString()}% (${p.value.toFixed(
-                1,
+                0,
               )} days)`,
               display: showPercentileLabels,
               textAlign: "start",
               rotation: 90,
               color: "#666666",
+              font: {
+                size: 16,
+              },
             },
             enter({ element }) {
               element.label!.options.display = true;
