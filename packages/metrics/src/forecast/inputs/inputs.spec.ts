@@ -1,5 +1,5 @@
 import { buildCompletedIssue } from "../../fixtures";
-import { computeThroughput, measure } from "./measurements";
+import { computeThroughput, computeInputs } from "./inputs";
 
 describe("computeThroughput", () => {
   it("computes the throughput for a given ordered list of issues", () => {
@@ -31,7 +31,7 @@ describe("computeThroughput", () => {
   });
 });
 
-describe("measure", () => {
+describe("computeInputs", () => {
   const issues = [
     buildCompletedIssue({
       metrics: {
@@ -59,8 +59,8 @@ describe("measure", () => {
     }),
   ];
 
-  it("measures cycle times and throughput for the given issues", () => {
-    expect(measure(issues, false)).toEqual({
+  it("computes cycle times and throughput for the given issues", () => {
+    expect(computeInputs(issues, false)).toEqual({
       cycleTimes: [1, 3, 2, 200],
       throughputs: {
         weekend: [0, 0],
@@ -70,7 +70,7 @@ describe("measure", () => {
   });
 
   it("optionally excludes cycle time outliers", () => {
-    expect(measure(issues, true)).toEqual({
+    expect(computeInputs(issues, true)).toEqual({
       cycleTimes: [1, 3, 2],
       throughputs: {
         weekend: [0, 0],

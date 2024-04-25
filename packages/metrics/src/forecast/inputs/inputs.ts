@@ -1,5 +1,5 @@
 import { eachDayOfInterval, endOfDay, getISODay, startOfDay } from "date-fns";
-import { InputMeasurements } from "../simulation/run";
+import { SimulationInputs } from "../simulation/run";
 import { excludeOutliersFromSeq } from "@agileplanning-io/flow-lib";
 import { categorizeWeekday } from "@agileplanning-io/flow-lib";
 import { CompletedIssue } from "../../types";
@@ -29,10 +29,16 @@ export const computeThroughput = (
   });
 };
 
-export const measure = (
+/**
+ * Computes metrics (throughput and cucle times) for input to the simulation
+ * @param {CompletedIssue[]} issues the completed issues from which to derive inputs
+ * @param {boolean} excludeCycleTimeOutliers whether or not to include outliers in the cycle times
+ * @returns a {SimulationInputs} object with cycle times and throughput
+ */
+export const computeInputs = (
   issues: CompletedIssue[],
   excludeCycleTimeOutliers: boolean,
-): InputMeasurements => {
+): SimulationInputs => {
   const throughputs: Record<string, number[]> = {};
   for (const { date, count } of computeThroughput(issues)) {
     const category = categorizeWeekday(getISODay(date));
