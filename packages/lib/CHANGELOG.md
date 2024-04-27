@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-lib
 
+## 1.0.3
+
+### Patch Changes
+
+- c9780de: refactor: simplify query params parsing
+
 ## 1.0.2
 
 ### Patch Changes

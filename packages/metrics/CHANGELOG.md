@@ -1,5 +1,13 @@
 # @agileplanning-io/flow-metrics
 
+## 1.0.3
+
+### Patch Changes
+
+- 7cbf564: refactor: forecast params
+- Updated dependencies [c9780de]
+  - @agileplanning-io/flow-lib@1.0.3
+
 ## 1.0.2
 
 ### Patch Changes

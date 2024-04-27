@@ -1,5 +1,14 @@
 # @agileplanning-io/flow-charts
 
+## 0.0.27
+
+### Patch Changes
+
+- Updated dependencies [7cbf564]
+- Updated dependencies [c9780de]
+  - @agileplanning-io/flow-metrics@1.0.3
+  - @agileplanning-io/flow-lib@1.0.3
+
 ## 0.0.26
 
 ### Patch Changes
