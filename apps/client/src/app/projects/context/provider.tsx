@@ -4,13 +4,15 @@ import { useIssues } from "@data/issues";
 import { CycleTimePolicy } from "@agileplanning-io/flow-metrics";
 import { useEffect } from "react";
 import { useQueryState } from "@lib/use-query-state";
+import { cycleTimePolicySchema } from "./schema";
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { project } = useNavigationContext();
-  const [cycleTimePolicy, setCycleTimePolicy] =
-    useQueryState<CycleTimePolicy>("p");
+  const [cycleTimePolicy, setCycleTimePolicy] = useQueryState<
+    CycleTimePolicy | undefined
+  >("p", cycleTimePolicySchema.parse);
 
   const { data: issues } = useIssues(project?.id, cycleTimePolicy);
 

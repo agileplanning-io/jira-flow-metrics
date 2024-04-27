@@ -9,7 +9,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [filter, setFilter] = useQueryState<ClientIssueFilter | undefined>(
     "f",
-    (value: unknown) => filterSchema.parse(value),
+    filterSchema.parse,
   );
 
   return (
@@ -44,8 +44,8 @@ const filterSchema = z
     statuses: valuesFilterSchema.catch(defaultValuesFilter()),
     dates: z
       .object({
-        start: z.date(),
-        end: z.date(),
+        start: z.coerce.date(),
+        end: z.coerce.date(),
       })
       .catch(defaultDateRange()),
   })

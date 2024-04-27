@@ -32,7 +32,6 @@
     "fuzzball": "^2.1.2",
     "immer": "^10.0.3",
     "mathjs": "^11.11.2",
-    "qs": "^6.12.0",
     "rc-picker": "~3.14.5",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
@@ -44,7 +43,6 @@
   "devDependencies": {
     "@testing-library/react": "^14.3.0",
     "@tsconfig/vite-react": "^3.0.0",
-    "@types/qs": "^6.9.14",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",

@@ -18,7 +18,7 @@ describe("useQueryState", () => {
     expect(result.current[0]).toEqual({
       epics: {
         type: "status",
-        includeWaitTime: true,
+        includeWaitTime: "true",
       },
     });
   });

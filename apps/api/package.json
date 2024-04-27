@@ -22,8 +22,8 @@
     "seed": "ts-node scripts/seed.ts"
   },
   "dependencies": {
-    "@agileplanning-io/flow-metrics": "workspace:*",
     "@agileplanning-io/flow-lib": "workspace:*",
+    "@agileplanning-io/flow-metrics": "workspace:*",
     "@dagrejs/graphlib": "^2.1.13",
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
@@ -38,7 +38,8 @@
     "node-json-db": "^2.2.0",
     "reflect-metadata": "^0.1.13",
     "remeda": "^1.58.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.2.0",

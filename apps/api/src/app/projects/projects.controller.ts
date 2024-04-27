@@ -5,11 +5,13 @@ import {
   FilterType,
   getFlowMetrics,
 } from "@agileplanning-io/flow-metrics";
-import { qsParse } from "@agileplanning-io/flow-lib";
-import { Body, Controller, Delete, Get, Param, Put, Req } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Put } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
 import { SyncUseCase } from "@usecases/projects/sync/sync-use-case";
-import { URL } from "url";
+import { z } from "zod";
+import { ZodValidationPipe } from "@lib/pipes/zod-pipe";
+import { ParsedQuery } from "@lib/decorators/parsed-query";
+import { isNullish } from "remeda";
 
 class WorkflowStageBody {
   @ApiProperty()
@@ -63,6 +65,36 @@ class UpdateProjectBody {
   @ApiProperty()
   defaultCycleTimePolicy: CycleTimePolicyBody;
 }
+
+const booleanSchema = z
+  .string()
+  .optional()
+  .transform((val) => (isNullish(val) || val === "false" ? false : true));
+
+const valuesFilterSchema = z.object({
+  values: z.array(z.string()).optional(),
+  type: z.enum([FilterType.Include, FilterType.Exclude]),
+});
+
+const statusCycleTimePolicySchema = z.object({
+  type: z.literal("status"),
+  includeWaitTime: booleanSchema,
+  statuses: z.array(z.string()).optional(),
+});
+
+const computedCycleTimePolicySchema = z.object({
+  type: z.literal("computed"),
+  labelsFilter: valuesFilterSchema,
+  issueTypesFilter: valuesFilterSchema,
+});
+
+const cycleTimePolicySchema = z.object({
+  stories: statusCycleTimePolicySchema,
+  epics: z.discriminatedUnion("type", [
+    statusCycleTimePolicySchema,
+    computedCycleTimePolicySchema,
+  ]),
+});
 
 @Controller("projects")
 export class ProjectsController {
@@ -147,11 +179,9 @@ export class ProjectsController {
   @Get(":projectId/issues")
   async getIssues(
     @Param("projectId") projectId: string,
-    @Req() request: Request,
+    @ParsedQuery("policy", new ZodValidationPipe(cycleTimePolicySchema))
+    policy: CycleTimePolicy,
   ) {
-    const url = new URL(request.url, "http://localhost");
-    const queryObject = qsParse(url.search);
-    const policy = queryObject["policy"] as CycleTimePolicy;
     let issues = await this.issues.getIssues(projectId);
 
     issues = getFlowMetrics(issues, policy);
