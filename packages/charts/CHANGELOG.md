@@ -1,5 +1,19 @@
 # @agileplanning-io/flow-charts
 
+## 0.0.26
+
+### Patch Changes
+
+- 2929e91: feat: improve ide support
+- f82e9f0: refactor: forecasts
+- af94e6a: fix: dev watch mode
+- Updated dependencies [2929e91]
+- Updated dependencies [35e12ed]
+- Updated dependencies [f82e9f0]
+- Updated dependencies [af94e6a]
+  - @agileplanning-io/flow-metrics@1.0.2
+  - @agileplanning-io/flow-lib@1.0.2
+
 ## 0.0.25
 
 ### Patch Changes

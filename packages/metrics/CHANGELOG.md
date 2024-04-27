@@ -1,5 +1,17 @@
 # @agileplanning-io/flow-metrics
 
+## 1.0.2
+
+### Patch Changes
+
+- 2929e91: feat: improve ide support
+- 35e12ed: feat: add filter types for all filters
+- f82e9f0: refactor: forecasts
+- af94e6a: fix: dev watch mode
+- Updated dependencies [2929e91]
+- Updated dependencies [af94e6a]
+  - @agileplanning-io/flow-lib@1.0.2
+
 ## 1.0.1
 
 ### Patch Changes
