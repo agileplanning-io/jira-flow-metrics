@@ -17,7 +17,7 @@ const defaultParamValues = {
 const forecastChartParamsSchema = z
   .object({
     issueCount: z.coerce.number().catch(defaultParamValues.issueCount),
-    startDate: z.date().catch(defaultParamValues.startDate),
+    startDate: z.coerce.date().catch(defaultParamValues.startDate),
     seed: z.coerce.number().catch(defaultParamValues.seed),
     includeLongTail: z.boolean().catch(defaultParamValues.includeLongTail),
     includeLeadTimes: z.boolean().catch(defaultParamValues.includeLeadTimes),

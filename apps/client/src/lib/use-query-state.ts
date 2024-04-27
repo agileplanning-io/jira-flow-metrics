@@ -28,7 +28,6 @@ export const useQueryState = <T>(
   const result = useMemo(() => {
     const queryObject = qsParse(queryString);
     const query = queryObject[key] as T | undefined;
-
     return parser ? parser(query) : query;
   }, [queryString, key, parser]);
 

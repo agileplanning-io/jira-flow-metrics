@@ -77,6 +77,9 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
     devDependencies:
       '@faker-js/faker':
         specifier: ^8.2.0
@@ -213,9 +216,6 @@ importers:
       mathjs:
         specifier: ^11.11.2
         version: 11.11.2
-      qs:
-        specifier: ^6.12.0
-        version: 6.12.0
       rc-picker:
         specifier: ~3.14.5
         version: 3.14.6(date-fns@2.30.0)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0)
@@ -244,9 +244,6 @@ importers:
       '@tsconfig/vite-react':
         specifier: ^3.0.0
         version: 3.0.0
-      '@types/qs':
-        specifier: ^6.9.14
-        version: 6.9.14
       '@types/react':
         specifier: ^18.2.15
         version: 18.2.15
