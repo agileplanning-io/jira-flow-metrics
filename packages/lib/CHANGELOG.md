@@ -1,5 +1,12 @@
 # @agileplanning-io/flow-lib
 
+## 1.0.2
+
+### Patch Changes
+
+- 2929e91: feat: improve ide support
+- af94e6a: fix: dev watch mode
+
 ## 1.0.1
 
 ### Patch Changes

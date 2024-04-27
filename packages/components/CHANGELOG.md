@@ -1,5 +1,18 @@
 # @agileplanning-io/flow-components
 
+## 0.0.22
+
+### Patch Changes
+
+- 2929e91: feat: improve ide support
+- af94e6a: fix: dev watch mode
+- Updated dependencies [2929e91]
+- Updated dependencies [35e12ed]
+- Updated dependencies [f82e9f0]
+- Updated dependencies [af94e6a]
+  - @agileplanning-io/flow-metrics@1.0.2
+  - @agileplanning-io/flow-lib@1.0.2
+
 ## 0.0.21
 
 ### Patch Changes
