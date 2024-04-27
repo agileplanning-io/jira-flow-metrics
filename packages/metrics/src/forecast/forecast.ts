@@ -26,13 +26,14 @@ export const forecast = ({
   seed,
 }: ForecastParams) => {
   const measurements = measure(selectedIssues, excludeOutliers);
+  const generator = newGenerator(seed);
   const runs = run({
     issueCount,
     measurements,
     runCount: 10000,
     startWeekday: getISODay(startDate),
     excludeLeadTimes,
-    generator: newGenerator(seed),
+    generator,
   });
   const results = summarize(runs, startDate, includeLongTail);
   return results;
