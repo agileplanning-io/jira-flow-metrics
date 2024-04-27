@@ -8,7 +8,7 @@
   "scripts": {
     "test": "jest",
     "build": "tsup --clean --onSuccess 'tsc --emitDeclarationOnly'",
-    "dev": "tsup --onSuccess 'tsc --emitDeclarationOnly'",
+    "dev": "tsup --watch --onSuccess 'tsc --emitDeclarationOnly'",
     "lint": "eslint . --max-warnings 0",
     "clean": "rm -rf node_modules && rm -rf dist"
   },
