@@ -1,22 +1,28 @@
 import seedrandom from "seedrandom";
 
-/**
- * Any function which given an integer k returns a random
- * integer in the range [0-k).
- */
-export type RandomGenerator = (k: number) => number;
-
-export function newGenerator(seed?: number): RandomGenerator {
-  const generator = seed ? seedrandom(seed.toString()) : seedrandom();
-  return (k: number): number => {
-    return Math.floor(generator() * k);
-  };
-}
-
 export function selectValue(
   values: number[],
   generator: RandomGenerator,
 ): number {
-  const index = generator(values.length);
+  const index = generator.rand(values.length);
   return values[index];
+}
+
+export interface RandomGenerator {
+  /**
+   * Returns a random integer in the range [0-k).
+   */
+  rand: (k: number) => number;
+}
+
+export class SeedRandomGenerator implements RandomGenerator {
+  private generator: seedrandom.PRNG;
+
+  constructor(seed?: number) {
+    this.generator = seed ? seedrandom(seed.toString()) : seedrandom();
+  }
+
+  rand(k: number): number {
+    return Math.floor(this.generator() * k);
+  }
 }

@@ -1,9 +1,8 @@
-import { getLongTailCutoff, run } from "./simulation/run";
+import { runSimulation } from "./simulation/run";
 import { addDays, compareAsc, getISODay } from "date-fns";
 import { groupBy } from "remeda";
-import { formatDate } from "@agileplanning-io/flow-lib";
-import { newGenerator } from "./simulation/select";
-import { measure } from "./input/measurements";
+import { SeedRandomGenerator } from "./simulation/select";
+import { computeInputs } from "./inputs/inputs";
 import { CompletedIssue } from "../types";
 
 export type ForecastParams = {
@@ -16,6 +15,26 @@ export type ForecastParams = {
   seed: number;
 };
 
+export type SummaryRow = {
+  date: Date;
+  /**
+   * The count of simulations which finished on `date`.
+   */
+  count: number;
+  /**
+   * The cumulative count of simulations which finished by `date`.
+   */
+  cumulativeCount: number;
+  /**
+   * The quantile of runs completed at the start of `date`.
+   */
+  startQuantile: number;
+  /**
+   * The quantile of runs complete at the end of `date`.
+   */
+  endQuantile: number;
+};
+
 export const forecast = ({
   selectedIssues,
   issueCount,
@@ -24,29 +43,22 @@ export const forecast = ({
   excludeLeadTimes,
   includeLongTail,
   seed,
-}: ForecastParams) => {
-  const measurements = measure(selectedIssues, excludeOutliers);
-  const generator = newGenerator(seed);
-  const runs = run({
+}: ForecastParams): SummaryRow[] => {
+  const generator = new SeedRandomGenerator(seed);
+  const inputs = computeInputs(selectedIssues, excludeOutliers);
+
+  const runs = runSimulation({
     issueCount,
-    measurements,
+    inputs,
     runCount: 10000,
     startWeekday: getISODay(startDate),
     excludeLeadTimes,
     generator,
   });
-  const results = summarize(runs, startDate, includeLongTail);
-  return results;
-};
 
-export type SummaryRow = {
-  date: Date;
-  count: number;
-  annotation?: string;
-  annotationText?: string;
-  startPercentile: number;
-  endPercentile: number;
-  tooltip: string;
+  const results = summarize(runs, startDate, includeLongTail);
+
+  return results;
 };
 
 export function summarize(
@@ -54,56 +66,60 @@ export function summarize(
   startDate: Date,
   includeLongTail: boolean,
 ): SummaryRow[] {
-  const timeByDays = groupBy(runs, (run) => Math.ceil(run).toString());
-  const rowCount = Object.keys(timeByDays).length;
+  const runsByDuration = groupBy(runs, (run) => Math.ceil(run));
+
+  const rowCount = Object.keys(runsByDuration).length;
   const longtail = getLongTailCutoff(rowCount);
-  const minPercentile = longtail;
-  const maxPercentile = 1 - longtail;
-  const percentiles = {
-    "50": 0.5,
-    "70": 0.7,
-    "85": 0.85,
-    "95": 0.95,
+  const minQuantile = longtail;
+  const maxQuantile = 1 - longtail;
+
+  const filterLongTail = (row: SummaryRow) => {
+    if (includeLongTail) {
+      return true;
+    }
+    return row.endQuantile >= minQuantile && row.startQuantile <= maxQuantile;
   };
-  let index = 0;
-  return Object.entries(timeByDays)
-    .map(([duration, runsWithDuration]) => {
-      const count = runsWithDuration.length;
-      const date = addDays(startDate, parseInt(duration));
-      const startPercentile = index / runs.length;
-      const endPercentile = (index + count) / runs.length;
 
-      const percentile = Object.entries(percentiles).find(([, percentile]) => {
-        return startPercentile <= percentile && percentile < endPercentile;
-      });
-      const annotation = percentile ? `${percentile[0]}th` : undefined;
-      const annotationText = percentile ? date.toISOString() : undefined;
+  const appendRow = (
+    prevRows: SummaryRow[],
+    duration: string,
+  ): SummaryRow[] => {
+    const prevTotal =
+      prevRows.length > 0 ? prevRows[prevRows.length - 1].cumulativeCount : 0;
+    const runsWithDuration = runsByDuration[duration];
 
-      index += count;
+    const count = runsWithDuration.length;
+    const cumulativeCount = count + prevTotal;
+    const date = addDays(startDate, parseInt(duration));
+    const startQuantile = prevTotal / runs.length;
+    const endQuantile = (prevTotal + count) / runs.length;
 
-      const percentComplete = Math.floor((index / runs.length) * 100);
-      const tooltip = `${percentComplete}% of trials finished by ${formatDate(
-        date,
-      )}`;
+    const nextRow = {
+      date,
+      count,
+      startQuantile,
+      endQuantile,
+      cumulativeCount,
+    };
 
-      return {
-        date,
-        count,
-        annotation,
-        annotationText,
-        startPercentile,
-        endPercentile,
-        tooltip,
-      };
-    })
-    .filter((row) => {
-      if (includeLongTail) {
-        return true;
-      }
-      return (
-        row.endPercentile >= minPercentile &&
-        row.startPercentile <= maxPercentile
-      );
-    })
+    return [...prevRows, nextRow];
+  };
+
+  return Object.keys(runsByDuration)
+    .reduce(appendRow, [])
+    .filter(filterLongTail)
     .sort((row1, row2) => compareAsc(row1.date, row2.date));
 }
+
+const getLongTailCutoff = (rowCount: number) => {
+  if (rowCount < 50) {
+    return 0;
+  }
+  if (rowCount < 100) {
+    return 0.01;
+  }
+  if (rowCount < 200) {
+    return 0.02;
+  }
+  return 0.025;
+};
