@@ -11,7 +11,7 @@ type RunOnceParams = {
   issueCount: number;
   inputs: SimulationInputs;
   startWeekday: number;
-  excludeLeadTimes: boolean;
+  includeLeadTimes: boolean;
   generator: RandomGenerator;
 };
 
@@ -26,16 +26,16 @@ export function runOnce({
   issueCount,
   inputs,
   startWeekday,
-  excludeLeadTimes,
+  includeLeadTimes,
   generator,
 }: RunOnceParams): number {
   let durationInDays = 0;
 
-  if (!excludeLeadTimes) {
+  if (includeLeadTimes) {
     // In this case we're looking at a 'cold start' for work that has not yet been started, so we
     // need to factor in the initial lead time to the first item being completed.
 
-    // If `excludeLeadTimes` is true, then we assume work is already in progress and we're just
+    // If `includeLeadTimes` is false, then we assume work is already in progress and we're just
     // forecasting 'remaining work'.
     durationInDays += selectValue(inputs.cycleTimes, generator);
     issueCount -= 1;

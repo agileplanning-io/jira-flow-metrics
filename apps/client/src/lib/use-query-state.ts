@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { mergeDeep } from "remeda";
 import { qsParse, qsStringify } from "@agileplanning-io/flow-lib";
@@ -23,8 +23,14 @@ export const useQueryState = <T>(
     [setParams, key],
   );
 
-  const queryObject = qsParse(params.toString());
-  const query = queryObject[key] as T | undefined;
+  const queryString = params.toString();
 
-  return [parser ? parser(query) : query, setQuery];
+  const result = useMemo(() => {
+    const queryObject = qsParse(queryString);
+    const query = queryObject[key] as T | undefined;
+
+    return parser ? parser(query) : query;
+  }, [queryString, key, parser]);
+
+  return [result, setQuery];
 };

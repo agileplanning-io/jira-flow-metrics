@@ -22,7 +22,7 @@ describe("forecast", () => {
       issueCount: 3,
       startDate: now,
       excludeOutliers: false,
-      excludeLeadTimes: false,
+      includeLeadTimes: true,
       includeLongTail: false,
       seed: 123,
     });

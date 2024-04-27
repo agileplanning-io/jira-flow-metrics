@@ -57,13 +57,13 @@ describe("run", () => {
           issueCount: 5,
           inputs: measurements,
           startWeekday,
-          excludeLeadTimes: false,
+          includeLeadTimes: true,
           generator,
         }),
       ).toEqual(7.5);
     });
 
-    it("ignores lead times if excludeLeadTimes is true", () => {
+    it("ignores lead times if includeLeadTimes is false", () => {
       const measurements: SimulationInputs = {
         cycleTimes: [2.5, 3.5, 5.5],
         throughputs: {
@@ -90,7 +90,7 @@ describe("run", () => {
           issueCount: 5,
           inputs: measurements,
           startWeekday,
-          excludeLeadTimes: true,
+          includeLeadTimes: false,
           generator,
         }),
       ).toEqual(4);
@@ -129,7 +129,7 @@ describe("run", () => {
           inputs: measurements,
           runCount: 2,
           startWeekday: getISODay(startDate),
-          excludeLeadTimes: false,
+          includeLeadTimes: true,
           generator,
         }),
       ).toEqual([7.5, 8.5]);

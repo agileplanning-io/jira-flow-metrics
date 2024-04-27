@@ -53,13 +53,17 @@ export const ForecastPage = () => {
   const [summary, setSummary] = useState<SummaryRow[]>();
 
   useEffect(() => {
-    if (!filteredIssues || filteredIssues.length === 0) return;
+    if (!filteredIssues || filteredIssues.length === 0 || !chartParams) return;
     const result = forecast({
       selectedIssues: filteredIssues,
       ...chartParams,
     });
     setSummary(result);
   }, [filteredIssues, filter, chartParams]);
+
+  if (!chartParams) {
+    return;
+  }
 
   return (
     <>
@@ -88,9 +92,9 @@ export const ForecastPage = () => {
                 : "Exclude long tail",
             },
             {
-              value: chartParams.excludeLeadTimes
-                ? "Exclude lead times"
-                : "Include lead times",
+              value: chartParams.includeLeadTimes
+                ? "Include lead times"
+                : "Exclude lead times",
             },
             {
               value: chartParams.excludeOutliers
@@ -170,15 +174,15 @@ export const ForecastPage = () => {
                 Include long tail
               </Checkbox>
               <Checkbox
-                checked={chartParams.excludeLeadTimes}
+                checked={chartParams.includeLeadTimes}
                 onChange={(e) =>
                   setChartParams({
                     ...chartParams,
-                    excludeLeadTimes: e.target.checked,
+                    includeLeadTimes: e.target.checked,
                   })
                 }
               >
-                Exclude lead times
+                Include lead times
               </Checkbox>
               <Checkbox
                 checked={chartParams.excludeOutliers}
