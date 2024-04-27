@@ -10,7 +10,7 @@ export type ForecastParams = {
   issueCount: number;
   startDate: Date;
   excludeOutliers: boolean;
-  excludeLeadTimes: boolean;
+  includeLeadTimes: boolean;
   includeLongTail: boolean;
   seed: number;
 };
@@ -40,7 +40,7 @@ export const forecast = ({
   issueCount,
   startDate,
   excludeOutliers,
-  excludeLeadTimes,
+  includeLeadTimes,
   includeLongTail,
   seed,
 }: ForecastParams): SummaryRow[] => {
@@ -52,7 +52,7 @@ export const forecast = ({
     inputs,
     runCount: 10000,
     startWeekday: getISODay(startDate),
-    excludeLeadTimes,
+    includeLeadTimes,
     generator,
   });
 

@@ -1,60 +1,43 @@
-import { ForecastParams } from "@agileplanning-io/flow-metrics";
-import { SearchParamsBuilder } from "@lib/search-params-builder";
-import { parse, startOfDay } from "date-fns";
-import { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
-
-export type ForecastChartParams = Omit<ForecastParams, "selectedIssues">;
-
-export const useForecastChartParams = (): {
-  chartParams: ForecastChartParams;
-  setChartParams: (params: ForecastChartParams) => void;
-} => {
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const chartParams = useMemo(
-    () => ({
-      issueCount: parseInt(searchParams.get("issueCount")) ?? 10,
-      startDate: parseStartDate(searchParams) ?? startOfDay(new Date()),
-      seed: parseInt(searchParams.get("seed")) ?? newSeed(),
-
-      includeLongTail: searchParams.get("includeLongTail") === "true",
-      excludeLeadTimes: searchParams.get("excludeLeadTimes") === "true",
-      excludeOutliers: searchParams.get("excludeOutliers") === "true",
-    }),
-    [searchParams],
-  );
-
-  const setChartParams = (newParams: ForecastChartParams) => {
-    setSearchParams((params) => {
-      return new SearchParamsBuilder(params)
-        .set("issueCount", newParams.issueCount)
-        .set("startDate", newParams.startDate)
-        .set("seed", newParams.seed)
-        .set("includeLongTail", newParams.includeLongTail)
-        .set("excludeLeadTimes", newParams.excludeLeadTimes)
-        .set("excludeOutliers", newParams.excludeOutliers)
-        .getParams();
-    });
-  };
-
-  return { chartParams, setChartParams };
-};
-
-const parseStartDate = (params: URLSearchParams): Date | undefined => {
-  const startDateString = params.get("startDate");
-  if (startDateString) {
-    return parse(startDateString, "yyyy-MM-dd", new Date());
-  }
-};
+import { useQueryState } from "@lib/use-query-state";
+import { useEffect } from "react";
+import { z } from "zod";
 
 export const newSeed = () =>
   Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 
-const parseInt = (input: unknown): number | undefined => {
-  const value = typeof input === "string" ? Number.parseInt(input) : undefined;
+const defaultParamValues = {
+  issueCount: 10,
+  startDate: new Date(),
+  seed: newSeed(),
+  includeLongTail: false,
+  includeLeadTimes: true,
+  excludeOutliers: false,
+};
 
-  if (Number.isInteger(value)) {
-    return value;
-  }
+const forecastChartParamsSchema = z
+  .object({
+    issueCount: z.coerce.number().catch(defaultParamValues.issueCount),
+    startDate: z.date().catch(defaultParamValues.startDate),
+    seed: z.coerce.number().catch(defaultParamValues.seed),
+    includeLongTail: z.boolean().catch(defaultParamValues.includeLongTail),
+    includeLeadTimes: z.boolean().catch(defaultParamValues.includeLeadTimes),
+    excludeOutliers: z.boolean().catch(defaultParamValues.excludeOutliers),
+  })
+  .optional();
+
+export type ForecastChartParams = z.infer<typeof forecastChartParamsSchema>;
+
+export const useForecastChartParams = () => {
+  const [chartParams, setChartParams] = useQueryState(
+    "c",
+    forecastChartParamsSchema.parse,
+  );
+
+  useEffect(() => {
+    if (!chartParams) {
+      setChartParams(defaultParamValues);
+    }
+  }, [chartParams, setChartParams]);
+
+  return { chartParams, setChartParams };
 };
