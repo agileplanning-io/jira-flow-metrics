@@ -15,6 +15,8 @@ import { FilterOptionsForm } from "../components/filter-form/filter-options-form
 import { useProjectContext } from "../../context";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
+import { useAtomValue } from "jotai";
+import { chartStyleAtom } from "../chart-style";
 
 export const WipPage = () => {
   const { issues } = useProjectContext();
@@ -24,6 +26,8 @@ export const WipPage = () => {
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
 
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const chartStyle = useAtomValue(chartStyleAtom);
 
   const includeStoppedIssues =
     searchParams.get("includeStoppedIssues") === "true";
@@ -108,7 +112,11 @@ export const WipPage = () => {
       </ExpandableOptions>
 
       {wipResult ? (
-        <WipChart result={wipResult} setSelectedIssues={setSelectedIssues} />
+        <WipChart
+          result={wipResult}
+          setSelectedIssues={setSelectedIssues}
+          style={chartStyle}
+        />
       ) : null}
       <div style={{ margin: 16 }} />
       <IssuesTable issues={selectedIssues} defaultSortField="cycleTime" />

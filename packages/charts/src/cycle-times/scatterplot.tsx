@@ -1,4 +1,4 @@
-import { CSSProperties, ReactElement } from "react";
+import { ReactElement } from "react";
 import { CompletedIssue, Issue } from "@agileplanning-io/flow-metrics";
 import { ChartOptions } from "chart.js";
 import { Scatter } from "react-chartjs-2";
@@ -14,6 +14,7 @@ import { compareAsc, startOfDay } from "date-fns";
 import { mergeDeep, sort, uniqBy } from "remeda";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
 import { getColorForPercentile } from "../util/styles";
+import { ChartStyle, buildFontSpec } from "../style";
 
 type ScatterplotProps = {
   issues: CompletedIssue[];
@@ -23,7 +24,7 @@ type ScatterplotProps = {
   setSelectedIssues: (issues: Issue[]) => void;
   hideOutliers: boolean;
   options?: ChartOptions<"scatter">;
-  style?: CSSProperties;
+  style?: ChartStyle;
 };
 
 export const Scatterplot = ({
@@ -36,6 +37,8 @@ export const Scatterplot = ({
   options: overrideOptions,
   style,
 }: ScatterplotProps): ReactElement => {
+  const font = buildFontSpec(style);
+
   const data = issues.map((issue) => ({
     x: issue.metrics.completed,
     y: issue.metrics.cycleTime,
@@ -76,6 +79,7 @@ export const Scatterplot = ({
               display: showPercentileLabels,
               textAlign: "start",
               color: "#666666",
+              font,
             },
             enter({ element }) {
               element.label!.options.display = true;
@@ -105,7 +109,14 @@ export const Scatterplot = ({
       datalabels: {
         display: false,
       },
+      legend: {
+        labels: {
+          font,
+        },
+      },
       tooltip: {
+        titleFont: font,
+        bodyFont: font,
         callbacks: {
           title: (ctx) => {
             const dates = ctx.map(({ dataIndex }) =>
@@ -136,6 +147,9 @@ export const Scatterplot = ({
       y: {
         beginAtZero: true,
         max: maxYValue,
+        ticks: {
+          font,
+        },
       },
       x: {
         type: "time",
@@ -147,6 +161,10 @@ export const Scatterplot = ({
         title: {
           text: "Completion Date",
           display: true,
+          font,
+        },
+        ticks: {
+          font,
         },
       },
     },
@@ -157,7 +175,7 @@ export const Scatterplot = ({
     overrideOptions ?? {},
   );
 
-  return <Scatter data={{ datasets }} options={options} style={style} />;
+  return <Scatter data={{ datasets }} options={options} />;
 };
 
 const getMaxYValue = (issues: CompletedIssue[]): number => {

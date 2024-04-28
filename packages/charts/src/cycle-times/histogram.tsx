@@ -10,6 +10,7 @@ import { range, countBy } from "remeda";
 import { FC, ReactElement } from "react";
 import { Chart } from "react-chartjs-2";
 import { getColorForPercentile } from "../util/styles";
+import { ChartStyle, buildFontSpec } from "../style";
 
 export type HistogramProps = {
   issues: CompletedIssue[];
@@ -17,6 +18,7 @@ export type HistogramProps = {
   percentiles?: Percentile[];
   showPercentileLabels: boolean;
   hideOutliers: boolean;
+  style?: ChartStyle;
 };
 
 type BucketedFlowMetrics = CompletedFlowMetrics & {
@@ -45,6 +47,7 @@ export const Histogram: FC<HistogramProps> = ({
   percentiles,
   showPercentileLabels,
   hideOutliers,
+  style,
 }): ReactElement => {
   const bucketedIssues: BucketedIssue[] = issues.map(bucketIssue);
   const buckets = range(
@@ -58,6 +61,8 @@ export const Histogram: FC<HistogramProps> = ({
   const cumulativeCounts = cumsum(counts) as number[];
 
   const maxXValue = hideOutliers ? getMaxXValue(issues) : undefined;
+
+  const font = buildFontSpec(style);
 
   const data: ChartData<"bar" | "line"> = {
     labels: buckets,
@@ -100,6 +105,7 @@ export const Histogram: FC<HistogramProps> = ({
               textAlign: "start",
               rotation: 90,
               color: "#666666",
+              font,
             },
             enter({ element }) {
               element.label!.options.display = true;
@@ -139,13 +145,23 @@ export const Histogram: FC<HistogramProps> = ({
             title: {
               text: "Cycle Time (days)",
               display: true,
+              font,
+            },
+            ticks: {
+              font,
             },
           },
           y: {
             position: "left",
+            ticks: {
+              font,
+            },
           },
           y2: {
             position: "right",
+            ticks: {
+              font,
+            },
             grid: {
               display: false,
             },
@@ -157,6 +173,11 @@ export const Histogram: FC<HistogramProps> = ({
           },
           annotation: {
             annotations,
+          },
+          legend: {
+            labels: {
+              font,
+            },
           },
           tooltip: {
             mode: "index",
@@ -173,6 +194,7 @@ export const Histogram: FC<HistogramProps> = ({
                 return `${count} (${percent}%) items completed ${description} ${bucket} days`;
               },
             },
+            bodyFont: font,
           },
         },
       }}

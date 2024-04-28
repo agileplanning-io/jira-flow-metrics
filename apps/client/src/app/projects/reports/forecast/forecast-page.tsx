@@ -7,6 +7,7 @@ import {
   filterCompletedIssues,
   forecast,
 } from "@agileplanning-io/flow-metrics";
+import { useAtomValue } from "jotai";
 import { useFilterContext } from "../../../filter/context";
 import { ForecastChart } from "@agileplanning-io/flow-charts";
 import {
@@ -27,6 +28,7 @@ import { useProjectContext } from "../../context";
 import { formatDate } from "@agileplanning-io/flow-lib";
 import { newSeed, useForecastChartParams } from "./hooks/use-chart-params";
 import { fromClientFilter } from "@app/filter/context/context";
+import { chartStyleAtom } from "../chart-style";
 
 export const ForecastPage = () => {
   const { issues } = useProjectContext();
@@ -36,6 +38,8 @@ export const ForecastPage = () => {
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
 
   const { chartParams, setChartParams } = useForecastChartParams();
+
+  const chartStyle = useAtomValue(chartStyleAtom);
 
   useEffect(() => {
     if (filter && issues) {
@@ -199,7 +203,7 @@ export const ForecastPage = () => {
           </Row>
         </Form>
       </ExpandableOptions>
-      <ForecastChart summary={summary ?? []} />
+      <ForecastChart summary={summary ?? []} style={chartStyle} />
     </>
   );
 };

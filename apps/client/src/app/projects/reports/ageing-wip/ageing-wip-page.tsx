@@ -20,10 +20,12 @@ import {
 } from "@agileplanning-io/flow-charts";
 import { filterCompletedIssues } from "@agileplanning-io/flow-metrics";
 import { isStarted } from "@agileplanning-io/flow-metrics";
+import { useAtomValue } from "jotai";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { IssuesTable } from "@app/components/issues-table";
 import { Percentile } from "@agileplanning-io/flow-lib";
 import { fromClientFilter } from "@app/filter/context/context";
+import { chartStyleAtom } from "../chart-style";
 
 export const AgeingWipPage = () => {
   const { issues } = useProjectContext();
@@ -36,6 +38,8 @@ export const AgeingWipPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [percentiles, setPercentiles] = useState<Percentile[]>([]);
+
+  const chartStyle = useAtomValue(chartStyleAtom);
 
   const includeStoppedIssues =
     searchParams.get("includeStoppedIssues") === "true";
@@ -145,6 +149,7 @@ export const AgeingWipPage = () => {
         percentiles={percentiles}
         setSelectedIssues={setSelectedIssues}
         showPercentileLabels={showPercentileLabels}
+        style={chartStyle}
       />
 
       <IssueDetailsDrawer

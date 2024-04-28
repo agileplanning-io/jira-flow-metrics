@@ -22,6 +22,8 @@ import { FilterOptionsForm } from "../components/filter-form/filter-options-form
 import { useProjectContext } from "../../context";
 import { useSearchParams } from "react-router-dom";
 import { fromClientFilter } from "@app/filter/context/context";
+import { useAtomValue } from "jotai";
+import { chartStyleAtom } from "../chart-style";
 
 export const ThroughputPage = () => {
   const { issues } = useProjectContext();
@@ -33,6 +35,8 @@ export const ThroughputPage = () => {
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
   const [throughputResult, setThroughputResult] = useState<ThroughputResult>();
+
+  const chartStyle = useAtomValue(chartStyleAtom);
 
   useEffect(() => {
     if (!filter?.dates || !issues) {
@@ -104,6 +108,7 @@ export const ThroughputPage = () => {
           result={throughputResult}
           timeUnit={timeUnit}
           setSelectedIssues={setSelectedIssues}
+          style={chartStyle}
         />
       ) : null}
       <div style={{ margin: 16 }} />

@@ -5,12 +5,14 @@ import "chartjs-adapter-date-fns";
 import { Issue, StartedIssue } from "@agileplanning-io/flow-metrics";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
 import { ellipsize, Percentile } from "@agileplanning-io/flow-lib";
+import { ChartStyle, buildFontSpec } from "../style";
 
 type AgeingWipChartProps = {
   issues: StartedIssue[];
   percentiles: Percentile[];
   showPercentileLabels: boolean;
   setSelectedIssues: (issues: Issue[]) => void;
+  style?: ChartStyle;
 };
 
 Tooltip.positioners.custom = (_, eventPosition) => {
@@ -25,11 +27,14 @@ export const AgeingWipChart = ({
   percentiles,
   showPercentileLabels,
   setSelectedIssues,
+  style,
 }: AgeingWipChartProps): ReactElement => {
   const labels = issues.map((issue) => [
     issue.key,
     ellipsize(issue?.summary ?? ""),
   ]);
+
+  const font = buildFontSpec(style);
 
   const annotations = percentiles
     ? Object.fromEntries(
@@ -54,6 +59,7 @@ export const AgeingWipChart = ({
               )} days)`,
               display: showPercentileLabels,
               textAlign: "start",
+              font,
               color: "#666666",
             },
             enter({ element }) {
@@ -116,7 +122,11 @@ export const AgeingWipChart = ({
       x: {
         title: {
           text: "Issue age (days)",
+          font,
           display: true,
+        },
+        ticks: {
+          font,
         },
       },
       y: {
@@ -129,11 +139,18 @@ export const AgeingWipChart = ({
       datalabels: {
         display: false,
       },
+      legend: {
+        labels: {
+          font,
+        },
+      },
       annotation: {
         annotations,
         clip: false,
       },
       tooltip: {
+        titleFont: font,
+        bodyFont: font,
         callbacks: {
           title: (items) => {
             const issue = issues[items[0].dataIndex];

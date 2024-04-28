@@ -4,3 +4,4 @@ export * from "./src/cycle-times/percentiles";
 export * from "./src/cycle-times/ageing-wip-chart";
 export * from "./src/throughput";
 export * from "./src/forecast/forecast-chart";
+export * from "./src/style";

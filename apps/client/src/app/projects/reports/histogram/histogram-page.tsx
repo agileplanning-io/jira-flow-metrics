@@ -9,6 +9,7 @@ import {
   getCycleTimePercentiles,
 } from "@agileplanning-io/flow-charts";
 import { useEffect, useState } from "react";
+import { useAtomValue } from "jotai";
 import { IssuesTable } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
@@ -20,6 +21,7 @@ import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { Percentile } from "@agileplanning-io/flow-lib";
 import { fromClientFilter } from "@app/filter/context/context";
+import { chartStyleAtom } from "../chart-style";
 
 export const HistogramPage = () => {
   const { issues } = useProjectContext();
@@ -31,6 +33,8 @@ export const HistogramPage = () => {
   const [percentiles, setPercentiles] = useState<Percentile[] | undefined>();
 
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const chartStyle = useAtomValue(chartStyleAtom);
 
   const showPercentileLabels =
     searchParams.get("showPercentileLabels") === "true";
@@ -130,6 +134,7 @@ export const HistogramPage = () => {
           setSelectedIssues={setSelectedIssues}
           showPercentileLabels={showPercentileLabels}
           hideOutliers={hideOutliers}
+          style={chartStyle}
         />
       ) : null}
       <div style={{ margin: 16 }} />

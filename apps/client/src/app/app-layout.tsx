@@ -1,13 +1,19 @@
 import { Outlet } from "react-router-dom";
 import { Breadcrumbs } from "./navigation/breadcrumbs";
-import { Button, Col, Layout, Row, Space, Typography } from "antd";
+import { Button, Col, Layout, Row, Space, Tooltip, Typography } from "antd";
 import { Title } from "./navigation/title";
 import { useNavigationContext } from "./navigation/context";
 import { formatDate } from "@agileplanning-io/flow-lib";
 import { useSyncProject } from "@data/projects";
 import { useState } from "react";
-import { ArrowsAltOutlined, ShrinkOutlined } from "@ant-design/icons";
+import {
+  ArrowsAltOutlined,
+  ShrinkOutlined,
+  FontSizeOutlined,
+} from "@ant-design/icons";
+import { useAtom } from "jotai";
 import { FilterProvider } from "./filter/context/provider";
+import { FontSize, fontSizeAtom } from "./projects/reports/chart-style";
 
 const FooterContent = () => {
   const { project } = useNavigationContext();
@@ -38,6 +44,14 @@ const FooterContent = () => {
 
 export const AppLayout = () => {
   const [fullscreen, setFullscreen] = useState(true);
+
+  const [fontSize, setFontSize] = useAtom(fontSizeAtom);
+  const toggleFontSize = () => {
+    setFontSize(
+      fontSize === FontSize.Default ? FontSize.Large : FontSize.Default,
+    );
+  };
+
   return (
     <FilterProvider>
       <Layout
@@ -49,11 +63,20 @@ export const AppLayout = () => {
               <Breadcrumbs />
             </Col>
             <Col>
-              <Button
-                type="text"
-                icon={fullscreen ? <ArrowsAltOutlined /> : <ShrinkOutlined />}
-                onClick={() => setFullscreen(!fullscreen)}
-              />
+              <Tooltip placement="left" title="Toggle large fonts on charts">
+                <Button
+                  type={fontSize === FontSize.Default ? "text" : "primary"}
+                  icon={<FontSizeOutlined />}
+                  onClick={toggleFontSize}
+                />
+              </Tooltip>
+              <Tooltip placement="left" title="Toggle full page width">
+                <Button
+                  type="text"
+                  icon={fullscreen ? <ArrowsAltOutlined /> : <ShrinkOutlined />}
+                  onClick={() => setFullscreen(!fullscreen)}
+                />
+              </Tooltip>
             </Col>
           </Row>
         </Layout.Header>
