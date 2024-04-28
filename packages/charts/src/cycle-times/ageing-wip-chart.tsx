@@ -114,6 +114,11 @@ export const AgeingWipChart = ({
           display: true,
         },
       },
+      y: {
+        ticks: {
+          autoSkip: false,
+        },
+      },
     },
     plugins: {
       datalabels: {
