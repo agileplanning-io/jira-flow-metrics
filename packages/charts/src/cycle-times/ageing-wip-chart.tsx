@@ -39,11 +39,16 @@ export const AgeingWipChart = ({
             borderColor: getColorForPercentile(p.percentile),
             borderWidth: 1,
             borderDash: p.percentile < 95 ? [4, 4] : undefined,
+            backgroundShadowColor: "#000000",
+            borderShadowColor: "#FFFFFF90",
+            shadowOffsetX: 1,
+            shadowOffsetY: 1,
             label: {
-              backgroundColor: "#FFFFFF",
+              backgroundColor: "#FFFFFFA0",
               padding: 4,
               position: "start",
-              yAdjust: -10,
+              xAdjust: 13,
+              rotation: -90,
               content: `${p.percentile.toString()}% (${p.value.toFixed(
                 1,
               )} days)`,
