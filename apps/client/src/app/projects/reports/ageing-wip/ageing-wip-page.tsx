@@ -78,7 +78,8 @@ export const AgeingWipPage = () => {
           return !isStopped;
         })
         .filter(isStarted)
-        .filter((issue) => !isNil(issue.metrics.age));
+        .filter((issue) => !isNil(issue.metrics.age))
+        .sort((i1, i2) => -(i1.metrics.age - i2.metrics.age));
 
       setAgeingIssues(ageingIssues);
 
