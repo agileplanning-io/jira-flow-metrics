@@ -67,11 +67,6 @@ export const AgeingWipPage = () => {
       setBenchmarkIssues(benchmarkIssues);
 
       const ageingIssues = filterIssues(issues, omit(filter, ["dates"]))
-        .filter(
-          (issue) =>
-            issue.hierarchyLevel === HierarchyLevel.Epic ||
-            issue.metrics.includedInEpic,
-        )
         .filter((issue) => {
           if (includeStoppedIssues) {
             return true;
