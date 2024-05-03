@@ -3,15 +3,18 @@ import { Line } from "react-chartjs-2";
 import { ChartOptions } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { Issue, WipResult } from "@agileplanning-io/flow-metrics";
+import { ChartStyle, buildFontSpec } from "../style";
 
 type WipChartProps = {
   result: WipResult;
   setSelectedIssues: (issues: Issue[]) => void;
+  style?: ChartStyle;
 };
 
 export const WipChart = ({
   result,
   setSelectedIssues,
+  style,
 }: WipChartProps): ReactElement => {
   const labels = result.map(({ date }) => date.toISOString());
 
@@ -28,6 +31,8 @@ export const WipChart = ({
     ],
   };
 
+  const font = buildFontSpec(style);
+
   const scales: ChartOptions<"line">["scales"] = {
     x: {
       type: "time",
@@ -35,9 +40,11 @@ export const WipChart = ({
         unit: "day",
       },
       position: "bottom",
+      ticks: { font },
     },
     y: {
       beginAtZero: true,
+      ticks: { font },
     },
   };
 
@@ -56,6 +63,13 @@ export const WipChart = ({
     plugins: {
       datalabels: {
         display: false,
+      },
+      legend: {
+        labels: { font },
+      },
+      tooltip: {
+        bodyFont: font,
+        titleFont: font,
       },
     },
   };

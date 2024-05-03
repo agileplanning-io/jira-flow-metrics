@@ -2,17 +2,24 @@ import { Bar } from "react-chartjs-2";
 import { ChartData, ChartOptions } from "chart.js";
 import { SummaryRow } from "@agileplanning-io/flow-metrics";
 import { formatDate } from "@agileplanning-io/flow-lib";
+import { ChartStyle, buildFontSpec } from "../style";
 
 export type ForecastChartProps = {
   summary: SummaryRow[];
+  style?: ChartStyle;
 };
 
-export const ForecastChart: React.FC<ForecastChartProps> = ({ summary }) => {
+export const ForecastChart: React.FC<ForecastChartProps> = ({
+  summary,
+  style,
+}) => {
   const labels = summary.map(({ date }) => date.toISOString());
   const tooltips = summary.map((row) => {
     const percentComplete = Math.floor(row.endQuantile * 100);
     return `${percentComplete}% of trials finished by ${formatDate(row.date)}`;
   });
+
+  const font = buildFontSpec(style);
 
   const data: ChartData<"bar"> = {
     labels,
@@ -36,11 +43,18 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({ summary }) => {
       title: {
         text: "Completion Date",
         display: true,
+        font,
+      },
+      ticks: {
+        font,
       },
       position: "bottom",
     },
     y: {
       beginAtZero: true,
+      ticks: {
+        font,
+      },
     },
   };
 
@@ -62,6 +76,7 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({ summary }) => {
             return tooltips[ctx.dataIndex];
           },
         },
+        bodyFont: font,
         displayColors: false,
       },
     },

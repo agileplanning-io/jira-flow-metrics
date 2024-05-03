@@ -6,19 +6,24 @@ import "chartjs-adapter-date-fns";
 import { TimeUnit } from "@agileplanning-io/flow-lib";
 import { Issue, ThroughputResult } from "@agileplanning-io/flow-metrics";
 import { getColorForPercentile } from "../util/styles";
+import { ChartStyle, buildFontSpec } from "../style";
 
 type ThroughputChartProps = {
   result: ThroughputResult;
   timeUnit: TimeUnit;
   setSelectedIssues: (issues: Issue[]) => void;
+  style?: ChartStyle;
 };
 
 export const ThroughputChart = ({
   result,
   timeUnit,
   setSelectedIssues,
+  style,
 }: ThroughputChartProps): ReactElement => {
   const labels = result.data.map(({ date }) => date.toISOString());
+
+  const font = buildFontSpec(style);
 
   const data = {
     labels,
@@ -48,6 +53,7 @@ export const ThroughputChart = ({
           display: true,
           textAlign: "start",
           color: "#666666",
+          font,
         },
         scaleID: "y",
         value: p.value,
@@ -63,9 +69,15 @@ export const ThroughputChart = ({
         unit: timeUnit === TimeUnit.Fortnight ? "week" : timeUnit,
       },
       position: "bottom",
+      ticks: {
+        font,
+      },
     },
     y: {
       beginAtZero: true,
+      ticks: {
+        font,
+      },
     },
   };
 
@@ -89,6 +101,14 @@ export const ThroughputChart = ({
       },
       datalabels: {
         display: false,
+      },
+      title: { font },
+      tooltip: {
+        bodyFont: font,
+        titleFont: font,
+      },
+      legend: {
+        labels: { font },
       },
     },
   };
