@@ -1,5 +1,16 @@
 # @agileplanning-io/flow-charts
 
+## 0.0.28
+
+### Patch Changes
+
+- 1b9a7c4: fix: disable autoskip for AgeingWipChart ticks
+- a731d4c: feat: chart font sizes
+- ffceda6: feat: improve ageing wip chart labels
+- 93854c2: feat: forecast lead times
+- Updated dependencies [93854c2]
+  - @agileplanning-io/flow-metrics@1.0.4
+
 ## 0.0.27
 
 ### Patch Changes
