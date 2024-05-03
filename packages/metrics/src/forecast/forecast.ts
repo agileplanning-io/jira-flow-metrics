@@ -8,7 +8,7 @@ import { CompletedIssue } from "../types";
 export type ForecastParams = {
   selectedIssues: CompletedIssue[];
   issueCount: number;
-  startDate: Date;
+  startDate?: Date;
   excludeOutliers: boolean;
   includeLeadTimes: boolean;
   includeLongTail: boolean;
@@ -16,7 +16,7 @@ export type ForecastParams = {
 };
 
 export type SummaryRow = {
-  date: Date;
+  time: Date | number;
   /**
    * The count of simulations which finished on `date`.
    */
@@ -51,7 +51,7 @@ export const forecast = ({
     issueCount,
     inputs,
     runCount: 10000,
-    startWeekday: getISODay(startDate),
+    startWeekday: startDate ? getISODay(startDate) : 1,
     includeLeadTimes,
     generator,
   });
@@ -63,7 +63,7 @@ export const forecast = ({
 
 export function summarize(
   runs: number[],
-  startDate: Date,
+  startDate: Date | undefined,
   includeLongTail: boolean,
 ): SummaryRow[] {
   const runsByDuration = groupBy(runs, (run) => Math.ceil(run));
@@ -90,12 +90,13 @@ export function summarize(
 
     const count = runsWithDuration.length;
     const cumulativeCount = count + prevTotal;
-    const date = addDays(startDate, parseInt(duration));
+    const date = startDate ? addDays(startDate, parseInt(duration)) : undefined;
+    const time = date ?? parseInt(duration);
     const startQuantile = prevTotal / runs.length;
     const endQuantile = (prevTotal + count) / runs.length;
 
     const nextRow = {
-      date,
+      time,
       count,
       startQuantile,
       endQuantile,
@@ -108,7 +109,7 @@ export function summarize(
   return Object.keys(runsByDuration)
     .reduce(appendRow, [])
     .filter(filterLongTail)
-    .sort((row1, row2) => compareAsc(row1.date, row2.date));
+    .sort((row1, row2) => compareAsc(row1.time, row2.time));
 }
 
 const getLongTailCutoff = (rowCount: number) => {

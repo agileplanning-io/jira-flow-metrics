@@ -1,3 +1,4 @@
+import { booleanSchema } from "@lib/boolean-schema";
 import { useQueryState } from "@lib/use-query-state";
 import { useEffect } from "react";
 import { z } from "zod";
@@ -17,11 +18,11 @@ const defaultParamValues = {
 const forecastChartParamsSchema = z
   .object({
     issueCount: z.coerce.number().catch(defaultParamValues.issueCount),
-    startDate: z.coerce.date().catch(defaultParamValues.startDate),
+    startDate: z.coerce.date().optional().catch(defaultParamValues.startDate),
     seed: z.coerce.number().catch(defaultParamValues.seed),
-    includeLongTail: z.boolean().catch(defaultParamValues.includeLongTail),
-    includeLeadTimes: z.boolean().catch(defaultParamValues.includeLeadTimes),
-    excludeOutliers: z.boolean().catch(defaultParamValues.excludeOutliers),
+    includeLongTail: booleanSchema.catch(defaultParamValues.includeLongTail),
+    includeLeadTimes: booleanSchema.catch(defaultParamValues.includeLeadTimes),
+    excludeOutliers: booleanSchema.catch(defaultParamValues.excludeOutliers),
   })
   .optional();
 
