@@ -3,20 +3,32 @@ import { ChartData, ChartOptions } from "chart.js";
 import { SummaryRow } from "@agileplanning-io/flow-metrics";
 import { formatDate } from "@agileplanning-io/flow-lib";
 import { ChartStyle, buildFontSpec } from "../style";
+import { isDate } from "remeda";
 
 export type ForecastChartProps = {
   summary: SummaryRow[];
+  startDate?: Date;
   style?: ChartStyle;
 };
 
 export const ForecastChart: React.FC<ForecastChartProps> = ({
   summary,
+  startDate,
   style,
 }) => {
-  const labels = summary.map(({ date }) => date.toISOString());
+  const labels = summary.map(({ time }) =>
+    typeof time === "number" ? time : time.toISOString(),
+  );
   const tooltips = summary.map((row) => {
     const percentComplete = Math.floor(row.endQuantile * 100);
-    return `${percentComplete}% of trials finished by ${formatDate(row.date)}`;
+    const date = isDate(row.time) ? row.time : undefined;
+    const tooltip = [
+      `${percentComplete}% of trials finished`,
+      date ? "by" : "in",
+      date ? formatDate(date) : row.time,
+      date ? "" : "days",
+    ].join(" ");
+    return tooltip;
   });
 
   const font = buildFontSpec(style);
@@ -36,7 +48,7 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({
 
   const scales: ChartOptions<"bar">["scales"] = {
     x: {
-      type: "time",
+      type: startDate ? "time" : "linear",
       time: {
         unit: "day",
       },

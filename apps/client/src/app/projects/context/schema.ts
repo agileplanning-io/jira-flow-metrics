@@ -1,11 +1,6 @@
 import { FilterType } from "@agileplanning-io/flow-metrics";
-import { isNullish } from "remeda";
+import { booleanSchema } from "@lib/boolean-schema";
 import { z } from "zod";
-
-const booleanSchema = z
-  .string()
-  .optional()
-  .transform((val) => (isNullish(val) || val === "false" ? false : true));
 
 const valuesFilterSchema = z.object({
   values: z.array(z.string()).optional(),

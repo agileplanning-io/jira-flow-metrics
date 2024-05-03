@@ -128,11 +128,12 @@ export const ForecastPage = () => {
                 <DatePicker
                   style={{ width: "100%" }}
                   value={chartParams.startDate}
-                  allowClear={false}
+                  allowClear={true}
                   onChange={(e) => {
-                    if (e) {
-                      setChartParams({ ...chartParams, startDate: e });
-                    }
+                    setChartParams({
+                      ...chartParams,
+                      startDate: e ?? undefined,
+                    });
                   }}
                 />
               </Form.Item>
@@ -203,7 +204,11 @@ export const ForecastPage = () => {
           </Row>
         </Form>
       </ExpandableOptions>
-      <ForecastChart summary={summary ?? []} style={chartStyle} />
+      <ForecastChart
+        summary={summary ?? []}
+        style={chartStyle}
+        startDate={chartParams.startDate}
+      />
     </>
   );
 };

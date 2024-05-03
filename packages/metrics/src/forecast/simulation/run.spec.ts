@@ -142,35 +142,35 @@ describe("run", () => {
       const summary = summarize([1, 3, 10, 5, 9, 5, 3, 5], startDate, false);
       expect(summary).toEqual([
         {
-          date: new Date("2020-01-02T00:00:00.000Z"),
+          time: new Date("2020-01-02T00:00:00.000Z"),
           count: 1,
           cumulativeCount: 1,
           startQuantile: 0,
           endQuantile: 0.125,
         },
         {
-          date: new Date("2020-01-04T00:00:00.000Z"),
+          time: new Date("2020-01-04T00:00:00.000Z"),
           count: 2,
           cumulativeCount: 3,
           startQuantile: 0.125,
           endQuantile: 0.375,
         },
         {
-          date: new Date("2020-01-06T00:00:00.000Z"),
+          time: new Date("2020-01-06T00:00:00.000Z"),
           count: 3,
           cumulativeCount: 6,
           startQuantile: 0.375,
           endQuantile: 0.75,
         },
         {
-          date: new Date("2020-01-10T00:00:00.000Z"),
+          time: new Date("2020-01-10T00:00:00.000Z"),
           count: 1,
           cumulativeCount: 7,
           startQuantile: 0.75,
           endQuantile: 0.875,
         },
         {
-          date: new Date("2020-01-11T00:00:00.000Z"),
+          time: new Date("2020-01-11T00:00:00.000Z"),
           count: 1,
           cumulativeCount: 8,
           startQuantile: 0.875,
