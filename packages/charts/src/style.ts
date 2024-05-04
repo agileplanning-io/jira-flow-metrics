@@ -15,3 +15,9 @@ export const buildFontSpec = (style?: ChartStyle): Partial<FontSpec> => {
   };
   return font;
 };
+
+export const defaultBarStyle = Object.freeze({
+  backgroundColor: "#0E7EF1",
+  barPercentage: 1,
+  categoryPercentage: 0.9,
+});
