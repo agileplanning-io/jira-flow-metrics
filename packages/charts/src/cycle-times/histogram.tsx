@@ -10,7 +10,7 @@ import { range, countBy } from "remeda";
 import { FC, ReactElement } from "react";
 import { Chart } from "react-chartjs-2";
 import { getColorForPercentile } from "../util/styles";
-import { ChartStyle, buildFontSpec } from "../style";
+import { ChartStyle, buildFontSpec, defaultBarStyle } from "../style";
 
 export type HistogramProps = {
   issues: CompletedIssue[];
@@ -78,10 +78,8 @@ export const Histogram: FC<HistogramProps> = ({
       {
         label: "Item Count",
         data: counts,
-        backgroundColor: "#0E7EF1",
-        barPercentage: 1,
-        categoryPercentage: 0.9,
         yAxisID: "y",
+        ...defaultBarStyle,
       },
     ],
   };

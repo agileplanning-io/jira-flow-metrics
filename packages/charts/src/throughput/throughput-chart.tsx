@@ -1,12 +1,12 @@
 import { ReactElement } from "react";
-import { Line } from "react-chartjs-2";
-import { ChartOptions } from "chart.js";
+import { Bar } from "react-chartjs-2";
+import { ChartData, ChartOptions } from "chart.js";
 import { AnnotationOptions } from "chartjs-plugin-annotation";
 import "chartjs-adapter-date-fns";
 import { TimeUnit } from "@agileplanning-io/flow-lib";
 import { Issue, ThroughputResult } from "@agileplanning-io/flow-metrics";
 import { getColorForPercentile } from "../util/styles";
-import { ChartStyle, buildFontSpec } from "../style";
+import { ChartStyle, buildFontSpec, defaultBarStyle } from "../style";
 
 type ThroughputChartProps = {
   result: ThroughputResult;
@@ -25,15 +25,13 @@ export const ThroughputChart = ({
 
   const font = buildFontSpec(style);
 
-  const data = {
+  const data: ChartData<"bar"> = {
     labels,
     datasets: [
       {
         label: "Throughput",
         data: result.data.map(({ count }) => count),
-        fill: false,
-        borderColor: "rgb(255, 99, 132)",
-        tension: 0.1,
+        ...defaultBarStyle,
       },
     ],
   };
@@ -62,7 +60,7 @@ export const ThroughputChart = ({
     }),
   );
 
-  const scales: ChartOptions<"line">["scales"] = {
+  const scales: ChartOptions<"bar">["scales"] = {
     x: {
       type: "time",
       time: {
@@ -81,7 +79,7 @@ export const ThroughputChart = ({
     },
   };
 
-  const onClick: ChartOptions<"line">["onClick"] = (_, elements) => {
+  const onClick: ChartOptions<"bar">["onClick"] = (_, elements) => {
     if (elements.length === 1) {
       const selectedIssues = elements.map(
         (el) => result.data[el.index].issues,
@@ -92,7 +90,7 @@ export const ThroughputChart = ({
     }
   };
 
-  const options: ChartOptions<"line"> = {
+  const options: ChartOptions<"bar"> = {
     onClick,
     scales,
     plugins: {
@@ -113,5 +111,5 @@ export const ThroughputChart = ({
     },
   };
 
-  return <Line data={data} options={options} style={{ marginTop: 40 }} />;
+  return <Bar data={data} options={options} style={{ marginTop: 40 }} />;
 };
