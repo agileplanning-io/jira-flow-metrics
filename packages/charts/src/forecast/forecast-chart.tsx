@@ -2,7 +2,7 @@ import { Bar } from "react-chartjs-2";
 import { ChartData, ChartOptions } from "chart.js";
 import { SummaryRow } from "@agileplanning-io/flow-metrics";
 import { formatDate } from "@agileplanning-io/flow-lib";
-import { ChartStyle, buildFontSpec } from "../style";
+import { ChartStyle, buildFontSpec } from "../util/style";
 import { isDate } from "remeda";
 
 export type ForecastChartProps = {

@@ -14,7 +14,7 @@ import {
   getOverlappingInterval,
 } from "@agileplanning-io/flow-lib";
 import { ThroughputChart } from "@agileplanning-io/flow-charts";
-import { Col, Form, Row, Select } from "antd";
+import { Checkbox, Col, Form, Row, Select } from "antd";
 import { IssuesTable } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
 import { ExpandableOptions } from "../../../components/expandable-options";
@@ -70,6 +70,14 @@ export const ThroughputPage = () => {
     });
   };
 
+  const showPercentileLabels =
+    searchParams.get("showPercentileLabels") === "true";
+  const setShowPercentileLabels = (showPercentileLabels: boolean) =>
+    setSearchParams((prev) => {
+      prev.set("showPercentileLabels", showPercentileLabels.toString());
+      return prev;
+    });
+
   return (
     <>
       <FilterOptionsForm
@@ -85,7 +93,14 @@ export const ThroughputPage = () => {
       <ExpandableOptions
         header={{
           title: "Chart Options",
-          options: [{ label: "time unit", value: timeUnit }],
+          options: [
+            {
+              value: showPercentileLabels
+                ? "Show percentile labels"
+                : "Hide percentile labels",
+            },
+            { label: "time unit", value: timeUnit },
+          ],
         }}
       >
         <Row gutter={[8, 8]}>
@@ -100,6 +115,12 @@ export const ThroughputPage = () => {
                 <Select.Option key={TimeUnit.Month}>Months</Select.Option>
               </Select>
             </Form.Item>
+            <Checkbox
+              checked={showPercentileLabels}
+              onChange={(e) => setShowPercentileLabels(e.target.checked)}
+            >
+              Show percentile labels
+            </Checkbox>
           </Col>
         </Row>
       </ExpandableOptions>
@@ -109,6 +130,7 @@ export const ThroughputPage = () => {
           timeUnit={timeUnit}
           setSelectedIssues={setSelectedIssues}
           style={chartStyle}
+          showPercentileLabels={showPercentileLabels}
         />
       ) : null}
       <div style={{ margin: 16 }} />
