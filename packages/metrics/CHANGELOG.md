@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-metrics
 
+## 1.0.4
+
+### Patch Changes
+
+- 93854c2: feat: forecast lead times
+
 ## 1.0.3
 
 ### Patch Changes
