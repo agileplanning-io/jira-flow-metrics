@@ -4,6 +4,7 @@ import { groupBy } from "remeda";
 import { SeedRandomGenerator } from "./simulation/select";
 import { computeInputs } from "./inputs/inputs";
 import { CompletedIssue } from "../types";
+import { Percentile, getPercentiles } from "@agileplanning-io/flow-lib";
 
 export type ForecastParams = {
   selectedIssues: CompletedIssue[];
@@ -35,6 +36,12 @@ export type SummaryRow = {
   endQuantile: number;
 };
 
+export type SummaryResult = {
+  startDate: Date | undefined;
+  rows: SummaryRow[];
+  percentiles: Percentile[];
+};
+
 export const forecast = ({
   selectedIssues,
   issueCount,
@@ -43,7 +50,7 @@ export const forecast = ({
   includeLeadTimes,
   includeLongTail,
   seed,
-}: ForecastParams): SummaryRow[] => {
+}: ForecastParams): SummaryResult => {
   const generator = new SeedRandomGenerator(seed);
   const inputs = computeInputs(selectedIssues, excludeOutliers);
 
@@ -65,7 +72,7 @@ export function summarize(
   runs: number[],
   startDate: Date | undefined,
   includeLongTail: boolean,
-): SummaryRow[] {
+): SummaryResult {
   const runsByDuration = groupBy(runs, (run) => Math.ceil(run));
 
   const rowCount = Object.keys(runsByDuration).length;
@@ -106,10 +113,18 @@ export function summarize(
     return [...prevRows, nextRow];
   };
 
-  return Object.keys(runsByDuration)
+  const percentiles = getPercentiles(runs);
+
+  const rows = Object.keys(runsByDuration)
     .reduce(appendRow, [])
     .filter(filterLongTail)
     .sort((row1, row2) => compareAsc(row1.time, row2.time));
+
+  return {
+    startDate,
+    rows,
+    percentiles,
+  };
 }
 
 const getLongTailCutoff = (rowCount: number) => {

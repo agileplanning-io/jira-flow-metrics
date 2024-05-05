@@ -13,6 +13,7 @@ export const getAnnotationOptions = (
   font: Partial<FontSpec>,
   scaleID: LineAnnotationOptions["scaleID"],
   content: (p: Percentile) => string,
+  selectValue?: (p: Percentile) => number | string,
 ): AnnotationPluginOptions | undefined => {
   if (!percentiles) {
     return undefined;
@@ -50,7 +51,7 @@ export const getAnnotationOptions = (
           return true;
         },
         scaleID,
-        value: p.value,
+        value: selectValue?.(p) ?? p.value,
       };
       return [p.percentile.toString(), options];
     }),

@@ -3,7 +3,7 @@ import {
   CompletedIssue,
   DateFilterType,
   HierarchyLevel,
-  SummaryRow,
+  SummaryResult,
   filterCompletedIssues,
   forecast,
 } from "@agileplanning-io/flow-metrics";
@@ -54,7 +54,7 @@ export const ForecastPage = () => {
     }
   }, [issues, filter, setFilteredIssues]);
 
-  const [summary, setSummary] = useState<SummaryRow[]>();
+  const [result, setResult] = useState<SummaryResult>();
 
   useEffect(() => {
     if (!filteredIssues || filteredIssues.length === 0 || !chartParams) return;
@@ -62,7 +62,7 @@ export const ForecastPage = () => {
       selectedIssues: filteredIssues,
       ...chartParams,
     });
-    setSummary(result);
+    setResult(result);
   }, [filteredIssues, filter, chartParams]);
 
   if (!chartParams) {
@@ -104,6 +104,11 @@ export const ForecastPage = () => {
               value: chartParams.excludeOutliers
                 ? "Exclude cycle time outliers"
                 : "Include cycle time outliers",
+            },
+            {
+              value: chartParams.showPercentileLabels
+                ? "Show percentile labels"
+                : "Hide percentile labels",
             },
           ],
         }}
@@ -200,15 +205,28 @@ export const ForecastPage = () => {
               >
                 Exclude cycle time outliers
               </Checkbox>
+              <Checkbox
+                checked={chartParams.showPercentileLabels}
+                onChange={(e) =>
+                  setChartParams({
+                    ...chartParams,
+                    showPercentileLabels: e.target.checked,
+                  })
+                }
+              >
+                Show percentile labels
+              </Checkbox>
             </Space>
           </Row>
         </Form>
       </ExpandableOptions>
-      <ForecastChart
-        summary={summary ?? []}
-        style={chartStyle}
-        startDate={chartParams.startDate}
-      />
+      {result ? (
+        <ForecastChart
+          result={result}
+          style={chartStyle}
+          showPercentiles={chartParams.showPercentileLabels}
+        />
+      ) : null}
     </>
   );
 };
