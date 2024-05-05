@@ -43,7 +43,7 @@ export const ThroughputChart = ({
     font,
     "y",
     (p) =>
-      `${(100 - p.percentile).toString()}% (${p.value.toFixed(
+      `${(100 - p.percentile).toString()}% (≤ ${p.value.toFixed(
         1,
       )} issues completed)`,
   );
