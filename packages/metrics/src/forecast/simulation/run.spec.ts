@@ -140,43 +140,47 @@ describe("run", () => {
     it("returns data for a histogram of durations", () => {
       const startDate = new Date("2020-01-01T00:00:00.000Z");
       const summary = summarize([1, 3, 10, 5, 9, 5, 3, 5], startDate, false);
-      expect(summary).toEqual([
-        {
-          time: new Date("2020-01-02T00:00:00.000Z"),
-          count: 1,
-          cumulativeCount: 1,
-          startQuantile: 0,
-          endQuantile: 0.125,
-        },
-        {
-          time: new Date("2020-01-04T00:00:00.000Z"),
-          count: 2,
-          cumulativeCount: 3,
-          startQuantile: 0.125,
-          endQuantile: 0.375,
-        },
-        {
-          time: new Date("2020-01-06T00:00:00.000Z"),
-          count: 3,
-          cumulativeCount: 6,
-          startQuantile: 0.375,
-          endQuantile: 0.75,
-        },
-        {
-          time: new Date("2020-01-10T00:00:00.000Z"),
-          count: 1,
-          cumulativeCount: 7,
-          startQuantile: 0.75,
-          endQuantile: 0.875,
-        },
-        {
-          time: new Date("2020-01-11T00:00:00.000Z"),
-          count: 1,
-          cumulativeCount: 8,
-          startQuantile: 0.875,
-          endQuantile: 1,
-        },
-      ]);
+      expect(summary).toEqual({
+        startDate,
+        percentiles: [{ percentile: 50, value: 5 }],
+        rows: [
+          {
+            time: new Date("2020-01-02T00:00:00.000Z"),
+            count: 1,
+            cumulativeCount: 1,
+            startQuantile: 0,
+            endQuantile: 0.125,
+          },
+          {
+            time: new Date("2020-01-04T00:00:00.000Z"),
+            count: 2,
+            cumulativeCount: 3,
+            startQuantile: 0.125,
+            endQuantile: 0.375,
+          },
+          {
+            time: new Date("2020-01-06T00:00:00.000Z"),
+            count: 3,
+            cumulativeCount: 6,
+            startQuantile: 0.375,
+            endQuantile: 0.75,
+          },
+          {
+            time: new Date("2020-01-10T00:00:00.000Z"),
+            count: 1,
+            cumulativeCount: 7,
+            startQuantile: 0.75,
+            endQuantile: 0.875,
+          },
+          {
+            time: new Date("2020-01-11T00:00:00.000Z"),
+            count: 1,
+            cumulativeCount: 8,
+            startQuantile: 0.875,
+            endQuantile: 1,
+          },
+        ],
+      });
     });
   });
 });

@@ -13,6 +13,7 @@ const defaultParamValues = {
   includeLongTail: false,
   includeLeadTimes: true,
   excludeOutliers: false,
+  showPercentileLabels: false,
 };
 
 const forecastChartParamsSchema = z
@@ -23,6 +24,9 @@ const forecastChartParamsSchema = z
     includeLongTail: booleanSchema.catch(defaultParamValues.includeLongTail),
     includeLeadTimes: booleanSchema.catch(defaultParamValues.includeLeadTimes),
     excludeOutliers: booleanSchema.catch(defaultParamValues.excludeOutliers),
+    showPercentileLabels: booleanSchema.catch(
+      defaultParamValues.showPercentileLabels,
+    ),
   })
   .optional();
 

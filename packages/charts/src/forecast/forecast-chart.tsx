@@ -1,25 +1,29 @@
 import { Bar } from "react-chartjs-2";
 import { ChartData, ChartOptions } from "chart.js";
-import { SummaryRow } from "@agileplanning-io/flow-metrics";
+import { SummaryResult } from "@agileplanning-io/flow-metrics";
 import { formatDate } from "@agileplanning-io/flow-lib";
 import { ChartStyle, buildFontSpec } from "../util/style";
 import { isDate } from "remeda";
+import { getAnnotationOptions } from "../util/annotations";
+import { addDays } from "date-fns";
 
 export type ForecastChartProps = {
-  summary: SummaryRow[];
-  startDate?: Date;
+  result: SummaryResult;
+  showPercentiles: boolean;
   style?: ChartStyle;
 };
 
 export const ForecastChart: React.FC<ForecastChartProps> = ({
-  summary,
-  startDate,
+  result,
+  showPercentiles,
   style,
 }) => {
-  const labels = summary.map(({ time }) =>
+  const { rows, percentiles, startDate } = result;
+
+  const labels = rows.map(({ time }) =>
     typeof time === "number" ? time : time.toISOString(),
   );
-  const tooltips = summary.map((row) => {
+  const tooltips = rows.map((row) => {
     const percentComplete = Math.floor(row.endQuantile * 100);
     const date = isDate(row.time) ? row.time : undefined;
     const tooltip = [
@@ -33,12 +37,21 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({
 
   const font = buildFontSpec(style);
 
+  const annotation = getAnnotationOptions(
+    percentiles,
+    showPercentiles,
+    font,
+    "x",
+    (p) => `${p.percentile.toString()}%`,
+    (p) => (startDate ? addDays(startDate, p.value).toISOString() : p.value),
+  );
+
   const data: ChartData<"bar"> = {
     labels,
     datasets: [
       {
-        data: summary.map(({ count }) => count),
-        backgroundColor: summary.map((row) =>
+        data: rows.map(({ count }) => count),
+        backgroundColor: rows.map((row) =>
           getColorForQuantile(row.endQuantile),
         ),
         borderColor: "rgb(255, 99, 132)",
@@ -79,6 +92,7 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({
       datalabels: {
         display: false,
       },
+      annotation,
       tooltip: {
         callbacks: {
           title: () => {
