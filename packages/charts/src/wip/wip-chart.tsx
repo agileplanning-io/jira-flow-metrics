@@ -3,7 +3,7 @@ import { Line } from "react-chartjs-2";
 import { ChartOptions } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { Issue, WipResult } from "@agileplanning-io/flow-metrics";
-import { ChartStyle, buildFontSpec } from "../style";
+import { ChartStyle, buildFontSpec } from "../util/style";
 
 type WipChartProps = {
   result: WipResult;

@@ -14,16 +14,13 @@ import { FilterOptionsForm } from "../components/filter-form/filter-options-form
 import { useProjectContext } from "../../context";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
-import {
-  AgeingWipChart,
-  getCycleTimePercentiles,
-} from "@agileplanning-io/flow-charts";
+import { AgeingWipChart } from "@agileplanning-io/flow-charts";
 import { filterCompletedIssues } from "@agileplanning-io/flow-metrics";
 import { isStarted } from "@agileplanning-io/flow-metrics";
 import { useAtomValue } from "jotai";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { IssuesTable } from "@app/components/issues-table";
-import { Percentile } from "@agileplanning-io/flow-lib";
+import { Percentile, getPercentiles } from "@agileplanning-io/flow-lib";
 import { fromClientFilter } from "@app/filter/context/context";
 import { chartStyleAtom } from "../chart-style";
 
@@ -87,8 +84,11 @@ export const AgeingWipPage = () => {
 
       setAgeingIssues(ageingIssues);
 
-      const percentiles = getCycleTimePercentiles(benchmarkIssues);
-      setPercentiles(percentiles ?? []);
+      const percentiles = getPercentiles(
+        benchmarkIssues.map((issue) => issue.metrics.cycleTime),
+      );
+      // reversing the percentiles make the bar color lookup easier
+      setPercentiles(percentiles?.reverse() ?? []);
     }
   }, [
     issues,

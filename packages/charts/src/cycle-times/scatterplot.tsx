@@ -12,9 +12,8 @@ import {
 } from "@agileplanning-io/flow-lib";
 import { compareAsc, startOfDay } from "date-fns";
 import { mergeDeep, sort, uniqBy } from "remeda";
-import { AnnotationOptions } from "chartjs-plugin-annotation";
-import { getColorForPercentile } from "../util/styles";
-import { ChartStyle, buildFontSpec } from "../style";
+import { ChartStyle, buildFontSpec } from "../util/style";
+import { getAnnotationOptions } from "../util/annotations";
 
 type ScatterplotProps = {
   issues: CompletedIssue[];
@@ -61,41 +60,13 @@ export const Scatterplot = ({
     },
   ];
 
-  const annotations = percentiles
-    ? Object.fromEntries(
-        percentiles.map((p) => {
-          const options: AnnotationOptions = {
-            type: "line",
-            borderColor: getColorForPercentile(p.percentile),
-            borderWidth: 1,
-            borderDash: p.percentile < 95 ? [4, 4] : undefined,
-            label: {
-              backgroundColor: "#FFFFFF",
-              padding: 4,
-              position: "start",
-              content: `${p.percentile.toString()}% (${p.value.toFixed(
-                1,
-              )} days)`,
-              display: showPercentileLabels,
-              textAlign: "start",
-              color: "#666666",
-              font,
-            },
-            enter({ element }) {
-              element.label!.options.display = true;
-              return true;
-            },
-            leave({ element }) {
-              element.label!.options.display = showPercentileLabels;
-              return true;
-            },
-            scaleID: "y",
-            value: p.value,
-          };
-          return [p.percentile.toString(), options];
-        }),
-      )
-    : undefined;
+  const annotation = getAnnotationOptions(
+    percentiles,
+    showPercentileLabels,
+    font,
+    "y",
+    (p) => `${p.percentile.toString()}% (${p.value.toFixed(1)} days)`,
+  );
 
   const minDate = range.start.toISOString();
   const maxDate = range.end.toISOString();
@@ -103,9 +74,7 @@ export const Scatterplot = ({
   const defaultOptions: ChartOptions<"scatter"> = {
     onClick,
     plugins: {
-      annotation: {
-        annotations,
-      },
+      annotation,
       datalabels: {
         display: false,
       },

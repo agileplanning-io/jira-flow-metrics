@@ -4,13 +4,12 @@ import {
   CompletedIssue,
 } from "@agileplanning-io/flow-metrics";
 import { ChartData, ChartOptions } from "chart.js";
-import { AnnotationOptions } from "chartjs-plugin-annotation";
 import { cumsum } from "mathjs";
 import { range, countBy } from "remeda";
 import { FC, ReactElement } from "react";
 import { Chart } from "react-chartjs-2";
-import { getColorForPercentile } from "../util/styles";
-import { ChartStyle, buildFontSpec, defaultBarStyle } from "../style";
+import { ChartStyle, buildFontSpec, defaultBarStyle } from "../util/style";
+import { getAnnotationOptions } from "../util/annotations";
 
 export type HistogramProps = {
   issues: CompletedIssue[];
@@ -84,42 +83,13 @@ export const Histogram: FC<HistogramProps> = ({
     ],
   };
 
-  const annotations = percentiles
-    ? Object.fromEntries(
-        percentiles.map((p) => {
-          const options: AnnotationOptions = {
-            type: "line",
-            borderColor: getColorForPercentile(p.percentile),
-            borderWidth: 1,
-            borderDash: p.percentile < 95 ? [4, 4] : undefined,
-            label: {
-              backgroundColor: "#FFFFFF",
-              padding: 4,
-              position: "start",
-              content: `${p.percentile.toString()}% (${p.value.toFixed(
-                1,
-              )} days)`,
-              display: showPercentileLabels,
-              textAlign: "start",
-              rotation: 90,
-              color: "#666666",
-              font,
-            },
-            enter({ element }) {
-              element.label!.options.display = true;
-              return true;
-            },
-            leave({ element }) {
-              element.label!.options.display = showPercentileLabels;
-              return true;
-            },
-            scaleID: "x",
-            value: p.value,
-          };
-          return [p.percentile.toString(), options];
-        }),
-      )
-    : undefined;
+  const annotation = getAnnotationOptions(
+    percentiles,
+    showPercentileLabels,
+    font,
+    "x",
+    (p) => `${p.percentile.toString()}% (${p.value.toFixed(1)} days)`,
+  );
 
   const onClick: ChartOptions<"bar">["onClick"] = (_, elements) => {
     if (elements.length) {
@@ -169,9 +139,7 @@ export const Histogram: FC<HistogramProps> = ({
           datalabels: {
             display: false,
           },
-          annotation: {
-            annotations,
-          },
+          annotation,
           legend: {
             labels: {
               font,

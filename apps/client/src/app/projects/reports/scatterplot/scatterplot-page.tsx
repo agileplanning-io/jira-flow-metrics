@@ -5,10 +5,7 @@ import {
   Issue,
   filterCompletedIssues,
 } from "@agileplanning-io/flow-metrics";
-import {
-  Scatterplot,
-  getCycleTimePercentiles,
-} from "@agileplanning-io/flow-charts";
+import { Scatterplot } from "@agileplanning-io/flow-charts";
 import { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
@@ -20,7 +17,7 @@ import { Checkbox, Col, Popover, Row, Space } from "antd";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import { Percentile } from "@agileplanning-io/flow-lib";
+import { Percentile, getPercentiles } from "@agileplanning-io/flow-lib";
 import { fromClientFilter } from "@app/filter/context/context";
 import { chartStyleAtom } from "../chart-style";
 
@@ -58,8 +55,10 @@ export const ScatterplotPage = () => {
         issues,
         fromClientFilter(filter, DateFilterType.Completed),
       );
-      const percentiles = getCycleTimePercentiles(
-        filteredIssues.filter((issue) => !excludedIssues.includes(issue.key)),
+      const percentiles = getPercentiles(
+        filteredIssues
+          .filter((issue) => !excludedIssues.includes(issue.key))
+          .map((issue) => issue.metrics.cycleTime),
       );
       setFilteredIssues(filteredIssues);
       setPercentiles(percentiles);

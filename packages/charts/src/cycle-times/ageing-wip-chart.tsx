@@ -3,9 +3,9 @@ import { Bar } from "react-chartjs-2";
 import { ChartData, ChartOptions, ScriptableContext, Tooltip } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { Issue, StartedIssue } from "@agileplanning-io/flow-metrics";
-import { AnnotationOptions } from "chartjs-plugin-annotation";
 import { ellipsize, Percentile } from "@agileplanning-io/flow-lib";
-import { ChartStyle, buildFontSpec } from "../style";
+import { ChartStyle, buildFontSpec } from "../util/style";
+import { getAnnotationOptions } from "../util/annotations";
 
 type AgeingWipChartProps = {
   issues: StartedIssue[];
@@ -36,47 +36,13 @@ export const AgeingWipChart = ({
 
   const font = buildFontSpec(style);
 
-  const annotations = percentiles
-    ? Object.fromEntries(
-        percentiles.map((p) => {
-          const options: AnnotationOptions = {
-            type: "line",
-            borderColor: getColorForPercentile(p.percentile),
-            borderWidth: 1,
-            borderDash: p.percentile < 95 ? [4, 4] : undefined,
-            backgroundShadowColor: "#000000",
-            borderShadowColor: "#FFFFFF90",
-            shadowOffsetX: 1,
-            shadowOffsetY: 1,
-            label: {
-              backgroundColor: "#FFFFFFA0",
-              padding: 4,
-              position: "start",
-              xAdjust: 13,
-              rotation: -90,
-              content: `${p.percentile.toString()}% (${p.value.toFixed(
-                1,
-              )} days)`,
-              display: showPercentileLabels,
-              textAlign: "start",
-              font,
-              color: "#666666",
-            },
-            enter({ element }) {
-              element.label!.options.display = true;
-              return true;
-            },
-            leave({ element }) {
-              element.label!.options.display = showPercentileLabels;
-              return true;
-            },
-            scaleID: "x",
-            value: p.value,
-          };
-          return [p.percentile.toString(), options];
-        }),
-      )
-    : undefined;
+  const annotation = getAnnotationOptions(
+    percentiles,
+    showPercentileLabels,
+    font,
+    "x",
+    (p) => `${p.percentile.toString()}% (${p.value.toFixed(1)} days)`,
+  );
 
   const data: ChartData<"bar"> = {
     labels,
@@ -144,10 +110,7 @@ export const AgeingWipChart = ({
           font,
         },
       },
-      annotation: {
-        annotations,
-        clip: false,
-      },
+      annotation,
       tooltip: {
         titleFont: font,
         bodyFont: font,

@@ -52,27 +52,10 @@ export const calculateThroughput = ({
     };
   });
 
-  const percentiles = getThroughputPercentiles(data);
+  const percentiles = getPercentiles(data.map((d) => d.count));
 
   return {
     data,
     percentiles,
   };
-};
-
-const getThroughputPercentiles = (data: ThroughputDatum[]): Percentile[] => {
-  const throughputCounts = data.map((item) => item.count);
-
-  const quantiles =
-    throughputCounts.length > 20
-      ? [0.15, 0.3, 0.5, 0.7, 0.85]
-      : throughputCounts.length > 10
-      ? [0.3, 0.5, 0.7]
-      : throughputCounts.length >= 5
-      ? [0.5]
-      : [];
-
-  const percentiles = getPercentiles(throughputCounts, quantiles);
-
-  return percentiles;
 };

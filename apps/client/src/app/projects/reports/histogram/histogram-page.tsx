@@ -4,10 +4,7 @@ import {
   HierarchyLevel,
   filterCompletedIssues,
 } from "@agileplanning-io/flow-metrics";
-import {
-  Histogram,
-  getCycleTimePercentiles,
-} from "@agileplanning-io/flow-charts";
+import { Histogram } from "@agileplanning-io/flow-charts";
 import { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 import { IssuesTable } from "../../../components/issues-table";
@@ -19,7 +16,7 @@ import { ExpandableOptions } from "../../../components/expandable-options";
 import { useSearchParams } from "react-router-dom";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import { Percentile } from "@agileplanning-io/flow-lib";
+import { Percentile, getPercentiles } from "@agileplanning-io/flow-lib";
 import { fromClientFilter } from "@app/filter/context/context";
 import { chartStyleAtom } from "../chart-style";
 
@@ -58,8 +55,10 @@ export const HistogramPage = () => {
         fromClientFilter(filter, DateFilterType.Completed),
       );
       setFilteredIssues(filteredIssues);
-      const percentiles = getCycleTimePercentiles(
-        filteredIssues.filter((issue) => !excludedIssues.includes(issue.key)),
+      const percentiles = getPercentiles(
+        filteredIssues
+          .filter((issue) => !excludedIssues.includes(issue.key))
+          .map((issue) => issue.metrics.cycleTime),
       );
       setPercentiles(percentiles);
     }
