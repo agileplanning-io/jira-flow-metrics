@@ -1,29 +1,19 @@
+import { TimeUnit } from "@agileplanning-io/flow-lib";
 import { booleanSchema } from "@lib/boolean-schema";
 import { useQueryState } from "@lib/use-query-state";
 import { useEffect } from "react";
 import { z } from "zod";
 
-export const newSeed = () =>
-  Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-
 const defaultValues = {
-  issueCount: 10,
-  startDate: new Date(),
-  seed: newSeed(),
-  includeLongTail: false,
-  includeLeadTimes: true,
-  excludeOutliers: false,
+  timeUnit: TimeUnit.Week,
   showPercentileLabels: true,
 };
 
 const chartParamsSchema = z
   .object({
-    issueCount: z.coerce.number().catch(defaultValues.issueCount),
-    startDate: z.coerce.date().optional().catch(defaultValues.startDate),
-    seed: z.coerce.number().catch(defaultValues.seed),
-    includeLongTail: booleanSchema.catch(defaultValues.includeLongTail),
-    includeLeadTimes: booleanSchema.catch(defaultValues.includeLeadTimes),
-    excludeOutliers: booleanSchema.catch(defaultValues.excludeOutliers),
+    timeUnit: z
+      .enum([TimeUnit.Day, TimeUnit.Week, TimeUnit.Fortnight, TimeUnit.Month])
+      .catch(defaultValues.timeUnit),
     showPercentileLabels: booleanSchema.catch(
       defaultValues.showPercentileLabels,
     ),

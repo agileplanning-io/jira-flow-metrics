@@ -11,14 +11,12 @@ import { IssuesTable } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
-import { Checkbox, Col, Popover, Row, Space } from "antd";
-import { ExpandableOptions } from "../../../components/expandable-options";
-import { useSearchParams } from "react-router-dom";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
-import { QuestionCircleOutlined } from "@ant-design/icons";
 import { Percentile, getPercentiles } from "@agileplanning-io/flow-lib";
 import { fromClientFilter } from "@app/filter/context/context";
 import { chartStyleAtom } from "../chart-style";
+import { useChartParams } from "./hooks/use-chart-params";
+import { ChartParamsForm } from "./components/chart-params-form";
 
 export const HistogramPage = () => {
   const { issues } = useProjectContext();
@@ -29,24 +27,9 @@ export const HistogramPage = () => {
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
   const [percentiles, setPercentiles] = useState<Percentile[] | undefined>();
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { chartParams, setChartParams } = useChartParams();
 
   const chartStyle = useAtomValue(chartStyleAtom);
-
-  const showPercentileLabels =
-    searchParams.get("showPercentileLabels") === "true";
-  const setShowPercentileLabels = (showPercentileLabels: boolean) =>
-    setSearchParams((prev) => {
-      prev.set("showPercentileLabels", showPercentileLabels.toString());
-      return prev;
-    });
-
-  const hideOutliers = searchParams.get("hideOutliers") === "true";
-  const setHideOutliers = (hideOutliers: boolean) =>
-    setSearchParams((prev) => {
-      prev.set("hideOutliers", hideOutliers.toString());
-      return prev;
-    });
 
   useEffect(() => {
     if (filter && issues) {
@@ -78,51 +61,10 @@ export const HistogramPage = () => {
         defaultHierarchyLevel={HierarchyLevel.Story}
       />
 
-      <ExpandableOptions
-        header={{
-          title: "Chart Options",
-          options: [
-            {
-              value: showPercentileLabels
-                ? "Show percentile labels"
-                : "Hide percentile labels",
-            },
-            {
-              value: hideOutliers ? "Hide outliers" : "Show outliers",
-            },
-          ],
-        }}
-      >
-        <Row gutter={[8, 8]}>
-          <Col span={6}>
-            <Space direction="vertical">
-              <Checkbox
-                checked={showPercentileLabels}
-                onChange={(e) => setShowPercentileLabels(e.target.checked)}
-              >
-                Show percentile labels
-              </Checkbox>
-              <Checkbox
-                checked={hideOutliers}
-                onChange={(e) => setHideOutliers(e.target.checked)}
-              >
-                Hide outliers
-                <Popover
-                  placement="right"
-                  content={
-                    "Outliers are calculated using the Tukey Fence method"
-                  }
-                >
-                  {" "}
-                  <a href="#">
-                    <QuestionCircleOutlined />
-                  </a>
-                </Popover>
-              </Checkbox>
-            </Space>
-          </Col>
-        </Row>
-      </ExpandableOptions>
+      <ChartParamsForm
+        chartParams={chartParams}
+        setChartParams={setChartParams}
+      />
 
       {filter?.dates ? (
         <Histogram
@@ -131,8 +73,8 @@ export const HistogramPage = () => {
           )}
           percentiles={percentiles}
           setSelectedIssues={setSelectedIssues}
-          showPercentileLabels={showPercentileLabels}
-          hideOutliers={hideOutliers}
+          showPercentileLabels={chartParams.showPercentileLabels}
+          hideOutliers={chartParams.hideOutliers}
           style={chartStyle}
         />
       ) : null}

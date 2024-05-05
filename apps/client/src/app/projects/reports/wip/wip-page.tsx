@@ -14,9 +14,9 @@ import { Checkbox, Col, Row } from "antd";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
 import { ExpandableOptions } from "../../../components/expandable-options";
-import { useSearchParams } from "react-router-dom";
 import { useAtomValue } from "jotai";
 import { chartStyleAtom } from "../chart-style";
+import { useChartParams } from "./hooks/use-chart-params";
 
 export const WipPage = () => {
   const { issues } = useProjectContext();
@@ -25,30 +25,14 @@ export const WipPage = () => {
   const [filteredIssues, setFilteredIssues] = useState<Issue[]>([]);
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
 
-  const [searchParams, setSearchParams] = useSearchParams();
-
   const chartStyle = useAtomValue(chartStyleAtom);
 
-  const includeStoppedIssues =
-    searchParams.get("includeStoppedIssues") === "true";
-  const setIncludeStoppedIssues = (includeStoppedIssues: boolean) =>
-    setSearchParams((prev) => {
-      prev.set("includeStoppedIssues", includeStoppedIssues.toString());
-      return prev;
-    });
-
-  const showPercentileLabels =
-    searchParams.get("showPercentileLabels") === "true";
-  const setShowPercentileLabels = (showPercentileLabels: boolean) =>
-    setSearchParams((prev) => {
-      prev.set("showPercentileLabels", showPercentileLabels.toString());
-      return prev;
-    });
+  const { chartParams, setChartParams } = useChartParams();
 
   useEffect(() => {
     // reset the selected issue list if we change the filter
     setSelectedIssues([]);
-  }, [filter, includeStoppedIssues]);
+  }, [filter, chartParams.includeStoppedIssues]);
 
   useEffect(() => {
     if (filter && issues) {
@@ -56,7 +40,7 @@ export const WipPage = () => {
         issues,
         omit(filter, ["dates"]),
       ).filter((issue) => {
-        if (includeStoppedIssues) {
+        if (chartParams.includeStoppedIssues) {
           return true;
         }
 
@@ -67,7 +51,7 @@ export const WipPage = () => {
       });
       setFilteredIssues(filteredIssues);
     }
-  }, [issues, filter, includeStoppedIssues, setFilteredIssues]);
+  }, [issues, filter, chartParams.includeStoppedIssues, setFilteredIssues]);
 
   const [wipResult, setWipResult] = useState<WipResult>();
 
@@ -100,12 +84,12 @@ export const WipPage = () => {
           title: "Chart Options",
           options: [
             {
-              value: includeStoppedIssues
+              value: chartParams.includeStoppedIssues
                 ? "Include stopped issues"
                 : "Exclude stopped issues",
             },
             {
-              value: showPercentileLabels
+              value: chartParams.showPercentileLabels
                 ? "Show percentile labels"
                 : "Hide percentile labels",
             },
@@ -115,14 +99,24 @@ export const WipPage = () => {
         <Row gutter={[8, 8]}>
           <Col span={6}>
             <Checkbox
-              checked={includeStoppedIssues}
-              onChange={(e) => setIncludeStoppedIssues(e.target.checked)}
+              checked={chartParams.includeStoppedIssues}
+              onChange={(e) =>
+                setChartParams({
+                  ...chartParams,
+                  includeStoppedIssues: e.target.checked,
+                })
+              }
             >
               Include stopped issues
             </Checkbox>
             <Checkbox
-              checked={showPercentileLabels}
-              onChange={(e) => setShowPercentileLabels(e.target.checked)}
+              checked={chartParams.showPercentileLabels}
+              onChange={(e) =>
+                setChartParams({
+                  ...chartParams,
+                  showPercentileLabels: e.target.checked,
+                })
+              }
             >
               Show percentile labels
             </Checkbox>
@@ -134,7 +128,7 @@ export const WipPage = () => {
         <WipChart
           result={wipResult}
           setSelectedIssues={setSelectedIssues}
-          showPercentileLabels={showPercentileLabels}
+          showPercentileLabels={chartParams.showPercentileLabels}
           style={chartStyle}
         />
       ) : null}

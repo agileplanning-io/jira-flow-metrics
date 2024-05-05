@@ -9,11 +9,9 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { useFilterContext } from "../../../filter/context";
 import { isNil, omit } from "remeda";
-import { Checkbox, Col, Collapse, Row } from "antd";
+import { Collapse } from "antd";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
-import { ExpandableOptions } from "../../../components/expandable-options";
-import { useSearchParams } from "react-router-dom";
 import { AgeingWipChart } from "@agileplanning-io/flow-charts";
 import { filterCompletedIssues } from "@agileplanning-io/flow-metrics";
 import { isStarted } from "@agileplanning-io/flow-metrics";
@@ -23,6 +21,9 @@ import { IssuesTable } from "@app/components/issues-table";
 import { Percentile, getPercentiles } from "@agileplanning-io/flow-lib";
 import { fromClientFilter } from "@app/filter/context/context";
 import { chartStyleAtom } from "../chart-style";
+import { useChartParams } from "./hooks/use-chart-params";
+import { LoadingSpinner } from "@app/components/loading-spinner";
+import { ChartParamsForm } from "./components/chart-params-form";
 
 export const AgeingWipPage = () => {
   const { issues } = useProjectContext();
@@ -32,32 +33,16 @@ export const AgeingWipPage = () => {
   const [ageingIssues, setAgeingIssues] = useState<StartedIssue[]>([]);
   const [benchmarkIssues, setBenchmarkIssues] = useState<CompletedIssue[]>([]);
 
-  const [searchParams, setSearchParams] = useSearchParams();
-
   const [percentiles, setPercentiles] = useState<Percentile[]>([]);
 
   const chartStyle = useAtomValue(chartStyleAtom);
 
-  const includeStoppedIssues =
-    searchParams.get("includeStoppedIssues") === "true";
-  const setIncludeStoppedIssues = (includeStoppedIssues: boolean) =>
-    setSearchParams((prev) => {
-      prev.set("includeStoppedIssues", includeStoppedIssues.toString());
-      return prev;
-    });
-
-  const showPercentileLabels =
-    searchParams.get("showPercentileLabels") === "true";
-  const setShowPercentileLabels = (showPercentileLabels: boolean) =>
-    setSearchParams((prev) => {
-      prev.set("showPercentileLabels", showPercentileLabels.toString());
-      return prev;
-    });
+  const { chartParams, setChartParams } = useChartParams();
 
   useEffect(() => {
     // reset the selected issue list if we change the filter
     setSelectedIssues([]);
-  }, [filter, includeStoppedIssues]);
+  }, [filter, chartParams.includeStoppedIssues]);
 
   useEffect(() => {
     if (filter && issues) {
@@ -69,7 +54,7 @@ export const AgeingWipPage = () => {
 
       const ageingIssues = filterIssues(issues, omit(filter, ["dates"]))
         .filter((issue) => {
-          if (includeStoppedIssues) {
+          if (chartParams.includeStoppedIssues) {
             return true;
           }
 
@@ -93,10 +78,14 @@ export const AgeingWipPage = () => {
   }, [
     issues,
     filter,
-    includeStoppedIssues,
+    chartParams?.includeStoppedIssues,
     setPercentiles,
     setBenchmarkIssues,
   ]);
+
+  if (!chartParams) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <>
@@ -109,46 +98,17 @@ export const AgeingWipPage = () => {
         showHierarchyFilter={true}
         defaultHierarchyLevel={HierarchyLevel.Story}
       />
-      <ExpandableOptions
-        header={{
-          title: "Chart Options",
-          options: [
-            {
-              value: includeStoppedIssues
-                ? "Include stopped issues"
-                : "Exclude stopped issues",
-            },
-            {
-              value: showPercentileLabels
-                ? "Show percentile labels"
-                : "Hide percentile labels",
-            },
-          ],
-        }}
-      >
-        <Row gutter={[8, 8]}>
-          <Col span={6}>
-            <Checkbox
-              checked={includeStoppedIssues}
-              onChange={(e) => setIncludeStoppedIssues(e.target.checked)}
-            >
-              Include stopped issues
-            </Checkbox>
-            <Checkbox
-              checked={showPercentileLabels}
-              onChange={(e) => setShowPercentileLabels(e.target.checked)}
-            >
-              Show percentile labels
-            </Checkbox>
-          </Col>
-        </Row>
-      </ExpandableOptions>
+
+      <ChartParamsForm
+        chartParams={chartParams}
+        setChartParams={setChartParams}
+      />
 
       <AgeingWipChart
         issues={ageingIssues}
         percentiles={percentiles}
         setSelectedIssues={setSelectedIssues}
-        showPercentileLabels={showPercentileLabels}
+        showPercentileLabels={chartParams.showPercentileLabels}
         style={chartStyle}
       />
 
