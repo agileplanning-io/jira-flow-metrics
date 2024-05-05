@@ -8,33 +8,27 @@ import {
   calculateThroughput,
   filterCompletedIssues,
 } from "@agileplanning-io/flow-metrics";
-import {
-  Interval,
-  TimeUnit,
-  getOverlappingInterval,
-} from "@agileplanning-io/flow-lib";
+import { Interval, getOverlappingInterval } from "@agileplanning-io/flow-lib";
 import { ThroughputChart } from "@agileplanning-io/flow-charts";
-import { Checkbox, Col, Form, Row, Select } from "antd";
 import { IssuesTable } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
-import { ExpandableOptions } from "../../../components/expandable-options";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
-import { useSearchParams } from "react-router-dom";
 import { fromClientFilter } from "@app/filter/context/context";
 import { useAtomValue } from "jotai";
 import { chartStyleAtom } from "../chart-style";
+import { useChartParams } from "./hooks/use-chart-params";
+import { ChartParamsForm } from "./components/chart-params-form";
 
 export const ThroughputPage = () => {
   const { issues } = useProjectContext();
   const { filter } = useFilterContext();
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const timeUnit = (searchParams.get("timeUnit") as TimeUnit) ?? TimeUnit.Week;
 
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
   const [throughputResult, setThroughputResult] = useState<ThroughputResult>();
+
+  const { chartParams, setChartParams } = useChartParams();
 
   const chartStyle = useAtomValue(chartStyleAtom);
 
@@ -43,7 +37,10 @@ export const ThroughputPage = () => {
       return;
     }
 
-    const interval: Interval = getOverlappingInterval(filter.dates, timeUnit);
+    const interval: Interval = getOverlappingInterval(
+      filter.dates,
+      chartParams.timeUnit,
+    );
 
     const filteredIssues = filterCompletedIssues(
       issues,
@@ -58,25 +55,10 @@ export const ThroughputPage = () => {
       calculateThroughput({
         issues: filteredIssues,
         interval,
-        timeUnit,
+        timeUnit: chartParams.timeUnit,
       }),
     );
-  }, [filter, timeUnit, issues]);
-
-  const onTimeUnitChanged = (timeUnit: TimeUnit) => {
-    setSearchParams((prev) => {
-      prev.set("timeUnit", timeUnit);
-      return prev;
-    });
-  };
-
-  const showPercentileLabels =
-    searchParams.get("showPercentileLabels") === "true";
-  const setShowPercentileLabels = (showPercentileLabels: boolean) =>
-    setSearchParams((prev) => {
-      prev.set("showPercentileLabels", showPercentileLabels.toString());
-      return prev;
-    });
+  }, [filter, chartParams.timeUnit, issues]);
 
   return (
     <>
@@ -90,47 +72,18 @@ export const ThroughputPage = () => {
         defaultHierarchyLevel={HierarchyLevel.Story}
       />
 
-      <ExpandableOptions
-        header={{
-          title: "Chart Options",
-          options: [
-            {
-              value: showPercentileLabels
-                ? "Show percentile labels"
-                : "Hide percentile labels",
-            },
-            { label: "time unit", value: timeUnit },
-          ],
-        }}
-      >
-        <Row gutter={[8, 8]}>
-          <Col span={4}>
-            <Form.Item label="Time Unit">
-              <Select value={timeUnit} onChange={onTimeUnitChanged}>
-                <Select.Option key={TimeUnit.Day}>Days</Select.Option>
-                <Select.Option key={TimeUnit.Week}>Weeks</Select.Option>
-                <Select.Option key={TimeUnit.Fortnight}>
-                  Fortnights
-                </Select.Option>
-                <Select.Option key={TimeUnit.Month}>Months</Select.Option>
-              </Select>
-            </Form.Item>
-            <Checkbox
-              checked={showPercentileLabels}
-              onChange={(e) => setShowPercentileLabels(e.target.checked)}
-            >
-              Show percentile labels
-            </Checkbox>
-          </Col>
-        </Row>
-      </ExpandableOptions>
+      <ChartParamsForm
+        chartParams={chartParams}
+        setChartParams={setChartParams}
+      />
+
       {throughputResult ? (
         <ThroughputChart
           result={throughputResult}
-          timeUnit={timeUnit}
+          timeUnit={chartParams.timeUnit}
           setSelectedIssues={setSelectedIssues}
           style={chartStyle}
-          showPercentileLabels={showPercentileLabels}
+          showPercentileLabels={chartParams.showPercentileLabels}
         />
       ) : null}
       <div style={{ margin: 16 }} />

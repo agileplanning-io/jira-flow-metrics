@@ -10,35 +10,18 @@ import {
 import { useAtomValue } from "jotai";
 import { useFilterContext } from "../../../filter/context";
 import { ForecastChart } from "@agileplanning-io/flow-charts";
-import {
-  Button,
-  Checkbox,
-  Col,
-  Form,
-  InputNumber,
-  Row,
-  Space,
-  Tooltip,
-} from "antd";
-import { DatePicker } from "../components/date-picker";
-import { RedoOutlined } from "@ant-design/icons";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
-import { ExpandableOptions } from "../../../components/expandable-options";
 import { useProjectContext } from "../../context";
-import { formatDate } from "@agileplanning-io/flow-lib";
-import { newSeed, useForecastChartParams } from "./hooks/use-chart-params";
+import { useChartParams } from "./hooks/use-chart-params";
 import { fromClientFilter } from "@app/filter/context/context";
 import { chartStyleAtom } from "../chart-style";
+import { ChartParamsForm } from "./components/chart-params-form";
 
 export const ForecastPage = () => {
   const { issues } = useProjectContext();
-
   const { filter } = useFilterContext();
-
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
-
-  const { chartParams, setChartParams } = useForecastChartParams();
-
+  const { chartParams, setChartParams } = useChartParams();
   const chartStyle = useAtomValue(chartStyleAtom);
 
   useEffect(() => {
@@ -65,10 +48,6 @@ export const ForecastPage = () => {
     setResult(result);
   }, [filteredIssues, filter, chartParams]);
 
-  if (!chartParams) {
-    return;
-  }
-
   return (
     <>
       <FilterOptionsForm
@@ -80,146 +59,10 @@ export const ForecastPage = () => {
         showHierarchyFilter={true}
         defaultHierarchyLevel={HierarchyLevel.Story}
       />
-      <ExpandableOptions
-        header={{
-          title: "Chart Options",
-          options: [
-            { label: "Issue count", value: chartParams.issueCount.toString() },
-            {
-              label: "Start date",
-              value: formatDate(chartParams.startDate) ?? "-",
-            },
-            { label: "Seed", value: chartParams.seed.toString() },
-            {
-              value: chartParams.includeLongTail
-                ? "Include long tail"
-                : "Exclude long tail",
-            },
-            {
-              value: chartParams.includeLeadTimes
-                ? "Include lead times"
-                : "Exclude lead times",
-            },
-            {
-              value: chartParams.excludeOutliers
-                ? "Exclude cycle time outliers"
-                : "Include cycle time outliers",
-            },
-            {
-              value: chartParams.showPercentileLabels
-                ? "Show percentile labels"
-                : "Hide percentile labels",
-            },
-          ],
-        }}
-      >
-        <Form layout="vertical">
-          <Row gutter={[8, 8]}>
-            <Col span={2}>
-              <Form.Item label="Issue count">
-                <InputNumber
-                  style={{ width: "100%" }}
-                  value={chartParams.issueCount}
-                  onChange={(e) => {
-                    if (e) {
-                      setChartParams({ ...chartParams, issueCount: e });
-                    }
-                  }}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={4}>
-              <Form.Item label="Start date">
-                <DatePicker
-                  style={{ width: "100%" }}
-                  value={chartParams.startDate}
-                  allowClear={true}
-                  onChange={(e) => {
-                    setChartParams({
-                      ...chartParams,
-                      startDate: e ?? undefined,
-                    });
-                  }}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={4}>
-              <Form.Item label="Seed">
-                <Space.Compact style={{ width: "100%" }}>
-                  <InputNumber
-                    style={{ width: "100%" }}
-                    value={chartParams.seed}
-                    onChange={(e) => {
-                      if (e) {
-                        setChartParams({ ...chartParams, seed: e });
-                      }
-                    }}
-                  />
-                  <Tooltip title="Refresh">
-                    <Button
-                      icon={
-                        <RedoOutlined
-                          onClick={() =>
-                            setChartParams({ ...chartParams, seed: newSeed() })
-                          }
-                        />
-                      }
-                    />
-                  </Tooltip>
-                </Space.Compact>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Space direction="vertical">
-              <Checkbox
-                checked={chartParams.includeLongTail}
-                onChange={(e) =>
-                  setChartParams({
-                    ...chartParams,
-                    includeLongTail: e.target.checked,
-                  })
-                }
-              >
-                Include long tail
-              </Checkbox>
-              <Checkbox
-                checked={chartParams.includeLeadTimes}
-                onChange={(e) =>
-                  setChartParams({
-                    ...chartParams,
-                    includeLeadTimes: e.target.checked,
-                  })
-                }
-              >
-                Include lead times
-              </Checkbox>
-              <Checkbox
-                checked={chartParams.excludeOutliers}
-                onChange={(e) =>
-                  setChartParams({
-                    ...chartParams,
-                    excludeOutliers: e.target.checked,
-                  })
-                }
-              >
-                Exclude cycle time outliers
-              </Checkbox>
-              <Checkbox
-                checked={chartParams.showPercentileLabels}
-                onChange={(e) =>
-                  setChartParams({
-                    ...chartParams,
-                    showPercentileLabels: e.target.checked,
-                  })
-                }
-              >
-                Show percentile labels
-              </Checkbox>
-            </Space>
-          </Row>
-        </Form>
-      </ExpandableOptions>
+      <ChartParamsForm
+        chartParams={chartParams}
+        setChartParams={setChartParams}
+      />
       {result ? (
         <ForecastChart
           result={result}
