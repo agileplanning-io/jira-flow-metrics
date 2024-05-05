@@ -4,16 +4,20 @@ import { ChartOptions } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { Issue, WipResult } from "@agileplanning-io/flow-metrics";
 import { ChartStyle, buildFontSpec } from "../util/style";
+import { getPercentiles } from "@agileplanning-io/flow-lib";
+import { getAnnotationOptions } from "../util/annotations";
 
 type WipChartProps = {
   result: WipResult;
   setSelectedIssues: (issues: Issue[]) => void;
+  showPercentileLabels: boolean;
   style?: ChartStyle;
 };
 
 export const WipChart = ({
   result,
   setSelectedIssues,
+  showPercentileLabels,
   style,
 }: WipChartProps): ReactElement => {
   const labels = result.map(({ date }) => date.toISOString());
@@ -31,7 +35,17 @@ export const WipChart = ({
     ],
   };
 
+  const percentiles = getPercentiles(result.map((x) => x.count));
+
   const font = buildFontSpec(style);
+
+  const annotation = getAnnotationOptions(
+    percentiles,
+    showPercentileLabels,
+    font,
+    "y",
+    (p) => `${p.percentile.toString()}% (${p.value.toFixed(1)} items)`,
+  );
 
   const scales: ChartOptions<"line">["scales"] = {
     x: {
@@ -71,6 +85,7 @@ export const WipChart = ({
         bodyFont: font,
         titleFont: font,
       },
+      annotation,
     },
   };
 

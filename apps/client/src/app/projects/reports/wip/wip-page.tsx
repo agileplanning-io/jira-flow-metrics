@@ -37,6 +37,14 @@ export const WipPage = () => {
       return prev;
     });
 
+  const showPercentileLabels =
+    searchParams.get("showPercentileLabels") === "true";
+  const setShowPercentileLabels = (showPercentileLabels: boolean) =>
+    setSearchParams((prev) => {
+      prev.set("showPercentileLabels", showPercentileLabels.toString());
+      return prev;
+    });
+
   useEffect(() => {
     // reset the selected issue list if we change the filter
     setSelectedIssues([]);
@@ -96,6 +104,11 @@ export const WipPage = () => {
                 ? "Include stopped issues"
                 : "Exclude stopped issues",
             },
+            {
+              value: showPercentileLabels
+                ? "Show percentile labels"
+                : "Hide percentile labels",
+            },
           ],
         }}
       >
@@ -107,6 +120,12 @@ export const WipPage = () => {
             >
               Include stopped issues
             </Checkbox>
+            <Checkbox
+              checked={showPercentileLabels}
+              onChange={(e) => setShowPercentileLabels(e.target.checked)}
+            >
+              Show percentile labels
+            </Checkbox>
           </Col>
         </Row>
       </ExpandableOptions>
@@ -115,6 +134,7 @@ export const WipPage = () => {
         <WipChart
           result={wipResult}
           setSelectedIssues={setSelectedIssues}
+          showPercentileLabels={showPercentileLabels}
           style={chartStyle}
         />
       ) : null}
