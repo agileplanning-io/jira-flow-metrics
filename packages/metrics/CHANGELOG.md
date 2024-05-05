@@ -1,5 +1,13 @@
 # @agileplanning-io/flow-metrics
 
+## 1.0.5
+
+### Patch Changes
+
+- ee4e665: feat: show percentiles on forecast chart
+- Updated dependencies [8187ce1]
+  - @agileplanning-io/flow-lib@1.0.4
+
 ## 1.0.4
 
 ### Patch Changes
