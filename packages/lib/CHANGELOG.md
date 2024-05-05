@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-lib
 
+## 1.0.4
+
+### Patch Changes
+
+- 8187ce1: feat: consistent percentiles
+
 ## 1.0.3
 
 ### Patch Changes

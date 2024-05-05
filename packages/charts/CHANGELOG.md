@@ -1,5 +1,18 @@
 # @agileplanning-io/flow-charts
 
+## 0.0.29
+
+### Patch Changes
+
+- 11bd05b: feat: show throughput as bar chart
+- 8187ce1: feat: consistent percentiles
+- 25529b6: feat: wip chart percentiles
+- ee4e665: feat: show percentiles on forecast chart
+- Updated dependencies [8187ce1]
+- Updated dependencies [ee4e665]
+  - @agileplanning-io/flow-lib@1.0.4
+  - @agileplanning-io/flow-metrics@1.0.5
+
 ## 0.0.28
 
 ### Patch Changes
