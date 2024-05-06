@@ -1,5 +1,6 @@
 import {
   CycleTimePolicy,
+  IssueFilter,
   TransitionStatus,
 } from "@agileplanning-io/flow-metrics";
 import { Domain } from "./domains";
@@ -35,9 +36,11 @@ export type Project = {
   };
   labels: string[];
   components: string[];
+  resolutions: string[];
   issueTypes: string[];
   workflowScheme?: WorkflowScheme;
   defaultCycleTimePolicy?: CycleTimePolicy;
+  defaultFilter?: IssueFilter;
 };
 
 export type DataSource = {

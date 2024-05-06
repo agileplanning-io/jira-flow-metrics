@@ -7,7 +7,7 @@ import {
   StatusBuilder,
 } from "@agileplanning-io/flow-metrics";
 import { DomainsRepository } from "@entities/domains";
-import { compact, flatten, uniq } from "remeda";
+import { filter, flat, isNonNullish, unique } from "remeda";
 import { buildDefaultWorkflowScheme } from "./build-default-workflow";
 import { isValidWorkflowScheme } from "./validation-rules";
 import { buildDefaultCycleTimePolicy } from "./build-default-policy";
@@ -54,11 +54,14 @@ export class SyncUseCase {
       workflowScheme,
     );
 
-    const labels = uniq(flatten(issues.map((issue) => issue.labels)));
-    const issueTypes = uniq(
-      compact(flatten(issues.map((issue) => issue.issueType))),
-    );
-    const components = uniq(flatten(issues.map((issue) => issue.components)));
+    const uniqueValues = (
+      values: (string | undefined)[][] | (string | undefined)[],
+    ) => unique(filter(flat(values), isNonNullish));
+
+    const labels = uniqueValues(issues.map((issue) => issue.labels));
+    const issueTypes = uniqueValues(issues.map((issue) => issue.issueType));
+    const components = uniqueValues(issues.map((issue) => issue.components));
+    const resolutions = uniqueValues(issues.map((issue) => issue.resolution));
 
     await this.projects.updateProject(projectId, {
       lastSync: {
@@ -67,6 +70,7 @@ export class SyncUseCase {
       },
       components,
       labels,
+      resolutions,
       issueTypes,
       workflowScheme: workflowScheme,
       defaultCycleTimePolicy,

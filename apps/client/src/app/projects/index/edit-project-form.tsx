@@ -11,10 +11,11 @@ import {
   WorkflowBoard,
   WorkflowBoardProps,
 } from "@agileplanning-io/flow-components";
-import { WorkflowStage } from "@data/issues";
+import { WorkflowStage, useIssues } from "@data/issues";
 import { CycleTimePolicy } from "@agileplanning-io/flow-metrics";
 import { EditCycleTimePolicyForm } from "@app/components/edit-cycle-time-policy-form";
 import { FullScreenDrawer } from "@app/components/full-screen-drawer";
+import { FilterOptionsForm } from "../reports/components/filter-form/filter-options-form";
 
 export type EditProjectFormProps = {
   project: Project;
@@ -35,6 +36,8 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
     useState<CycleTimePolicy>(project?.defaultCycleTimePolicy);
 
   const updateProject = useUpdateProject();
+
+  const { data: issues } = useIssues(project.id);
 
   const onStoryWorkflowChanged = useCallback(
     (workflow: WorkflowStage[]) =>
@@ -103,6 +106,16 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
         project={project}
         cycleTimePolicy={updatedCycleTimePolicy}
         setCycleTimePolicy={setUpdatedCycleTimePolicy}
+      />
+
+      <h2>Default Completed Work Filter</h2>
+
+      <FilterOptionsForm
+        issues={issues}
+        showDateSelector={false}
+        showHierarchyFilter={false}
+        showResolutionFilter={false}
+        showStatusFilter={false}
       />
 
       <h2>Workflows</h2>

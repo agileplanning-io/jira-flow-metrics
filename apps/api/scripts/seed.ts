@@ -46,6 +46,7 @@ const createProject = async (projects: ProjectsRepository) => {
       labels: [],
       components: [],
       issueTypes: [],
+      resolutions: [],
       defaultCycleTimePolicy: {
         stories: {
           type: "status",
