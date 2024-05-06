@@ -13,7 +13,11 @@ import { IssuesTable } from "../../../components/issues-table";
 import { useFilterContext } from "../../../filter/context";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
-import { Percentile, getPercentiles } from "@agileplanning-io/flow-lib";
+import {
+  Percentile,
+  defaultDateRange,
+  getPercentiles,
+} from "@agileplanning-io/flow-lib";
 import { fromClientFilter, toClientFilter } from "@app/filter/context/context";
 import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
@@ -23,7 +27,10 @@ import { useFilterParams } from "@app/filter/context/use-filter-params";
 export const ScatterplotPage = () => {
   const { issues, project } = useProjectContext();
 
-  const { filter, setFilter } = useFilterParams();
+  const { filter, setFilter } = useFilterParams({
+    dates: defaultDateRange(),
+    hierarchyLevel: HierarchyLevel.Story,
+  });
 
   const initialized = useRef(false);
 

@@ -53,13 +53,14 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
   const [assigneeOptions, setAssigneeOptions] = useState<string[]>();
 
   useEffect(() => {
-    if (showDateSelector && !filter?.dates) {
-      setFilter({
-        ...filter,
-        dates: defaultDateRange(),
-        hierarchyLevel: defaultHierarchyLevel,
-      });
-    }
+    // TODO: move this to page level defaults?
+    // if (showDateSelector && !filter?.dates) {
+    //   setFilter({
+    //     ...filter,
+    //     dates: defaultDateRange(),
+    //     hierarchyLevel: defaultHierarchyLevel,
+    //   });
+    // }
   });
 
   useEffect(() => {
@@ -93,6 +94,7 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
 
   const onHierarchyLevelChanged = (hierarchyLevel: HierarchyLevel) =>
     setFilter({ ...filter, hierarchyLevel });
+
   const onDatesChanged = (dates?: Interval) => setFilter({ ...filter, dates });
 
   return (
