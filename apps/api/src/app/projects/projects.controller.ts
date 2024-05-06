@@ -11,7 +11,7 @@ import { SyncUseCase } from "@usecases/projects/sync/sync-use-case";
 import { z } from "zod";
 import { ZodValidationPipe } from "@lib/pipes/zod-pipe";
 import { ParsedQuery } from "@lib/decorators/parsed-query";
-import { isNullish } from "remeda";
+import { boolean } from "@agileplanning-io/flow-lib";
 
 class WorkflowStageBody {
   @ApiProperty()
@@ -66,11 +66,6 @@ class UpdateProjectBody {
   defaultCycleTimePolicy: CycleTimePolicyBody;
 }
 
-const booleanSchema = z
-  .string()
-  .optional()
-  .transform((val) => (isNullish(val) || val === "false" ? false : true));
-
 const valuesFilterSchema = z.object({
   values: z.array(z.string()).optional(),
   type: z.enum([FilterType.Include, FilterType.Exclude]),
@@ -78,7 +73,7 @@ const valuesFilterSchema = z.object({
 
 const statusCycleTimePolicySchema = z.object({
   type: z.literal("status"),
-  includeWaitTime: booleanSchema,
+  includeWaitTime: boolean.schema,
   statuses: z.array(z.string()).optional(),
 });
 

@@ -1,4 +1,4 @@
-import { booleanSchema } from "@lib/boolean-schema";
+import { boolean } from "@agileplanning-io/flow-lib";
 import { z } from "zod";
 import { useChartParamsState } from "../../hooks/use-chart-params";
 
@@ -7,14 +7,19 @@ export const newSeed = () =>
 
 const chartParamsSchema = z.object({
   issueCount: z.coerce.number().default(10),
-  startDate: z.coerce.date().default(new Date()).optional(),
+  startDate: z.coerce.date().optional(),
   seed: z.coerce.number().default(newSeed()),
-  includeLongTail: booleanSchema.default("false"),
-  includeLeadTimes: booleanSchema.default("true"),
-  excludeOutliers: booleanSchema.default("false"),
-  showPercentileLabels: booleanSchema.default("true"),
+  includeLongTail: boolean.schema.default(boolean.False),
+  includeLeadTimes: boolean.schema.default(boolean.True),
+  excludeOutliers: boolean.schema.default(boolean.False),
+  showPercentileLabels: boolean.schema.default(boolean.True),
 });
+
+const defaults = {
+  startDate: new Date(),
+};
 
 export type ChartParams = z.infer<typeof chartParamsSchema>;
 
-export const useChartParams = () => useChartParamsState(chartParamsSchema);
+export const useChartParams = () =>
+  useChartParamsState(chartParamsSchema, defaults);

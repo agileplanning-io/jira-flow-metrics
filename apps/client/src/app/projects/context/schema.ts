@@ -1,5 +1,5 @@
 import { FilterType } from "@agileplanning-io/flow-metrics";
-import { booleanSchema } from "@lib/boolean-schema";
+import { boolean } from "@agileplanning-io/flow-lib";
 import { z } from "zod";
 
 const valuesFilterSchema = z.object({
@@ -9,7 +9,7 @@ const valuesFilterSchema = z.object({
 
 const statusCycleTimePolicySchema = z.object({
   type: z.literal("status"),
-  includeWaitTime: booleanSchema,
+  includeWaitTime: boolean.schema,
   statuses: z.array(z.string()),
 });
 
