@@ -31,11 +31,12 @@ export const ScatterplotPage = () => {
 
   const project = useLoaderData() as Project;
 
-  const { filter, setFilter } = useFilterParams({
+  const defaultParams = {
+    ...toClientFilter(project.defaultFilter),
     dates: defaultDateRange(),
     hierarchyLevel: HierarchyLevel.Story,
-    ...toClientFilter(project.defaultFilter),
-  });
+  };
+  const { filter, setFilter } = useFilterParams(defaultParams);
 
   const initialized = useRef(false);
 

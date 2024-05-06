@@ -12,17 +12,18 @@ export const useFilterParams = (defaults?: Partial<ClientIssueFilter>) => {
   }, []);
 
   const defaultValues = useMemo(() => {
-    const defaultValues: ClientIssueFilter = {
-      ...filterSchema.parse({}),
-      ...defaults,
-    };
-    return defaultValues;
+    return defaults
+      ? {
+          ...filterSchema.parse({}),
+          ...defaults,
+        }
+      : undefined;
   }, [defaults]);
 
   const [filter, setFilter] = useQueryState("f", parse);
 
   useEffect(() => {
-    if (!filter) {
+    if (!filter && defaultValues) {
       setFilter(defaultValues);
     }
   }, [filter, setFilter, defaultValues]);
