@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { mergeDeep } from "remeda";
+import { isDeepEqual, mergeDeep } from "remeda";
 import { qsParse, qsStringify } from "@agileplanning-io/flow-lib";
 
 // inspired by https://www.inkoop.io/blog/syncing-query-parameters-with-react-state/
@@ -16,8 +16,9 @@ export const useQueryState = <T>(
       setParams((prev) => {
         const existingQuery = qsParse(prev.toString());
         const newQuery = { [key]: value };
-        const updatedQuery = qsStringify(mergeDeep(existingQuery, newQuery));
-        return new URLSearchParams(updatedQuery);
+        const updatedQuery = mergeDeep(existingQuery, newQuery);
+        const changed = !isDeepEqual(existingQuery, updatedQuery);
+        return changed ? new URLSearchParams(qsStringify(updatedQuery)) : prev;
       });
     },
     [setParams, key],

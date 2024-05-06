@@ -1,6 +1,6 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { client } from "./client";
+import { queryClient } from "./client";
 import {
   CycleTimePolicy,
   IssueFilter,
@@ -94,13 +94,24 @@ const getProject = async (projectId?: string): Promise<Project> => {
   };
 };
 
+const getProjectQuery = (projectId?: string) => ({
+  queryKey: projectQueryKey(projectId),
+  queryFn: () => getProject(projectId),
+  enabled: projectId !== undefined,
+});
+
 export const useProject = (projectId?: string) => {
-  return useQuery({
-    queryKey: projectQueryKey(projectId),
-    queryFn: () => getProject(projectId),
-    enabled: projectId !== undefined,
-  });
+  return useQuery(getProjectQuery(projectId));
 };
+
+export const projectLoader =
+  (queryClient: QueryClient) => async (projectId?: string) => {
+    const query = getProjectQuery(projectId);
+    return (
+      queryClient.getQueryData<Project>(query.queryKey) ??
+      queryClient.fetchQuery(query)
+    );
+  };
 
 const parseProject = (project: Project) => {
   const lastSync = project.lastSync;
@@ -136,7 +147,7 @@ export const useSyncProject = () => {
   return useMutation({
     mutationFn: syncProject,
     onSuccess: () => {
-      client.invalidateQueries();
+      queryClient.invalidateQueries();
     },
   });
 };
@@ -149,7 +160,7 @@ export const useRemoveProject = (projectId?: string) => {
   return useMutation({
     mutationFn: () => removeProject(projectId),
     onSuccess: () => {
-      client.invalidateQueries();
+      queryClient.invalidateQueries();
     },
   });
 };
@@ -170,7 +181,7 @@ const createProject = async (params: CreateProjectParams): Promise<Project> => {
 export const useCreateProject = () => {
   return useMutation({
     mutationFn: createProject,
-    onSuccess: () => client.invalidateQueries(),
+    onSuccess: () => queryClient.invalidateQueries(),
   });
 };
 
@@ -195,9 +206,9 @@ export const useUpdateProject = () => {
     mutationFn: updateProject,
     onSuccess: (response) => {
       const project = parseProject(response);
-      client.setQueryData(projectQueryKey(project.id), project);
+      queryClient.setQueryData(projectQueryKey(project.id), project);
 
-      const projects = client.getQueryData<Project[]>(
+      const projects = queryClient.getQueryData<Project[]>(
         projectsQueryKey(project.domainId),
       );
       if (!projects) {

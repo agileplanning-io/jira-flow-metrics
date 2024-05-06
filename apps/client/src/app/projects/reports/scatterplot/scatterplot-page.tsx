@@ -23,13 +23,18 @@ import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
 import { ChartParamsForm } from "./components/chart-params-form";
 import { useFilterParams } from "@app/filter/context/use-filter-params";
+import { useLoaderData } from "react-router-dom";
+import { Project } from "@data/projects";
 
 export const ScatterplotPage = () => {
-  const { issues, project } = useProjectContext();
+  const { issues } = useProjectContext();
+
+  const project = useLoaderData() as Project;
 
   const { filter, setFilter } = useFilterParams({
     dates: defaultDateRange(),
     hierarchyLevel: HierarchyLevel.Story,
+    ...toClientFilter(project.defaultFilter),
   });
 
   const initialized = useRef(false);

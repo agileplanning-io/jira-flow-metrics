@@ -52,16 +52,16 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
   const [issueTypeOptions, setIssueTypeOptions] = useState<string[]>();
   const [assigneeOptions, setAssigneeOptions] = useState<string[]>();
 
-  useEffect(() => {
-    // TODO: move this to page level defaults?
-    // if (showDateSelector && !filter?.dates) {
-    //   setFilter({
-    //     ...filter,
-    //     dates: defaultDateRange(),
-    //     hierarchyLevel: defaultHierarchyLevel,
-    //   });
-    // }
-  });
+  // useEffect(() => {
+  // TODO: move this to page level defaults?
+  // if (showDateSelector && !filter?.dates) {
+  //   setFilter({
+  //     ...filter,
+  //     dates: defaultDateRange(),
+  //     hierarchyLevel: defaultHierarchyLevel,
+  //   });
+  // }
+  // });
 
   useEffect(() => {
     if (!issues) {
