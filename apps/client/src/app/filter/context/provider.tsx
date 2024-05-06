@@ -25,10 +25,10 @@ const defaultValuesFilter = () => ({
 });
 
 const valuesFilterSchema = z.object({
-  values: z.array(z.string()).catch([]),
+  values: z.array(z.string()).default([]),
   type: z
     .enum([FilterType.Include, FilterType.Exclude])
-    .catch(FilterType.Include),
+    .default(FilterType.Include),
 });
 
 const filterSchema = z
@@ -36,17 +36,17 @@ const filterSchema = z
     hierarchyLevel: z
       .enum([HierarchyLevel.Epic, HierarchyLevel.Story])
       .optional(),
-    issueTypes: valuesFilterSchema.catch(defaultValuesFilter()),
-    labels: valuesFilterSchema.catch(defaultValuesFilter()),
-    components: valuesFilterSchema.catch(defaultValuesFilter()),
-    resolutions: valuesFilterSchema.catch(defaultValuesFilter()),
-    assignees: valuesFilterSchema.catch(defaultValuesFilter()),
-    statuses: valuesFilterSchema.catch(defaultValuesFilter()),
+    issueTypes: valuesFilterSchema.default(defaultValuesFilter()),
+    labels: valuesFilterSchema.default(defaultValuesFilter()),
+    components: valuesFilterSchema.default(defaultValuesFilter()),
+    resolutions: valuesFilterSchema.default(defaultValuesFilter()),
+    assignees: valuesFilterSchema.default(defaultValuesFilter()),
+    statuses: valuesFilterSchema.default(defaultValuesFilter()),
     dates: z
       .object({
         start: z.coerce.date(),
         end: z.coerce.date(),
       })
-      .catch(defaultDateRange()),
+      .default(defaultDateRange()),
   })
   .optional();
