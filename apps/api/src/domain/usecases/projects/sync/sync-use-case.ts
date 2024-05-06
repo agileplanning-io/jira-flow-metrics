@@ -74,6 +74,7 @@ export class SyncUseCase {
       issueTypes,
       workflowScheme: workflowScheme,
       defaultCycleTimePolicy,
+      defaultFilter: {},
     });
 
     return issues;

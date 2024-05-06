@@ -3,6 +3,7 @@ import axios from "axios";
 import { client } from "./client";
 import {
   CycleTimePolicy,
+  IssueFilter,
   TransitionStatus,
 } from "@agileplanning-io/flow-metrics";
 import { WorkflowStage } from "./issues";
@@ -30,6 +31,7 @@ export type Project = {
   domainId: string;
   workflowScheme: WorkflowScheme;
   defaultCycleTimePolicy: CycleTimePolicy;
+  defaultFilter: IssueFilter;
   issueTypes: string[];
   labels: string[];
   components: string[];

@@ -144,6 +144,8 @@ export class ProjectsController {
       },
     };
 
+    const defaultFilter = project.defaultFilter;
+
     const updatedProject = await this.projects.updateProject(projectId, {
       workflowScheme: {
         stories: {
@@ -156,6 +158,7 @@ export class ProjectsController {
         },
       },
       defaultCycleTimePolicy,
+      defaultFilter,
     });
 
     return updatedProject;

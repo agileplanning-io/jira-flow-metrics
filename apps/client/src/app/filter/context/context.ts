@@ -22,6 +22,13 @@ export const fromClientFilter = (
   };
 };
 
+export const toClientFilter = (filter: IssueFilter): ClientIssueFilter => {
+  return {
+    ...omit(filter, ["dates"]),
+    dates: filter.dates?.interval,
+  };
+};
+
 export type FilterContextType = {
   filter: ClientIssueFilter | undefined;
   setFilter: (filter: ClientIssueFilter) => void;
