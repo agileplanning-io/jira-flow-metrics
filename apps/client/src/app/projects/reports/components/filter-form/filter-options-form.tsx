@@ -7,12 +7,7 @@ import {
   filterIssues,
 } from "@agileplanning-io/flow-metrics";
 import { flatten, compact, uniq, pipe, map } from "remeda";
-import { useFilterContext } from "../../../../filter/context";
-import {
-  Interval,
-  defaultDateRange,
-  formatDate,
-} from "@agileplanning-io/flow-lib";
+import { Interval, formatDate } from "@agileplanning-io/flow-lib";
 import { LoadingSpinner } from "@app/components/loading-spinner";
 import { EditFilterForm } from "./edit-filter-form";
 import {
@@ -32,6 +27,8 @@ type FilterOptionsProps = {
   showStatusFilter: boolean;
   showHierarchyFilter: boolean;
   defaultHierarchyLevel?: HierarchyLevel;
+  filter?: ClientIssueFilter;
+  setFilter: (filter: ClientIssueFilter) => void;
 };
 
 export const FilterOptionsForm: FC<FilterOptionsProps> = ({
@@ -41,10 +38,9 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
   showResolutionFilter,
   showStatusFilter,
   showHierarchyFilter,
-  defaultHierarchyLevel,
+  filter,
+  setFilter,
 }) => {
-  const { filter, setFilter } = useFilterContext();
-
   const [resolutionOptions, setResolutionOptions] = useState<string[]>();
   const [statusOptions, setStatusOptions] = useState<string[]>();
   const [labelOptions, setLabelOptions] = useState<string[]>();

@@ -10,7 +10,6 @@ import { useEffect, useRef, useState } from "react";
 import { useAtomValue } from "jotai";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { IssuesTable } from "../../../components/issues-table";
-import { useFilterContext } from "../../../filter/context";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
 import {
@@ -38,18 +37,18 @@ export const ScatterplotPage = () => {
   };
   const { filter, setFilter } = useFilterParams(defaultParams);
 
-  const initialized = useRef(false);
+  // const initialized = useRef(false);
 
-  useEffect(() => {
-    if (project && !initialized.current) {
-      const defaultFilter = {
-        ...filter,
-        ...toClientFilter(project.defaultFilter),
-      };
-      setFilter(defaultFilter);
-      initialized.current = true;
-    }
-  }, [initialized, filter, setFilter, project]);
+  // useEffect(() => {
+  //   if (project && !initialized.current) {
+  //     const defaultFilter = {
+  //       ...filter,
+  //       ...toClientFilter(project.defaultFilter),
+  //     };
+  //     setFilter(defaultFilter);
+  //     initialized.current = true;
+  //   }
+  // }, [initialized, filter, setFilter, project]);
 
   const [excludedIssues, setExcludedIssues] = useState<string[]>([]);
 
@@ -78,17 +77,23 @@ export const ScatterplotPage = () => {
 
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
 
+  console.info(filter);
+
   return (
     <>
-      <FilterOptionsForm
-        issues={issues}
-        filteredIssuesCount={filteredIssues.length}
-        showDateSelector={true}
-        showStatusFilter={false}
-        showResolutionFilter={true}
-        showHierarchyFilter={true}
-        defaultHierarchyLevel={HierarchyLevel.Story}
-      />
+      {filter ? (
+        <FilterOptionsForm
+          issues={issues}
+          filter={filter}
+          setFilter={setFilter}
+          filteredIssuesCount={filteredIssues.length}
+          showDateSelector={true}
+          showStatusFilter={false}
+          showResolutionFilter={true}
+          showHierarchyFilter={true}
+          defaultHierarchyLevel={HierarchyLevel.Story}
+        />
+      ) : null}
 
       <ChartParamsForm
         chartParams={chartParams}
