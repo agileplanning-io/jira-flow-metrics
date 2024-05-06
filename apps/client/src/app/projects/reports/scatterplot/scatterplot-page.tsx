@@ -6,7 +6,7 @@ import {
   filterCompletedIssues,
 } from "@agileplanning-io/flow-metrics";
 import { Scatterplot } from "@agileplanning-io/flow-charts";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAtomValue } from "jotai";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { IssuesTable } from "../../../components/issues-table";
@@ -14,15 +14,30 @@ import { useFilterContext } from "../../../filter/context";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
 import { Percentile, getPercentiles } from "@agileplanning-io/flow-lib";
-import { fromClientFilter } from "@app/filter/context/context";
+import { fromClientFilter, toClientFilter } from "@app/filter/context/context";
 import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
 import { ChartParamsForm } from "./components/chart-params-form";
+import { useFilterParams } from "@app/filter/context/use-filter-params";
 
 export const ScatterplotPage = () => {
-  const { issues } = useProjectContext();
+  const { issues, project } = useProjectContext();
 
-  const { filter } = useFilterContext();
+  const { filter, setFilter } = useFilterParams();
+
+  const initialized = useRef(false);
+
+  useEffect(() => {
+    if (project && !initialized.current) {
+      const defaultFilter = {
+        ...filter,
+        ...toClientFilter(project.defaultFilter),
+      };
+      setFilter(defaultFilter);
+      initialized.current = true;
+    }
+  }, [initialized, filter, setFilter, project]);
+
   const [excludedIssues, setExcludedIssues] = useState<string[]>([]);
 
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
