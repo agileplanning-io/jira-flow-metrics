@@ -5,7 +5,7 @@ import { Checkbox, Col, Popover, Row, Space } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 
 export type ChartParamsFormOptions = {
-  chartParams: NonNullable<ChartParams>;
+  chartParams: ChartParams;
   setChartParams: (chartParams: ChartParams) => void;
 };
 
