@@ -1,4 +1,4 @@
-import { booleanSchema } from "@lib/boolean-schema";
+import { boolean } from "@agileplanning-io/flow-lib";
 import { useQueryState } from "@lib/use-query-state";
 import { useEffect } from "react";
 import { z } from "zod";
@@ -10,10 +10,10 @@ const defaultValues = {
 
 const chartParamsSchema = z
   .object({
-    includeStoppedIssues: booleanSchema.catch(
+    includeStoppedIssues: boolean.schema.catch(
       defaultValues.includeStoppedIssues,
     ),
-    showPercentileLabels: booleanSchema.catch(
+    showPercentileLabels: boolean.schema.catch(
       defaultValues.showPercentileLabels,
     ),
   })

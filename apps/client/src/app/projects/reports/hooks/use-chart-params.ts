@@ -2,7 +2,10 @@ import { useQueryState } from "@lib/use-query-state";
 import { useCallback, useEffect, useMemo } from "react";
 import { z } from "zod";
 
-export const useChartParamsState = <T extends z.ZodTypeAny>(schema: T) => {
+export const useChartParamsState = <T extends z.ZodTypeAny>(
+  schema: T,
+  defaults?: Partial<z.infer<T>>,
+) => {
   const parse = useCallback(
     (data: unknown) => {
       const result = schema.safeParse(data);
@@ -11,7 +14,10 @@ export const useChartParamsState = <T extends z.ZodTypeAny>(schema: T) => {
     [schema],
   );
 
-  const defaultValues = useMemo(() => schema.parse({}), [schema]);
+  const defaultValues = useMemo(
+    () => ({ ...schema.parse({}), ...defaults }),
+    [schema, defaults],
+  );
 
   const [chartParams, setChartParams] = useQueryState("c", parse);
 

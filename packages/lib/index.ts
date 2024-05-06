@@ -5,3 +5,4 @@ export * from "./src/outliers";
 export * from "./src/weekdays";
 export * from "./src/percentiles";
 export * from "./src/query-params";
+export * from "./src/boolean-schema";
