@@ -10,6 +10,7 @@ export type EditFilterFormProps = {
   showResolutionFilter: boolean;
   showStatusFilter: boolean;
   showHierarchyFilter: boolean;
+  showAssigneesFilter: boolean;
   statuses?: string[];
   resolutions?: string[];
   components?: string[];
@@ -24,6 +25,7 @@ export const EditFilterForm: FC<EditFilterFormProps> = ({
   setFilter,
   showResolutionFilter,
   showStatusFilter,
+  showAssigneesFilter,
   statuses,
   resolutions,
   components,
@@ -76,12 +78,14 @@ export const EditFilterForm: FC<EditFilterFormProps> = ({
           options={resolutionOptions}
         />
       ) : null}
-      <ValuesFilterField
-        label="Assignees"
-        filter={filter.assignees}
-        onChange={onAssigneesChanged}
-        options={assigneeOptions}
-      />
+      {showAssigneesFilter ? (
+        <ValuesFilterField
+          label="Assignees"
+          filter={filter.assignees}
+          onChange={onAssigneesChanged}
+          options={assigneeOptions}
+        />
+      ) : null}
 
       <ValuesFilterField
         label="Labels"
@@ -141,6 +145,7 @@ const ValuesFilterField: FC<ValuesFilterFieldProps> = ({
           <Select
             value={filter?.type}
             onChange={onTypeChanged}
+            defaultValue={FilterType.Include}
             options={[
               { value: "include", label: "Include" },
               { value: "exclude", label: "Exclude" },

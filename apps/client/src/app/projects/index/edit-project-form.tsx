@@ -119,6 +119,11 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
         showHierarchyFilter={false}
         showResolutionFilter={true}
         showStatusFilter={false}
+        showAssigneesFilter={false}
+        issueTypes={project.issueTypes}
+        labels={project.labels}
+        components={project.components}
+        resolutions={project.resolutions}
       />
 
       <h2>Workflows</h2>

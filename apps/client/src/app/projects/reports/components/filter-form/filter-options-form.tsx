@@ -133,6 +133,7 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
           showResolutionFilter={showResolutionFilter}
           showStatusFilter={showStatusFilter}
           showHierarchyFilter={showHierarchyFilter}
+          showAssigneesFilter={true}
           statuses={statusOptions}
           resolutions={resolutionOptions}
           components={componentOptions}

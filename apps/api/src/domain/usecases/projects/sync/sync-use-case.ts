@@ -3,6 +3,8 @@ import { IssuesRepository } from "@entities/issues";
 import { Injectable } from "@nestjs/common";
 import { JiraIssuesRepository } from "./jira-issues-repository";
 import {
+  FilterType,
+  IssueFilter,
   JiraIssueBuilder,
   StatusBuilder,
 } from "@agileplanning-io/flow-metrics";
@@ -63,6 +65,8 @@ export class SyncUseCase {
     const components = uniqueValues(issues.map((issue) => issue.components));
     const resolutions = uniqueValues(issues.map((issue) => issue.resolution));
 
+    const defaultFilter = buildDefaultFilter(resolutions);
+
     await this.projects.updateProject(projectId, {
       lastSync: {
         date: new Date(),
@@ -74,9 +78,22 @@ export class SyncUseCase {
       issueTypes,
       workflowScheme: workflowScheme,
       defaultCycleTimePolicy,
-      defaultFilter: {},
+      defaultFilter,
     });
 
     return issues;
   }
 }
+
+const buildDefaultFilter = (resolutions: string[]): IssueFilter => {
+  if (!resolutions.includes("Done")) {
+    return {};
+  }
+
+  return {
+    resolutions: {
+      type: FilterType.Include,
+      values: ["Done"],
+    },
+  };
+};

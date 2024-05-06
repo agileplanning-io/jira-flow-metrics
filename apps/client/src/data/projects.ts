@@ -35,6 +35,7 @@ export type Project = {
   issueTypes: string[];
   labels: string[];
   components: string[];
+  resolutions: string[];
   lastSync?: {
     date: Date;
     issueCount: number;
