@@ -117,7 +117,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
         setFilter={setUpdatedDefaultFilter}
         showDateSelector={false}
         showHierarchyFilter={false}
-        showResolutionFilter={false}
+        showResolutionFilter={true}
         showStatusFilter={false}
       />
 
