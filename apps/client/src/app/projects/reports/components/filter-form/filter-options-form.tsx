@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import {
   FilterType,
   HierarchyLevel,
@@ -6,7 +6,7 @@ import {
   ValuesFilter,
   filterIssues,
 } from "@agileplanning-io/flow-metrics";
-import { flatten, compact, uniq, pipe, map } from "remeda";
+import { flatten, compact, uniq, pipe, map, isNonNullish } from "remeda";
 import { Interval, formatDate } from "@agileplanning-io/flow-lib";
 import { LoadingSpinner } from "@app/components/loading-spinner";
 import { EditFilterForm } from "./edit-filter-form";
@@ -14,14 +14,13 @@ import {
   ExpandableOptions,
   ExpandableOptionsHeader,
 } from "@app/components/expandable-options";
-import { Col, Form, Row, Select } from "antd";
+import { Col, Form, Row, Select, Tag } from "antd";
 import { DateSelector } from "../date-selector";
 import { ClientIssueFilter } from "@app/filter/context/context";
 
 type FilterOptionsProps = {
   issues?: Issue[];
   filteredIssuesCount?: number;
-
   showDateSelector: boolean;
   showResolutionFilter: boolean;
   showStatusFilter: boolean;
@@ -122,7 +121,13 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
       </Form>
       <ExpandableOptions
         header={{ title: "Filter Options", options: headerOptions }}
-        extra={"TODO: this"}
+        extra={
+          isNonNullish(filteredIssuesCount) ? (
+            <Tag style={{ marginRight: -4 }}>
+              {filteredIssuesCount} / {issues?.length} issues
+            </Tag>
+          ) : null
+        }
       >
         <EditFilterForm
           filter={filter}
@@ -138,7 +143,6 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
           issueTypes={issueTypeOptions}
           assignees={assigneeOptions}
           labels={labelOptions}
-          expandableOptionsExtra={filteredIssuesCount}
         />
       </ExpandableOptions>
     </>

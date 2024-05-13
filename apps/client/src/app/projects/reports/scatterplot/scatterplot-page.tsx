@@ -33,11 +33,7 @@ const createDefaultFilter = (project: Project) => ({
 export const ScatterplotPage = () => {
   const { issues } = useProjectContext();
 
-  const { filter, setFilter } = useFilterParams((project: Project) => ({
-    ...toClientFilter(project.defaultCompletedFilter),
-    dates: defaultDateRange(),
-    hierarchyLevel: HierarchyLevel.Story,
-  }));
+  const { filter, setFilter } = useFilterParams(createDefaultFilter);
 
   const [excludedIssues, setExcludedIssues] = useState<string[]>([]);
 
@@ -71,9 +67,9 @@ export const ScatterplotPage = () => {
       {filter ? (
         <FilterOptionsForm
           issues={issues}
+          filteredIssuesCount={filteredIssues?.length}
           filter={filter}
           setFilter={setFilter}
-          filteredIssuesCount={filteredIssues.length}
           showDateSelector={true}
           showStatusFilter={false}
           showResolutionFilter={true}
