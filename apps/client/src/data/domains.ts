@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { client } from "./client";
+import { queryClient } from "./client";
 
 export type Domain = {
   id: string;
@@ -27,7 +27,7 @@ const createDomain = async (domain: Omit<Domain, "id">): Promise<Domain> => {
 export const useCreateDomain = () => {
   return useMutation({
     mutationFn: createDomain,
-    onSuccess: () => client.invalidateQueries([domainsQueryKey]),
+    onSuccess: () => queryClient.invalidateQueries([domainsQueryKey]),
   });
 };
 
@@ -39,7 +39,7 @@ export const useRemoveDomain = (domainId?: string) => {
   return useMutation({
     mutationFn: () => removeDomain(domainId),
     onSuccess: () => {
-      client.invalidateQueries();
+      queryClient.invalidateQueries();
     },
   });
 };

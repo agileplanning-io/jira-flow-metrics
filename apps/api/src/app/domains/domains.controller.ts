@@ -75,6 +75,7 @@ export class DomainsController {
       labels: [],
       components: [],
       issueTypes: [],
+      resolutions: [],
     });
   }
 

@@ -34,6 +34,7 @@ describe("SyncUseCase", () => {
       labels: [],
       components: [],
       issueTypes: [],
+      resolutions: [],
     };
 
     const domain: Domain = {
@@ -84,6 +85,7 @@ describe("SyncUseCase", () => {
     expect(projects.updateProject).toBeCalledWith(projectId, {
       labels: [],
       components: [],
+      resolutions: [],
       issueTypes: ["Story"],
       lastSync: {
         date: now,
@@ -101,6 +103,7 @@ describe("SyncUseCase", () => {
           includeWaitTime: false,
         },
       },
+      defaultCompletedFilter: {},
       workflowScheme: {
         epics: {
           stages: [

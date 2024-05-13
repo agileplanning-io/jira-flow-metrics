@@ -5,7 +5,6 @@ import {
   timeSpentInPeriod,
 } from "@agileplanning-io/flow-metrics";
 import { useEffect, useState } from "react";
-import { useFilterContext } from "../../../filter/context";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
 import { Space, Table } from "antd";
@@ -25,14 +24,18 @@ import {
 } from "@app/projects/components/issue-links";
 import { useOutletContext } from "react-router-dom";
 import { ProjectsContext } from "@app/projects/projects-layout";
-import { fromClientFilter } from "@app/filter/context/context";
+import { fromClientFilter } from "@app/filter/client-issue-filter";
+import { useFilterParams } from "@app/filter/use-filter-params";
+import { defaultDateRange } from "@agileplanning-io/flow-lib";
 
 export const TimeSpentPage = () => {
   const { projectId } = useNavigationContext();
   const { issues } = useProjectContext();
   const { hidePolicyForm } = useOutletContext<ProjectsContext>();
 
-  const { filter } = useFilterContext();
+  const { filter, setFilter } = useFilterParams({
+    dates: defaultDateRange(),
+  });
 
   const [filteredIssues, setFilteredIssues] = useState<Issue[]>([]);
   const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
@@ -41,19 +44,17 @@ export const TimeSpentPage = () => {
 
   useEffect(() => {
     if (filter && issues) {
-      const filteredIssues = filterIssues(
+      const filteredStories = filterIssues(
         issues,
         fromClientFilter(
           { ...filter, hierarchyLevel: HierarchyLevel.Story },
           DateFilterType.Intersects,
         ),
       );
-      setFilteredIssues([
-        ...filteredIssues,
-        ...issues.filter(
-          (issue) => issue.hierarchyLevel === HierarchyLevel.Epic,
-        ),
-      ]);
+      const epics = issues.filter(
+        (issue) => issue.hierarchyLevel === HierarchyLevel.Epic,
+      );
+      setFilteredIssues([...filteredStories, ...epics]);
     }
   }, [issues, filter, setFilteredIssues]);
 
@@ -145,13 +146,14 @@ export const TimeSpentPage = () => {
   return (
     <>
       <FilterOptionsForm
+        filter={filter}
+        setFilter={setFilter}
         issues={issues}
         filteredIssuesCount={filteredIssues.length}
         showDateSelector={true}
         showStatusFilter={false}
         showHierarchyFilter={false}
         showResolutionFilter={true}
-        defaultHierarchyLevel={HierarchyLevel.Story}
       />
 
       <Table

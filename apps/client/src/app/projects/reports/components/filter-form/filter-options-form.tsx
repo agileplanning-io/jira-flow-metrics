@@ -1,33 +1,32 @@
 import { FC, useEffect, useState } from "react";
 import {
+  FilterType,
   HierarchyLevel,
   Issue,
-  FilterType,
-  filterIssues,
   ValuesFilter,
+  filterIssues,
 } from "@agileplanning-io/flow-metrics";
-import { Col, Form, Row, Select, SelectProps, Space, Tag } from "antd";
-import { DateSelector } from "../date-selector";
-import { flatten, compact, uniq, pipe, map } from "remeda";
-import { useFilterContext } from "../../../../filter/context";
-import { Interval, defaultDateRange } from "@agileplanning-io/flow-lib";
+import { flatten, compact, uniq, pipe, map, isNonNullish } from "remeda";
+import { Interval, formatDate } from "@agileplanning-io/flow-lib";
+import { LoadingSpinner } from "@app/components/loading-spinner";
+import { EditFilterForm } from "./edit-filter-form";
 import {
   ExpandableOptions,
   ExpandableOptionsHeader,
-} from "../../../../components/expandable-options";
-import { formatDate } from "@agileplanning-io/flow-lib";
-import { ClientIssueFilter } from "@app/filter/context/context";
-import { LoadingSpinner } from "@app/components/loading-spinner";
+} from "@app/components/expandable-options";
+import { Col, Form, Row, Select, Tag } from "antd";
+import { DateSelector } from "../date-selector";
+import { ClientIssueFilter } from "@app/filter/client-issue-filter";
 
 type FilterOptionsProps = {
   issues?: Issue[];
   filteredIssuesCount?: number;
-
   showDateSelector: boolean;
   showResolutionFilter: boolean;
   showStatusFilter: boolean;
   showHierarchyFilter: boolean;
-  defaultHierarchyLevel?: HierarchyLevel;
+  filter?: ClientIssueFilter;
+  setFilter: (filter: ClientIssueFilter) => void;
 };
 
 export const FilterOptionsForm: FC<FilterOptionsProps> = ({
@@ -37,30 +36,15 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
   showResolutionFilter,
   showStatusFilter,
   showHierarchyFilter,
-  defaultHierarchyLevel,
+  filter,
+  setFilter,
 }) => {
-  const { filter, setFilter } = useFilterContext();
-
-  const [resolutionOptions, setResolutionOptions] =
-    useState<SelectProps["options"]>();
-  const [statusOptions, setStatusOptions] = useState<SelectProps["options"]>();
-  const [labelOptions, setLabelOptions] = useState<SelectProps["options"]>();
-  const [componentOptions, setComponentOptions] =
-    useState<SelectProps["options"]>();
-  const [issueTypeOptions, setIssueTypeOptions] =
-    useState<SelectProps["options"]>();
-  const [assigneeOptions, setAssigneeOptions] =
-    useState<SelectProps["options"]>();
-
-  useEffect(() => {
-    if (showDateSelector && !filter?.dates) {
-      setFilter({
-        ...filter,
-        dates: defaultDateRange(),
-        hierarchyLevel: defaultHierarchyLevel,
-      });
-    }
-  });
+  const [resolutionOptions, setResolutionOptions] = useState<string[]>();
+  const [statusOptions, setStatusOptions] = useState<string[]>();
+  const [labelOptions, setLabelOptions] = useState<string[]>();
+  const [componentOptions, setComponentOptions] = useState<string[]>();
+  const [issueTypeOptions, setIssueTypeOptions] = useState<string[]>();
+  const [assigneeOptions, setAssigneeOptions] = useState<string[]>();
 
   useEffect(() => {
     if (!issues) {
@@ -71,10 +55,10 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
       hierarchyLevel: filter?.hierarchyLevel,
     });
 
-    setResolutionOptions(makeFilterOptions(filteredIssues, "resolution"));
-    setIssueTypeOptions(makeFilterOptions(filteredIssues, "issueType"));
-    setStatusOptions(makeFilterOptions(filteredIssues, "status"));
-    setAssigneeOptions(makeFilterOptions(filteredIssues, "assignee"));
+    setResolutionOptions(getUniqueValues(filteredIssues, "resolution"));
+    setIssueTypeOptions(getUniqueValues(filteredIssues, "issueType"));
+    setStatusOptions(getUniqueValues(filteredIssues, "status"));
+    setAssigneeOptions(getUniqueValues(filteredIssues, "assignee"));
     setLabelOptions(makeLabelOptions(filteredIssues));
     setComponentOptions(makeComponentOptions(filteredIssues));
   }, [
@@ -85,34 +69,16 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
     setStatusOptions,
   ]);
 
-  const onHierarchyLevelChanged = (hierarchyLevel: HierarchyLevel) =>
-    setFilter({ ...filter, hierarchyLevel });
-
-  const onResolutionsChanged = (resolutions: ValuesFilter) =>
-    setFilter({ ...filter, resolutions });
-
-  const onStatusesChanged = (statuses: ValuesFilter) =>
-    setFilter({ ...filter, statuses });
-
-  const onIssueTypesChanged = (issueTypes: ValuesFilter) =>
-    setFilter({ ...filter, issueTypes });
-
-  const onAssigneesChanged = (assignees: ValuesFilter) =>
-    setFilter({ ...filter, assignees });
-
-  const onDatesChanged = (dates?: Interval) => setFilter({ ...filter, dates });
-
-  const onLabelsChanged = (labels: ValuesFilter) =>
-    setFilter({ ...filter, labels });
-
-  const onComponentsChanged = (components: ValuesFilter) =>
-    setFilter({ ...filter, components });
-
   if (!filter) {
     return <LoadingSpinner />;
   }
 
   const headerOptions = getHeaderOptions(filter);
+
+  const onHierarchyLevelChanged = (hierarchyLevel: HierarchyLevel) =>
+    setFilter({ ...filter, hierarchyLevel });
+
+  const onDatesChanged = (dates?: Interval) => setFilter({ ...filter, dates });
 
   return (
     <>
@@ -144,76 +110,31 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
       <ExpandableOptions
         header={{ title: "Filter Options", options: headerOptions }}
         extra={
-          filteredIssuesCount ? (
+          isNonNullish(filteredIssuesCount) ? (
             <Tag style={{ marginRight: -4 }}>
               {filteredIssuesCount} / {issues?.length} issues
             </Tag>
           ) : null
         }
       >
-        <Form
-          layout="horizontal"
-          labelCol={{ span: 2 }}
-          wrapperCol={{ span: 10 }}
-        >
-          {showStatusFilter ? (
-            <ValuesFilterField
-              label="Statuses"
-              options={statusOptions}
-              filter={filter.statuses}
-              onChange={onStatusesChanged}
-            />
-          ) : null}
-          {showResolutionFilter ? (
-            <ValuesFilterField
-              label="Resolutions"
-              filter={filter.resolutions}
-              onChange={onResolutionsChanged}
-              options={resolutionOptions}
-            />
-          ) : null}
-          <ValuesFilterField
-            label="Assignees"
-            filter={filter.assignees}
-            onChange={onAssigneesChanged}
-            options={assigneeOptions}
-          />
-
-          <ValuesFilterField
-            label="Labels"
-            filter={filter.labels}
-            onChange={onLabelsChanged}
-            options={labelOptions}
-          />
-
-          <ValuesFilterField
-            label="Components"
-            filter={filter.components}
-            onChange={onComponentsChanged}
-            options={componentOptions}
-          />
-
-          <ValuesFilterField
-            label="Issue types"
-            filter={filter.issueTypes}
-            onChange={onIssueTypesChanged}
-            options={issueTypeOptions}
-          />
-        </Form>
+        <EditFilterForm
+          filter={filter}
+          setFilter={setFilter}
+          showDateSelector={showDateSelector}
+          showResolutionFilter={showResolutionFilter}
+          showStatusFilter={showStatusFilter}
+          showHierarchyFilter={showHierarchyFilter}
+          showAssigneesFilter={true}
+          statuses={statusOptions}
+          resolutions={resolutionOptions}
+          components={componentOptions}
+          issueTypes={issueTypeOptions}
+          assignees={assigneeOptions}
+          labels={labelOptions}
+        />
       </ExpandableOptions>
     </>
   );
-};
-
-const makeFilterOptions = (
-  issues: Issue[],
-  property: keyof Issue,
-): SelectProps["options"] => {
-  const options = getUniqueValues(issues, property);
-  return options?.map((option) => ({
-    label: option,
-    value: option,
-  }));
 };
 
 const getUniqueValues = (issues: Issue[], property: keyof Issue): string[] => {
@@ -225,22 +146,16 @@ const getUniqueValues = (issues: Issue[], property: keyof Issue): string[] => {
   );
 };
 
-const makeLabelOptions = (issues: Issue[]): SelectProps["options"] => {
+const makeLabelOptions = (issues: Issue[]): string[] => {
   const options: string[] = uniq(flatten(issues.map((issue) => issue.labels)));
-  return options?.map((option) => ({
-    label: option,
-    value: option,
-  }));
+  return options;
 };
 
-const makeComponentOptions = (issues: Issue[]): SelectProps["options"] => {
+const makeComponentOptions = (issues: Issue[]): string[] => {
   const options: string[] = uniq(
     flatten(issues.map((issue) => issue.components)),
   );
-  return options?.map((option) => ({
-    label: option,
-    value: option,
-  }));
+  return options;
 };
 
 const getHeaderOptions = (
@@ -289,58 +204,4 @@ const getHeaderOptions = (
     options.push(makeOptions(filter.components, "components"));
   }
   return options;
-};
-
-type ValuesFilterField = {
-  label: string;
-  filter?: ValuesFilter;
-  onChange: (filter: ValuesFilter) => void;
-  options: SelectProps["options"];
-};
-
-const ValuesFilterField: FC<ValuesFilterField> = ({
-  label,
-  options,
-  filter,
-  onChange,
-}) => {
-  const onTypeChanged = (type: FilterType) => {
-    if (filter) {
-      filter.type = type;
-      onChange(filter);
-    }
-  };
-
-  const onValuesChanged = (values: string[]) => {
-    if (filter) {
-      filter.values = values;
-      onChange(filter);
-    }
-  };
-
-  return (
-    <Form.Item label={label} style={{ width: "100%", margin: "8px 0" }}>
-      <Space.Compact style={{ width: "100%" }}>
-        <Form.Item style={{ width: "25%", margin: 0 }}>
-          <Select
-            value={filter?.type}
-            onChange={onTypeChanged}
-            options={[
-              { value: "include", label: "Include" },
-              { value: "exclude", label: "Exclude" },
-            ]}
-          />
-        </Form.Item>
-        <Form.Item style={{ width: "75%", margin: 0 }}>
-          <Select
-            mode="multiple"
-            allowClear={true}
-            options={options}
-            value={filter?.values}
-            onChange={onValuesChanged}
-          />
-        </Form.Item>
-      </Space.Compact>
-    </Form.Item>
-  );
 };

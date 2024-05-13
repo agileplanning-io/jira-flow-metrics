@@ -17,6 +17,11 @@ export type ValuesFilter = {
   type?: FilterType;
 };
 
+export const defaultValuesFilter = (): ValuesFilter => ({
+  values: [],
+  type: FilterType.Include,
+});
+
 export type DatesFilter = {
   interval: Interval;
   filterType: DateFilterType;

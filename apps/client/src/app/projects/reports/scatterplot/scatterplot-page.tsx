@@ -10,19 +10,32 @@ import { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { IssuesTable } from "../../../components/issues-table";
-import { useFilterContext } from "../../../filter/context";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
-import { Percentile, getPercentiles } from "@agileplanning-io/flow-lib";
-import { fromClientFilter } from "@app/filter/context/context";
+import {
+  Percentile,
+  defaultDateRange,
+  getPercentiles,
+} from "@agileplanning-io/flow-lib";
+import {
+  fromClientFilter,
+  toClientFilter,
+} from "@app/filter/client-issue-filter";
 import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
 import { ChartParamsForm } from "./components/chart-params-form";
+import { useFilterParams } from "@app/filter/use-filter-params";
+import { Project } from "@data/projects";
 
 export const ScatterplotPage = () => {
   const { issues } = useProjectContext();
 
-  const { filter } = useFilterContext();
+  const { filter, setFilter } = useFilterParams((project: Project) => ({
+    ...toClientFilter(project.defaultCompletedFilter),
+    dates: defaultDateRange(),
+    hierarchyLevel: HierarchyLevel.Story,
+  }));
+
   const [excludedIssues, setExcludedIssues] = useState<string[]>([]);
 
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
@@ -52,15 +65,18 @@ export const ScatterplotPage = () => {
 
   return (
     <>
-      <FilterOptionsForm
-        issues={issues}
-        filteredIssuesCount={filteredIssues.length}
-        showDateSelector={true}
-        showStatusFilter={false}
-        showResolutionFilter={true}
-        showHierarchyFilter={true}
-        defaultHierarchyLevel={HierarchyLevel.Story}
-      />
+      {filter ? (
+        <FilterOptionsForm
+          issues={issues}
+          filteredIssuesCount={filteredIssues?.length}
+          filter={filter}
+          setFilter={setFilter}
+          showDateSelector={true}
+          showStatusFilter={false}
+          showResolutionFilter={true}
+          showHierarchyFilter={true}
+        />
+      ) : null}
 
       <ChartParamsForm
         chartParams={chartParams}

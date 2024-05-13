@@ -1,8 +1,9 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { client } from "./client";
+import { queryClient } from "./client";
 import {
   CycleTimePolicy,
+  IssueFilter,
   TransitionStatus,
 } from "@agileplanning-io/flow-metrics";
 import { WorkflowStage } from "./issues";
@@ -30,9 +31,11 @@ export type Project = {
   domainId: string;
   workflowScheme: WorkflowScheme;
   defaultCycleTimePolicy: CycleTimePolicy;
+  defaultCompletedFilter: IssueFilter;
   issueTypes: string[];
   labels: string[];
   components: string[];
+  resolutions: string[];
   lastSync?: {
     date: Date;
     issueCount: number;
@@ -133,7 +136,7 @@ export const useSyncProject = () => {
   return useMutation({
     mutationFn: syncProject,
     onSuccess: () => {
-      client.invalidateQueries();
+      queryClient.invalidateQueries();
     },
   });
 };
@@ -146,7 +149,7 @@ export const useRemoveProject = (projectId?: string) => {
   return useMutation({
     mutationFn: () => removeProject(projectId),
     onSuccess: () => {
-      client.invalidateQueries();
+      queryClient.invalidateQueries();
     },
   });
 };
@@ -167,7 +170,7 @@ const createProject = async (params: CreateProjectParams): Promise<Project> => {
 export const useCreateProject = () => {
   return useMutation({
     mutationFn: createProject,
-    onSuccess: () => client.invalidateQueries(),
+    onSuccess: () => queryClient.invalidateQueries(),
   });
 };
 
@@ -177,6 +180,7 @@ export type UpdateProjectParams = {
   storyWorkflowStages: { name: string; statuses: string[] }[];
   epicWorkflowStages: { name: string; statuses: string[] }[];
   defaultCycleTimePolicy: CycleTimePolicy;
+  defaultCompletedFilter: IssueFilter;
 };
 
 const updateProject = async ({
@@ -192,9 +196,9 @@ export const useUpdateProject = () => {
     mutationFn: updateProject,
     onSuccess: (response) => {
       const project = parseProject(response);
-      client.setQueryData(projectQueryKey(project.id), project);
+      queryClient.setQueryData(projectQueryKey(project.id), project);
 
-      const projects = client.getQueryData<Project[]>(
+      const projects = queryClient.getQueryData<Project[]>(
         projectsQueryKey(project.domainId),
       );
       if (!projects) {

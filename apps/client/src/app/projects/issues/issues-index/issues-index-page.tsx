@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { IssuesTable, SortState } from "../../../components/issues-table";
-import { useFilterContext } from "../../../filter/context";
 import {
   FilterType,
   Issue,
@@ -11,10 +10,11 @@ import { Col, Form, Input } from "antd";
 import * as fuzzball from "fuzzball";
 import { useProjectContext } from "../../context";
 import { FilterOptionsForm } from "../../reports/components/filter-form/filter-options-form";
+import { useFilterParams } from "@app/filter/use-filter-params";
 
 export const IssuesIndexPage = () => {
   const { issues } = useProjectContext();
-  const { filter, setFilter } = useFilterContext();
+  const { filter, setFilter } = useFilterParams();
 
   const [filteredIssues, setFilteredIssues] = useState<Issue[]>([]);
 
@@ -83,6 +83,8 @@ export const IssuesIndexPage = () => {
   return (
     <>
       <FilterOptionsForm
+        filter={filter}
+        setFilter={setFilter}
         issues={issues}
         filteredIssuesCount={filteredIssues.length}
         showDateSelector={false}

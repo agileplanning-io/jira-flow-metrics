@@ -12,9 +12,18 @@ import {
   WorkflowBoardProps,
 } from "@agileplanning-io/flow-components";
 import { WorkflowStage } from "@data/issues";
-import { CycleTimePolicy } from "@agileplanning-io/flow-metrics";
+import {
+  CycleTimePolicy,
+  DateFilterType,
+} from "@agileplanning-io/flow-metrics";
 import { EditCycleTimePolicyForm } from "@app/components/edit-cycle-time-policy-form";
 import { FullScreenDrawer } from "@app/components/full-screen-drawer";
+import { EditFilterForm } from "../reports/components/filter-form/edit-filter-form";
+import {
+  ClientIssueFilter,
+  fromClientFilter,
+  toClientFilter,
+} from "@app/filter/client-issue-filter";
 
 export type EditProjectFormProps = {
   project: Project;
@@ -32,7 +41,10 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
     useState<UpdateProjectParams["epicWorkflowStages"]>();
 
   const [updatedCycleTimePolicy, setUpdatedCycleTimePolicy] =
-    useState<CycleTimePolicy>(project?.defaultCycleTimePolicy);
+    useState<CycleTimePolicy>(project.defaultCycleTimePolicy);
+
+  const [updatedDefaultCompletedFilter, setUpdatedDefaultCompletedFilter] =
+    useState<ClientIssueFilter>(toClientFilter(project.defaultCompletedFilter));
 
   const updateProject = useUpdateProject();
 
@@ -71,7 +83,12 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
   }
 
   const applyChanges = () => {
-    if (updatedStoryWorkflow && updatedEpicWorkflow && updatedCycleTimePolicy) {
+    if (
+      updatedStoryWorkflow &&
+      updatedEpicWorkflow &&
+      updatedCycleTimePolicy &&
+      updatedDefaultCompletedFilter
+    ) {
       updateProject.mutate(
         {
           id: project.id,
@@ -79,6 +96,10 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
           storyWorkflowStages: updatedStoryWorkflow,
           epicWorkflowStages: updatedEpicWorkflow,
           defaultCycleTimePolicy: updatedCycleTimePolicy,
+          defaultCompletedFilter: fromClientFilter(
+            updatedDefaultCompletedFilter,
+            DateFilterType.Completed,
+          ),
         },
         {
           onSuccess: onClose,
@@ -103,6 +124,22 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
         project={project}
         cycleTimePolicy={updatedCycleTimePolicy}
         setCycleTimePolicy={setUpdatedCycleTimePolicy}
+      />
+
+      <h2>Default Completed Work Filter</h2>
+
+      <EditFilterForm
+        filter={updatedDefaultCompletedFilter}
+        setFilter={setUpdatedDefaultCompletedFilter}
+        showDateSelector={false}
+        showHierarchyFilter={false}
+        showResolutionFilter={true}
+        showStatusFilter={false}
+        showAssigneesFilter={false}
+        issueTypes={project.issueTypes}
+        labels={project.labels}
+        components={project.components}
+        resolutions={project.resolutions}
       />
 
       <h2>Workflows</h2>

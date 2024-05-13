@@ -12,7 +12,6 @@ import {
   FontSizeOutlined,
 } from "@ant-design/icons";
 import { useAtom } from "jotai";
-import { FilterProvider } from "./filter/context/provider";
 import { FontSize, fontSizeAtom } from "./projects/reports/chart-style";
 
 const FooterContent = () => {
@@ -53,41 +52,39 @@ export const AppLayout = () => {
   };
 
   return (
-    <FilterProvider>
-      <Layout
-        style={{ maxWidth: fullscreen ? "1440px" : undefined, margin: "auto" }}
-      >
-        <Layout.Header>
-          <Row>
-            <Col flex="auto">
-              <Breadcrumbs />
-            </Col>
-            <Col>
-              <Tooltip placement="left" title="Toggle large fonts on charts">
-                <Button
-                  type={fontSize === FontSize.Default ? "text" : "primary"}
-                  icon={<FontSizeOutlined />}
-                  onClick={toggleFontSize}
-                />
-              </Tooltip>
-              <Tooltip placement="left" title="Toggle full page width">
-                <Button
-                  type="text"
-                  icon={fullscreen ? <ArrowsAltOutlined /> : <ShrinkOutlined />}
-                  onClick={() => setFullscreen(!fullscreen)}
-                />
-              </Tooltip>
-            </Col>
-          </Row>
-        </Layout.Header>
-        <Layout.Content style={{ margin: "0 50px" }}>
-          <Title />
-          <Outlet />
-        </Layout.Content>
-        <Layout.Footer style={{ textAlign: "center" }}>
-          <FooterContent />
-        </Layout.Footer>
-      </Layout>
-    </FilterProvider>
+    <Layout
+      style={{ maxWidth: fullscreen ? "1440px" : undefined, margin: "auto" }}
+    >
+      <Layout.Header>
+        <Row>
+          <Col flex="auto">
+            <Breadcrumbs />
+          </Col>
+          <Col>
+            <Tooltip placement="left" title="Toggle large fonts on charts">
+              <Button
+                type={fontSize === FontSize.Default ? "text" : "primary"}
+                icon={<FontSizeOutlined />}
+                onClick={toggleFontSize}
+              />
+            </Tooltip>
+            <Tooltip placement="left" title="Toggle full page width">
+              <Button
+                type="text"
+                icon={fullscreen ? <ArrowsAltOutlined /> : <ShrinkOutlined />}
+                onClick={() => setFullscreen(!fullscreen)}
+              />
+            </Tooltip>
+          </Col>
+        </Row>
+      </Layout.Header>
+      <Layout.Content style={{ margin: "0 50px" }}>
+        <Title />
+        <Outlet />
+      </Layout.Content>
+      <Layout.Footer style={{ textAlign: "center" }}>
+        <FooterContent />
+      </Layout.Footer>
+    </Layout>
   );
 };
