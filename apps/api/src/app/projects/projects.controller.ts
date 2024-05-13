@@ -144,7 +144,7 @@ export class ProjectsController {
       },
     };
 
-    const defaultFilter = project.defaultFilter;
+    const defaultCompletedFilter = project.defaultCompletedFilter;
 
     const updatedProject = await this.projects.updateProject(projectId, {
       workflowScheme: {
@@ -158,7 +158,7 @@ export class ProjectsController {
         },
       },
       defaultCycleTimePolicy,
-      defaultFilter,
+      defaultCompletedFilter,
     });
 
     return updatedProject;

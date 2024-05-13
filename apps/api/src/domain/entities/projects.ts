@@ -40,7 +40,7 @@ export type Project = {
   issueTypes: string[];
   workflowScheme?: WorkflowScheme;
   defaultCycleTimePolicy?: CycleTimePolicy;
-  defaultFilter?: IssueFilter;
+  defaultCompletedFilter?: IssueFilter;
 };
 
 export type DataSource = {

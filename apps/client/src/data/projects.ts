@@ -31,7 +31,7 @@ export type Project = {
   domainId: string;
   workflowScheme: WorkflowScheme;
   defaultCycleTimePolicy: CycleTimePolicy;
-  defaultFilter: IssueFilter;
+  defaultCompletedFilter: IssueFilter;
   issueTypes: string[];
   labels: string[];
   components: string[];

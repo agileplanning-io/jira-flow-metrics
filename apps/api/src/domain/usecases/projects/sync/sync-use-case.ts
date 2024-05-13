@@ -65,7 +65,7 @@ export class SyncUseCase {
     const components = uniqueValues(issues.map((issue) => issue.components));
     const resolutions = uniqueValues(issues.map((issue) => issue.resolution));
 
-    const defaultFilter = buildDefaultFilter(resolutions);
+    const defaultCompletedFilter = buildDefaultCompletedFilter(resolutions);
 
     await this.projects.updateProject(projectId, {
       lastSync: {
@@ -78,14 +78,14 @@ export class SyncUseCase {
       issueTypes,
       workflowScheme: workflowScheme,
       defaultCycleTimePolicy,
-      defaultFilter,
+      defaultCompletedFilter: defaultCompletedFilter,
     });
 
     return issues;
   }
 }
 
-const buildDefaultFilter = (resolutions: string[]): IssueFilter => {
+const buildDefaultCompletedFilter = (resolutions: string[]): IssueFilter => {
   if (!resolutions.includes("Done")) {
     return {};
   }

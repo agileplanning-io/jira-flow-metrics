@@ -36,8 +36,8 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
   const [updatedCycleTimePolicy, setUpdatedCycleTimePolicy] =
     useState<CycleTimePolicy>(project?.defaultCycleTimePolicy);
 
-  const [updatedDefaultFilter, setUpdatedDefaultFilter] =
-    useState<ClientIssueFilter>(toClientFilter(project.defaultFilter));
+  const [updatedDefaultCompletedFilter, setUpdatedDefaultCompletedFilter] =
+    useState<ClientIssueFilter>(toClientFilter(project.defaultCompletedFilter));
 
   const updateProject = useUpdateProject();
 
@@ -113,8 +113,8 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
       <h2>Default Completed Work Filter</h2>
 
       <EditFilterForm
-        filter={updatedDefaultFilter}
-        setFilter={setUpdatedDefaultFilter}
+        filter={updatedDefaultCompletedFilter}
+        setFilter={setUpdatedDefaultCompletedFilter}
         showDateSelector={false}
         showHierarchyFilter={false}
         showResolutionFilter={true}

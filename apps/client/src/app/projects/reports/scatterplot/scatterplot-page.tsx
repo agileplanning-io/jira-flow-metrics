@@ -31,7 +31,7 @@ export const ScatterplotPage = () => {
   const project = useLoaderData() as Project;
 
   const defaultParams = {
-    ...toClientFilter(project.defaultFilter),
+    ...toClientFilter(project.defaultCompletedFilter),
     dates: defaultDateRange(),
     hierarchyLevel: HierarchyLevel.Story,
   };
