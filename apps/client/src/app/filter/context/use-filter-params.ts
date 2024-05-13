@@ -4,21 +4,28 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useQueryState } from "@lib/use-query-state";
 import { FilterType, HierarchyLevel } from "@agileplanning-io/flow-metrics";
 import { defaultDateRange } from "@agileplanning-io/flow-lib";
+import { Project } from "@data/projects";
+import { useProjectContext } from "@app/projects/context";
 
-export const useFilterParams = (defaults?: Partial<ClientIssueFilter>) => {
+export const useFilterParams = (
+  createDefaults?: (project: Project) => Partial<ClientIssueFilter>,
+) => {
+  const { project } = useProjectContext();
+
   const parse = useCallback((data: unknown) => {
     const result = filterSchema.safeParse(data);
     return result.success ? result.data : undefined;
   }, []);
 
   const defaultValues = useMemo(() => {
-    return defaults
+    if (!project) return undefined;
+    return createDefaults
       ? {
           ...filterSchema.parse({}),
-          ...defaults,
+          ...createDefaults(project),
         }
       : undefined;
-  }, [defaults]);
+  }, [project, createDefaults]);
 
   const [filter, setFilter] = useQueryState("f", parse);
 

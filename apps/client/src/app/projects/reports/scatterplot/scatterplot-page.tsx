@@ -22,20 +22,22 @@ import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
 import { ChartParamsForm } from "./components/chart-params-form";
 import { useFilterParams } from "@app/filter/context/use-filter-params";
-import { useLoaderData } from "react-router-dom";
 import { Project } from "@data/projects";
+
+const createDefaultFilter = (project: Project) => ({
+  ...toClientFilter(project.defaultCompletedFilter),
+  dates: defaultDateRange(),
+  hierarchyLevel: HierarchyLevel.Story,
+});
 
 export const ScatterplotPage = () => {
   const { issues } = useProjectContext();
 
-  const project = useLoaderData() as Project;
-
-  const defaultParams = {
+  const { filter, setFilter } = useFilterParams((project: Project) => ({
     ...toClientFilter(project.defaultCompletedFilter),
     dates: defaultDateRange(),
     hierarchyLevel: HierarchyLevel.Story,
-  };
-  const { filter, setFilter } = useFilterParams(defaultParams);
+  }));
 
   const [excludedIssues, setExcludedIssues] = useState<string[]>([]);
 
