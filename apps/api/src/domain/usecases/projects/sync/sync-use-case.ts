@@ -76,9 +76,9 @@ export class SyncUseCase {
       labels,
       resolutions,
       issueTypes,
-      workflowScheme: workflowScheme,
+      workflowScheme,
       defaultCycleTimePolicy,
-      defaultCompletedFilter: defaultCompletedFilter,
+      defaultCompletedFilter,
     });
 
     return issues;

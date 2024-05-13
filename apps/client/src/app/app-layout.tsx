@@ -12,7 +12,6 @@ import {
   FontSizeOutlined,
 } from "@ant-design/icons";
 import { useAtom } from "jotai";
-import { FilterProvider } from "./filter/context/provider";
 import { FontSize, fontSizeAtom } from "./projects/reports/chart-style";
 
 const FooterContent = () => {
@@ -53,7 +52,6 @@ export const AppLayout = () => {
   };
 
   return (
-    // <FilterProvider>
     <Layout
       style={{ maxWidth: fullscreen ? "1440px" : undefined, margin: "auto" }}
     >
@@ -88,6 +86,5 @@ export const AppLayout = () => {
         <FooterContent />
       </Layout.Footer>
     </Layout>
-    // </FilterProvider>
   );
 };
