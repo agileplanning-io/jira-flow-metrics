@@ -568,7 +568,7 @@ describe("getFlowMetrics", () => {
           },
           epics: {
             type: "computed",
-            labelsFilter: {
+            labels: {
               values: story1.labels,
               type: FilterType.Include,
             },

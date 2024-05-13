@@ -27,14 +27,17 @@ export type DatesFilter = {
   filterType: DateFilterType;
 };
 
-export type IssueFilter = {
-  hierarchyLevel?: HierarchyLevel;
+export type IssueAttributesFilter = {
   resolutions?: ValuesFilter;
   statuses?: ValuesFilter;
   issueTypes?: ValuesFilter;
   assignees?: ValuesFilter;
   labels?: ValuesFilter;
   components?: ValuesFilter;
+};
+
+export type IssueFilter = IssueAttributesFilter & {
+  hierarchyLevel?: HierarchyLevel;
   dates?: DatesFilter;
 };
 

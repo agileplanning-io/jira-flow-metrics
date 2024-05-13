@@ -1,4 +1,4 @@
-import { ValuesFilter } from "./util";
+import { IssueAttributesFilter } from "./util";
 
 export enum StatusCategory {
   ToDo = "To Do",
@@ -92,10 +92,8 @@ export type StatusCycleTimePolicy = {
   statuses?: string[];
 };
 
-export type ComputedCycleTimePolicy = {
+export type ComputedCycleTimePolicy = IssueAttributesFilter & {
   type: "computed";
-  labelsFilter?: ValuesFilter;
-  issueTypesFilter?: ValuesFilter;
 };
 
 export type CycleTimePolicy = {
