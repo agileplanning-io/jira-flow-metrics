@@ -3,6 +3,7 @@ import { IssuesRepository } from "@entities/issues";
 import {
   CycleTimePolicy,
   FilterType,
+  IssueFilter,
   getFlowMetrics,
 } from "@agileplanning-io/flow-metrics";
 import { Body, Controller, Delete, Get, Param, Put } from "@nestjs/common";
@@ -64,6 +65,9 @@ class UpdateProjectBody {
 
   @ApiProperty()
   defaultCycleTimePolicy: CycleTimePolicyBody;
+
+  @ApiProperty()
+  defaultCompletedFilter: IssueFilter;
 }
 
 const valuesFilterSchema = z.object({
@@ -144,7 +148,8 @@ export class ProjectsController {
       },
     };
 
-    const defaultCompletedFilter = project.defaultCompletedFilter;
+    const defaultCompletedFilter =
+      request.defaultCompletedFilter ?? project.defaultCompletedFilter;
 
     const updatedProject = await this.projects.updateProject(projectId, {
       workflowScheme: {

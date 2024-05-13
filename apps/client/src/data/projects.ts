@@ -191,6 +191,7 @@ export type UpdateProjectParams = {
   storyWorkflowStages: { name: string; statuses: string[] }[];
   epicWorkflowStages: { name: string; statuses: string[] }[];
   defaultCycleTimePolicy: CycleTimePolicy;
+  defaultCompletedFilter: IssueFilter;
 };
 
 const updateProject = async ({
