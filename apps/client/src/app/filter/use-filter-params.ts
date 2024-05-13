@@ -7,11 +7,16 @@ import { defaultDateRange } from "@agileplanning-io/flow-lib";
 import { Project } from "@data/projects";
 import { useProjectContext } from "@app/projects/context";
 
+export type FilterParams = {
+  filter: ClientIssueFilter | undefined;
+  setFilter: (filter: ClientIssueFilter | undefined) => void;
+};
+
 export const useFilterParams = (
   defaults?:
     | Partial<ClientIssueFilter>
     | ((project: Project) => Partial<ClientIssueFilter>),
-) => {
+): FilterParams => {
   const { project } = useProjectContext();
 
   const parse = useCallback((data: unknown) => {
@@ -19,17 +24,32 @@ export const useFilterParams = (
     return result.success ? result.data : undefined;
   }, []);
 
-  const defaultValues = useMemo(() => {
+  const defaultValues: FilterParamsType = useMemo(() => {
     if (!project) return undefined;
-    return defaults
-      ? {
-          ...filterSchema.parse({}),
-          ...(typeof defaults === "function" ? defaults(project) : defaults),
-        }
-      : filterSchema.parse({});
+    // if (defaults) {
+    //   return defaults;
+    // }
+    const schemaDefaults: FilterParamsType = filterSchema.parse({});
+
+    if (!defaults || !schemaDefaults) {
+      return schemaDefaults;
+    }
+
+    const defaultValues = {
+      ...schemaDefaults,
+      ...(typeof defaults === "function" ? defaults(project) : defaults),
+    };
+
+    return defaultValues;
+    // return defaults
+    //   ? {
+    //       ...filterSchema.parse({}),
+    //       // ...(typeof defaults === "function" ? defaults(project) : defaults),
+    //     }
+    //   : filterSchema.parse({});
   }, [project, defaults]);
 
-  const [filter, setFilter] = useQueryState("f", parse);
+  const [filter, setFilter] = useQueryState<FilterParamsType>("f", parse);
 
   useEffect(() => {
     if (!filter && defaultValues) {
@@ -37,7 +57,14 @@ export const useFilterParams = (
     }
   }, [filter, setFilter, defaultValues]);
 
-  return { filter: filter ?? defaultValues, setFilter };
+  return {
+    filter: filter ?? defaultValues,
+    setFilter: (filter) => {
+      if (defaultValues) {
+        setFilter({ ...defaultValues, ...filter });
+      }
+    },
+  };
 };
 
 const defaultValuesFilter = () => ({
@@ -58,12 +85,12 @@ const filterSchema = z
     hierarchyLevel: z
       .enum([HierarchyLevel.Epic, HierarchyLevel.Story])
       .optional(),
-    issueTypes: valuesFilterSchema.default(defaultValuesFilter()).optional(),
-    labels: valuesFilterSchema.default(defaultValuesFilter()).optional(),
-    components: valuesFilterSchema.default(defaultValuesFilter()).optional(),
-    resolutions: valuesFilterSchema.default(defaultValuesFilter()).optional(),
-    assignees: valuesFilterSchema.default(defaultValuesFilter()).optional(),
-    statuses: valuesFilterSchema.default(defaultValuesFilter()).optional(),
+    issueTypes: valuesFilterSchema.default(defaultValuesFilter()),
+    labels: valuesFilterSchema.default(defaultValuesFilter()),
+    components: valuesFilterSchema.default(defaultValuesFilter()),
+    resolutions: valuesFilterSchema.default(defaultValuesFilter()),
+    assignees: valuesFilterSchema.default(defaultValuesFilter()),
+    statuses: valuesFilterSchema.default(defaultValuesFilter()),
     dates: z
       .object({
         start: z.coerce.date(),
@@ -73,3 +100,5 @@ const filterSchema = z
       .optional(),
   })
   .optional();
+
+type FilterParamsType = z.infer<typeof filterSchema>;
