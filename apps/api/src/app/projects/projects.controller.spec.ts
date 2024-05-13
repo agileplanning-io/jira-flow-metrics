@@ -64,6 +64,7 @@ describe("ProjectsController", () => {
       labels: [],
       components: [],
       issueTypes: [],
+      resolutions: [],
     });
   };
 

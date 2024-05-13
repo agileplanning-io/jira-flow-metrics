@@ -105,6 +105,7 @@ describe("DomainsController", () => {
         labels: [],
         components: [],
         issueTypes: [],
+        resolutions: [],
       });
 
       await request(app.getHttpServer())
@@ -129,6 +130,7 @@ describe("DomainsController", () => {
           labels: [],
           components: [],
           issueTypes: [],
+          resolutions: [],
           ...params,
         });
     });

@@ -103,6 +103,7 @@ describe("SyncUseCase", () => {
           includeWaitTime: false,
         },
       },
+      defaultCompletedFilter: {},
       workflowScheme: {
         epics: {
           stages: [
