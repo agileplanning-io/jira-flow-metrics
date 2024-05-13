@@ -8,7 +8,6 @@ import {
   forecast,
 } from "@agileplanning-io/flow-metrics";
 import { useAtomValue } from "jotai";
-import { useFilterContext } from "../../../filter/context";
 import { ForecastChart } from "@agileplanning-io/flow-charts";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
@@ -16,10 +15,15 @@ import { useChartParams } from "./hooks/use-chart-params";
 import { fromClientFilter } from "@app/filter/context/context";
 import { chartStyleAtom } from "../chart-style";
 import { ChartParamsForm } from "./components/chart-params-form";
+import { useFilterParams } from "@app/filter/context/use-filter-params";
+import { defaultDateRange } from "@agileplanning-io/flow-lib";
 
 export const ForecastPage = () => {
   const { issues } = useProjectContext();
-  const { filter } = useFilterContext();
+  const { filter, setFilter } = useFilterParams({
+    dates: defaultDateRange(),
+    hierarchyLevel: HierarchyLevel.Story,
+  });
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
   const { chartParams, setChartParams } = useChartParams();
   const chartStyle = useAtomValue(chartStyleAtom);
@@ -51,6 +55,8 @@ export const ForecastPage = () => {
   return (
     <>
       <FilterOptionsForm
+        filter={filter}
+        setFilter={setFilter}
         issues={issues}
         filteredIssuesCount={filteredIssues.length}
         showDateSelector={true}

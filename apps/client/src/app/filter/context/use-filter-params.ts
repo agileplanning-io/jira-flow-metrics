@@ -8,7 +8,9 @@ import { Project } from "@data/projects";
 import { useProjectContext } from "@app/projects/context";
 
 export const useFilterParams = (
-  createDefaults?: (project: Project) => Partial<ClientIssueFilter>,
+  defaults?:
+    | Partial<ClientIssueFilter>
+    | ((project: Project) => Partial<ClientIssueFilter>),
 ) => {
   const { project } = useProjectContext();
 
@@ -19,13 +21,13 @@ export const useFilterParams = (
 
   const defaultValues = useMemo(() => {
     if (!project) return undefined;
-    return createDefaults
+    return defaults
       ? {
           ...filterSchema.parse({}),
-          ...createDefaults(project),
+          ...(typeof defaults === "function" ? defaults(project) : defaults),
         }
-      : undefined;
-  }, [project, createDefaults]);
+      : filterSchema.parse({});
+  }, [project, defaults]);
 
   const [filter, setFilter] = useQueryState("f", parse);
 

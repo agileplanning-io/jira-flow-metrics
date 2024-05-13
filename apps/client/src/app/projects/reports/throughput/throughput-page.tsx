@@ -8,21 +8,30 @@ import {
   calculateThroughput,
   filterCompletedIssues,
 } from "@agileplanning-io/flow-metrics";
-import { Interval, getOverlappingInterval } from "@agileplanning-io/flow-lib";
+import {
+  Interval,
+  defaultDateRange,
+  getOverlappingInterval,
+} from "@agileplanning-io/flow-lib";
 import { ThroughputChart } from "@agileplanning-io/flow-charts";
 import { IssuesTable } from "../../../components/issues-table";
-import { useFilterContext } from "../../../filter/context";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
-import { fromClientFilter } from "@app/filter/context/context";
+import { fromClientFilter, toClientFilter } from "@app/filter/context/context";
 import { useAtomValue } from "jotai";
 import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
 import { ChartParamsForm } from "./components/chart-params-form";
+import { useFilterParams } from "@app/filter/context/use-filter-params";
+import { Project } from "@data/projects";
 
 export const ThroughputPage = () => {
   const { issues } = useProjectContext();
-  const { filter } = useFilterContext();
+  const { filter, setFilter } = useFilterParams((project: Project) => ({
+    ...toClientFilter(project.defaultCompletedFilter),
+    dates: defaultDateRange(),
+    hierarchyLevel: HierarchyLevel.Story,
+  }));
 
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
@@ -63,6 +72,8 @@ export const ThroughputPage = () => {
   return (
     <>
       <FilterOptionsForm
+        filter={filter}
+        setFilter={setFilter}
         issues={issues}
         filteredIssuesCount={filteredIssues.length}
         showDateSelector={true}

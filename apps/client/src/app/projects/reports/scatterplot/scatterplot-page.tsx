@@ -24,16 +24,14 @@ import { ChartParamsForm } from "./components/chart-params-form";
 import { useFilterParams } from "@app/filter/context/use-filter-params";
 import { Project } from "@data/projects";
 
-const createDefaultFilter = (project: Project) => ({
-  ...toClientFilter(project.defaultCompletedFilter),
-  dates: defaultDateRange(),
-  hierarchyLevel: HierarchyLevel.Story,
-});
-
 export const ScatterplotPage = () => {
   const { issues } = useProjectContext();
 
-  const { filter, setFilter } = useFilterParams(createDefaultFilter);
+  const { filter, setFilter } = useFilterParams((project: Project) => ({
+    ...toClientFilter(project.defaultCompletedFilter),
+    dates: defaultDateRange(),
+    hierarchyLevel: HierarchyLevel.Story,
+  }));
 
   const [excludedIssues, setExcludedIssues] = useState<string[]>([]);
 

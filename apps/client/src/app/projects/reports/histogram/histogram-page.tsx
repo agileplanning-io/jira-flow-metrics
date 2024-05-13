@@ -23,16 +23,15 @@ import { ChartParamsForm } from "./components/chart-params-form";
 import { Project } from "@data/projects";
 import { useFilterParams } from "@app/filter/context/use-filter-params";
 
-const createDefaultFilter = (project: Project) => ({
-  ...toClientFilter(project.defaultCompletedFilter),
-  dates: defaultDateRange(),
-  hierarchyLevel: HierarchyLevel.Story,
-});
-
 export const HistogramPage = () => {
   const { issues } = useProjectContext();
 
-  const { filter, setFilter } = useFilterParams(createDefaultFilter);
+  const { filter, setFilter } = useFilterParams((project: Project) => ({
+    ...toClientFilter(project.defaultCompletedFilter),
+    dates: defaultDateRange(),
+    hierarchyLevel: HierarchyLevel.Story,
+  }));
+
   const [excludedIssues, setExcludedIssues] = useState<string[]>([]);
 
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);

@@ -7,7 +7,6 @@ import {
   StartedIssue,
   filterIssues,
 } from "@agileplanning-io/flow-metrics";
-import { useFilterContext } from "../../../filter/context";
 import { isNil, omit } from "remeda";
 import { Collapse } from "antd";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
@@ -18,16 +17,24 @@ import { isStarted } from "@agileplanning-io/flow-metrics";
 import { useAtomValue } from "jotai";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { IssuesTable } from "@app/components/issues-table";
-import { Percentile, getPercentiles } from "@agileplanning-io/flow-lib";
+import {
+  Percentile,
+  defaultDateRange,
+  getPercentiles,
+} from "@agileplanning-io/flow-lib";
 import { fromClientFilter } from "@app/filter/context/context";
 import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
 import { LoadingSpinner } from "@app/components/loading-spinner";
 import { ChartParamsForm } from "./components/chart-params-form";
+import { useFilterParams } from "@app/filter/context/use-filter-params";
 
 export const AgeingWipPage = () => {
   const { issues } = useProjectContext();
-  const { filter } = useFilterContext();
+  const { filter, setFilter } = useFilterParams({
+    dates: defaultDateRange(),
+    hierarchyLevel: HierarchyLevel.Story,
+  });
 
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
   const [ageingIssues, setAgeingIssues] = useState<StartedIssue[]>([]);
@@ -90,6 +97,8 @@ export const AgeingWipPage = () => {
   return (
     <>
       <FilterOptionsForm
+        filter={filter}
+        setFilter={setFilter}
         issues={issues}
         filteredIssuesCount={ageingIssues.length}
         showDateSelector={true}

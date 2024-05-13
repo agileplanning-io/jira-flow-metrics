@@ -26,13 +26,17 @@ import {
 import { useOutletContext } from "react-router-dom";
 import { ProjectsContext } from "@app/projects/projects-layout";
 import { fromClientFilter } from "@app/filter/context/context";
+import { useFilterParams } from "@app/filter/context/use-filter-params";
+import { defaultDateRange } from "@agileplanning-io/flow-lib";
 
 export const TimeSpentPage = () => {
   const { projectId } = useNavigationContext();
   const { issues } = useProjectContext();
   const { hidePolicyForm } = useOutletContext<ProjectsContext>();
 
-  const { filter } = useFilterContext();
+  const { filter, setFilter } = useFilterParams({
+    dates: defaultDateRange(),
+  });
 
   const [filteredIssues, setFilteredIssues] = useState<Issue[]>([]);
   const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
@@ -145,6 +149,8 @@ export const TimeSpentPage = () => {
   return (
     <>
       <FilterOptionsForm
+        filter={filter}
+        setFilter={setFilter}
         issues={issues}
         filteredIssuesCount={filteredIssues.length}
         showDateSelector={true}
