@@ -1,10 +1,4 @@
-import {
-  ActionFunctionArgs,
-  Navigate,
-  ParamParseKey,
-  Params,
-  Route,
-} from "react-router-dom";
+import { Navigate, Route } from "react-router-dom";
 import { ScatterplotPage } from "./scatterplot/scatterplot-page";
 import { NavigationContext } from "../../navigation/context";
 import { ThroughputPage } from "./throughput/throughput-page";

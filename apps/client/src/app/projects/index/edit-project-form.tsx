@@ -108,8 +108,6 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
     }
   };
 
-  console.info(updatedDefaultCompletedFilter);
-
   return (
     <>
       <h2>Project Details</h2>
