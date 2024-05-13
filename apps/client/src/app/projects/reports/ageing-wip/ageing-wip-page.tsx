@@ -22,7 +22,7 @@ import {
   defaultDateRange,
   getPercentiles,
 } from "@agileplanning-io/flow-lib";
-import { fromClientFilter } from "@app/filter/context/context";
+import { fromClientFilter } from "@app/filter/context/client-issue-filter";
 import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
 import { LoadingSpinner } from "@app/components/loading-spinner";

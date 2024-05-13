@@ -16,7 +16,7 @@ import {
 } from "@app/components/expandable-options";
 import { Col, Form, Row, Select, Tag } from "antd";
 import { DateSelector } from "../date-selector";
-import { ClientIssueFilter } from "@app/filter/context/context";
+import { ClientIssueFilter } from "@app/filter/context/client-issue-filter";
 
 type FilterOptionsProps = {
   issues?: Issue[];

@@ -1,6 +1,5 @@
 import { Interval } from "@agileplanning-io/flow-lib";
 import { DateFilterType, IssueFilter } from "@agileplanning-io/flow-metrics";
-import { createContext } from "react";
 import { omit } from "remeda";
 
 export type ClientIssueFilter = Omit<IssueFilter, "dates"> & {
@@ -28,13 +27,3 @@ export const toClientFilter = (filter: IssueFilter): ClientIssueFilter => {
     dates: filter.dates?.interval,
   };
 };
-
-export type FilterContextType = {
-  filter: ClientIssueFilter | undefined;
-  setFilter: (filter: ClientIssueFilter) => void;
-};
-
-export const FilterContext = createContext<FilterContextType>({
-  filter: {},
-  setFilter: () => {},
-});

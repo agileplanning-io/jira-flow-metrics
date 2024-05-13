@@ -16,7 +16,10 @@ import { CycleTimePolicy } from "@agileplanning-io/flow-metrics";
 import { EditCycleTimePolicyForm } from "@app/components/edit-cycle-time-policy-form";
 import { FullScreenDrawer } from "@app/components/full-screen-drawer";
 import { EditFilterForm } from "../reports/components/filter-form/edit-filter-form";
-import { ClientIssueFilter, toClientFilter } from "@app/filter/context/context";
+import {
+  ClientIssueFilter,
+  toClientFilter,
+} from "@app/filter/context/client-issue-filter";
 
 export type EditProjectFormProps = {
   project: Project;

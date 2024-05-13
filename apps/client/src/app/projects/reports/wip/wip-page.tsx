@@ -7,7 +7,6 @@ import {
   filterIssues,
 } from "@agileplanning-io/flow-metrics";
 import { IssuesTable } from "../../../components/issues-table";
-import { useFilterContext } from "../../../filter/context";
 import { WipChart } from "@agileplanning-io/flow-charts/src/wip/wip-chart";
 import { omit } from "remeda";
 import { Checkbox, Col, Row } from "antd";
@@ -17,10 +16,15 @@ import { ExpandableOptions } from "../../../components/expandable-options";
 import { useAtomValue } from "jotai";
 import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
+import { useFilterParams } from "@app/filter/context/use-filter-params";
+import { defaultDateRange } from "@agileplanning-io/flow-lib";
 
 export const WipPage = () => {
   const { issues } = useProjectContext();
-  const { filter } = useFilterContext();
+  const { filter, setFilter } = useFilterParams({
+    dates: defaultDateRange(),
+    hierarchyLevel: HierarchyLevel.Story,
+  });
 
   const [filteredIssues, setFilteredIssues] = useState<Issue[]>([]);
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
@@ -71,13 +75,14 @@ export const WipPage = () => {
   return (
     <>
       <FilterOptionsForm
+        filter={filter}
+        setFilter={setFilter}
         issues={issues}
         filteredIssuesCount={filteredIssues.length}
         showDateSelector={true}
         showStatusFilter={false}
         showResolutionFilter={false}
         showHierarchyFilter={true}
-        defaultHierarchyLevel={HierarchyLevel.Story}
       />
       <ExpandableOptions
         header={{

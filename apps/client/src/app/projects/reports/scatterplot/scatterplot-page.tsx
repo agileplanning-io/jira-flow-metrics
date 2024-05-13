@@ -17,7 +17,10 @@ import {
   defaultDateRange,
   getPercentiles,
 } from "@agileplanning-io/flow-lib";
-import { fromClientFilter, toClientFilter } from "@app/filter/context/context";
+import {
+  fromClientFilter,
+  toClientFilter,
+} from "@app/filter/context/client-issue-filter";
 import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
 import { ChartParamsForm } from "./components/chart-params-form";

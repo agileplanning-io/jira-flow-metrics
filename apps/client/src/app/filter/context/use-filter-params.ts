@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ClientIssueFilter } from "./context";
+import { ClientIssueFilter } from "./client-issue-filter";
 import { useCallback, useEffect, useMemo } from "react";
 import { useQueryState } from "@lib/use-query-state";
 import { FilterType, HierarchyLevel } from "@agileplanning-io/flow-metrics";

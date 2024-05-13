@@ -17,7 +17,10 @@ import { ThroughputChart } from "@agileplanning-io/flow-charts";
 import { IssuesTable } from "../../../components/issues-table";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
-import { fromClientFilter, toClientFilter } from "@app/filter/context/context";
+import {
+  fromClientFilter,
+  toClientFilter,
+} from "@app/filter/context/client-issue-filter";
 import { useAtomValue } from "jotai";
 import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
