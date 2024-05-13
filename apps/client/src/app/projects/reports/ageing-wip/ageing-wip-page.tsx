@@ -105,7 +105,6 @@ export const AgeingWipPage = () => {
         showStatusFilter={false}
         showResolutionFilter={false}
         showHierarchyFilter={true}
-        defaultHierarchyLevel={HierarchyLevel.Story}
       />
 
       <ChartParamsForm

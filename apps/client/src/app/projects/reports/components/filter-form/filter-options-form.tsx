@@ -25,7 +25,6 @@ type FilterOptionsProps = {
   showResolutionFilter: boolean;
   showStatusFilter: boolean;
   showHierarchyFilter: boolean;
-  defaultHierarchyLevel?: HierarchyLevel;
   filter?: ClientIssueFilter;
   setFilter: (filter: ClientIssueFilter) => void;
 };

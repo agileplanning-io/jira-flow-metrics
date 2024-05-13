@@ -80,7 +80,6 @@ export const ThroughputPage = () => {
         showStatusFilter={false}
         showResolutionFilter={true}
         showHierarchyFilter={true}
-        defaultHierarchyLevel={HierarchyLevel.Story}
       />
 
       <ChartParamsForm

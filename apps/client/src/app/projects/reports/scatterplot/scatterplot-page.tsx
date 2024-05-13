@@ -72,7 +72,6 @@ export const ScatterplotPage = () => {
           showStatusFilter={false}
           showResolutionFilter={true}
           showHierarchyFilter={true}
-          defaultHierarchyLevel={HierarchyLevel.Story}
         />
       ) : null}
 

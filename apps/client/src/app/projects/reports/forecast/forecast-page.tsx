@@ -63,7 +63,6 @@ export const ForecastPage = () => {
         showStatusFilter={false}
         showResolutionFilter={true}
         showHierarchyFilter={true}
-        defaultHierarchyLevel={HierarchyLevel.Story}
       />
       <ChartParamsForm
         chartParams={chartParams}

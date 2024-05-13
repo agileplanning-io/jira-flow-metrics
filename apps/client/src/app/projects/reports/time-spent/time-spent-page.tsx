@@ -5,7 +5,6 @@ import {
   timeSpentInPeriod,
 } from "@agileplanning-io/flow-metrics";
 import { useEffect, useState } from "react";
-import { useFilterContext } from "../../../filter/context";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
 import { Space, Table } from "antd";
@@ -45,19 +44,17 @@ export const TimeSpentPage = () => {
 
   useEffect(() => {
     if (filter && issues) {
-      const filteredIssues = filterIssues(
+      const filteredStories = filterIssues(
         issues,
         fromClientFilter(
           { ...filter, hierarchyLevel: HierarchyLevel.Story },
           DateFilterType.Intersects,
         ),
       );
-      setFilteredIssues([
-        ...filteredIssues,
-        ...issues.filter(
-          (issue) => issue.hierarchyLevel === HierarchyLevel.Epic,
-        ),
-      ]);
+      const epics = issues.filter(
+        (issue) => issue.hierarchyLevel === HierarchyLevel.Epic,
+      );
+      setFilteredIssues([...filteredStories, ...epics]);
     }
   }, [issues, filter, setFilteredIssues]);
 
@@ -157,7 +154,6 @@ export const TimeSpentPage = () => {
         showStatusFilter={false}
         showHierarchyFilter={false}
         showResolutionFilter={true}
-        defaultHierarchyLevel={HierarchyLevel.Story}
       />
 
       <Table

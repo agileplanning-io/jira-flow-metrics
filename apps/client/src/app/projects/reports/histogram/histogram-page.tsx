@@ -70,7 +70,6 @@ export const HistogramPage = () => {
         showStatusFilter={false}
         showResolutionFilter={true}
         showHierarchyFilter={true}
-        defaultHierarchyLevel={HierarchyLevel.Story}
       />
 
       <ChartParamsForm
