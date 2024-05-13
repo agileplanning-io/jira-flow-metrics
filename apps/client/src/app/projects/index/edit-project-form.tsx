@@ -19,7 +19,7 @@ import { EditFilterForm } from "../reports/components/filter-form/edit-filter-fo
 import {
   ClientIssueFilter,
   toClientFilter,
-} from "@app/filter/context/client-issue-filter";
+} from "@app/filter/client-issue-filter";
 
 export type EditProjectFormProps = {
   project: Project;

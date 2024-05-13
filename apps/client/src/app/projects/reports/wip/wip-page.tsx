@@ -16,7 +16,7 @@ import { ExpandableOptions } from "../../../components/expandable-options";
 import { useAtomValue } from "jotai";
 import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
-import { useFilterParams } from "@app/filter/context/use-filter-params";
+import { useFilterParams } from "@app/filter/use-filter-params";
 import { defaultDateRange } from "@agileplanning-io/flow-lib";
 
 export const WipPage = () => {

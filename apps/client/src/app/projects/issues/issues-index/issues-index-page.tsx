@@ -10,7 +10,7 @@ import { Col, Form, Input } from "antd";
 import * as fuzzball from "fuzzball";
 import { useProjectContext } from "../../context";
 import { FilterOptionsForm } from "../../reports/components/filter-form/filter-options-form";
-import { useFilterParams } from "@app/filter/context/use-filter-params";
+import { useFilterParams } from "@app/filter/use-filter-params";
 
 export const IssuesIndexPage = () => {
   const { issues } = useProjectContext();

@@ -19,12 +19,12 @@ import {
 import {
   fromClientFilter,
   toClientFilter,
-} from "@app/filter/context/client-issue-filter";
+} from "@app/filter/client-issue-filter";
 import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
 import { ChartParamsForm } from "./components/chart-params-form";
 import { Project } from "@data/projects";
-import { useFilterParams } from "@app/filter/context/use-filter-params";
+import { useFilterParams } from "@app/filter/use-filter-params";
 
 export const HistogramPage = () => {
   const { issues } = useProjectContext();

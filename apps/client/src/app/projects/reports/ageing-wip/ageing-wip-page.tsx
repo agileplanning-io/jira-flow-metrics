@@ -22,12 +22,12 @@ import {
   defaultDateRange,
   getPercentiles,
 } from "@agileplanning-io/flow-lib";
-import { fromClientFilter } from "@app/filter/context/client-issue-filter";
+import { fromClientFilter } from "@app/filter/client-issue-filter";
 import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
 import { LoadingSpinner } from "@app/components/loading-spinner";
 import { ChartParamsForm } from "./components/chart-params-form";
-import { useFilterParams } from "@app/filter/context/use-filter-params";
+import { useFilterParams } from "@app/filter/use-filter-params";
 
 export const AgeingWipPage = () => {
   const { issues } = useProjectContext();

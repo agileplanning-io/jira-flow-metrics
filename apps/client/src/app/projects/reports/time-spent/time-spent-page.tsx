@@ -24,8 +24,8 @@ import {
 } from "@app/projects/components/issue-links";
 import { useOutletContext } from "react-router-dom";
 import { ProjectsContext } from "@app/projects/projects-layout";
-import { fromClientFilter } from "@app/filter/context/client-issue-filter";
-import { useFilterParams } from "@app/filter/context/use-filter-params";
+import { fromClientFilter } from "@app/filter/client-issue-filter";
+import { useFilterParams } from "@app/filter/use-filter-params";
 import { defaultDateRange } from "@agileplanning-io/flow-lib";
 
 export const TimeSpentPage = () => {

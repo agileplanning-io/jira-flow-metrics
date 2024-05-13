@@ -1,7 +1,7 @@
 import { FilterType, ValuesFilter } from "@agileplanning-io/flow-metrics";
 import { Form, Select, SelectProps, Space } from "antd";
 import { FC } from "react";
-import { ClientIssueFilter } from "@app/filter/context/client-issue-filter";
+import { ClientIssueFilter } from "@app/filter/client-issue-filter";
 
 export type EditFilterFormProps = {
   filter: ClientIssueFilter;

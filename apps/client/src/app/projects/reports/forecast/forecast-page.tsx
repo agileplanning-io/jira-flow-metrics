@@ -12,10 +12,10 @@ import { ForecastChart } from "@agileplanning-io/flow-charts";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
 import { useChartParams } from "./hooks/use-chart-params";
-import { fromClientFilter } from "@app/filter/context/client-issue-filter";
+import { fromClientFilter } from "@app/filter/client-issue-filter";
 import { chartStyleAtom } from "../chart-style";
 import { ChartParamsForm } from "./components/chart-params-form";
-import { useFilterParams } from "@app/filter/context/use-filter-params";
+import { useFilterParams } from "@app/filter/use-filter-params";
 import { defaultDateRange } from "@agileplanning-io/flow-lib";
 
 export const ForecastPage = () => {
