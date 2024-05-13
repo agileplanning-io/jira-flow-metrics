@@ -26,13 +26,12 @@ export const useFilterParams = (
 
   const defaultValues: FilterParamsType = useMemo(() => {
     if (!project) return undefined;
-    // if (defaults) {
-    //   return defaults;
-    // }
+
     const schemaDefaults: FilterParamsType = filterSchema.parse({});
 
-    if (!defaults || !schemaDefaults) {
-      return schemaDefaults;
+    if (!schemaDefaults) {
+      // TODO: enforce this with schema. TBD: can this ever occur?
+      return undefined;
     }
 
     const defaultValues = {
@@ -41,30 +40,28 @@ export const useFilterParams = (
     };
 
     return defaultValues;
-    // return defaults
-    //   ? {
-    //       ...filterSchema.parse({}),
-    //       // ...(typeof defaults === "function" ? defaults(project) : defaults),
-    //     }
-    //   : filterSchema.parse({});
   }, [project, defaults]);
 
-  const [filter, setFilter] = useQueryState<FilterParamsType>("f", parse);
+  const [filterParams, setFilterParams] = useQueryState<FilterParamsType>(
+    "f",
+    parse,
+  );
 
   useEffect(() => {
-    if (!filter && defaultValues) {
-      setFilter(defaultValues);
+    if (!filterParams && defaultValues) {
+      setFilterParams(defaultValues);
     }
-  }, [filter, setFilter, defaultValues]);
+  }, [filterParams, setFilterParams, defaultValues]);
 
-  return {
-    filter: filter ?? defaultValues,
-    setFilter: (filter) => {
-      if (defaultValues) {
-        setFilter({ ...defaultValues, ...filter });
-      }
-    },
+  const filter: FilterParams["filter"] = filterParams ?? defaultValues;
+
+  const setFilter: FilterParams["setFilter"] = (filter) => {
+    if (defaultValues) {
+      setFilterParams({ ...defaultValues, ...filter });
+    }
   };
+
+  return { filter, setFilter };
 };
 
 const defaultValuesFilter = () => ({
