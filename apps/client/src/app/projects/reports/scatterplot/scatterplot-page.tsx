@@ -6,7 +6,7 @@ import {
   filterCompletedIssues,
 } from "@agileplanning-io/flow-metrics";
 import { Scatterplot } from "@agileplanning-io/flow-charts";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { IssuesTable } from "../../../components/issues-table";
@@ -37,19 +37,6 @@ export const ScatterplotPage = () => {
   };
   const { filter, setFilter } = useFilterParams(defaultParams);
 
-  // const initialized = useRef(false);
-
-  // useEffect(() => {
-  //   if (project && !initialized.current) {
-  //     const defaultFilter = {
-  //       ...filter,
-  //       ...toClientFilter(project.defaultFilter),
-  //     };
-  //     setFilter(defaultFilter);
-  //     initialized.current = true;
-  //   }
-  // }, [initialized, filter, setFilter, project]);
-
   const [excludedIssues, setExcludedIssues] = useState<string[]>([]);
 
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
@@ -76,8 +63,6 @@ export const ScatterplotPage = () => {
   }, [issues, filter, setFilteredIssues, setPercentiles, excludedIssues]);
 
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
-
-  console.info(filter);
 
   return (
     <>
