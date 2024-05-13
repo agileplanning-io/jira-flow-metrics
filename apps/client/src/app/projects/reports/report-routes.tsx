@@ -14,21 +14,12 @@ import { reportsCrumb } from "../components/reports-crumb";
 import { TimeSpentPage } from "./time-spent/time-spent-page";
 import { AgeingWipPage } from "./ageing-wip/ageing-wip-page";
 import { HistogramPage } from "./histogram/histogram-page";
-import { queryClient } from "@data/client";
-import { projectLoader } from "@data/projects";
-
-interface Args extends ActionFunctionArgs {
-  params: Params<ParamParseKey<"/:projectId">>;
-}
 
 export const reportRoutes = (
   <Route path="reports">
     <Route
       path="scatterplot"
       element={<ScatterplotPage />}
-      loader={({ params }: Args) =>
-        projectLoader(queryClient)(params.projectId)
-      }
       handle={{
         crumb: ({ project }: NavigationContext) =>
           reportsCrumb(project?.id, "scatterplot"),

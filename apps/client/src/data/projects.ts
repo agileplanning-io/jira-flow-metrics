@@ -1,4 +1,4 @@
-import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { queryClient } from "./client";
 import {
@@ -94,24 +94,13 @@ const getProject = async (projectId?: string): Promise<Project> => {
   };
 };
 
-const getProjectQuery = (projectId?: string) => ({
-  queryKey: projectQueryKey(projectId),
-  queryFn: () => getProject(projectId),
-  enabled: projectId !== undefined,
-});
-
 export const useProject = (projectId?: string) => {
-  return useQuery(getProjectQuery(projectId));
+  return useQuery({
+    queryKey: projectQueryKey(projectId),
+    queryFn: () => getProject(projectId),
+    enabled: projectId !== undefined,
+  });
 };
-
-export const projectLoader =
-  (queryClient: QueryClient) => async (projectId?: string) => {
-    const query = getProjectQuery(projectId);
-    return (
-      queryClient.getQueryData<Project>(query.queryKey) ??
-      queryClient.fetchQuery(query)
-    );
-  };
 
 const parseProject = (project: Project) => {
   const lastSync = project.lastSync;

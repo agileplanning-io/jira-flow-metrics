@@ -46,17 +46,6 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
   const [issueTypeOptions, setIssueTypeOptions] = useState<string[]>();
   const [assigneeOptions, setAssigneeOptions] = useState<string[]>();
 
-  // useEffect(() => {
-  // TODO: move this to page level defaults?
-  // if (showDateSelector && !filter?.dates) {
-  //   setFilter({
-  //     ...filter,
-  //     dates: defaultDateRange(),
-  //     hierarchyLevel: defaultHierarchyLevel,
-  //   });
-  // }
-  // });
-
   useEffect(() => {
     if (!issues) {
       return;
@@ -168,60 +157,6 @@ const makeComponentOptions = (issues: Issue[]): string[] => {
   );
   return options;
 };
-
-// type ValuesFilterField = {
-//   label: string;
-//   filter?: ValuesFilter;
-//   onChange: (filter: ValuesFilter) => void;
-//   options: SelectProps["options"];
-// };
-
-// const ValuesFilterField: FC<ValuesFilterField> = ({
-//   label,
-//   options,
-//   filter,
-//   onChange,
-// }) => {
-//   const onTypeChanged = (type: FilterType) => {
-//     if (filter) {
-//       filter.type = type;
-//       onChange(filter);
-//     }
-//   };
-
-//   const onValuesChanged = (values: string[]) => {
-//     if (filter) {
-//       filter.values = values;
-//       onChange(filter);
-//     }
-//   };
-
-//   return (
-//     <Form.Item label={label} style={{ width: "100%", margin: "8px 0" }}>
-//       <Space.Compact style={{ width: "100%" }}>
-//         <Form.Item style={{ width: "25%", margin: 0 }}>
-//           <Select
-//             value={filter?.type}
-//             onChange={onTypeChanged}
-//             options={[
-//               { value: "include", label: "Include" },
-//               { value: "exclude", label: "Exclude" },
-//             ]}
-//           />
-//         </Form.Item>
-//         <Form.Item style={{ width: "75%", margin: 0 }}>
-//           <Select
-//             mode="multiple"
-//             allowClear={true}
-//             options={options}
-//             value={filter?.values}
-//             onChange={onValuesChanged}
-//           />
-//         </Form.Item>
-//       </Space.Compact>
-//     </Form.Item>
-//   );
-// };
 
 const getHeaderOptions = (
   filter: ClientIssueFilter,
