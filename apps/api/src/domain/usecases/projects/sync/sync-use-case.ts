@@ -65,7 +65,9 @@ export class SyncUseCase {
     const components = uniqueValues(issues.map((issue) => issue.components));
     const resolutions = uniqueValues(issues.map((issue) => issue.resolution));
 
-    const defaultCompletedFilter = buildDefaultCompletedFilter(resolutions);
+    const defaultCompletedFilter =
+      project.defaultCompletedFilter ??
+      buildDefaultCompletedFilter(resolutions);
 
     await this.projects.updateProject(projectId, {
       lastSync: {
