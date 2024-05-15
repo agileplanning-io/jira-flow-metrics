@@ -140,6 +140,8 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
         labels={project.labels}
         components={project.components}
         resolutions={project.resolutions}
+        labelColSpan={2}
+        wrapperColSpan={10}
       />
 
       <h2>Workflows</h2>

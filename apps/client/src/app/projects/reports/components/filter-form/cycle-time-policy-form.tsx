@@ -1,4 +1,3 @@
-import { FilterType } from "@agileplanning-io/flow-metrics";
 import {
   ExpandableOptions,
   ExpandableOptionsHeader,
@@ -7,6 +6,7 @@ import { useProjectContext } from "@app/projects/context";
 import { LoadingSpinner } from "@app/components/loading-spinner";
 import { EditCycleTimePolicyForm } from "@app/components/edit-cycle-time-policy-form";
 import { getSelectedStages } from "@data/workflows";
+import { getHeaderOptions } from "./header-options";
 
 export const CycleTimePolicyForm = () => {
   const { project, cycleTimePolicy, setCycleTimePolicy } = useProjectContext();
@@ -60,25 +60,7 @@ export const CycleTimePolicyForm = () => {
   }
 
   if (cycleTimePolicy?.epics.type === "computed") {
-    if (cycleTimePolicy.epics.labelsFilter?.values?.length) {
-      options.push({
-        label:
-          cycleTimePolicy?.epics.labelsFilter?.type === FilterType.Exclude
-            ? "Exclude labels"
-            : "Include labels",
-        value: cycleTimePolicy?.epics.labelsFilter?.values?.join(),
-      });
-    }
-
-    if (cycleTimePolicy.epics.issueTypesFilter?.values?.length) {
-      options.push({
-        label:
-          cycleTimePolicy?.epics.issueTypesFilter?.type === FilterType.Exclude
-            ? "Exclude issue types"
-            : "Include issue types",
-        value: cycleTimePolicy?.epics.issueTypesFilter?.values?.join(),
-      });
-    }
+    options.push(...getHeaderOptions(cycleTimePolicy.epics));
   }
 
   return (

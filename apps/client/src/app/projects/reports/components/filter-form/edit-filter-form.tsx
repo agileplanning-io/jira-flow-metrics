@@ -1,4 +1,8 @@
-import { FilterType, ValuesFilter } from "@agileplanning-io/flow-metrics";
+import {
+  FilterType,
+  IssueAttributesFilter,
+  defaultValuesFilter,
+} from "@agileplanning-io/flow-metrics";
 import { Form, Select, SelectProps, Space } from "antd";
 import { FC } from "react";
 import { ClientIssueFilter } from "@app/filter/client-issue-filter";
@@ -17,6 +21,8 @@ export type EditFilterFormProps = {
   issueTypes?: string[];
   assignees?: string[];
   labels?: string[];
+  labelColSpan: number;
+  wrapperColSpan: number;
 };
 
 export const EditFilterForm: FC<EditFilterFormProps> = ({
@@ -31,27 +37,9 @@ export const EditFilterForm: FC<EditFilterFormProps> = ({
   issueTypes,
   assignees,
   labels,
+  labelColSpan,
+  wrapperColSpan,
 }) => {
-  const onResolutionsChanged = (resolutions: ValuesFilter) =>
-    setFilter({ ...filter, resolutions });
-
-  const onStatusesChanged = (statuses: ValuesFilter) =>
-    setFilter({ ...filter, statuses });
-
-  const onIssueTypesChanged = (issueTypes: ValuesFilter) =>
-    setFilter({ ...filter, issueTypes });
-
-  const onAssigneesChanged = (assignees: ValuesFilter) =>
-    setFilter({ ...filter, assignees });
-
-  const onLabelsChanged = (labels: ValuesFilter) =>
-    setFilter({ ...filter, labels });
-
-  const onComponentsChanged = (components: ValuesFilter) =>
-    setFilter({ ...filter, components });
-
-  // const headerOptions = getHeaderOptions(filter);
-
   const statusOptions = makeOptions(statuses);
   const resolutionOptions = makeOptions(resolutions);
   const componentOptions = makeOptions(components);
@@ -60,50 +48,60 @@ export const EditFilterForm: FC<EditFilterFormProps> = ({
   const labelOptions = makeOptions(labels);
 
   return (
-    <Form layout="horizontal" labelCol={{ span: 2 }} wrapperCol={{ span: 10 }}>
+    <Form
+      layout="horizontal"
+      labelCol={{ span: labelColSpan }}
+      wrapperCol={{ span: wrapperColSpan }}
+    >
       {showStatusFilter ? (
         <ValuesFilterField
           label="Statuses"
           options={statusOptions}
-          filter={filter.statuses}
-          onChange={onStatusesChanged}
+          filter={filter}
+          filterKey="statuses"
+          onChange={setFilter}
         />
       ) : null}
       {showResolutionFilter ? (
         <ValuesFilterField
           label="Resolutions"
-          filter={filter.resolutions}
-          onChange={onResolutionsChanged}
+          filter={filter}
+          filterKey="resolutions"
+          onChange={setFilter}
           options={resolutionOptions}
         />
       ) : null}
       {showAssigneesFilter ? (
         <ValuesFilterField
           label="Assignees"
-          filter={filter.assignees}
-          onChange={onAssigneesChanged}
+          filter={filter}
+          filterKey="assignees"
+          onChange={setFilter}
           options={assigneeOptions}
         />
       ) : null}
 
       <ValuesFilterField
         label="Labels"
-        filter={filter.labels}
-        onChange={onLabelsChanged}
+        filter={filter}
+        filterKey="labels"
+        onChange={setFilter}
         options={labelOptions}
       />
 
       <ValuesFilterField
         label="Components"
-        filter={filter.components}
-        onChange={onComponentsChanged}
+        filter={filter}
+        filterKey="components"
+        onChange={setFilter}
         options={componentOptions}
       />
 
       <ValuesFilterField
         label="Issue types"
-        filter={filter.issueTypes}
-        onChange={onIssueTypesChanged}
+        filter={filter}
+        filterKey="issueTypes"
+        onChange={setFilter}
         options={issueTypeOptions}
       />
     </Form>
@@ -112,8 +110,9 @@ export const EditFilterForm: FC<EditFilterFormProps> = ({
 
 type ValuesFilterFieldProps = {
   label: string;
-  filter?: ValuesFilter;
-  onChange: (filter: ValuesFilter) => void;
+  filter?: IssueAttributesFilter;
+  filterKey: keyof IssueAttributesFilter;
+  onChange: (filter: IssueAttributesFilter) => void;
   options: SelectProps["options"];
 };
 
@@ -121,18 +120,23 @@ const ValuesFilterField: FC<ValuesFilterFieldProps> = ({
   label,
   options,
   filter,
+  filterKey,
   onChange,
 }) => {
   const onTypeChanged = (type: FilterType) => {
     if (filter) {
-      filter.type = type;
+      const valuesFilter = filter[filterKey] ?? defaultValuesFilter();
+      valuesFilter.type = type;
+      filter[filterKey] = valuesFilter;
       onChange(filter);
     }
   };
 
   const onValuesChanged = (values: string[]) => {
     if (filter) {
-      filter.values = values;
+      const valuesFilter = filter[filterKey] ?? defaultValuesFilter();
+      valuesFilter.values = values;
+      filter[filterKey] = valuesFilter;
       onChange(filter);
     }
   };
@@ -142,7 +146,7 @@ const ValuesFilterField: FC<ValuesFilterFieldProps> = ({
       <Space.Compact style={{ width: "100%" }}>
         <Form.Item style={{ width: "25%", margin: 0 }}>
           <Select
-            value={filter?.type}
+            value={filter?.[filterKey]?.type}
             onChange={onTypeChanged}
             defaultValue={FilterType.Include}
             options={[
@@ -156,7 +160,7 @@ const ValuesFilterField: FC<ValuesFilterFieldProps> = ({
             mode="multiple"
             allowClear={true}
             options={options}
-            value={filter?.values}
+            value={filter?.[filterKey]?.values}
             onChange={onValuesChanged}
           />
         </Form.Item>

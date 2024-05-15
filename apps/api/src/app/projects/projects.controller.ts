@@ -83,8 +83,10 @@ const statusCycleTimePolicySchema = z.object({
 
 const computedCycleTimePolicySchema = z.object({
   type: z.literal("computed"),
-  labelsFilter: valuesFilterSchema,
-  issueTypesFilter: valuesFilterSchema,
+  labels: valuesFilterSchema.optional(),
+  issueTypes: valuesFilterSchema.optional(),
+  resolutions: valuesFilterSchema.optional(),
+  components: valuesFilterSchema.optional(),
 });
 
 const cycleTimePolicySchema = z.object({
