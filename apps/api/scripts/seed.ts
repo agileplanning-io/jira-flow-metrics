@@ -4,6 +4,7 @@ import { MainModule } from "../src/main-module";
 import { ProjectsRepository } from "@entities/projects";
 import { IssuesRepository } from "@entities/issues";
 import {
+  FilterType,
   HierarchyLevel,
   Issue,
   Status,
@@ -43,10 +44,10 @@ const createProject = async (projects: ProjectsRepository) => {
       domainId,
       name: "My Project",
       jql: "project = MYPROJ",
-      labels: [],
+      labels: ["wont-fix", "duplicate"],
       components: [],
       issueTypes: [],
-      resolutions: [],
+      resolutions: ["Done", "Won't Do"],
       defaultCycleTimePolicy: {
         stories: {
           type: "status",
@@ -57,9 +58,15 @@ const createProject = async (projects: ProjectsRepository) => {
           type: "computed",
         },
       },
+      defaultCompletedFilter: {
+        resolutions: {
+          type: FilterType.Include,
+          values: ["Done"],
+        },
+      },
       workflowScheme: {
         stories: {
-          statuses: [backlog, inProgress, done],
+          statuses: [backlog, inProgress, inReview, done],
           stages: [
             {
               name: backlog.name,
@@ -182,6 +189,10 @@ const seedData = async (app: INestApplicationContext) => {
   const issues: Issue[] = flatten(times(15, (index) => buildEpic(index)));
   const issuesRepository = await app.resolve(IssuesRepository);
   await issuesRepository.setIssues(projectId, issues);
+
+  await projects.updateProject(project.id, {
+    lastSync: { issueCount: issues.length, date: new Date() },
+  });
 };
 
 const destroyData = async (app: INestApplicationContext) => {
