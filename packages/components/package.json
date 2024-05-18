@@ -10,9 +10,13 @@
     "dev": "tsup --watch --onSuccess 'tsc --emitDeclarationOnly'",
     "clean": "rm -rf node_modules && rm -rf dist"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "files": [
     "dist/**"
   ],
+  "repository": "https://github.com/agileplanning-io/jira-flow-metrics.git",
   "keywords": [],
   "author": "",
   "license": "ISC",
