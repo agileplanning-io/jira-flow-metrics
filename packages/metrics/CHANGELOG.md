@@ -1,5 +1,14 @@
 # @agileplanning-io/flow-metrics
 
+## 1.0.6
+
+### Patch Changes
+
+- d6ff5ff: feat: defaultValuesFeat function
+- 5300149: refactor: create IssueAttributesFilter
+- Updated dependencies [76334ec]
+  - @agileplanning-io/flow-lib@1.0.5
+
 ## 1.0.5
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-lib
 
+## 1.0.5
+
+### Patch Changes
+
+- 76334ec: feat: boolean schema
+
 ## 1.0.4
 
 ### Patch Changes
