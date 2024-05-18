@@ -45,6 +45,11 @@ export const ThroughputPage = () => {
   const chartStyle = useAtomValue(chartStyleAtom);
 
   useEffect(() => {
+    // reset the selected issue list if we change the filter
+    setSelectedIssues([]);
+  }, [filter]);
+
+  useEffect(() => {
     if (!filter?.dates || !issues) {
       return;
     }
