@@ -52,9 +52,9 @@ export const AgeingWipChart = ({
         data: issues.map(({ metrics }) => metrics.age ?? null),
         backgroundColor: (ctx: ScriptableContext<"bar">) => {
           const issue = issues[ctx.dataIndex];
-          const percentile = percentiles.find(
-            (p) => issue.metrics.age >= p.value,
-          )?.percentile;
+          const percentile = issue
+            ? percentiles.find((p) => issue.metrics.age >= p.value)?.percentile
+            : 0;
           return getColorForPercentile(percentile ?? 0);
         },
         borderColor: "rgb(255, 99, 132)",
