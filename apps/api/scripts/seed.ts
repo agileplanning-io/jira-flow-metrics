@@ -38,60 +38,62 @@ const projectId = "-xD8fzU7kki0";
 
 const createProject = async (projects: ProjectsRepository) => {
   try {
-    return await projects.getProject(projectId);
+    await projects.removeProject(projectId);
   } catch {
-    return await projects.addProject({
-      domainId,
-      name: "My Project",
-      jql: "project = MYPROJ",
-      labels: ["wont-fix", "duplicate"],
-      components: [],
-      issueTypes: [],
-      resolutions: ["Done", "Won't Do"],
-      defaultCycleTimePolicy: {
-        stories: {
-          type: "status",
-          includeWaitTime: false,
-          statuses: [inProgress.name, inReview.name],
-        },
-        epics: {
-          type: "computed",
-        },
-      },
-      defaultCompletedFilter: {
-        resolutions: {
-          type: FilterType.Include,
-          values: ["Done"],
-        },
-      },
-      workflowScheme: {
-        stories: {
-          statuses: [backlog, inProgress, inReview, done],
-          stages: [
-            {
-              name: backlog.name,
-              statuses: [backlog],
-              selectByDefault: false,
-            },
-            {
-              name: inProgress.name,
-              statuses: [inProgress, inReview],
-              selectByDefault: true,
-            },
-            {
-              name: done.name,
-              statuses: [done],
-              selectByDefault: false,
-            },
-          ],
-        },
-        epics: {
-          stages: [],
-          statuses: [],
-        },
-      },
-    });
+    // project doesn't exist
   }
+
+  return await projects.addProject({
+    domainId,
+    name: "My Project",
+    jql: "project = MYPROJ",
+    labels: ["wont-fix", "duplicate", "discovery"],
+    components: [],
+    issueTypes: [],
+    resolutions: ["Done", "duplicate", "Won't Do"],
+    defaultCycleTimePolicy: {
+      stories: {
+        type: "status",
+        includeWaitTime: false,
+        statuses: [inProgress.name, inReview.name],
+      },
+      epics: {
+        type: "computed",
+      },
+    },
+    defaultCompletedFilter: {
+      resolutions: {
+        type: FilterType.Include,
+        values: ["Done"],
+      },
+    },
+    workflowScheme: {
+      stories: {
+        statuses: [backlog, inProgress, inReview, pendingRelease, done],
+        stages: [
+          {
+            name: backlog.name,
+            statuses: [backlog],
+            selectByDefault: false,
+          },
+          {
+            name: inProgress.name,
+            statuses: [inProgress, inReview],
+            selectByDefault: true,
+          },
+          {
+            name: done.name,
+            statuses: [done, pendingRelease],
+            selectByDefault: false,
+          },
+        ],
+      },
+      epics: {
+        stages: [],
+        statuses: [],
+      },
+    },
+  });
 };
 
 const backlog: Status = {
@@ -101,19 +103,25 @@ const backlog: Status = {
 };
 
 const inProgress: Status = {
-  jiraId: "34",
+  jiraId: "13",
   name: "In Progress",
   category: StatusCategory.InProgress,
 };
 
 const inReview: Status = {
-  jiraId: "42",
+  jiraId: "14",
   name: "In Review",
   category: StatusCategory.InProgress,
 };
 
+const pendingRelease: Status = {
+  jiraId: "15",
+  name: "Pending Release",
+  category: StatusCategory.Done,
+};
+
 const done: Status = {
-  jiraId: "56",
+  jiraId: "16",
   name: "Done",
   category: StatusCategory.Done,
 };
