@@ -13,10 +13,10 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { flatten, times } from "remeda";
 import { INestApplicationContext } from "@nestjs/common";
-import { addMinutes, subHours } from "date-fns";
+import { addMinutes, subDays, subHours } from "date-fns";
 import { randomInt } from "crypto";
 import * as weibull from "@stdlib/random-base-weibull";
-import { faker } from "@faker-js/faker";
+import { base, faker } from "@faker-js/faker";
 
 const rand = weibull.factory({ seed: 1234 });
 
@@ -129,6 +129,8 @@ const done: Status = {
 const buildEpic = (index: number) => {
   const now = new Date();
 
+  const isInProgress = index === 0;
+
   const epicSummary =
     faker.company.catchPhraseAdjective() +
     " " +
@@ -144,10 +146,18 @@ const buildEpic = (index: number) => {
     statusCategory: StatusCategory.Done,
   });
 
-  const children = times(5, () => {
-    const started = subHours(now, 12 * (index * 10 + randomInt(10)) + 12 * 6);
-    const reviewDate = addMinutes(started, rand(1.2, 7 * 24 * 60));
+  const getStoryDates = (index: number) => {
+    const baseline = subHours(now, 12 * (index * 10 + randomInt(10)) + 12 * 6);
+    // create a wider distribution for the ageing wip chart
+    const adjustment = isInProgress ? randomInt(7) : 0;
+    const started = subDays(baseline, adjustment);
+    const reviewDate = addMinutes(baseline, rand(1.2, 7 * 24 * 60));
     const completed = addMinutes(reviewDate, rand(1, 1 * 24 * 60));
+    return { started, reviewDate, completed };
+  };
+
+  const children = times(5, () => {
+    const { started, reviewDate, completed } = getStoryDates(index);
 
     const storySummary =
       faker.commerce.productAdjective() +
@@ -156,13 +166,8 @@ const buildEpic = (index: number) => {
       " " +
       faker.hacker.noun();
 
-    return buildIssue({
-      summary: storySummary,
-      parentKey: epic.key,
-      status: done.name,
-      statusCategory: StatusCategory.Done,
-      created: subHours(started, randomInt(10) + 1),
-      transitions: [
+    const getTransitions = () => {
+      const startedTransitions = [
         {
           fromStatus: backlog,
           toStatus: inProgress,
@@ -173,12 +178,29 @@ const buildEpic = (index: number) => {
           toStatus: inReview,
           date: reviewDate,
         },
-        {
-          fromStatus: inReview,
-          toStatus: done,
-          date: completed,
-        },
-      ],
+      ];
+      return isInProgress
+        ? startedTransitions
+        : [
+            ...startedTransitions,
+            {
+              fromStatus: inReview,
+              toStatus: done,
+              date: completed,
+            },
+          ];
+    };
+
+    return buildIssue({
+      summary: storySummary,
+      parentKey: epic.key,
+      status: isInProgress ? inProgress.name : done.name,
+      statusCategory: isInProgress
+        ? StatusCategory.InProgress
+        : StatusCategory.Done,
+      created: subHours(started, randomInt(10) + 1),
+      resolution: isInProgress ? undefined : "Done",
+      transitions: getTransitions(),
     });
   });
 
