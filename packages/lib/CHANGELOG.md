@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-lib
 
+## 0.1.0
+
+### Minor Changes
+
+- 84aa369: first general release
+
 ## 0.0.7
 
 ### Patch Changes
