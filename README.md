@@ -1,10 +1,10 @@
 # jira-flow-metrics
 
-A tool for measuring and visualising flow metrics, and for forecasting ahead.
+Open source flow metrics and planning reports for Jira.
 
 ## Getting started
 
-Clone the repository and run `./bootstrap.sh`.
+See the [Getting Started](https://metrics.agileplanning.io/docs/guides/getting-started/) guide.
 
 ## Development
 
