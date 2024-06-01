@@ -1,3 +1,4 @@
+import { subDays } from "date-fns";
 import { buildCompletedIssue } from "../../fixtures";
 import { computeThroughput, computeInputs } from "./inputs";
 
@@ -23,7 +24,13 @@ describe("computeThroughput", () => {
         },
       }),
     ];
-    expect(computeThroughput(issues)).toEqual([
+
+    const interval = {
+      start: issues[0].metrics.completed,
+      end: issues[2].metrics.completed,
+    };
+
+    expect(computeThroughput(interval, issues)).toEqual([
       { date: new Date("2020-01-03T00:00:00.000Z"), count: 1 },
       { date: new Date("2020-01-04T00:00:00.000Z"), count: 0 },
       { date: new Date("2020-01-05T00:00:00.000Z"), count: 2 },
@@ -59,8 +66,13 @@ describe("computeInputs", () => {
     }),
   ];
 
+  const interval = {
+    start: issues[0].metrics.completed,
+    end: issues[3].metrics.completed,
+  };
+
   it("computes cycle times and throughput for the given issues", () => {
-    expect(computeInputs(issues, false)).toEqual({
+    expect(computeInputs(interval, issues, false)).toEqual({
       cycleTimes: [1, 3, 2, 200],
       throughputs: {
         weekend: [0, 0],
@@ -69,8 +81,24 @@ describe("computeInputs", () => {
     });
   });
 
+  it("computes values for the given internal", () => {
+    expect(
+      computeInputs(
+        { start: subDays(interval.start, 2), end: interval.end },
+        issues,
+        false,
+      ),
+    ).toEqual({
+      cycleTimes: [1, 3, 2, 200],
+      throughputs: {
+        weekend: [0, 0],
+        weekday: [0, 0, 2, 0, 1, 1],
+      },
+    });
+  });
+
   it("optionally excludes cycle time outliers", () => {
-    expect(computeInputs(issues, true)).toEqual({
+    expect(computeInputs(interval, issues, true)).toEqual({
       cycleTimes: [1, 3, 2],
       throughputs: {
         weekend: [0, 0],

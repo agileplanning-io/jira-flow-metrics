@@ -1,16 +1,13 @@
-import { eachDayOfInterval, endOfDay, getISODay, startOfDay } from "date-fns";
+import { eachDayOfInterval, getISODay, startOfDay } from "date-fns";
 import { SimulationInputs } from "../simulation/run";
-import { excludeOutliersFromSeq } from "@agileplanning-io/flow-lib";
+import { Interval, excludeOutliersFromSeq } from "@agileplanning-io/flow-lib";
 import { categorizeWeekday } from "@agileplanning-io/flow-lib";
 import { CompletedIssue } from "../../types";
 
 export const computeThroughput = (
+  interval: Interval,
   issues: CompletedIssue[],
 ): { date: Date; count: number }[] => {
-  const interval = {
-    start: startOfDay(issues[0].metrics.completed),
-    end: endOfDay(issues[issues.length - 1].metrics.completed),
-  };
   const dates = eachDayOfInterval(interval);
   const results: Record<string, number> = {};
   for (const issue of issues) {
@@ -36,11 +33,12 @@ export const computeThroughput = (
  * @returns a {SimulationInputs} object with cycle times and throughput
  */
 export const computeInputs = (
+  interval: Interval,
   issues: CompletedIssue[],
   excludeCycleTimeOutliers: boolean,
 ): SimulationInputs => {
   const throughputs: Record<string, number[]> = {};
-  for (const { date, count } of computeThroughput(issues)) {
+  for (const { date, count } of computeThroughput(interval, issues)) {
     const category = categorizeWeekday(getISODay(date));
     if (!throughputs[category]) {
       throughputs[category] = [];

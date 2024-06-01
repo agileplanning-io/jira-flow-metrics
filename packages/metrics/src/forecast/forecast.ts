@@ -4,9 +4,14 @@ import { groupBy } from "remeda";
 import { SeedRandomGenerator } from "./simulation/select";
 import { computeInputs } from "./inputs/inputs";
 import { CompletedIssue } from "../types";
-import { Percentile, getPercentiles } from "@agileplanning-io/flow-lib";
+import {
+  Interval,
+  Percentile,
+  getPercentiles,
+} from "@agileplanning-io/flow-lib";
 
 export type ForecastParams = {
+  interval: Interval;
   selectedIssues: CompletedIssue[];
   issueCount: number;
   startDate?: Date;
@@ -43,6 +48,7 @@ export type SummaryResult = {
 };
 
 export const forecast = ({
+  interval,
   selectedIssues,
   issueCount,
   startDate,
@@ -52,7 +58,7 @@ export const forecast = ({
   seed,
 }: ForecastParams): SummaryResult => {
   const generator = new SeedRandomGenerator(seed);
-  const inputs = computeInputs(selectedIssues, excludeOutliers);
+  const inputs = computeInputs(interval, selectedIssues, excludeOutliers);
 
   const runs = runSimulation({
     issueCount,

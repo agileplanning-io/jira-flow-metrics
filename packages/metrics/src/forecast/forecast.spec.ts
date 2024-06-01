@@ -18,6 +18,7 @@ describe("forecast", () => {
     ];
 
     const result = forecast({
+      interval: { start: subDays(now, 5), end: now },
       selectedIssues: issues,
       issueCount: 3,
       startDate: now,
