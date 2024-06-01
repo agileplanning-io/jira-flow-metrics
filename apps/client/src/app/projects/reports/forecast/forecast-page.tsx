@@ -51,6 +51,7 @@ export const ForecastPage = () => {
   useEffect(() => {
     if (!filteredIssues || filteredIssues.length === 0 || !chartParams) return;
     const result = forecast({
+      interval: filter?.dates,
       selectedIssues: filteredIssues,
       ...chartParams,
     });
