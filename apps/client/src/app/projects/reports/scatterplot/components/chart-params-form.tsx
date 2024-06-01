@@ -2,7 +2,7 @@ import { FC } from "react";
 import { ChartParams } from "../hooks/use-chart-params";
 import { ExpandableOptions } from "@app/components/expandable-options";
 import { Checkbox, Col, Popover, Row, Space } from "antd";
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import { ExportOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 
 export type ChartParamsFormOptions = {
   chartParams: ChartParams;
@@ -54,7 +54,17 @@ export const ChartParamsForm: FC<ChartParamsFormOptions> = ({
             Hide outliers
             <Popover
               placement="right"
-              content={"Outliers are calculated using the Tukey Fence method"}
+              content={
+                <span>
+                  Outliers are calculated using Tukey's fence method{" "}
+                  <a
+                    href="https://metrics.agileplanning.io/docs/reference/report-options/#hide-outliers"
+                    target="_blank"
+                  >
+                    <ExportOutlined />
+                  </a>
+                </span>
+              }
             >
               {" "}
               <a href="#">

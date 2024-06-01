@@ -1,7 +1,7 @@
 import { quantileSeq } from "mathjs";
 
 /**
- * Removes outliers from a list of items based on the Tukey Fence method.
+ * Removes outliers from a list of items based on Tukey's Fence method.
  * @param data the list of items to consider
  * @param valueOf a function which returns the value for the given item
  */
