@@ -1,5 +1,16 @@
 # @agileplanning-io/flow-metrics
 
+## 0.1.0
+
+### Minor Changes
+
+- 84aa369: first general release
+
+### Patch Changes
+
+- Updated dependencies [84aa369]
+  - @agileplanning-io/flow-lib@0.1.0
+
 ## 0.0.19
 
 ### Patch Changes
