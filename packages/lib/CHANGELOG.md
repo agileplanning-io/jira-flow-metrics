@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-lib
 
+## 0.0.7
+
+### Patch Changes
+
+- b88c3b8: fix: forecast sampling
+
 ## 1.0.5
 
 ### Patch Changes

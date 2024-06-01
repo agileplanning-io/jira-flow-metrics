@@ -1,5 +1,13 @@
 # @agileplanning-io/flow-metrics
 
+## 0.0.19
+
+### Patch Changes
+
+- b88c3b8: fix: forecast sampling
+- Updated dependencies [b88c3b8]
+  - @agileplanning-io/flow-lib@0.0.7
+
 ## 1.0.6
 
 ### Patch Changes
