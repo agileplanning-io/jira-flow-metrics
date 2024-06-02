@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-charts
 
+## 0.1.1
+
+### Patch Changes
+
+- 5c21848: feat: add chart options
+
 ## 0.1.0
 
 ### Minor Changes
