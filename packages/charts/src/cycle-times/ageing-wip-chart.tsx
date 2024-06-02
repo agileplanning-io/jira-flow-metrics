@@ -6,6 +6,7 @@ import { Issue, StartedIssue } from "@agileplanning-io/flow-metrics";
 import { ellipsize, Percentile } from "@agileplanning-io/flow-lib";
 import { ChartStyle, buildFontSpec } from "../util/style";
 import { getAnnotationOptions } from "../util/annotations";
+import { mergeDeep } from "remeda";
 
 type AgeingWipChartProps = {
   issues: StartedIssue[];
@@ -13,6 +14,7 @@ type AgeingWipChartProps = {
   showPercentileLabels: boolean;
   setSelectedIssues: (issues: Issue[]) => void;
   style?: ChartStyle;
+  options?: ChartOptions<"bar">;
 };
 
 Tooltip.positioners.custom = (_, eventPosition) => {
@@ -28,6 +30,7 @@ export const AgeingWipChart = ({
   showPercentileLabels,
   setSelectedIssues,
   style,
+  options: overrideOptions,
 }: AgeingWipChartProps): ReactElement => {
   const labels = issues.map((issue) => [
     issue.key,
@@ -71,7 +74,7 @@ export const AgeingWipChart = ({
     }
   };
 
-  const options: ChartOptions<"bar"> = {
+  const defaultOptions: ChartOptions<"bar"> = {
     onClick,
     responsive: true,
     maintainAspectRatio: false,
@@ -128,6 +131,8 @@ export const AgeingWipChart = ({
       },
     },
   };
+
+  const options = mergeDeep(defaultOptions, overrideOptions ?? {});
 
   return (
     <div style={{ height: issues.length * 30 + 120, marginBottom: 8 }}>

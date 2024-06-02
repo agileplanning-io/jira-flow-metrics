@@ -6,6 +6,7 @@ import { TimeUnit } from "@agileplanning-io/flow-lib";
 import { Issue, ThroughputResult } from "@agileplanning-io/flow-metrics";
 import { ChartStyle, buildFontSpec, defaultBarStyle } from "../util/style";
 import { getAnnotationOptions } from "../util/annotations";
+import { mergeDeep } from "remeda";
 
 type ThroughputChartProps = {
   result: ThroughputResult;
@@ -13,6 +14,7 @@ type ThroughputChartProps = {
   showPercentileLabels: boolean;
   setSelectedIssues: (issues: Issue[]) => void;
   style?: ChartStyle;
+  options?: ChartOptions<"bar">;
 };
 
 export const ThroughputChart = ({
@@ -21,6 +23,7 @@ export const ThroughputChart = ({
   showPercentileLabels,
   setSelectedIssues,
   style,
+  options: overrideOptions,
 }: ThroughputChartProps): ReactElement => {
   const labels = result.data.map(({ date }) => date.toISOString());
 
@@ -78,7 +81,7 @@ export const ThroughputChart = ({
     }
   };
 
-  const options: ChartOptions<"bar"> = {
+  const defaultOptions: ChartOptions<"bar"> = {
     onClick,
     scales,
     plugins: {
@@ -96,6 +99,11 @@ export const ThroughputChart = ({
       },
     },
   };
+
+  const options: ChartOptions<"bar"> = mergeDeep(
+    defaultOptions,
+    overrideOptions ?? {},
+  );
 
   return <Bar data={data} options={options} style={{ marginTop: 40 }} />;
 };

@@ -5,7 +5,7 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { ChartData, ChartOptions } from "chart.js";
 import { cumsum } from "mathjs";
-import { range, countBy } from "remeda";
+import { range, countBy, mergeDeep } from "remeda";
 import { FC, ReactElement } from "react";
 import { Chart } from "react-chartjs-2";
 import { ChartStyle, buildFontSpec, defaultBarStyle } from "../util/style";
@@ -18,6 +18,7 @@ export type HistogramProps = {
   showPercentileLabels: boolean;
   hideOutliers: boolean;
   style?: ChartStyle;
+  options?: ChartOptions<"bar" | "line">;
 };
 
 type BucketedFlowMetrics = CompletedFlowMetrics & {
@@ -47,6 +48,7 @@ export const Histogram: FC<HistogramProps> = ({
   showPercentileLabels,
   hideOutliers,
   style,
+  options: overrideOptions,
 }): ReactElement => {
   const bucketedIssues: BucketedIssue[] = issues.map(bucketIssue);
   const buckets = range(
@@ -101,71 +103,72 @@ export const Histogram: FC<HistogramProps> = ({
     }
   };
 
-  return (
-    <Chart
-      type="bar"
-      data={data}
-      options={{
-        onClick,
-        scales: {
-          x: {
-            max: maxXValue,
-            title: {
-              text: "Cycle Time (days)",
-              display: true,
-              font,
-            },
-            ticks: {
-              font,
-            },
-          },
-          y: {
-            position: "left",
-            ticks: {
-              font,
-            },
-          },
-          y2: {
-            position: "right",
-            ticks: {
-              font,
-            },
-            grid: {
-              display: false,
-            },
+  const defaultOptions: ChartOptions<"bar"> = {
+    onClick,
+    scales: {
+      x: {
+        max: maxXValue,
+        title: {
+          text: "Cycle Time (days)",
+          display: true,
+          font,
+        },
+        ticks: {
+          font,
+        },
+      },
+      y: {
+        position: "left",
+        ticks: {
+          font,
+        },
+      },
+      y2: {
+        position: "right",
+        ticks: {
+          font,
+        },
+        grid: {
+          display: false,
+        },
+      },
+    },
+    plugins: {
+      datalabels: {
+        display: false,
+      },
+      annotation,
+      legend: {
+        labels: {
+          font,
+        },
+      },
+      tooltip: {
+        mode: "index",
+        intersect: false,
+        position: "nearest",
+        callbacks: {
+          title: () => "",
+          label: (item) => {
+            const isCumulative = item.datasetIndex === 0;
+            const count = item.parsed.y as number;
+            const bucket = item.parsed.x as number;
+            const percent = ((count / issues.length) * 100).toFixed(1);
+            const description = isCumulative ? `within` : `in exactly`;
+            return `${count} (${percent}%) items completed ${description} ${bucket} days`;
           },
         },
-        plugins: {
-          datalabels: {
-            display: false,
-          },
-          annotation,
-          legend: {
-            labels: {
-              font,
-            },
-          },
-          tooltip: {
-            mode: "index",
-            intersect: false,
-            position: "nearest",
-            callbacks: {
-              title: () => "",
-              label: (item) => {
-                const isCumulative = item.datasetIndex === 0;
-                const count = item.parsed.y as number;
-                const bucket = item.parsed.x as number;
-                const percent = ((count / issues.length) * 100).toFixed(1);
-                const description = isCumulative ? `within` : `in exactly`;
-                return `${count} (${percent}%) items completed ${description} ${bucket} days`;
-              },
-            },
-            bodyFont: font,
-          },
-        },
-      }}
-    />
+        bodyFont: font,
+      },
+    },
+  };
+
+  const options: ChartOptions<"bar" | "line"> = mergeDeep(
+    defaultOptions,
+    overrideOptions ?? {},
   );
+
+  return <Chart type="bar" data={data} options={options} />;
 };
 
 const getMaxXValue = (issues: CompletedIssue[]): number => {
