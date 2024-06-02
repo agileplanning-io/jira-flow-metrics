@@ -3,7 +3,7 @@ import { ChartData, ChartOptions } from "chart.js";
 import { SummaryResult } from "@agileplanning-io/flow-metrics";
 import { formatDate } from "@agileplanning-io/flow-lib";
 import { ChartStyle, buildFontSpec } from "../util/style";
-import { isDate } from "remeda";
+import { isDate, mergeDeep } from "remeda";
 import { getAnnotationOptions } from "../util/annotations";
 import { addDays } from "date-fns";
 
@@ -11,12 +11,14 @@ export type ForecastChartProps = {
   result: SummaryResult;
   showPercentiles: boolean;
   style?: ChartStyle;
+  options?: ChartOptions<"bar">;
 };
 
 export const ForecastChart: React.FC<ForecastChartProps> = ({
   result,
   showPercentiles,
   style,
+  options: overrideOptions,
 }) => {
   const { rows, percentiles, startDate } = result;
 
@@ -83,7 +85,7 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({
     },
   };
 
-  const options: ChartOptions<"bar"> = {
+  const defaultOptions: ChartOptions<"bar"> = {
     scales,
     plugins: {
       legend: {
@@ -107,6 +109,8 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({
       },
     },
   };
+
+  const options = mergeDeep(defaultOptions, overrideOptions ?? {});
 
   return <Bar data={data} options={options} />;
 };
