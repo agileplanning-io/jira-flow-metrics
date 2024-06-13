@@ -1,37 +1,12 @@
 import { boolean } from "@agileplanning-io/flow-lib";
-import { useQueryState } from "@lib/use-query-state";
-import { useEffect } from "react";
 import { z } from "zod";
+import { useChartParamsState } from "../../hooks/use-chart-params";
 
-const defaultValues = {
-  includeStoppedIssues: false,
-  showPercentileLabels: true,
-};
-
-const chartParamsSchema = z
-  .object({
-    includeStoppedIssues: boolean.schema.catch(
-      defaultValues.includeStoppedIssues,
-    ),
-    showPercentileLabels: boolean.schema.catch(
-      defaultValues.showPercentileLabels,
-    ),
-  })
-  .optional();
+const chartParamsSchema = z.object({
+  includeStoppedIssues: boolean.schema.default(boolean.False),
+  showPercentileLabels: boolean.schema.default(boolean.True),
+});
 
 export type ChartParams = z.infer<typeof chartParamsSchema>;
 
-export const useChartParams = () => {
-  const [chartParams, setChartParams] = useQueryState(
-    "c",
-    chartParamsSchema.parse,
-  );
-
-  useEffect(() => {
-    if (!chartParams) {
-      setChartParams(defaultValues);
-    }
-  }, [chartParams, setChartParams]);
-
-  return { chartParams: chartParams ?? defaultValues, setChartParams };
-};
+export const useChartParams = () => useChartParamsState(chartParamsSchema);
