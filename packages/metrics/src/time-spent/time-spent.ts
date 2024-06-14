@@ -1,7 +1,7 @@
 import { compact, identity, pipe, reject, sortBy, sumBy } from "remeda";
 import { Interval, getIntersectingInterval } from "@agileplanning-io/flow-lib";
 import { differenceInSeconds } from "date-fns";
-import { HierarchyLevel, Issue } from "../types";
+import { HierarchyLevel, Issue } from "../issues";
 
 export type TimeSpentRow = Pick<Issue, "key" | "summary"> &
   Partial<

@@ -2,7 +2,7 @@ import { eachDayOfInterval, getISODay, startOfDay } from "date-fns";
 import { SimulationInputs } from "../simulation/run";
 import { Interval, excludeOutliersFromSeq } from "@agileplanning-io/flow-lib";
 import { categorizeWeekday } from "@agileplanning-io/flow-lib";
-import { CompletedIssue } from "../../types";
+import { CompletedIssue } from "../../issues";
 
 export const computeThroughput = (
   interval: Interval,

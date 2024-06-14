@@ -7,7 +7,7 @@ import {
   difference,
   getPercentiles,
 } from "@agileplanning-io/flow-lib";
-import { CompletedIssue } from "../types";
+import { CompletedIssue } from "../issues";
 
 export type CalculateThroughputParams = {
   issues: CompletedIssue[];

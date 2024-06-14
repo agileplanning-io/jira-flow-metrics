@@ -3,7 +3,7 @@ import {
   HierarchyLevel,
   Issue,
   StatusCategory,
-} from "../types";
+} from "../issues";
 import { TransitionContext, buildTransitions } from "../parse/issue_builder";
 
 let issueCount = 100;

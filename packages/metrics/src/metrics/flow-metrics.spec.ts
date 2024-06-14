@@ -1,12 +1,8 @@
-import {
-  CycleTimePolicy,
-  HierarchyLevel,
-  Status,
-  StatusCategory,
-} from "../types";
+import { HierarchyLevel, Status, StatusCategory } from "../issues";
 import { getFlowMetrics } from "./flow-metrics";
 import { buildIssue } from "../fixtures/issue-factory";
-import { FilterType } from "../util";
+import { FilterType } from "../issues";
+import { CycleTimePolicy } from "./policies/cycle-time-policy";
 
 jest.useFakeTimers();
 

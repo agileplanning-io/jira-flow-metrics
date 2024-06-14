@@ -5,7 +5,7 @@ import {
   StatusCategory,
   isCompleted,
   isStarted,
-} from "../../types";
+} from "../../issues";
 import { compareAsc, compareDesc } from "date-fns";
 import { getDifferenceInDays } from "@agileplanning-io/flow-lib";
 

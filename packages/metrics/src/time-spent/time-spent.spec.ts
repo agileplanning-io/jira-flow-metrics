@@ -5,7 +5,7 @@ import {
   Issue,
   StatusCategory,
   TransitionStatus,
-} from "../types";
+} from "../issues";
 import { timeSpentInPeriod } from "./time-spent";
 
 const backlog: TransitionStatus = {

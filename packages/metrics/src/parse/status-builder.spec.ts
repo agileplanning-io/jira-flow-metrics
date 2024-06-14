@@ -1,4 +1,4 @@
-import { StatusCategory } from "../types";
+import { StatusCategory } from "../issues";
 import { StatusBuilder } from "./status-builder";
 
 describe("StatusBuilder", () => {

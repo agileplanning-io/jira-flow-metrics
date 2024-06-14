@@ -1,5 +1,5 @@
 import { intersection } from "remeda";
-import { CompletedIssue, HierarchyLevel, Issue, isCompleted } from "../types";
+import { CompletedIssue, HierarchyLevel, Issue, isCompleted } from "../issues";
 import { Interval } from "@agileplanning-io/flow-lib";
 
 export enum DateFilterType {

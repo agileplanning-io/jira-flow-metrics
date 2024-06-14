@@ -3,7 +3,7 @@ import { addDays, compareAsc, getISODay } from "date-fns";
 import { groupBy } from "remeda";
 import { SeedRandomGenerator } from "./simulation/select";
 import { computeInputs } from "./inputs/inputs";
-import { CompletedIssue } from "../types";
+import { CompletedIssue } from "../issues";
 import {
   Interval,
   Percentile,

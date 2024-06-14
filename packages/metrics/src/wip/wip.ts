@@ -1,7 +1,7 @@
 import { range } from "remeda";
 import { addDays, differenceInDays } from "date-fns";
 import { Interval } from "@agileplanning-io/flow-lib";
-import { Issue } from "../types";
+import { Issue } from "../issues";
 
 export type CalculateWipParams = {
   issues: Issue[];

@@ -4,7 +4,7 @@ import {
   IssueFlowMetrics,
   StatusCategory,
   Transition,
-} from "../../types";
+} from "../../issues";
 import { getDifferenceInDays } from "@agileplanning-io/flow-lib";
 
 export const getStatusFlowMetrics = (
