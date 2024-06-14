@@ -7,12 +7,12 @@ import {
   IssueFilter,
   JiraIssueBuilder,
   StatusBuilder,
+  buildDefaultWorkflowScheme,
 } from "@agileplanning-io/flow-metrics";
 import { DomainsRepository } from "@entities/domains";
 import { filter, flat, isNonNullish, unique } from "remeda";
-import { buildDefaultWorkflowScheme } from "./build-default-workflow";
-import { isValidWorkflowScheme } from "./validation-rules";
-import { buildDefaultCycleTimePolicy } from "./build-default-policy";
+import { isValidWorkflowScheme } from "@agileplanning-io/flow-metrics";
+import { buildDefaultCycleTimePolicy } from "@agileplanning-io/flow-metrics";
 
 @Injectable()
 export class SyncUseCase {

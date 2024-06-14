@@ -3,9 +3,9 @@ import {
   Issue,
   StatusCategory,
   TransitionStatus,
-} from "@agileplanning-io/flow-metrics";
-import { WorkflowScheme, WorkflowStage } from "@entities/projects";
+} from "../issues";
 import { sortStatuses } from "./sort-statuses";
+import { WorkflowScheme, WorkflowStage } from "./types";
 import { compact } from "remeda";
 
 export const buildDefaultWorkflowScheme = (

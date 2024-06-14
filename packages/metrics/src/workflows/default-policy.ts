@@ -1,9 +1,5 @@
-import { CycleTimePolicy } from "@agileplanning-io/flow-metrics";
-import {
-  Workflow,
-  WorkflowScheme,
-  statusesInWorkflowStages,
-} from "@entities/projects";
+import { CycleTimePolicy } from "../metrics";
+import { WorkflowScheme, Workflow, statusesInWorkflowStages } from "./types";
 import { isValidCycleTimePolicy } from "./validation-rules";
 
 export const buildDefaultCycleTimePolicy = (
