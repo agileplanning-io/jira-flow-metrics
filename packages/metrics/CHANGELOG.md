@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-metrics
 
+## 0.1.1
+
+### Patch Changes
+
+- 33334ee: refactor: extract workflows to metrics package
+
 ## 0.1.0
 
 ### Minor Changes
