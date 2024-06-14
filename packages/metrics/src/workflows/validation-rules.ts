@@ -1,12 +1,6 @@
-import {
-  CycleTimePolicy,
-  TransitionStatus,
-} from "@agileplanning-io/flow-metrics";
-import {
-  Workflow,
-  WorkflowScheme,
-  statusesInWorkflowStages,
-} from "@entities/projects";
+import { TransitionStatus } from "../issues";
+import { CycleTimePolicy } from "../metrics";
+import { WorkflowScheme, Workflow, statusesInWorkflowStages } from "./types";
 
 export const isValidWorkflowScheme = (scheme: WorkflowScheme): boolean => {
   return isValidWorkflow(scheme.stories) && isValidWorkflow(scheme.epics);

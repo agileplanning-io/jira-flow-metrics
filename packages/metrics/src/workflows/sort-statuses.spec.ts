@@ -1,8 +1,5 @@
-import {
-  Issue,
-  StatusCategory,
-  buildIssue,
-} from "@agileplanning-io/flow-metrics";
+import { buildIssue } from "../fixtures";
+import { Issue, StatusCategory } from "../issues";
 import { sortStatuses } from "./sort-statuses";
 import { addHours } from "date-fns";
 

@@ -1,6 +1,6 @@
 import { Edge, Graph, alg } from "@dagrejs/graphlib";
-import { Issue, Transition } from "@agileplanning-io/flow-metrics";
 import { flatten, compact, sortBy } from "remeda";
+import { Issue, Transition } from "../issues";
 
 type EdgeWithWeight = {
   edge: Edge;
