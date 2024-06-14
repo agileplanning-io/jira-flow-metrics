@@ -4,7 +4,7 @@ import {
   Status,
   StatusCategory,
 } from "../types";
-import { getFlowMetrics } from "./get-flow-metrics";
+import { getFlowMetrics } from "./flow-metrics";
 import { buildIssue } from "../fixtures/issue-factory";
 import { FilterType } from "../util";
 

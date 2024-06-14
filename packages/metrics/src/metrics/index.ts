@@ -1,1 +1,1 @@
-export * from "./get-flow-metrics";
+export * from "./flow-metrics";
