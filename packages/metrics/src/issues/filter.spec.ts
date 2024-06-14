@@ -1,5 +1,5 @@
 import { buildIssue } from "../fixtures/issue-factory";
-import { HierarchyLevel } from "../types";
+import { HierarchyLevel } from "../issues";
 import { FilterType, filterIssues } from "./filter";
 
 describe("filterIssues", () => {

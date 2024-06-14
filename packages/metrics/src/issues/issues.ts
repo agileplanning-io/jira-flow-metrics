@@ -1,5 +1,3 @@
-import { IssueAttributesFilter } from "./util";
-
 export enum StatusCategory {
   ToDo = "To Do",
   InProgress = "In Progress",
@@ -85,18 +83,3 @@ export const isStarted = (issue: Issue): issue is StartedIssue =>
 
 export const isCompleted = (issue: Issue): issue is CompletedIssue =>
   issue.metrics.completed !== undefined;
-
-export type StatusCycleTimePolicy = {
-  type: "status";
-  includeWaitTime: boolean;
-  statuses?: string[];
-};
-
-export type ComputedCycleTimePolicy = IssueAttributesFilter & {
-  type: "computed";
-};
-
-export type CycleTimePolicy = {
-  stories: StatusCycleTimePolicy;
-  epics: StatusCycleTimePolicy | ComputedCycleTimePolicy;
-};

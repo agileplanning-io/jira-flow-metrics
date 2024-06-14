@@ -1,8 +1,9 @@
-import { CycleTimePolicy, HierarchyLevel, Issue } from "../types";
-import { filterIssues } from "../util";
+import { HierarchyLevel, Issue } from "../issues";
+import { filterIssues } from "../issues";
 import { getStatusFlowMetrics } from "./policies/status-flow-metrics";
 import { getComputedFlowMetrics } from "./policies/computed-flow-metrics";
 import { pipe } from "remeda";
+import { CycleTimePolicy } from "./policies/cycle-time-policy";
 
 export const getFlowMetrics = (
   issues: Issue[],
