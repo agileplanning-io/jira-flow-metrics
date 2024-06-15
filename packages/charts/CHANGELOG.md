@@ -1,5 +1,13 @@
 # @agileplanning-io/flow-charts
 
+## 0.1.5
+
+### Patch Changes
+
+- 87ce4de: fix: DatePicker imports
+- Updated dependencies [87ce4de]
+  - @agileplanning-io/flow-metrics@0.1.4
+
 ## 0.1.4
 
 ### Patch Changes
