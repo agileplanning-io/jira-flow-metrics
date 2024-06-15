@@ -33,7 +33,6 @@
     "immer": "^10.0.3",
     "jotai": "^2.8.0",
     "mathjs": "^11.11.2",
-    "rc-picker": "~3.14.5",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
