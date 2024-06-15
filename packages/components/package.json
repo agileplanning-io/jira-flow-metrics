@@ -25,7 +25,9 @@
     "@agileplanning-io/flow-metrics": "workspace:*",
     "@emotion/styled": "^11.11.0",
     "@hello-pangea/dnd": "^16.5.0",
+    "date-fns": "^2.30.0",
     "immer": "^10.0.3",
+    "rc-picker": "~3.14.5",
     "remeda": "^1.58.2",
     "tsup": "^8.0.1"
   },

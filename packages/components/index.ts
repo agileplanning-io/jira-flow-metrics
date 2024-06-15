@@ -5,3 +5,4 @@ export * from "./src/issue-links";
 export * from "./src/issue-fields";
 export * from "./src/workflow-board/workflow-board";
 export * from "./src/workflow-stages-table";
+export * from "./src/date-selector";

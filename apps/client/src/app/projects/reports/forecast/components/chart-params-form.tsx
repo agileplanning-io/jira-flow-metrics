@@ -12,7 +12,7 @@ import {
   Space,
   Tooltip,
 } from "antd";
-import { DatePicker } from "../../components/date-picker";
+import { DatePicker } from "@agileplanning-io/flow-components";
 import { RedoOutlined } from "@ant-design/icons";
 
 export type ChartParamsFormOptions = {
