@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-metrics
 
+## 0.1.2
+
+### Patch Changes
+
+- 5b138a2: refactor: extract DateSelector to components package
+
 ## 0.1.1
 
 ### Patch Changes
