@@ -10,7 +10,7 @@ import { LoadingSpinner } from "@app/components/loading-spinner";
 import { EditFilterForm } from "./edit-filter-form";
 import { ExpandableOptions } from "@app/components/expandable-options";
 import { Col, Form, Row, Select, Tag } from "antd";
-import { DateSelector } from "../date-selector";
+import { DateSelector } from "@agileplanning-io/flow-components";
 import { ClientIssueFilter } from "@app/filter/client-issue-filter";
 import { getHeaderOptions } from "./header-options";
 

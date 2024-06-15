@@ -359,9 +359,15 @@ importers:
       '@hello-pangea/dnd':
         specifier: ^16.5.0
         version: 16.5.0(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)
+      date-fns:
+        specifier: ^2.30.0
+        version: 2.30.0
       immer:
         specifier: ^10.0.3
         version: 10.0.3
+      rc-picker:
+        specifier: ~3.14.5
+        version: 3.14.6(date-fns@2.30.0)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0)
       react-router-dom:
         specifier: ^6.16.0
         version: 6.16.0(react-dom@18.2.0)(react@18.2.0)
