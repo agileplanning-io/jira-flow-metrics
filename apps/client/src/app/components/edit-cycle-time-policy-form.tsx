@@ -26,7 +26,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
 }) => {
   const selectedStoryStages = useMemo(() => {
     return getSelectedStages(
-      project?.workflowScheme.stories,
+      project.workflowScheme.stories,
       cycleTimePolicy?.stories,
     );
   }, [project, cycleTimePolicy]);
@@ -199,10 +199,6 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
         <Col span={12}>
           <EpicPolicyForm />
         </Col>
-      </Row>
-      <Row gutter={[8, 8]}></Row>
-      <Row gutter={[8, 8]}>
-        <Col span={8}></Col>
       </Row>
     </>
   );
