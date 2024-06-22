@@ -10,7 +10,7 @@ const valuesFilterSchema = z.object({
 const statusCycleTimePolicySchema = z.object({
   type: z.literal("status"),
   includeWaitTime: boolean.schema,
-  statuses: z.array(z.string()),
+  statuses: z.array(z.string()).default([]),
 });
 
 const computedCycleTimePolicySchema = z.object({
