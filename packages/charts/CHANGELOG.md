@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-charts
 
+## 0.1.6
+
+### Patch Changes
+
+- 6e76776: fix: export WipChart
+
 ## 0.1.5
 
 ### Patch Changes
