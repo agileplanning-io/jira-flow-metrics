@@ -15,7 +15,7 @@ import {
 import { useProjectContext } from "@app/projects/context";
 import { IssuesTable } from "@app/components/issues-table";
 import { ZoomInOutlined } from "@ant-design/icons";
-import { EpicTimeline } from "@app/projects/issues/issue-details/components/epic-timeline";
+import { EpicTimelinePage } from "@app/projects/issues/issue-details/components/epic-timeline-page";
 
 const IssueDetails = ({ issue }: { issue: Issue }): ReactElement => {
   const { projectId } = useNavigationContext();
@@ -76,7 +76,7 @@ const IssueDetails = ({ issue }: { issue: Issue }): ReactElement => {
             >
               <Layout style={{ maxWidth: "1440px", margin: "auto" }}>
                 <Layout.Content style={{ margin: "0 50px" }}>
-                  <EpicTimeline issues={children ?? []} epic={issue} />
+                  <EpicTimelinePage issues={children ?? []} epic={issue} />
                 </Layout.Content>
               </Layout>
             </Drawer>

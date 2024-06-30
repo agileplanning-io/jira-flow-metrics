@@ -10,12 +10,12 @@ import {
 import { useProjectContext } from "../../context";
 import { useState } from "react";
 import { ZoomInOutlined } from "@ant-design/icons";
-import { EpicTimeline } from "./components/epic-timeline";
 import { issueDetailsPath } from "@app/navigation/paths";
 import {
   IssueExternalLink,
   IssueLink,
 } from "@app/projects/components/issue-links";
+import { EpicTimelinePage } from "./components/epic-timeline-page";
 
 export const IssueDetailsPage = () => {
   const { issueKey, projectId } = useNavigationContext();
@@ -77,7 +77,7 @@ export const IssueDetailsPage = () => {
           >
             <Layout style={{ maxWidth: "1440px", margin: "auto" }}>
               <Layout.Content style={{ margin: "0 50px" }}>
-                <EpicTimeline issues={children ?? []} epic={issue} />
+                <EpicTimelinePage issues={children ?? []} epic={issue} />
               </Layout.Content>
             </Layout>
           </Drawer>
