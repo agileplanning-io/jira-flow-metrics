@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-metrics
 
+## 0.1.5
+
+### Patch Changes
+
+- 8fd29eb: feat: add EpicTimeline to charts package
+
 ## 0.1.4
 
 ### Patch Changes
