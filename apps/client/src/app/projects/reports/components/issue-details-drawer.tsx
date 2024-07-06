@@ -13,9 +13,9 @@ import {
   IssueLink,
 } from "@app/projects/components/issue-links";
 import { useProjectContext } from "@app/projects/context";
-import { IssuesTable } from "@app/components/issues-table";
 import { ZoomInOutlined } from "@ant-design/icons";
 import { EpicTimelinePage } from "@app/projects/issues/issue-details/components/epic-timeline-page";
+import { IssuesTable } from "@app/components/issues-table";
 
 const IssueDetails = ({ issue }: { issue: Issue }): ReactElement => {
   const { projectId } = useNavigationContext();
