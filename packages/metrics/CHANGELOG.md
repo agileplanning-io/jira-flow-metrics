@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-metrics
 
+## 0.1.6
+
+### Patch Changes
+
+- 34b9468: feat: extract issues table
+
 ## 0.1.5
 
 ### Patch Changes
