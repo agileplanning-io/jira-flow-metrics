@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { IssuesTable, SortState } from "../../../components/issues-table";
 import {
   FilterType,
   Issue,
@@ -11,6 +10,8 @@ import * as fuzzball from "fuzzball";
 import { useProjectContext } from "../../context";
 import { FilterOptionsForm } from "../../reports/components/filter-form/filter-options-form";
 import { useFilterParams } from "@app/filter/use-filter-params";
+import { IssuesTable } from "@app/components/issues-table";
+import { SortState } from "@agileplanning-io/flow-components";
 
 export const IssuesIndexPage = () => {
   const { issues } = useProjectContext();

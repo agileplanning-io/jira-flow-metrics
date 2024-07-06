@@ -1,5 +1,4 @@
 import { Button, Col, Drawer, Layout, Row, Space } from "antd";
-import { IssuesTable } from "../../../components/issues-table";
 import { HierarchyLevel } from "@agileplanning-io/flow-metrics";
 import { useNavigationContext } from "../../../navigation/context";
 import {
@@ -16,6 +15,7 @@ import {
   IssueLink,
 } from "@app/projects/components/issue-links";
 import { EpicTimelinePage } from "./components/epic-timeline-page";
+import { IssuesTable } from "@app/components/issues-table";
 
 export const IssueDetailsPage = () => {
   const { issueKey, projectId } = useNavigationContext();
