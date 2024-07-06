@@ -1,5 +1,13 @@
 # @agileplanning-io/flow-charts
 
+## 0.1.8
+
+### Patch Changes
+
+- 34b9468: feat: extract issues table
+- Updated dependencies [34b9468]
+  - @agileplanning-io/flow-metrics@0.1.6
+
 ## 0.1.7
 
 ### Patch Changes

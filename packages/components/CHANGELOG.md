@@ -1,5 +1,13 @@
 # @agileplanning-io/flow-components
 
+## 0.1.6
+
+### Patch Changes
+
+- 34b9468: feat: extract issues table
+- Updated dependencies [34b9468]
+  - @agileplanning-io/flow-metrics@0.1.6
+
 ## 0.1.5
 
 ### Patch Changes
