@@ -1,3 +1,4 @@
+import { Interval, TimeUnit } from "@agileplanning-io/flow-lib";
 import {
   addDays,
   addMonths,
@@ -12,7 +13,7 @@ import {
 export type DateRangeOption = {
   label: string;
   key: string;
-  range: [Date, Date];
+  range: Interval;
 };
 
 type DateRangeOptionGroup = {
@@ -24,17 +25,26 @@ type DateRangeOptionGroup = {
 type DateRangeMenuOptions = {
   items: DateRangeOptionGroup[];
   ranges: {
-    [key: string]: [Date, Date];
+    [key: string]: Interval;
   };
 };
 
 const getRelativeDateRange = (count: number, now: Date): DateRangeOption => {
+  const label = `${count} ${count === 1 ? "day" : "days"} ago`;
+  return {
+    label,
+    key: `relative_${count}_days`,
+    range: { end: endOfDay(now), unit: TimeUnit.Day, unitCount: count },
+  };
+};
+
+const getAbsoluteDateRange = (count: number, now: Date): DateRangeOption => {
   const start = addDays(now, -count);
   const label = `Last ${count} ${count === 1 ? "day" : "days"}`;
   return {
     label,
-    key: `relative_${count}_days`,
-    range: [start, endOfDay(now)],
+    key: `absolute_${count}_days`,
+    range: { start, end: endOfDay(now) },
   };
 };
 
@@ -45,10 +55,13 @@ const getCalendarRange = (
 ): DateRangeOption => {
   const startOfUnit = unit === "week" ? startOfWeek(now) : startOfMonth(now);
   const addUnits = unit === "week" ? addWeeks : addMonths;
-  const range: [Date, Date] =
+  const range: Interval =
     prevCount === 0
-      ? [startOfUnit, endOfDay(now)]
-      : [addUnits(startOfUnit, -prevCount), endOfDay(subDays(startOfUnit, 1))];
+      ? { start: startOfUnit, end: endOfDay(now) }
+      : {
+          start: addUnits(startOfUnit, -prevCount),
+          end: endOfDay(subDays(startOfUnit, 1)),
+        };
   const label =
     prevCount === 0
       ? `This ${unit}`
@@ -67,6 +80,10 @@ export const getDateRanges = (): DateRangeMenuOptions => {
 
   const relativeItems = [
     ...[7, 14, 30, 90, 180].map((count) => getRelativeDateRange(count, now)),
+  ];
+
+  const absoluteItems = [
+    ...[7, 14, 30, 90, 180].map((count) => getAbsoluteDateRange(count, now)),
   ];
 
   const calendarWeekItems = [
@@ -88,6 +105,11 @@ export const getDateRanges = (): DateRangeMenuOptions => {
       children: relativeItems,
     },
     {
+      label: "Absolute",
+      key: "absolute",
+      children: absoluteItems,
+    },
+    {
       label: "Calendar weeks",
       key: "calendar_weeks",
       children: calendarWeekItems,
@@ -100,9 +122,12 @@ export const getDateRanges = (): DateRangeMenuOptions => {
   ];
 
   const ranges = Object.fromEntries(
-    [...relativeItems, ...calendarWeekItems, ...calendarMonthItems].map(
-      (item) => [item.key, item.range],
-    ),
+    [
+      ...relativeItems,
+      ...absoluteItems,
+      ...calendarWeekItems,
+      ...calendarMonthItems,
+    ].map((item) => [item.key, item.range]),
   );
 
   return {

@@ -1,6 +1,10 @@
 import { eachDayOfInterval, getISODay, startOfDay } from "date-fns";
 import { SimulationInputs } from "../simulation/run";
-import { Interval, excludeOutliersFromSeq } from "@agileplanning-io/flow-lib";
+import {
+  Interval,
+  asAbsolute,
+  excludeOutliersFromSeq,
+} from "@agileplanning-io/flow-lib";
 import { categorizeWeekday } from "@agileplanning-io/flow-lib";
 import { CompletedIssue } from "../../issues";
 
@@ -8,7 +12,7 @@ export const computeThroughput = (
   interval: Interval,
   issues: CompletedIssue[],
 ): { date: Date; count: number }[] => {
-  const dates = eachDayOfInterval(interval);
+  const dates = eachDayOfInterval(asAbsolute(interval));
   const results: Record<string, number> = {};
   for (const issue of issues) {
     const key = startOfDay(issue.metrics.completed).toISOString();

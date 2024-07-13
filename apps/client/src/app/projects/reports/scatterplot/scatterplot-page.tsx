@@ -14,6 +14,7 @@ import { FilterOptionsForm } from "../components/filter-form/filter-options-form
 import { useProjectContext } from "../../context";
 import {
   Percentile,
+  asAbsolute,
   defaultDateRange,
   getPercentiles,
 } from "@agileplanning-io/flow-lib";
@@ -89,7 +90,7 @@ export const ScatterplotPage = () => {
             (issue) => !excludedIssues.includes(issue.key),
           )}
           percentiles={percentiles}
-          range={filter.dates}
+          range={asAbsolute(filter.dates)}
           setSelectedIssues={setSelectedIssues}
           showPercentileLabels={chartParams.showPercentileLabels}
           hideOutliers={chartParams.hideOutliers}

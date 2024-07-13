@@ -1,6 +1,6 @@
 import { intersection } from "remeda";
 import { CompletedIssue, HierarchyLevel, Issue, isCompleted } from "../issues";
-import { Interval } from "@agileplanning-io/flow-lib";
+import { Interval, asAbsolute } from "@agileplanning-io/flow-lib";
 
 export enum DateFilterType {
   Completed,
@@ -93,16 +93,18 @@ export const filterIssues = (issues: Issue[], filter: IssueFilter): Issue[] => {
     }
 
     if (filter.dates) {
+      const interval = asAbsolute(filter.dates.interval);
+
       if (filter.dates.filterType === DateFilterType.Completed) {
         if (!issue.metrics.completed) {
           return false;
         }
 
-        if (issue.metrics.completed < filter.dates.interval.start) {
+        if (issue.metrics.completed < interval.start) {
           return false;
         }
 
-        if (issue.metrics.completed > filter.dates.interval.end) {
+        if (issue.metrics.completed > interval.end) {
           return false;
         }
       } else {
@@ -110,13 +112,13 @@ export const filterIssues = (issues: Issue[], filter: IssueFilter): Issue[] => {
           return false;
         }
 
-        if (issue.metrics.started > filter.dates.interval.end) {
+        if (issue.metrics.started > interval.end) {
           return false;
         }
 
         if (
           issue.metrics.completed &&
-          issue.metrics.completed < filter.dates.interval.start
+          issue.metrics.completed < interval.start
         ) {
           return false;
         }

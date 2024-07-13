@@ -17,7 +17,7 @@ import { useAtomValue } from "jotai";
 import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
 import { useFilterParams } from "@app/filter/use-filter-params";
-import { defaultDateRange } from "@agileplanning-io/flow-lib";
+import { asAbsolute, defaultDateRange } from "@agileplanning-io/flow-lib";
 
 export const WipPage = () => {
   const { issues } = useProjectContext();
@@ -67,7 +67,7 @@ export const WipPage = () => {
     setWipResult(
       calculateWip({
         issues: filteredIssues,
-        range: filter.dates,
+        range: asAbsolute(filter.dates),
       }),
     );
   }, [filter, filteredIssues]);
