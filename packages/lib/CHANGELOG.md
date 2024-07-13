@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-lib
 
+## 0.1.1
+
+### Patch Changes
+
+- 3b78d0f: feat: relative intervals
+
 ## 0.1.0
 
 ### Minor Changes
