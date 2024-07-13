@@ -5,9 +5,9 @@ import { Scatter } from "react-chartjs-2";
 import "chartjs-adapter-date-fns";
 import "chartjs-plugin-datalabels";
 import {
+  AbsoluteInterval,
   excludeOutliersFromSeq,
   formatDate,
-  Interval,
   Percentile,
 } from "@agileplanning-io/flow-lib";
 import { compareAsc, startOfDay } from "date-fns";
@@ -18,7 +18,7 @@ import { getAnnotationOptions } from "../util/annotations";
 type ScatterplotProps = {
   issues: CompletedIssue[];
   percentiles?: Percentile[];
-  range: Interval;
+  range: AbsoluteInterval;
   showPercentileLabels: boolean;
   setSelectedIssues: (issues: Issue[]) => void;
   hideOutliers: boolean;

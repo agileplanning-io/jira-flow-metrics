@@ -13,13 +13,7 @@ import {
   startOfDay,
   startOfMonth,
   startOfWeek,
-  subDays,
 } from "date-fns";
-
-export type Interval = {
-  start: Date;
-  end: Date;
-};
 
 export enum TimeUnit {
   Day = "day",
@@ -27,6 +21,31 @@ export enum TimeUnit {
   Fortnight = "fortnight",
   Month = "month",
 }
+
+export type AbsoluteInterval = {
+  start: Date;
+  end: Date;
+};
+
+export type RelativeInterval = {
+  end: Date;
+  unit: TimeUnit;
+  unitCount: number;
+};
+
+export type Interval = AbsoluteInterval | RelativeInterval;
+
+export const isAbsolute = (interval: Interval): interval is AbsoluteInterval =>
+  "start" in interval;
+
+export const asAbsolute = (interval: Interval): AbsoluteInterval => {
+  if (isAbsolute(interval)) {
+    return interval;
+  }
+
+  const start = addTime(interval.end, -interval.unitCount, interval.unit);
+  return { start, end: interval.end };
+};
 
 const startOf = (date: Date, unit: TimeUnit): Date => {
   switch (unit) {
@@ -56,18 +75,18 @@ const endOf = (date: Date, start: Date, unit: TimeUnit): Date => {
 };
 
 export const getOverlappingInterval = (
-  interval: Interval,
+  interval: AbsoluteInterval,
   unit: TimeUnit,
-): Interval => {
+): AbsoluteInterval => {
   const start = startOf(interval.start, unit);
   const end = endOf(interval.end, start, unit);
   return { start, end };
 };
 
 export const getIntersectingInterval = (
-  interval1: Interval,
-  interval2: Interval,
-): Interval | undefined => {
+  interval1: AbsoluteInterval,
+  interval2: AbsoluteInterval,
+): AbsoluteInterval | undefined => {
   if (interval1.end < interval2.start) {
     return undefined;
   }
@@ -114,7 +133,7 @@ export const difference = (
 
 export const defaultDateRange = (): Interval => {
   const today = new Date();
-  const defaultStart = startOfDay(subDays(today, 30));
+  //const defaultStart = startOfDay(subDays(today, 30));
   const defaultEnd = endOfDay(today);
-  return { start: defaultStart, end: defaultEnd };
+  return { end: defaultEnd, unit: TimeUnit.Day, unitCount: 30 };
 };

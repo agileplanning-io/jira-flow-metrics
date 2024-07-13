@@ -1,4 +1,4 @@
-import { formatDate } from "@agileplanning-io/flow-lib";
+import { formatDate, isAbsolute } from "@agileplanning-io/flow-lib";
 import { FilterType, ValuesFilter } from "@agileplanning-io/flow-metrics";
 import { ExpandableOptionsHeader } from "@app/components/expandable-options";
 import { ClientIssueFilter } from "@app/filter/client-issue-filter";
@@ -20,11 +20,14 @@ export const getHeaderOptions = (
   });
 
   if (filter.dates) {
+    const value = isAbsolute(filter.dates)
+      ? `${formatDate(filter.dates.start)}-${formatDate(filter.dates.end)}`
+      : `Last ${filter.dates.unitCount}-${filter.dates.unit}${
+          filter.dates.unitCount === 1 ? "" : "s"
+        }`;
     options.push({
       label: "Dates",
-      value: `${formatDate(filter.dates.start)}-${formatDate(
-        filter.dates.end,
-      )}`,
+      value,
     });
   }
   if (filter.hierarchyLevel) {

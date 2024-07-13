@@ -1,6 +1,6 @@
 import { range } from "remeda";
 import {
-  Interval,
+  AbsoluteInterval,
   Percentile,
   TimeUnit,
   addTime,
@@ -11,7 +11,7 @@ import { CompletedIssue } from "../issues";
 
 export type CalculateThroughputParams = {
   issues: CompletedIssue[];
-  interval: Interval;
+  interval: AbsoluteInterval;
   timeUnit: TimeUnit;
 };
 

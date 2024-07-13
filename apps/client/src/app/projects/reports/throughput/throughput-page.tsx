@@ -10,6 +10,7 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import {
   Interval,
+  asAbsolute,
   defaultDateRange,
   getOverlappingInterval,
 } from "@agileplanning-io/flow-lib";
@@ -55,7 +56,7 @@ export const ThroughputPage = () => {
     }
 
     const interval: Interval = getOverlappingInterval(
-      filter.dates,
+      asAbsolute(filter.dates),
       chartParams.timeUnit,
     );
 

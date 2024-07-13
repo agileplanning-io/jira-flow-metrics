@@ -1,11 +1,11 @@
 import { range } from "remeda";
 import { addDays, differenceInDays } from "date-fns";
-import { Interval } from "@agileplanning-io/flow-lib";
+import { AbsoluteInterval } from "@agileplanning-io/flow-lib";
 import { Issue } from "../issues";
 
 export type CalculateWipParams = {
   issues: Issue[];
-  range: Interval;
+  range: AbsoluteInterval;
 };
 
 export type WipResult = {

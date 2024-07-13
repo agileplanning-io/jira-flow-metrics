@@ -1,5 +1,8 @@
 import { compact, identity, pipe, reject, sortBy, sumBy } from "remeda";
-import { Interval, getIntersectingInterval } from "@agileplanning-io/flow-lib";
+import {
+  AbsoluteInterval,
+  getIntersectingInterval,
+} from "@agileplanning-io/flow-lib";
 import { differenceInSeconds } from "date-fns";
 import { HierarchyLevel, Issue } from "../issues";
 
@@ -21,7 +24,7 @@ const secondsInDay = 60 * 60 * 24;
 
 export const timeSpentInPeriod = (
   issues: Issue[],
-  period: Interval,
+  period: AbsoluteInterval,
 ): TimeSpentRow[] => {
   const timesInPeriod = Object.fromEntries(
     issues

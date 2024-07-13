@@ -7,7 +7,7 @@ import {
   HierarchyLevel,
   defaultValuesFilter,
 } from "@agileplanning-io/flow-metrics";
-import { defaultDateRange } from "@agileplanning-io/flow-lib";
+import { TimeUnit, defaultDateRange } from "@agileplanning-io/flow-lib";
 import { Project } from "@data/projects";
 import { useProjectContext } from "@app/projects/context";
 
@@ -49,6 +49,7 @@ export const useFilterParams = (
   const [filterParams, setFilterParams] = useQueryState<FilterParamsType>(
     "f",
     parse,
+    false,
   );
 
   useEffect(() => {
@@ -76,6 +77,25 @@ const valuesFilterSchema = z.object({
     .optional(),
 });
 
+const datesSchema = z
+  .union([
+    z.object({
+      end: z.coerce.date(),
+      unit: z.enum([
+        TimeUnit.Day,
+        TimeUnit.Week,
+        TimeUnit.Fortnight,
+        TimeUnit.Month,
+      ]),
+      unitCount: z.coerce.number(),
+    }),
+    z.object({
+      start: z.coerce.date(),
+      end: z.coerce.date(),
+    }),
+  ])
+  .optional();
+
 const filterSchema = z
   .object({
     hierarchyLevel: z
@@ -87,13 +107,7 @@ const filterSchema = z
     resolutions: valuesFilterSchema.default(defaultValuesFilter()),
     assignees: valuesFilterSchema.default(defaultValuesFilter()),
     statuses: valuesFilterSchema.default(defaultValuesFilter()),
-    dates: z
-      .object({
-        start: z.coerce.date(),
-        end: z.coerce.date(),
-      })
-      .default(defaultDateRange())
-      .optional(),
+    dates: datesSchema.default(defaultDateRange()),
   })
   .optional();
 
