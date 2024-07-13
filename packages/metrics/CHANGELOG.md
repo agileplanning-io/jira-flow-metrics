@@ -1,5 +1,13 @@
 # @agileplanning-io/flow-metrics
 
+## 0.1.7
+
+### Patch Changes
+
+- 3b78d0f: feat: relative intervals
+- Updated dependencies [3b78d0f]
+  - @agileplanning-io/flow-lib@0.1.1
+
 ## 0.1.6
 
 ### Patch Changes
