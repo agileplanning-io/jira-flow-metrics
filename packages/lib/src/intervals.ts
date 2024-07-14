@@ -28,7 +28,6 @@ export type AbsoluteInterval = {
 };
 
 export type RelativeInterval = {
-  end: Date;
   unit: TimeUnit;
   unitCount: number;
 };
@@ -38,13 +37,16 @@ export type Interval = AbsoluteInterval | RelativeInterval;
 export const isAbsolute = (interval: Interval): interval is AbsoluteInterval =>
   "start" in interval;
 
-export const asAbsolute = (interval: Interval): AbsoluteInterval => {
+export const asAbsolute = (
+  interval: Interval,
+  now: Date = new Date(),
+): AbsoluteInterval => {
   if (isAbsolute(interval)) {
     return interval;
   }
 
-  const start = addTime(interval.end, -interval.unitCount, interval.unit);
-  return { start, end: interval.end };
+  const start = addTime(now, -interval.unitCount, interval.unit);
+  return { start, end: now };
 };
 
 const startOf = (date: Date, unit: TimeUnit): Date => {

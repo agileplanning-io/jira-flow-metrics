@@ -80,7 +80,6 @@ const valuesFilterSchema = z.object({
 const datesSchema = z
   .union([
     z.object({
-      end: z.coerce.date(),
       unit: z.enum([
         TimeUnit.Day,
         TimeUnit.Week,
