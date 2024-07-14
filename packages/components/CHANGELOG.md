@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-components
 
+## 0.1.10
+
+### Patch Changes
+
+- a8fabe1: fix: relative dates dropdown width
+
 ## 0.1.9
 
 ### Patch Changes
