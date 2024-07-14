@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-lib
 
+## 0.1.2
+
+### Patch Changes
+
+- 9011050: fix: end time of now for relative dates
+
 ## 0.1.1
 
 ### Patch Changes

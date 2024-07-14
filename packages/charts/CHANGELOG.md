@@ -1,5 +1,14 @@
 # @agileplanning-io/flow-charts
 
+## 0.1.10
+
+### Patch Changes
+
+- 9011050: fix: end time of now for relative dates
+- Updated dependencies [9011050]
+  - @agileplanning-io/flow-metrics@0.1.8
+  - @agileplanning-io/flow-lib@0.1.2
+
 ## 0.1.9
 
 ### Patch Changes
