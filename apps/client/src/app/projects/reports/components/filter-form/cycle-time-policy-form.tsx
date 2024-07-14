@@ -17,7 +17,9 @@ export const CycleTimePolicyForm = () => {
 
   const selectedStoryStages = getSelectedStages(
     project.workflowScheme.stories,
-    cycleTimePolicy?.stories,
+    cycleTimePolicy.stories.type === "status"
+      ? cycleTimePolicy?.stories
+      : undefined,
   );
 
   const selectedEpicStages = getSelectedStages(
@@ -28,28 +30,33 @@ export const CycleTimePolicyForm = () => {
   const options: ExpandableOptionsHeader["options"][number][] = [
     {
       label: "story stages",
-      value: selectedStoryStages
-        ? `Stages=${selectedStoryStages}`
-        : "StatusCategory=In Progress",
+      value:
+        cycleTimePolicy.stories.type === "status"
+          ? `Stages=${selectedStoryStages}`
+          : "StatusCategory=In Progress",
     },
     {
       value: `${
-        cycleTimePolicy?.stories.includeWaitTime ? "Include" : "Exclude"
+        cycleTimePolicy.stories.includeWaitTime ? "Include" : "Exclude"
       } story wait time`,
     },
     {
       label: "epic policy type",
-      value: cycleTimePolicy?.epics.type,
+      value: cycleTimePolicy.epics.type,
     },
   ];
 
-  if (cycleTimePolicy.epics.type === "status") {
+  if (
+    cycleTimePolicy.epics.type === "status" ||
+    cycleTimePolicy.epics.type === "statusCategory"
+  ) {
     options.push(
       {
         label: "epic stages",
-        value: selectedEpicStages
-          ? `Stages=${selectedEpicStages}`
-          : "StatusCategory=In Progress",
+        value:
+          cycleTimePolicy.epics.type === "status"
+            ? `Stages=${selectedEpicStages}`
+            : "StatusCategory=In Progress",
       },
       {
         value: `${

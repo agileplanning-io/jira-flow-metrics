@@ -10,7 +10,12 @@ const valuesFilterSchema = z.object({
 const statusCycleTimePolicySchema = z.object({
   type: z.literal("status"),
   includeWaitTime: boolean.schema,
-  statuses: z.array(z.string()).default([]),
+  statuses: z.array(z.string()).optional(),
+});
+
+const statusCategoryCycleTimePolicySchema = z.object({
+  type: z.literal("statusCategory"),
+  includeWaitTime: boolean.schema,
 });
 
 const computedCycleTimePolicySchema = z.object({
@@ -23,9 +28,13 @@ const computedCycleTimePolicySchema = z.object({
 
 export const cycleTimePolicySchema = z
   .object({
-    stories: statusCycleTimePolicySchema,
+    stories: z.discriminatedUnion("type", [
+      statusCycleTimePolicySchema,
+      statusCategoryCycleTimePolicySchema,
+    ]),
     epics: z.discriminatedUnion("type", [
       statusCycleTimePolicySchema,
+      statusCategoryCycleTimePolicySchema,
       computedCycleTimePolicySchema,
     ]),
   })
