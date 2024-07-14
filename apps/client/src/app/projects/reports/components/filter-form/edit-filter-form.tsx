@@ -6,6 +6,7 @@ import {
 import { Form, Select, SelectProps, Space } from "antd";
 import { FC } from "react";
 import { ClientIssueFilter } from "@app/filter/client-issue-filter";
+import { clone } from "remeda";
 
 export type EditFilterFormProps = {
   filter: ClientIssueFilter;
@@ -128,7 +129,7 @@ const ValuesFilterField: FC<ValuesFilterFieldProps> = ({
       const valuesFilter = filter[filterKey] ?? defaultValuesFilter();
       valuesFilter.type = type;
       filter[filterKey] = valuesFilter;
-      onChange(filter);
+      onChange(clone(filter));
     }
   };
 
@@ -137,7 +138,7 @@ const ValuesFilterField: FC<ValuesFilterFieldProps> = ({
       const valuesFilter = filter[filterKey] ?? defaultValuesFilter();
       valuesFilter.values = values;
       filter[filterKey] = valuesFilter;
-      onChange(filter);
+      onChange(clone(filter));
     }
   };
 
