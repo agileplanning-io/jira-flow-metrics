@@ -93,6 +93,7 @@ const RelativePicker: FC<{
 }> = ({ dates, onChange }) => {
   const select = (
     <Select
+      style={{ width: "140px" }}
       options={timeUnitOptions}
       value={dates.unit}
       onChange={(unit) => onChange({ ...dates, unit })}
