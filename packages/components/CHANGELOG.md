@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-components
 
+## 0.1.9
+
+### Patch Changes
+
+- cb33e0c: fix: relative date picker width
+
 ## 0.1.8
 
 ### Patch Changes
