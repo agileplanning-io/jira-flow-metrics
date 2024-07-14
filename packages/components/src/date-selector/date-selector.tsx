@@ -32,8 +32,6 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
 }) => {
   const { items, ranges } = useMemo(() => getDateRanges(), [getDateRanges]);
 
-  console.info({ dates });
-
   return (
     <Space.Compact style={{ width: "100%" }}>
       <Form.Item noStyle>
@@ -42,7 +40,6 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
             items,
             onClick: (info) => {
               const range = ranges[info.key];
-              console.info(range);
               onChange(range);
             },
           }}
@@ -105,6 +102,7 @@ const RelativePicker: FC<{
     <InputNumber
       type="number"
       addonAfter={select}
+      style={{ width: "100%" }}
       value={dates.unitCount}
       onChange={(unitCount) => {
         if (isNumber(unitCount)) {
