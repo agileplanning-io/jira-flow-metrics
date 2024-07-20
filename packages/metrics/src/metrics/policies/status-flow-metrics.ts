@@ -5,16 +5,53 @@ import {
   StatusCategory,
   Transition,
 } from "../../issues";
-import { getDifferenceInDays } from "@agileplanning-io/flow-lib";
+import { TransitionCycleTimePolicy } from "./cycle-time-policy";
+
+type TransitionAnalysis = {
+  inProgressTransitions: Transition[];
+  startedIndex: number;
+  completedIndex: number;
+};
+
+export const analyseTransitions = (
+  transitions: Transition[],
+  policy: TransitionCycleTimePolicy,
+): TransitionAnalysis => {
+  const startedIndex = getStartedDateIndex(transitions, policy.statuses);
+  const completedIndex = getCompletedDateIndex(transitions, policy.statuses);
+
+  const isStarted = startedIndex >= 0;
+  const isCompleted = completedIndex >= 0;
+
+  const isInProgress = (transition: Transition, index: number) => {
+    if (policy.includeWaitTime) {
+      return isCompleted ? index < completedIndex : true;
+    } else {
+      if (policy.statuses) {
+        return policy.statuses.includes(transition.toStatus.name);
+      } else {
+        return transition.toStatus.category === StatusCategory.InProgress;
+      }
+    }
+  };
+
+  const inProgressTransitions = isStarted
+    ? transitions.filter(isInProgress)
+    : [];
+
+  return {
+    startedIndex,
+    completedIndex,
+    inProgressTransitions,
+  };
+};
 
 export const getStatusFlowMetrics = (
   story: Issue,
-  includeWaitTime: boolean,
-  statuses?: string[],
+  policy: TransitionCycleTimePolicy,
 ): IssueFlowMetrics => {
-  const now = new Date();
-  const startedIndex = getStartedDateIndex(story.transitions, statuses);
-  const completedIndex = getCompletedDateIndex(story.transitions, statuses);
+  const { startedIndex, completedIndex, inProgressTransitions } =
+    analyseTransitions(story.transitions, policy);
 
   if (startedIndex === -1 && completedIndex === -1) {
     return {};
@@ -28,46 +65,20 @@ export const getStatusFlowMetrics = (
     };
   }
 
-  const getCycleTime = (transitions: Transition[]) => {
-    return sumBy(transitions.slice(0, transitions.length - 1), (transition) => {
-      if (includeWaitTime) {
-        return transition.timeInStatus;
-      } else {
-        if (statuses) {
-          return statuses.includes(transition.toStatus.name)
-            ? transition.timeInStatus
-            : 0;
-        } else {
-          return transition.toStatus.category === StatusCategory.InProgress
-            ? transition.timeInStatus
-            : 0;
-        }
-      }
-    });
-  };
+  const cycleTime = sumBy(
+    inProgressTransitions,
+    (transition) => transition.timeInStatus,
+  );
 
   if (completedIndex === -1) {
-    // started but not yet completed
-    const lastTransition = story.transitions[story.transitions.length - 1];
-    const timeInLastTransition =
-      lastTransition.toStatus.category === StatusCategory.InProgress ||
-      includeWaitTime
-        ? getDifferenceInDays(now, lastTransition.date)
-        : 0;
-    const age =
-      timeInLastTransition +
-      getCycleTime(story.transitions.slice(startedIndex));
     return {
       started: story.transitions[startedIndex].date,
-      age,
+      age: cycleTime,
     };
   }
 
-  const transitions = story.transitions.slice(startedIndex, completedIndex + 1);
-  const cycleTime = getCycleTime(transitions);
-
-  const started = transitions[0].date;
-  const completed = transitions[transitions.length - 1].date;
+  const started = story.transitions[startedIndex].date;
+  const completed = story.transitions[completedIndex].date;
 
   return {
     started,

@@ -38,7 +38,10 @@ describe("getFlowMetrics", () => {
   };
 
   describe("for stories", () => {
-    const dummyEpicPolicy: CycleTimePolicy["epics"] = { type: "computed" };
+    const dummyEpicPolicy: CycleTimePolicy["epics"] = {
+      type: "computed",
+      includeWaitTime: false,
+    };
 
     it("calculates cycle time metrics from statuses", () => {
       const startedDate = new Date("2023-09-05T14:22:32.068Z");
@@ -306,20 +309,24 @@ describe("getFlowMetrics", () => {
       const pausedDate = new Date("2023-01-01T13:30:00.000Z");
       const now = new Date("2023-01-02T10:30:00.000Z");
 
-      const issue = buildIssue({
-        transitions: [
-          {
-            date: startedDate,
-            fromStatus: backlog,
-            toStatus: inProgress,
-          },
-          {
-            date: pausedDate,
-            fromStatus: inProgress,
-            toStatus: backlog,
-          },
-        ],
-      });
+      const issue = buildIssue(
+        {
+          created: startedDate,
+          transitions: [
+            {
+              date: startedDate,
+              fromStatus: backlog,
+              toStatus: inProgress,
+            },
+            {
+              date: pausedDate,
+              fromStatus: inProgress,
+              toStatus: backlog,
+            },
+          ],
+        },
+        now,
+      );
 
       beforeEach(() => {
         jest.setSystemTime(now);
@@ -441,7 +448,7 @@ describe("getFlowMetrics", () => {
 
         expect(result.metrics).toEqual(
           expect.objectContaining({
-            cycleTime: 0.375,
+            cycleTime: 0.5,
             started: inReviewDate,
             completed: doneDate,
           }),
@@ -491,10 +498,10 @@ describe("getFlowMetrics", () => {
   });
 
   describe("for epics", () => {
-    describe("when the epic cyle time policy is 'computed'", () => {
+    describe("when the epic cycle time policy is 'computed'", () => {
       const story1Started = new Date("2023-01-01T10:30:00.000Z");
-      const story2Started = new Date("2023-01-01T12:30:00.000Z");
-      const story1Completed = new Date("2023-01-02T13:30:00.000Z");
+      const story1Completed = new Date("2023-01-01T13:30:00.000Z");
+      const story2Started = new Date("2023-01-02T13:30:00.000Z");
       const story2Completed = new Date("2023-01-02T16:30:00.000Z");
       const now = new Date("2023-01-02T19:30:00.000Z");
 
@@ -546,7 +553,20 @@ describe("getFlowMetrics", () => {
       it("computes epic cycle time metrics based on stories", () => {
         const [result] = getFlowMetrics([epic, story1, story2], {
           stories: { type: "status", includeWaitTime: false },
-          epics: { type: "computed" },
+          epics: { type: "computed", includeWaitTime: false },
+        });
+
+        expect(result.metrics).toEqual({
+          started: story1Started,
+          completed: story2Completed,
+          cycleTime: 0.25,
+        });
+      });
+
+      it("applies the includeWaitTime filter", () => {
+        const [result] = getFlowMetrics([epic, story1, story2], {
+          stories: { type: "status", includeWaitTime: true },
+          epics: { type: "computed", includeWaitTime: true },
         });
 
         expect(result.metrics).toEqual({
@@ -556,7 +576,7 @@ describe("getFlowMetrics", () => {
         });
       });
 
-      it("applies epic cycle time policies", () => {
+      it("applies policy filters", () => {
         const [result] = getFlowMetrics([epic, story1, story2], {
           stories: {
             type: "status",
@@ -564,6 +584,7 @@ describe("getFlowMetrics", () => {
           },
           epics: {
             type: "computed",
+            includeWaitTime: false,
             labels: {
               values: story1.labels,
               type: FilterType.Include,
@@ -574,7 +595,7 @@ describe("getFlowMetrics", () => {
         expect(result.metrics).toEqual({
           started: story1Started,
           completed: story1Completed,
-          cycleTime: 1.125,
+          cycleTime: 0.125,
         });
       });
 
@@ -586,15 +607,17 @@ describe("getFlowMetrics", () => {
 
         const [result] = getFlowMetrics([inProgressEpic, story1, story2], {
           stories: { type: "status", includeWaitTime: false },
+
           epics: {
             type: "computed",
+            includeWaitTime: false,
           },
         });
 
         expect(result.metrics).toEqual({
           started: story1Started,
           completed: undefined,
-          age: 1.375,
+          age: 0.25,
         });
       });
     });
