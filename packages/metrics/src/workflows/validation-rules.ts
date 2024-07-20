@@ -17,13 +17,14 @@ export const isValidCycleTimePolicy = (
   scheme: WorkflowScheme,
 ): boolean => {
   const validStoryPolicy =
-    policy.stories.statuses?.every(isValidStatus(scheme.stories.statuses)) ??
-    false;
+    (policy.stories.type === "status" &&
+      policy.stories.statuses?.every(isValidStatus(scheme.stories.statuses))) ??
+    true;
 
   const validEpicPolicy =
     (policy.epics.type === "status" &&
-      policy.epics.statuses?.every(isValidStatus(scheme.epics.statuses))) ||
-    policy.epics.type === "computed";
+      policy.epics.statuses?.every(isValidStatus(scheme.epics.statuses))) ??
+    true;
 
   return validStoryPolicy && validEpicPolicy;
 };

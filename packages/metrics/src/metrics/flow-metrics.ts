@@ -37,7 +37,9 @@ const partitionByHierarchyLevel = (issues: Issue[]): PartitionedIssues => {
 };
 
 const computeStoryMetrics = (policy: CycleTimePolicy) => {
-  const { includeWaitTime, statuses } = policy.stories;
+  const { includeWaitTime } = policy.stories;
+  const statuses =
+    policy.stories.type === "status" ? policy.stories.statuses : undefined;
   return ([stories, epics]: PartitionedIssues): PartitionedIssues => [
     stories.map((story) => {
       const metrics = getStatusFlowMetrics(story, includeWaitTime, statuses);
@@ -95,7 +97,9 @@ const computeEpicMetrics = (policy: CycleTimePolicy, now: Date) => {
           : getStatusFlowMetrics(
               epic,
               policy.epics.includeWaitTime,
-              policy.epics.statuses,
+              policy.epics.type === "status"
+                ? policy.epics.statuses
+                : undefined,
             );
       return {
         ...epic,
