@@ -27,6 +27,10 @@ import { useChartParams } from "./hooks/use-chart-params";
 import { ChartParamsForm } from "./components/chart-params-form";
 import { useFilterParams } from "@app/filter/use-filter-params";
 import { Project } from "@data/projects";
+import { Button } from "antd";
+import { unparse } from "papaparse";
+import { saveAs } from "file-saver";
+import { sortBy } from "remeda";
 
 export const ScatterplotPage = () => {
   const { issues } = useProjectContext();
@@ -63,6 +67,24 @@ export const ScatterplotPage = () => {
   }, [issues, filter, setFilteredIssues, setPercentiles, excludedIssues]);
 
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
+
+  const exportIssues = () => {
+    const content = unparse(
+      sortBy(filteredIssues, (issue) => -issue.metrics.cycleTime).map(
+        (issue) => ({
+          key: issue.key,
+          summary: issue.summary,
+          url: issue.externalUrl,
+          started: issue.metrics.started,
+          completed: issue.metrics.completed,
+          cycleTime: issue.metrics.cycleTime,
+        }),
+      ),
+      { header: true },
+    );
+    const blob = new Blob([content], { type: "text/csv;charset=utf-8" });
+    saveAs(blob, "issues.csv");
+  };
 
   return (
     <>
@@ -104,6 +126,7 @@ export const ScatterplotPage = () => {
         onExcludedIssuesChanged={setExcludedIssues}
         percentiles={percentiles}
         defaultSortField="cycleTime"
+        footer={() => <Button onClick={exportIssues}>Export</Button>}
       />
 
       <IssueDetailsDrawer
