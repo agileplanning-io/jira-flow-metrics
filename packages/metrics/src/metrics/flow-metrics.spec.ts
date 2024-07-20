@@ -337,7 +337,7 @@ describe("getFlowMetrics", () => {
         });
       });
 
-      it("excludes the current status when includeWaitTime is false", () => {
+      it("excludes To Do transitions when includeWaitTime is false", () => {
         const [result] = getFlowMetrics([issue], {
           stories: { type: "status", includeWaitTime: false },
           epics: dummyEpicPolicy,
