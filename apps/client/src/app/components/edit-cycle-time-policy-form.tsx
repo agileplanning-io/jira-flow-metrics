@@ -105,7 +105,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
     if (policy.epics.type === "computed") {
       policy.epics = {
         type: "computed",
-        includeWaitTime: false,
+        includeWaitTime: policy.epics.includeWaitTime,
         ...filter,
       };
     }
