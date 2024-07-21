@@ -14,6 +14,7 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns";
+import { clone, sortBy } from "remeda";
 
 export enum TimeUnit {
   Day = "day",
@@ -85,6 +86,16 @@ export const getOverlappingInterval = (
   return { start, end };
 };
 
+export const getSpanningInterval = (
+  interval1: AbsoluteInterval,
+  interval2: AbsoluteInterval,
+): AbsoluteInterval => {
+  const start: Date = min([interval1.start, interval2.start]);
+  const end: Date = max([interval1.end, interval2.end]);
+
+  return { start, end };
+};
+
 export const getIntersectingInterval = (
   interval1: AbsoluteInterval,
   interval2: AbsoluteInterval,
@@ -101,6 +112,37 @@ export const getIntersectingInterval = (
   const end: Date = min([interval1.end, interval2.end]);
 
   return { start, end };
+};
+
+export const getSpanningSet = (
+  intervals: AbsoluteInterval[],
+): AbsoluteInterval[] => {
+  const spans: AbsoluteInterval[] = [];
+  const sortedIntervals = sortBy(intervals, (interval) =>
+    interval.start.getTime(),
+  );
+
+  while (sortedIntervals.length > 0) {
+    // the next span of contiguous intervals begins with the next interval
+    let span = clone(sortedIntervals[0]);
+    sortedIntervals.shift();
+
+    while (sortedIntervals.length > 0) {
+      const next = sortedIntervals[0];
+      const nextOverlaps = getIntersectingInterval(span, next) !== undefined;
+
+      if (nextOverlaps) {
+        span = getSpanningInterval(span, next);
+        sortedIntervals.shift();
+      } else {
+        break;
+      }
+    }
+
+    spans.push(span);
+  }
+
+  return spans;
 };
 
 export const addTime = (date: Date, count: number, unit: TimeUnit): Date => {

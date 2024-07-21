@@ -150,9 +150,10 @@ export const buildTransitions = (
   created: Date,
   status: string,
   statusCategory: StatusCategory,
+  now: Date = new Date(),
 ): Transition[] => {
   const sortedTransitions = transitions.sort((t1, t2) =>
-    compareAsc(t1.date, t2.date.getTime()),
+    compareAsc(t1.date, t2.date),
   );
 
   const createdTransition: TransitionContext =
@@ -180,9 +181,7 @@ export const buildTransitions = (
   return [createdTransition, ...sortedTransitions].map(
     (transition, index, transitions): Transition => {
       const nextTransitionDate =
-        index < transitions.length - 1
-          ? transitions[index + 1].date
-          : new Date();
+        index < transitions.length - 1 ? transitions[index + 1].date : now;
       const timeInStatus = getDifferenceInDays(
         nextTransitionDate,
         transition.date,

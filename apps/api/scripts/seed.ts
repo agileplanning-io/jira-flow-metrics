@@ -58,6 +58,7 @@ const createProject = async (projects: ProjectsRepository) => {
       },
       epics: {
         type: "computed",
+        includeWaitTime: false,
       },
     },
     defaultCompletedFilter: {

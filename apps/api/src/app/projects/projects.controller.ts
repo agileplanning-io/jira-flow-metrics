@@ -43,6 +43,7 @@ class LabelsFilterPolicyBody {
 
 class EpicCycleTimePolicyBody {
   labels: LabelsFilterPolicyBody;
+  includeWaitTime: boolean;
 }
 
 class CycleTimePolicyBody {
@@ -88,6 +89,7 @@ const statusCategoryCycleTimePolicySchema = z.object({
 
 const computedCycleTimePolicySchema = z.object({
   type: z.literal("computed"),
+  includeWaitTime: boolean.schema,
   labels: valuesFilterSchema.optional(),
   issueTypes: valuesFilterSchema.optional(),
   resolutions: valuesFilterSchema.optional(),

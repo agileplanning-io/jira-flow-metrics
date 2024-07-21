@@ -8,7 +8,6 @@ import { CycleTimePolicy } from "./policies/cycle-time-policy";
 export const getFlowMetrics = (
   issues: Issue[],
   policy: CycleTimePolicy,
-  now: Date = new Date(),
 ): Issue[] => {
   const [stories, epics] = pipe(
     issues,
@@ -16,7 +15,7 @@ export const getFlowMetrics = (
     computeStoryMetrics(policy),
     filterStories(policy),
     checkEpicInclusion,
-    computeEpicMetrics(policy, now),
+    computeEpicMetrics(policy),
   );
 
   return [...epics, ...stories];
@@ -37,12 +36,9 @@ const partitionByHierarchyLevel = (issues: Issue[]): PartitionedIssues => {
 };
 
 const computeStoryMetrics = (policy: CycleTimePolicy) => {
-  const { includeWaitTime } = policy.stories;
-  const statuses =
-    policy.stories.type === "status" ? policy.stories.statuses : undefined;
   return ([stories, epics]: PartitionedIssues): PartitionedIssues => [
     stories.map((story) => {
-      const metrics = getStatusFlowMetrics(story, includeWaitTime, statuses);
+      const metrics = getStatusFlowMetrics(story, policy.stories);
       return {
         ...story,
         metrics,
@@ -87,20 +83,14 @@ const checkEpicInclusion = ([
   ];
 };
 
-const computeEpicMetrics = (policy: CycleTimePolicy, now: Date) => {
+const computeEpicMetrics = (policy: CycleTimePolicy) => {
   return ([stories, epics]: PartitionedIssues): PartitionedIssues => [
     stories,
     epics.map((epic) => {
       const metrics =
         policy.epics.type === "computed"
-          ? getComputedFlowMetrics(epic, stories, now)
-          : getStatusFlowMetrics(
-              epic,
-              policy.epics.includeWaitTime,
-              policy.epics.type === "status"
-                ? policy.epics.statuses
-                : undefined,
-            );
+          ? getComputedFlowMetrics(epic, stories, policy)
+          : getStatusFlowMetrics(epic, policy.epics);
       return {
         ...epic,
         metrics,

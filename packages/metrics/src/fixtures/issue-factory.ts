@@ -12,9 +12,13 @@ type IssueParams = Partial<Omit<Issue, "transitions" | "fields">> & {
   transitions?: TransitionContext[];
 };
 
-export const buildIssue = (params: IssueParams): Issue => {
+export const buildIssue = (
+  params: IssueParams,
+  now: Date = new Date(),
+): Issue => {
   ++issueCount;
   const key = `TEST-${issueCount}`;
+  const created = params.transitions?.[0]?.date ?? now;
   const defaults: Issue = {
     key,
     externalUrl: `https://jira.example.com/browse/${key}`,
@@ -26,7 +30,7 @@ export const buildIssue = (params: IssueParams): Issue => {
     labels: [],
     components: [],
     assignee: "Test User",
-    created: new Date(),
+    created,
     transitions: [],
     metrics: {},
   };
@@ -41,6 +45,7 @@ export const buildIssue = (params: IssueParams): Issue => {
     result.created,
     result.status,
     result.statusCategory,
+    now,
   );
 
   return {
