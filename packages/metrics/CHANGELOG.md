@@ -1,5 +1,14 @@
 # @agileplanning-io/flow-metrics
 
+## 0.1.9
+
+### Patch Changes
+
+- 72efe86: feat: add includeWaitTime param to computed policy
+- 3931db1: feat: status category policy type
+- Updated dependencies [72efe86]
+  - @agileplanning-io/flow-lib@0.1.3
+
 ## 0.1.8
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-lib
 
+## 0.1.3
+
+### Patch Changes
+
+- 72efe86: feat: add includeWaitTime param to computed policy
+
 ## 0.1.2
 
 ### Patch Changes
