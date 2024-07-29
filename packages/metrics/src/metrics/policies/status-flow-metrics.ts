@@ -25,6 +25,14 @@ export const analyseTransitions = (
 
   const isInProgress = (transition: Transition, index: number) => {
     if (policy.includeWaitTime) {
+      if (!isStarted) {
+        return false;
+      }
+
+      if (index < startedIndex) {
+        return false;
+      }
+
       return isCompleted ? index < completedIndex : true;
     } else {
       if (policy.statuses) {
