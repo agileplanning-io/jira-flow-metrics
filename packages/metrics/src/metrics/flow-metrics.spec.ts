@@ -13,6 +13,12 @@ describe("getFlowMetrics", () => {
     category: StatusCategory.ToDo,
   };
 
+  const todo: Status = {
+    jiraId: "24",
+    name: "To Do",
+    category: StatusCategory.ToDo,
+  };
+
   const inProgress: Status = {
     jiraId: "34",
     name: "In Progress",
@@ -121,13 +127,19 @@ describe("getFlowMetrics", () => {
     });
 
     describe("when the issue was paused", () => {
-      const firstStartedDate = new Date("2023-01-01T10:30:00.000Z");
-      const stoppedDate = new Date("2023-01-01T12:30:00.000Z");
-      const secondStartedDate = new Date("2023-01-01T14:30:00.000Z");
-      const completedDate = new Date("2023-01-01T16:30:00.000Z");
+      const toDoDate = new Date("2023-01-01T08:30:00.000Z");
+      const firstStartedDate = new Date("2023-01-01T20:30:00.000Z");
+      const stoppedDate = new Date("2023-01-02T08:30:00.000Z");
+      const secondStartedDate = new Date("2023-01-02T20:30:00.000Z");
+      const completedDate = new Date("2023-01-03T08:30:00.000Z");
 
       const issue = buildIssue({
         transitions: [
+          {
+            date: toDoDate,
+            fromStatus: backlog,
+            toStatus: todo,
+          },
           {
             date: firstStartedDate,
             fromStatus: backlog,
@@ -160,12 +172,11 @@ describe("getFlowMetrics", () => {
           epics: dummyEpicPolicy,
         });
 
-        expect(result.metrics).toEqual(
-          expect.objectContaining({
-            started: firstStartedDate,
-            completed: completedDate,
-          }),
-        );
+        expect(result.metrics).toEqual({
+          started: firstStartedDate,
+          completed: completedDate,
+          cycleTime: 1,
+        });
       });
 
       it("excludes the paused status time when includeWaitTime = false", () => {
@@ -174,11 +185,11 @@ describe("getFlowMetrics", () => {
           epics: dummyEpicPolicy,
         });
 
-        expect(result.metrics).toEqual(
-          expect.objectContaining({
-            cycleTime: 0.16666666666666666,
-          }),
-        );
+        expect(result.metrics).toEqual({
+          started: firstStartedDate,
+          completed: completedDate,
+          cycleTime: 1,
+        });
       });
 
       it("includes the paused status time when includeWaitTime = true", () => {
@@ -187,19 +198,19 @@ describe("getFlowMetrics", () => {
           epics: dummyEpicPolicy,
         });
 
-        expect(result.metrics).toEqual(
-          expect.objectContaining({
-            cycleTime: 0.25,
-          }),
-        );
+        expect(result.metrics).toEqual({
+          started: firstStartedDate,
+          completed: completedDate,
+          cycleTime: 1.5,
+        });
       });
     });
 
     describe("when the issue was restarted", () => {
-      const startedDate = new Date("2023-01-01T10:30:00.000Z");
-      const firstCompletedDate = new Date("2023-01-01T12:30:00.000Z");
-      const restartedDate = new Date("2023-01-01T14:30:00.000Z");
-      const secondCompletedDate = new Date("2023-01-01T16:30:00.000Z");
+      const startedDate = new Date("2023-01-01T08:30:00.000Z");
+      const firstCompletedDate = new Date("2023-01-01T20:30:00.000Z");
+      const restartedDate = new Date("2023-01-02T08:30:00.000Z");
+      const secondCompletedDate = new Date("2023-01-02T20:30:00.000Z");
 
       const issue = buildIssue({
         transitions: [
@@ -232,12 +243,11 @@ describe("getFlowMetrics", () => {
           epics: dummyEpicPolicy,
         });
 
-        expect(result.metrics).toEqual(
-          expect.objectContaining({
-            started: startedDate,
-            completed: secondCompletedDate,
-          }),
-        );
+        expect(result.metrics).toEqual({
+          started: startedDate,
+          completed: secondCompletedDate,
+          cycleTime: 1,
+        });
       });
 
       it("excludes the paused status time when includeWaitTime = false", () => {
@@ -246,11 +256,11 @@ describe("getFlowMetrics", () => {
           epics: dummyEpicPolicy,
         });
 
-        expect(result.metrics).toEqual(
-          expect.objectContaining({
-            cycleTime: 0.16666666666666666,
-          }),
-        );
+        expect(result.metrics).toEqual({
+          started: startedDate,
+          completed: secondCompletedDate,
+          cycleTime: 1,
+        });
       });
 
       it("includes the paused status time when includeWaitTime = true", () => {
@@ -259,11 +269,11 @@ describe("getFlowMetrics", () => {
           epics: dummyEpicPolicy,
         });
 
-        expect(result.metrics).toEqual(
-          expect.objectContaining({
-            cycleTime: 0.25,
-          }),
-        );
+        expect(result.metrics).toEqual({
+          started: startedDate,
+          completed: secondCompletedDate,
+          cycleTime: 1.5,
+        });
       });
     });
 
@@ -358,13 +368,12 @@ describe("getFlowMetrics", () => {
     });
 
     describe("when given statuses parameter", () => {
-      const startedDate = new Date("2023-01-01T10:30:00.000Z");
-      const inReviewDate = new Date("2023-01-01T13:30:00.000Z");
-      const secondInProgressDate = new Date("2023-01-01T16:30:00.000Z");
-      const secondInReviewDate = new Date("2023-01-01T19:30:00.000Z");
-      const doneDate = new Date("2023-01-01T22:30:00.000Z");
-      const reopenedDate = new Date("2023-01-02T01:30:00.000Z");
-      const now = new Date("2023-01-02T04:30:00.000Z");
+      const startedDate = new Date("2023-01-01T08:30:00.000Z");
+      const inReviewDate = new Date("2023-01-01T20:30:00.000Z");
+      const secondInProgressDate = new Date("2023-01-02T08:30:00.000Z");
+      const secondInReviewDate = new Date("2023-01-02T20:30:00.000Z");
+      const doneDate = new Date("2023-01-03T08:30:00.000Z");
+      const now = new Date("2023-01-04T08:30:00.000Z");
 
       beforeEach(() => {
         jest.setSystemTime(now);
@@ -413,7 +422,7 @@ describe("getFlowMetrics", () => {
         expect(result.metrics).toEqual({
           started: startedDate,
           completed: doneDate,
-          cycleTime: 0.5,
+          cycleTime: 2,
         });
       });
 
@@ -427,13 +436,11 @@ describe("getFlowMetrics", () => {
           epics: dummyEpicPolicy,
         });
 
-        expect(result.metrics).toEqual(
-          expect.objectContaining({
-            cycleTime: 0.25,
-            started: inReviewDate,
-            completed: doneDate,
-          }),
-        );
+        expect(result.metrics).toEqual({
+          cycleTime: 1,
+          started: inReviewDate,
+          completed: doneDate,
+        });
       });
 
       it("includes times in ignored statuses when includeWaitTime = true", () => {
@@ -446,16 +453,16 @@ describe("getFlowMetrics", () => {
           epics: dummyEpicPolicy,
         });
 
-        expect(result.metrics).toEqual(
-          expect.objectContaining({
-            cycleTime: 0.5,
-            started: inReviewDate,
-            completed: doneDate,
-          }),
-        );
+        expect(result.metrics).toEqual({
+          cycleTime: 1.5,
+          started: inReviewDate,
+          completed: doneDate,
+        });
       });
 
       it("classes reopened issues as in progress", () => {
+        const reopenedDate = new Date("2023-01-03T20:30:00.000Z");
+
         const issue = buildIssue({
           transitions: [
             {
@@ -485,12 +492,10 @@ describe("getFlowMetrics", () => {
           epics: dummyEpicPolicy,
         });
 
-        expect(result.metrics).toEqual(
-          expect.objectContaining({
-            age: 0.625,
-            started: startedDate,
-          }),
-        );
+        expect(result.metrics).toEqual({
+          age: 2.5,
+          started: startedDate,
+        });
       });
 
       it("classes issues moved straight to done as done", () => {});
@@ -550,7 +555,7 @@ describe("getFlowMetrics", () => {
         jest.setSystemTime(now);
       });
 
-      it("computes epic cycle time metrics based on stories", () => {
+      it("measures total in progress time when includeWaitTime = false", () => {
         const [result] = getFlowMetrics([epic, story1, story2], {
           stories: { type: "status", includeWaitTime: false },
           epics: { type: "computed", includeWaitTime: false },
@@ -563,7 +568,7 @@ describe("getFlowMetrics", () => {
         });
       });
 
-      it("applies the includeWaitTime filter", () => {
+      it("measures total cycle time when includeWaitTime = true", () => {
         const [result] = getFlowMetrics([epic, story1, story2], {
           stories: { type: "status", includeWaitTime: true },
           epics: { type: "computed", includeWaitTime: true },
