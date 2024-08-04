@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-metrics
 
+## 0.1.10
+
+### Patch Changes
+
+- ffbf7dc: fix: started date computation
+
 ## 0.1.9
 
 ### Patch Changes
