@@ -5,7 +5,7 @@ import {
   StatusCategory,
   Transition,
 } from "../../issues";
-import { TransitionCycleTimePolicy } from "./cycle-time-policy";
+import { CycleTimeType, TransitionCycleTimePolicy } from "./cycle-time-policy";
 
 type TransitionAnalysis = {
   inProgressTransitions: Transition[];
@@ -24,7 +24,7 @@ export const analyseTransitions = (
   const isCompleted = completedIndex >= 0;
 
   const isInProgress = (transition: Transition, index: number) => {
-    if (policy.includeWaitTime) {
+    if (policy.cycleTimeType === CycleTimeType.TotalLeadTime) {
       if (!isStarted) {
         return false;
       }

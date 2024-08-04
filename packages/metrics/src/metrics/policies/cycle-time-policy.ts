@@ -1,20 +1,25 @@
 import { IssueAttributesFilter } from "../../issues";
 
+export enum CycleTimeType {
+  InProgressTime = "inProgressTime",
+  TotalLeadTime = "totalLeadTime",
+}
+
 export type StatusCycleTimePolicy = {
   type: "status";
-  includeWaitTime: boolean;
+  cycleTimeType: CycleTimeType;
   statuses?: string[];
 };
 
 export type StatusCategoryCycleTimePolicy = {
   type: "statusCategory";
-  includeWaitTime: boolean;
+  cycleTimeType: CycleTimeType;
   statuses?: undefined;
 };
 
 export type ComputedCycleTimePolicy = IssueAttributesFilter & {
   type: "computed";
-  includeWaitTime: boolean;
+  cycleTimeType: CycleTimeType;
 };
 
 export type TransitionCycleTimePolicy =

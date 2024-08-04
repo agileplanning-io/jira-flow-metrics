@@ -9,6 +9,7 @@ import { IssuesRepository } from "@entities/issues";
 import { ProjectsRepository } from "@entities/projects";
 import {
   CycleTimePolicy,
+  CycleTimeType,
   StatusCategory,
   buildIssue,
 } from "@agileplanning-io/flow-metrics";
@@ -82,11 +83,11 @@ describe("ProjectsController", () => {
       const policy: CycleTimePolicy = {
         stories: {
           type: "status",
-          includeWaitTime: false,
+          cycleTimeType: CycleTimeType.InProgressTime,
         },
         epics: {
           type: "status",
-          includeWaitTime: false,
+          cycleTimeType: CycleTimeType.InProgressTime,
         },
       };
 

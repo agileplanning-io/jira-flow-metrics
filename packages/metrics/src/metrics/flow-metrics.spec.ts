@@ -2,7 +2,7 @@ import { HierarchyLevel, Status, StatusCategory } from "../issues";
 import { getFlowMetrics } from "./flow-metrics";
 import { buildIssue } from "../fixtures/issue-factory";
 import { FilterType } from "../issues";
-import { CycleTimePolicy } from "./policies/cycle-time-policy";
+import { CycleTimePolicy, CycleTimeType } from "./policies/cycle-time-policy";
 
 jest.useFakeTimers();
 
@@ -46,7 +46,7 @@ describe("getFlowMetrics", () => {
   describe("for stories", () => {
     const dummyEpicPolicy: CycleTimePolicy["epics"] = {
       type: "computed",
-      includeWaitTime: false,
+      cycleTimeType: CycleTimeType.InProgressTime,
     };
 
     it("calculates cycle time metrics from statuses", () => {
@@ -115,7 +115,10 @@ describe("getFlowMetrics", () => {
       });
 
       const [result] = getFlowMetrics([issue], {
-        stories: { type: "status", includeWaitTime: false },
+        stories: {
+          type: "status",
+          cycleTimeType: CycleTimeType.InProgressTime,
+        },
         epics: dummyEpicPolicy,
       });
 
@@ -167,7 +170,7 @@ describe("getFlowMetrics", () => {
         const [result] = getFlowMetrics([issue], {
           stories: {
             type: "status",
-            includeWaitTime: false,
+            cycleTimeType: CycleTimeType.InProgressTime,
           },
           epics: dummyEpicPolicy,
         });
@@ -181,7 +184,10 @@ describe("getFlowMetrics", () => {
 
       it("excludes the paused status time when includeWaitTime = false", () => {
         const [result] = getFlowMetrics([issue], {
-          stories: { type: "status", includeWaitTime: false },
+          stories: {
+            type: "status",
+            cycleTimeType: CycleTimeType.InProgressTime,
+          },
           epics: dummyEpicPolicy,
         });
 
@@ -194,7 +200,10 @@ describe("getFlowMetrics", () => {
 
       it("includes the paused status time when includeWaitTime = true", () => {
         const [result] = getFlowMetrics([issue], {
-          stories: { type: "status", includeWaitTime: true },
+          stories: {
+            type: "status",
+            cycleTimeType: CycleTimeType.TotalLeadTime,
+          },
           epics: dummyEpicPolicy,
         });
 
@@ -239,7 +248,10 @@ describe("getFlowMetrics", () => {
 
       it("uses the last completed date", () => {
         const [result] = getFlowMetrics([issue], {
-          stories: { type: "status", includeWaitTime: false },
+          stories: {
+            type: "status",
+            cycleTimeType: CycleTimeType.InProgressTime,
+          },
           epics: dummyEpicPolicy,
         });
 
@@ -252,7 +264,10 @@ describe("getFlowMetrics", () => {
 
       it("excludes the paused status time when includeWaitTime = false", () => {
         const [result] = getFlowMetrics([issue], {
-          stories: { type: "status", includeWaitTime: false },
+          stories: {
+            type: "status",
+            cycleTimeType: CycleTimeType.InProgressTime,
+          },
           epics: dummyEpicPolicy,
         });
 
@@ -265,7 +280,10 @@ describe("getFlowMetrics", () => {
 
       it("includes the paused status time when includeWaitTime = true", () => {
         const [result] = getFlowMetrics([issue], {
-          stories: { type: "status", includeWaitTime: true },
+          stories: {
+            type: "status",
+            cycleTimeType: CycleTimeType.TotalLeadTime,
+          },
           epics: dummyEpicPolicy,
         });
 
@@ -303,7 +321,10 @@ describe("getFlowMetrics", () => {
       });
 
       const [result] = getFlowMetrics([issue], {
-        stories: { type: "status", includeWaitTime: false },
+        stories: {
+          type: "status",
+          cycleTimeType: CycleTimeType.InProgressTime,
+        },
         epics: dummyEpicPolicy,
       });
 
@@ -344,7 +365,10 @@ describe("getFlowMetrics", () => {
 
       it("returns the age of the issue", () => {
         const [result] = getFlowMetrics([issue], {
-          stories: { type: "status", includeWaitTime: true },
+          stories: {
+            type: "status",
+            cycleTimeType: CycleTimeType.TotalLeadTime,
+          },
           epics: dummyEpicPolicy,
         });
 
@@ -356,7 +380,10 @@ describe("getFlowMetrics", () => {
 
       it("excludes To Do transitions when includeWaitTime is false", () => {
         const [result] = getFlowMetrics([issue], {
-          stories: { type: "status", includeWaitTime: false },
+          stories: {
+            type: "status",
+            cycleTimeType: CycleTimeType.InProgressTime,
+          },
           epics: dummyEpicPolicy,
         });
 
@@ -413,7 +440,7 @@ describe("getFlowMetrics", () => {
         const [result] = getFlowMetrics([issue], {
           stories: {
             type: "status",
-            includeWaitTime: false,
+            cycleTimeType: CycleTimeType.InProgressTime,
             statuses: [inProgress.name, inReview.name],
           },
           epics: dummyEpicPolicy,
@@ -430,7 +457,7 @@ describe("getFlowMetrics", () => {
         const [result] = getFlowMetrics([issue], {
           stories: {
             type: "status",
-            includeWaitTime: false,
+            cycleTimeType: CycleTimeType.InProgressTime,
             statuses: [inReview.name],
           },
           epics: dummyEpicPolicy,
@@ -447,7 +474,7 @@ describe("getFlowMetrics", () => {
         const [result] = getFlowMetrics([issue], {
           stories: {
             type: "status",
-            includeWaitTime: true,
+            cycleTimeType: CycleTimeType.TotalLeadTime,
             statuses: [inReview.name],
           },
           epics: dummyEpicPolicy,
@@ -486,7 +513,7 @@ describe("getFlowMetrics", () => {
         const [result] = getFlowMetrics([issue], {
           stories: {
             type: "status",
-            includeWaitTime: false,
+            cycleTimeType: CycleTimeType.InProgressTime,
             statuses: [inProgress.name],
           },
           epics: dummyEpicPolicy,
@@ -557,8 +584,14 @@ describe("getFlowMetrics", () => {
 
       it("measures total in progress time when includeWaitTime = false", () => {
         const [result] = getFlowMetrics([epic, story1, story2], {
-          stories: { type: "status", includeWaitTime: false },
-          epics: { type: "computed", includeWaitTime: false },
+          stories: {
+            type: "status",
+            cycleTimeType: CycleTimeType.InProgressTime,
+          },
+          epics: {
+            type: "computed",
+            cycleTimeType: CycleTimeType.InProgressTime,
+          },
         });
 
         expect(result.metrics).toEqual({
@@ -570,8 +603,14 @@ describe("getFlowMetrics", () => {
 
       it("measures total cycle time when includeWaitTime = true", () => {
         const [result] = getFlowMetrics([epic, story1, story2], {
-          stories: { type: "status", includeWaitTime: true },
-          epics: { type: "computed", includeWaitTime: true },
+          stories: {
+            type: "status",
+            cycleTimeType: CycleTimeType.TotalLeadTime,
+          },
+          epics: {
+            type: "computed",
+            cycleTimeType: CycleTimeType.TotalLeadTime,
+          },
         });
 
         expect(result.metrics).toEqual({
@@ -585,11 +624,11 @@ describe("getFlowMetrics", () => {
         const [result] = getFlowMetrics([epic, story1, story2], {
           stories: {
             type: "status",
-            includeWaitTime: false,
+            cycleTimeType: CycleTimeType.InProgressTime,
           },
           epics: {
             type: "computed",
-            includeWaitTime: false,
+            cycleTimeType: CycleTimeType.InProgressTime,
             labels: {
               values: story1.labels,
               type: FilterType.Include,
@@ -611,11 +650,14 @@ describe("getFlowMetrics", () => {
         };
 
         const [result] = getFlowMetrics([inProgressEpic, story1, story2], {
-          stories: { type: "status", includeWaitTime: false },
+          stories: {
+            type: "status",
+            cycleTimeType: CycleTimeType.InProgressTime,
+          },
 
           epics: {
             type: "computed",
-            includeWaitTime: false,
+            cycleTimeType: CycleTimeType.InProgressTime,
           },
         });
 
@@ -674,10 +716,13 @@ describe("getFlowMetrics", () => {
         });
 
         const [result] = getFlowMetrics([epic], {
-          stories: { type: "status", includeWaitTime: false },
+          stories: {
+            type: "status",
+            cycleTimeType: CycleTimeType.InProgressTime,
+          },
           epics: {
             type: "status",
-            includeWaitTime: false,
+            cycleTimeType: CycleTimeType.InProgressTime,
           },
         });
 

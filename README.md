@@ -8,6 +8,8 @@ See the [Getting Started](https://metrics.agileplanning.io/docs/guides/getting-s
 
 ## Development
 
+Set a `GITHUB_TOKEN` environment variable to install GitHub packages, then:
+
 ```bash
 pnpm install
 pnpm dev
