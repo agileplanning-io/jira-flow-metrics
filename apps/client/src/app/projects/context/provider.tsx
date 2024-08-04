@@ -1,10 +1,12 @@
 import { useNavigationContext } from "../../navigation/context";
 import { ProjectContext, ProjectContextType } from "./context";
 import { useIssues } from "@data/issues";
-import { CycleTimePolicy } from "@agileplanning-io/flow-metrics";
+import {
+  CycleTimePolicy,
+  cycleTimePolicySchema,
+} from "@agileplanning-io/flow-metrics";
 import { useEffect } from "react";
 import { useQueryState } from "@lib/use-query-state";
-import { cycleTimePolicySchema } from "./schema";
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   children,

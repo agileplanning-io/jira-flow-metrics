@@ -1,6 +1,6 @@
-import { FilterType } from "@agileplanning-io/flow-metrics";
-import { boolean } from "@agileplanning-io/flow-lib";
 import { z } from "zod";
+import { FilterType } from "../../issues";
+import { boolean } from "@agileplanning-io/flow-lib";
 
 const valuesFilterSchema = z.object({
   values: z.array(z.string()).optional(),

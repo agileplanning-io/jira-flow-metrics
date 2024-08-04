@@ -4,15 +4,14 @@ import {
   CycleTimePolicy,
   FilterType,
   IssueFilter,
+  cycleTimePolicySchema,
   getFlowMetrics,
 } from "@agileplanning-io/flow-metrics";
 import { Body, Controller, Delete, Get, Param, Put } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
 import { SyncUseCase } from "@usecases/projects/sync/sync-use-case";
-import { z } from "zod";
 import { ZodValidationPipe } from "@lib/pipes/zod-pipe";
 import { ParsedQuery } from "@lib/decorators/parsed-query";
-import { boolean } from "@agileplanning-io/flow-lib";
 
 class WorkflowStageBody {
   @ApiProperty()
@@ -70,43 +69,6 @@ class UpdateProjectBody {
   @ApiProperty()
   defaultCompletedFilter: IssueFilter;
 }
-
-const valuesFilterSchema = z.object({
-  values: z.array(z.string()).optional(),
-  type: z.enum([FilterType.Include, FilterType.Exclude]),
-});
-
-const statusCycleTimePolicySchema = z.object({
-  type: z.literal("status"),
-  includeWaitTime: boolean.schema,
-  statuses: z.array(z.string()).optional(),
-});
-
-const statusCategoryCycleTimePolicySchema = z.object({
-  type: z.literal("statusCategory"),
-  includeWaitTime: boolean.schema,
-});
-
-const computedCycleTimePolicySchema = z.object({
-  type: z.literal("computed"),
-  includeWaitTime: boolean.schema,
-  labels: valuesFilterSchema.optional(),
-  issueTypes: valuesFilterSchema.optional(),
-  resolutions: valuesFilterSchema.optional(),
-  components: valuesFilterSchema.optional(),
-});
-
-const cycleTimePolicySchema = z.object({
-  stories: z.discriminatedUnion("type", [
-    statusCycleTimePolicySchema,
-    statusCategoryCycleTimePolicySchema,
-  ]),
-  epics: z.discriminatedUnion("type", [
-    statusCycleTimePolicySchema,
-    statusCategoryCycleTimePolicySchema,
-    computedCycleTimePolicySchema,
-  ]),
-});
 
 @Controller("projects")
 export class ProjectsController {
