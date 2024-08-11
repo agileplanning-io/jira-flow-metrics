@@ -3,8 +3,8 @@ import { CompletedIssue, HierarchyLevel, Issue, isCompleted } from "../issues";
 import { Interval, asAbsolute } from "@agileplanning-io/flow-lib";
 
 export enum DateFilterType {
-  Completed,
-  Intersects,
+  Completed = "completed",
+  Intersects = "intersects",
 }
 
 export enum FilterType {
