@@ -7,15 +7,7 @@ import {
   getFlowMetrics,
   workflowStageSchema,
 } from "@agileplanning-io/flow-metrics";
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Put,
-  UsePipes,
-} from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Put } from "@nestjs/common";
 import { SyncUseCase } from "@usecases/projects/sync/sync-use-case";
 import { ZodValidationPipe } from "@lib/pipes/zod-pipe";
 import { ParsedQuery } from "@lib/decorators/parsed-query";
@@ -50,11 +42,11 @@ export class ProjectsController {
     return this.projects.getProject(projectId);
   }
 
-  @UsePipes(new ZodValidationPipe(updateProjectBodyResponseSchema))
   @Put(":projectId")
   async updateProject(
     @Param("projectId") projectId: string,
-    @Body() request: UpdateProjectBodyResponse,
+    @Body(new ZodValidationPipe(updateProjectBodyResponseSchema))
+    request: UpdateProjectBodyResponse,
   ) {
     const project = await this.projects.getProject(projectId);
     const scheme = project.workflowScheme;
