@@ -21,63 +21,6 @@ import { ZodValidationPipe } from "@lib/pipes/zod-pipe";
 import { ParsedQuery } from "@lib/decorators/parsed-query";
 import { z } from "zod";
 
-// class WorkflowStageBody {
-//   @ApiProperty()
-//   name: string;
-
-//   @ApiProperty()
-//   selectByDefault: boolean;
-
-//   @ApiProperty()
-//   statuses: string[];
-// }
-
-// class StoryCycleTimePolicyBody {
-//   @ApiProperty()
-//   includeWaitTime: boolean;
-
-//   @ApiProperty()
-//   statuses: string[];
-// }
-
-// class LabelsFilterPolicyBody {
-//   @ApiProperty()
-//   values: string[];
-
-//   @ApiProperty()
-//   type: FilterType;
-// }
-
-// class EpicCycleTimePolicyBody {
-//   labels: LabelsFilterPolicyBody;
-//   includeWaitTime: boolean;
-// }
-
-// class CycleTimePolicyBody {
-//   @ApiProperty()
-//   stories: StoryCycleTimePolicyBody;
-
-//   @ApiProperty()
-//   epics: EpicCycleTimePolicyBody;
-// }
-
-// class UpdateProjectBody {
-//   @ApiProperty()
-//   name: string;
-
-//   @ApiProperty()
-//   storyWorkflowStages: WorkflowStageBody[];
-
-//   @ApiProperty()
-//   epicWorkflowStages: WorkflowStageBody[];
-
-//   @ApiProperty()
-//   defaultCycleTimePolicy: CycleTimePolicyBody;
-
-//   @ApiProperty()
-//   defaultCompletedFilter: IssueFilter;
-// }
-
 const workflowStageRequestSchema = workflowStageSchema.extend({
   statuses: z.array(z.string()),
 });
@@ -136,17 +79,6 @@ export class ProjectsController {
         stage.statuses.includes(status.name),
       ),
     }));
-
-    // const defaultCycleTimePolicy: CycleTimePolicy = {
-    //   stories: {
-    //     type: "status",
-    //     ...request.defaultCycleTimePolicy.stories,
-    //   },
-    //   epics: {
-    //     type: "computed",
-    //     ...request.defaultCycleTimePolicy.epics,
-    //   },
-    // };
 
     const defaultCompletedFilter =
       request.defaultCompletedFilter ?? project.defaultCompletedFilter;
