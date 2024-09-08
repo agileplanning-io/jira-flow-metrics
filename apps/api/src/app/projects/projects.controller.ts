@@ -165,6 +165,7 @@ export class ProjectsController {
       request.defaultCompletedFilter ?? project.defaultCompletedFilter;
 
     const updatedProject = await this.projects.updateProject(projectId, {
+      name: request.name,
       workflowScheme: {
         stories: {
           stages: storyStages,

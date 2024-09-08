@@ -43,6 +43,8 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
   const [updatedCycleTimePolicy, setUpdatedCycleTimePolicy] =
     useState<CycleTimePolicy>(project.defaultCycleTimePolicy);
 
+  const [updatedName, setUpdatedName] = useState(project.name);
+
   const [updatedDefaultCompletedFilter, setUpdatedDefaultCompletedFilter] =
     useState<ClientIssueFilter>(toClientFilter(project.defaultCompletedFilter));
 
@@ -92,7 +94,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
       updateProject.mutate(
         {
           id: project.id,
-          name: project.name,
+          name: updatedName,
           storyWorkflowStages: updatedStoryWorkflow,
           epicWorkflowStages: updatedEpicWorkflow,
           defaultCycleTimePolicy: updatedCycleTimePolicy,
@@ -114,7 +116,10 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
 
       <Form layout="vertical">
         <Form.Item label="Name">
-          <Input value={project.name} />
+          <Input
+            value={updatedName}
+            onChange={(e) => setUpdatedName(e.target.value)}
+          />
         </Form.Item>
       </Form>
 
