@@ -186,6 +186,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
           resolutions={project.resolutions}
           labels={project.labels}
           components={project.components}
+          issueTypes={project.issueTypes}
           setFilter={onFilterChanged}
           showDateSelector={false}
           showAssigneesFilter={false}
