@@ -1,13 +1,13 @@
-import { isNullish } from "remeda";
 import { z } from "zod";
 
 const TrueValue = "true";
 const FalseValue = "false";
 
-const schema = z
-  .string()
-  .optional()
-  .transform((val) => (isNullish(val) || val === FalseValue ? false : true));
+const schema = z.preprocess((val) => {
+  if (val === TrueValue) return true;
+  if (val === FalseValue) return false;
+  return val;
+}, z.boolean());
 
 export const boolean = Object.freeze({
   schema,

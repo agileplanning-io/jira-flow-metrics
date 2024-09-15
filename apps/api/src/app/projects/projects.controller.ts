@@ -2,111 +2,32 @@ import { ProjectsRepository } from "@entities/projects";
 import { IssuesRepository } from "@entities/issues";
 import {
   CycleTimePolicy,
-  FilterType,
-  IssueFilter,
+  cycleTimePolicySchema,
+  filterSchema,
   getFlowMetrics,
+  workflowStageSchema,
 } from "@agileplanning-io/flow-metrics";
 import { Body, Controller, Delete, Get, Param, Put } from "@nestjs/common";
-import { ApiProperty } from "@nestjs/swagger";
 import { SyncUseCase } from "@usecases/projects/sync/sync-use-case";
-import { z } from "zod";
 import { ZodValidationPipe } from "@lib/pipes/zod-pipe";
 import { ParsedQuery } from "@lib/decorators/parsed-query";
-import { boolean } from "@agileplanning-io/flow-lib";
+import { z } from "zod";
 
-class WorkflowStageBody {
-  @ApiProperty()
-  name: string;
-
-  @ApiProperty()
-  selectByDefault: boolean;
-
-  @ApiProperty()
-  statuses: string[];
-}
-
-class StoryCycleTimePolicyBody {
-  @ApiProperty()
-  includeWaitTime: boolean;
-
-  @ApiProperty()
-  statuses: string[];
-}
-
-class LabelsFilterPolicyBody {
-  @ApiProperty()
-  values: string[];
-
-  @ApiProperty()
-  type: FilterType;
-}
-
-class EpicCycleTimePolicyBody {
-  labels: LabelsFilterPolicyBody;
-  includeWaitTime: boolean;
-}
-
-class CycleTimePolicyBody {
-  @ApiProperty()
-  stories: StoryCycleTimePolicyBody;
-
-  @ApiProperty()
-  epics: EpicCycleTimePolicyBody;
-}
-
-class UpdateProjectBody {
-  @ApiProperty()
-  name: string;
-
-  @ApiProperty()
-  storyWorkflowStages: WorkflowStageBody[];
-
-  @ApiProperty()
-  epicWorkflowStages: WorkflowStageBody[];
-
-  @ApiProperty()
-  defaultCycleTimePolicy: CycleTimePolicyBody;
-
-  @ApiProperty()
-  defaultCompletedFilter: IssueFilter;
-}
-
-const valuesFilterSchema = z.object({
-  values: z.array(z.string()).optional(),
-  type: z.enum([FilterType.Include, FilterType.Exclude]),
+const workflowStageRequestSchema = workflowStageSchema.extend({
+  statuses: z.array(z.string()),
 });
 
-const statusCycleTimePolicySchema = z.object({
-  type: z.literal("status"),
-  includeWaitTime: boolean.schema,
-  statuses: z.array(z.string()).optional(),
+const updateProjectBodyResponseSchema = z.object({
+  name: z.string(),
+  storyWorkflowStages: z.array(workflowStageRequestSchema),
+  epicWorkflowStages: z.array(workflowStageRequestSchema),
+  defaultCycleTimePolicy: cycleTimePolicySchema,
+  defaultCompletedFilter: filterSchema,
 });
 
-const statusCategoryCycleTimePolicySchema = z.object({
-  type: z.literal("statusCategory"),
-  includeWaitTime: boolean.schema,
-});
-
-const computedCycleTimePolicySchema = z.object({
-  type: z.literal("computed"),
-  includeWaitTime: boolean.schema,
-  labels: valuesFilterSchema.optional(),
-  issueTypes: valuesFilterSchema.optional(),
-  resolutions: valuesFilterSchema.optional(),
-  components: valuesFilterSchema.optional(),
-});
-
-const cycleTimePolicySchema = z.object({
-  stories: z.discriminatedUnion("type", [
-    statusCycleTimePolicySchema,
-    statusCategoryCycleTimePolicySchema,
-  ]),
-  epics: z.discriminatedUnion("type", [
-    statusCycleTimePolicySchema,
-    statusCategoryCycleTimePolicySchema,
-    computedCycleTimePolicySchema,
-  ]),
-});
+type UpdateProjectBodyResponse = z.infer<
+  typeof updateProjectBodyResponseSchema
+>;
 
 @Controller("projects")
 export class ProjectsController {
@@ -124,7 +45,8 @@ export class ProjectsController {
   @Put(":projectId")
   async updateProject(
     @Param("projectId") projectId: string,
-    @Body() request: UpdateProjectBody,
+    @Body(new ZodValidationPipe(updateProjectBodyResponseSchema))
+    request: UpdateProjectBodyResponse,
   ) {
     const project = await this.projects.getProject(projectId);
     const scheme = project.workflowScheme;
@@ -150,19 +72,11 @@ export class ProjectsController {
       ),
     }));
 
-    const defaultCycleTimePolicy: CycleTimePolicy = {
-      stories: {
-        type: "status",
-        ...request.defaultCycleTimePolicy.stories,
-      },
-      epics: {
-        type: "computed",
-        ...request.defaultCycleTimePolicy.epics,
-      },
-    };
-
     const defaultCompletedFilter =
       request.defaultCompletedFilter ?? project.defaultCompletedFilter;
+
+    const defaultCycleTimePolicy =
+      request.defaultCycleTimePolicy ?? project.defaultCycleTimePolicy;
 
     const updatedProject = await this.projects.updateProject(projectId, {
       name: request.name,

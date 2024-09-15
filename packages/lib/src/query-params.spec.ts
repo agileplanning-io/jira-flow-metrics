@@ -1,8 +1,12 @@
 import { qsParse, qsStringify } from "./query-params";
 
 describe("qsParse", () => {
-  it("parses params", () => {
+  it("parses nested params", () => {
     expect(qsParse("foo.bar[0]=baz")).toEqual({ foo: { bar: ["baz"] } });
+  });
+
+  it("parses booleans", () => {
+    expect(qsParse("foo=true")).toEqual({ foo: true });
   });
 });
 
