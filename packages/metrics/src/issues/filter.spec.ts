@@ -1,6 +1,6 @@
 import { buildIssue } from "../fixtures/issue-factory";
 import { HierarchyLevel } from "../issues";
-import { FilterType, filterIssues } from "./filter";
+import { FilterType, FilterUseCase, filterIssues } from "./filter";
 
 describe("filterIssues", () => {
   const story = buildIssue({ hierarchyLevel: HierarchyLevel.Story });
@@ -90,7 +90,7 @@ describe("filterIssues", () => {
     const duplicateStory = { ...story, resolution: "Duplicate" };
 
     it("includes resolutions", () => {
-      const filteredIssues = filterIssues([doneStory, duplicateStory], {
+      const filteredIssues = filterIssues([doneStory, duplicateStory, story], {
         resolutions: {
           values: ["Done"],
           type: FilterType.Include,
@@ -101,14 +101,29 @@ describe("filterIssues", () => {
     });
 
     it("excludes resolutions", () => {
-      const filteredIssues = filterIssues([doneStory, duplicateStory], {
+      const filteredIssues = filterIssues([doneStory, duplicateStory, story], {
         resolutions: {
           values: ["Done"],
           type: FilterType.Exclude,
         },
       });
 
-      expect(filteredIssues).toEqual([duplicateStory]);
+      expect(filteredIssues).toEqual([duplicateStory, story]);
+    });
+
+    it("applies the resolution filter selectively in the metrics use case", () => {
+      const filteredIssues = filterIssues(
+        [doneStory, duplicateStory, story],
+        {
+          resolutions: {
+            values: ["Done"],
+            type: FilterType.Exclude,
+          },
+        },
+        FilterUseCase.Metrics,
+      );
+
+      expect(filteredIssues).toEqual([duplicateStory, story]);
     });
   });
 
