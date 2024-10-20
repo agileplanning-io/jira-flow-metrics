@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-metrics
 
+## 0.1.11
+
+### Patch Changes
+
+- 6088dd7: feat: add FilterUseCase to filterIssues function
+
 ## 0.1.10
 
 ### Patch Changes

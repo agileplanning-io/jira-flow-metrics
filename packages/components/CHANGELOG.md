@@ -1,5 +1,13 @@
 # @agileplanning-io/flow-components
 
+## 0.1.13
+
+### Patch Changes
+
+- 9abddeb: feat: IssuesTable footer
+- Updated dependencies [6088dd7]
+  - @agileplanning-io/flow-metrics@0.1.11
+
 ## 0.1.12
 
 ### Patch Changes
