@@ -25,6 +25,7 @@ export const IssuesTable: FC<
       IssueExternalLink={IssueExternalLink}
       IssueDetailsDrawer={IssueDetailsDrawer}
       getIssuePath={(issueKey) => issueDetailsPath({ projectId, issueKey })}
+      footer={params.footer}
     />
   );
 };

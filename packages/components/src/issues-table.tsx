@@ -1,5 +1,13 @@
 import { Issue, IssueFlowMetrics } from "@agileplanning-io/flow-metrics";
-import { Checkbox, Space, Table, Tag, Tooltip, Typography } from "antd";
+import {
+  Checkbox,
+  Space,
+  Table,
+  TableProps,
+  Tag,
+  Tooltip,
+  Typography,
+} from "antd";
 import {
   Percentile,
   formatDate,
@@ -42,6 +50,7 @@ export type IssuesTableProps = {
   IssueLink: IssueLinkComponent;
   IssueExternalLink: IssueExternalLinkComponent;
   IssueDetailsDrawer: IssueDetailsDrawerComponent;
+  footer?: TableProps<Issue>["footer"];
 };
 
 export const IssuesTable: React.FC<IssuesTableProps> = ({
@@ -58,6 +67,7 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
   IssueLink,
   IssueExternalLink,
   IssueDetailsDrawer,
+  footer,
 }) => {
   const [excludedIssueKeys, setExcludedIssueKeys] = useState<string[]>(
     defaultExcludedIssueKeys ?? [],
@@ -396,6 +406,7 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
           showSizeChanger: true,
           onChange: (_, pageSize) => setPageSize(pageSize),
         }}
+        footer={footer}
       />
       <IssueDetailsDrawer
         selectedIssues={selectedIssue ? [selectedIssue] : []}
