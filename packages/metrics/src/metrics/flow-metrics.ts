@@ -1,4 +1,4 @@
-import { HierarchyLevel, Issue } from "../issues";
+import { FilterUseCase, HierarchyLevel, Issue } from "../issues";
 import { filterIssues } from "../issues";
 import { getStatusFlowMetrics } from "./policies/status-flow-metrics";
 import { getComputedFlowMetrics } from "./policies/computed-flow-metrics";
@@ -53,7 +53,7 @@ const filterStories =
   ([stories, epics]: PartitionedIssues): PartitionedIssues => {
     return [
       policy.epics.type === "computed"
-        ? filterIssues(stories, policy.epics)
+        ? filterIssues(stories, policy.epics, FilterUseCase.Metrics)
         : stories,
       epics,
     ];
