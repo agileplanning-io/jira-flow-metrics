@@ -27,6 +27,9 @@ import { useChartParams } from "./hooks/use-chart-params";
 import { ChartParamsForm } from "./components/chart-params-form";
 import { useFilterParams } from "@app/filter/use-filter-params";
 import { Project } from "@data/projects";
+import { Button } from "antd";
+import { sortBy } from "remeda";
+import { downloadCsv } from "@data/csv";
 
 export const ScatterplotPage = () => {
   const { issues } = useProjectContext();
@@ -63,6 +66,10 @@ export const ScatterplotPage = () => {
   }, [issues, filter, setFilteredIssues, setPercentiles, excludedIssues]);
 
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
+
+  const exportIssues = () => {
+    downloadCsv(sortBy(filteredIssues, (issue) => -issue.metrics.cycleTime));
+  };
 
   return (
     <>
@@ -104,6 +111,7 @@ export const ScatterplotPage = () => {
         onExcludedIssuesChanged={setExcludedIssues}
         percentiles={percentiles}
         defaultSortField="cycleTime"
+        footer={() => <Button onClick={exportIssues}>Export</Button>}
       />
 
       <IssueDetailsDrawer
