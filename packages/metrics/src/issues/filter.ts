@@ -60,7 +60,27 @@ const matchValuesFilter = (
   return true;
 };
 
-export const filterIssues = (issues: Issue[], filter: IssueFilter): Issue[] => {
+/**
+ * The filtering use case.
+ */
+export enum FilterUseCase {
+  /**
+   * When simply listing issues, we should apply all filter criteria as specified.
+   */
+  List = "list",
+
+  /**
+   * When applying filters for metrics, we should only apply the resolution filter if there is a
+   * resolution. Otherwise we omit started issues from the cycle time/age.
+   */
+  Metrics = "metrics",
+}
+
+export const filterIssues = (
+  issues: Issue[],
+  filter: IssueFilter,
+  useCase: FilterUseCase = FilterUseCase.List,
+): Issue[] => {
   return issues.filter((issue) => {
     if (filter.hierarchyLevel) {
       if (issue.hierarchyLevel !== filter.hierarchyLevel) {
@@ -68,7 +88,13 @@ export const filterIssues = (issues: Issue[], filter: IssueFilter): Issue[] => {
       }
     }
 
-    if (!matchValuesFilter(filter.resolutions, issue.resolution)) {
+    const shouldApplyResolutionFilter =
+      (useCase === FilterUseCase.Metrics && issue.resolution) ||
+      useCase === FilterUseCase.List;
+    if (
+      shouldApplyResolutionFilter &&
+      !matchValuesFilter(filter.resolutions, issue.resolution)
+    ) {
       return false;
     }
 
