@@ -13,7 +13,7 @@ export const downloadCsv = (issues: Issue[]) => {
       completed: issue.metrics.completed,
       cycleTime: isNullish(issue.metrics.cycleTime)
         ? null
-        : round(issue.metrics.cycleTime),
+        : round(1)(issue.metrics.cycleTime),
     })),
     { header: true },
   );
