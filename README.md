@@ -1,4 +1,6 @@
 # jira-flow-metrics
+[![build](https://github.com/agileplanning-io/jira-flow-metrics/actions/workflows/build.yml/badge.svg?query=branch%3Amain)](https://github.com/agileplanning-io/jira-flow-metrics/actions/workflows/build.yml?query=branch%3Amain)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=agileplanning-io_jira-flow-metrics&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=agileplanning-io_jira-flow-metrics)
 
 Open source flow metrics and planning reports for Jira.
 
