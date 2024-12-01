@@ -7,6 +7,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "test": "jest",
+    "test:cov": "jest --coverage",
     "build": "tsup --clean --onSuccess 'tsc --emitDeclarationOnly'",
     "dev": "tsup --watch --onSuccess 'tsc --emitDeclarationOnly'",
     "lint": "eslint . --max-warnings 0",
