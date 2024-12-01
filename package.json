@@ -13,6 +13,7 @@
     "prepare": "husky install",
     "lint": "turbo lint",
     "test": "turbo test",
+    "test:cov": "turbo test:cov",
     "build": "turbo build",
     "dev": "turbo dev",
     "seed": "turbo seed",
