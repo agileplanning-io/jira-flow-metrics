@@ -6,7 +6,7 @@ const config = {
   transform: {
     "^.+\\.(t|j)s$": "ts-jest",
   },
-  collectCoverageFrom: ["**/*.(t|j)s"],
+  collectCoverageFrom: ["src/**/*.(t|j)s"],
   testEnvironment: "node",
 };
 
