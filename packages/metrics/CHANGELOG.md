@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-metrics
 
+## 0.1.12
+
+### Patch Changes
+
+- 722256b: feat: improve wip count options
+
 ## 0.1.11
 
 ### Patch Changes
