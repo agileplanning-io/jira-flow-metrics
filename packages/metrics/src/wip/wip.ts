@@ -51,7 +51,7 @@ export const calculateWip = ({
 
   const getStoppedDate = (issue: Issue) => {
     return issue.transitions
-      .reverse()
+      .toReversed()
       .find(
         (transition) =>
           transition.toStatus.category === StatusCategory.ToDo &&
