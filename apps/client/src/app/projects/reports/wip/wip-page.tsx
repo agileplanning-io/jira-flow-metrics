@@ -3,13 +3,14 @@ import {
   HierarchyLevel,
   Issue,
   WipResult,
+  WipType,
   calculateWip,
   filterIssues,
 } from "@agileplanning-io/flow-metrics";
 import { IssuesTable } from "../../../components/issues-table";
 import { WipChart } from "@agileplanning-io/flow-charts/src/wip/wip-chart";
 import { omit } from "remeda";
-import { Checkbox, Col, Row } from "antd";
+import { Checkbox, Col, Form, Radio, Row } from "antd";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
 import { ExpandableOptions } from "../../../components/expandable-options";
@@ -40,22 +41,10 @@ export const WipPage = () => {
 
   useEffect(() => {
     if (filter && issues) {
-      const filteredIssues = filterIssues(
-        issues,
-        omit(filter, ["dates"]),
-      ).filter((issue) => {
-        if (chartParams.includeStoppedIssues) {
-          return true;
-        }
-
-        const isStopped =
-          issue.metrics.started && issue.statusCategory === "To Do";
-
-        return !isStopped;
-      });
+      const filteredIssues = filterIssues(issues, omit(filter, ["dates"]));
       setFilteredIssues(filteredIssues);
     }
-  }, [issues, filter, chartParams.includeStoppedIssues, setFilteredIssues]);
+  }, [issues, filter, setFilteredIssues]);
 
   const [wipResult, setWipResult] = useState<WipResult>();
 
@@ -68,9 +57,16 @@ export const WipPage = () => {
       calculateWip({
         issues: filteredIssues,
         range: asAbsolute(filter.dates),
+        includeStoppedIssues: chartParams.includeStoppedIssues,
+        wipType: chartParams.wipType,
       }),
     );
-  }, [filter, filteredIssues]);
+  }, [
+    filter,
+    filteredIssues,
+    chartParams.includeStoppedIssues,
+    chartParams.wipType,
+  ]);
 
   return (
     <>
@@ -97,6 +93,12 @@ export const WipPage = () => {
               value: chartParams.showPercentileLabels
                 ? "Show percentile labels"
                 : "Hide percentile labels",
+            },
+            {
+              value:
+                chartParams.wipType === WipType.LeadTime
+                  ? "Lead time"
+                  : "Status",
             },
           ],
         }}
@@ -125,6 +127,20 @@ export const WipPage = () => {
             >
               Show percentile labels
             </Checkbox>
+            <Form.Item label="WIP algorithm" style={{ width: "100%" }}>
+              <Radio.Group
+                value={chartParams.wipType}
+                onChange={(e) =>
+                  setChartParams({
+                    ...chartParams,
+                    wipType: e.target.value,
+                  })
+                }
+              >
+                <Radio value={WipType.LeadTime}>Lead time</Radio>
+                <Radio value={WipType.Status}>Status</Radio>
+              </Radio.Group>
+            </Form.Item>
           </Col>
         </Row>
       </ExpandableOptions>
