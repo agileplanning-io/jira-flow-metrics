@@ -28,7 +28,7 @@ import { ChartParamsForm } from "./components/chart-params-form";
 import { useFilterParams } from "@app/filter/use-filter-params";
 import { Project } from "@data/projects";
 import { Button } from "antd";
-import { sortBy } from "remeda";
+import { reverse, sortBy } from "remeda";
 import { downloadCsv } from "@data/csv";
 
 export const ScatterplotPage = () => {
@@ -61,7 +61,7 @@ export const ScatterplotPage = () => {
           .map((issue) => issue.metrics.cycleTime),
       );
       setFilteredIssues(filteredIssues);
-      setPercentiles(percentiles);
+      setPercentiles(reverse(percentiles));
     }
   }, [issues, filter, setFilteredIssues, setPercentiles, excludedIssues]);
 

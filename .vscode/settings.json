@@ -7,5 +7,9 @@
     "**/.turbo": true,
     "**/dist": true,
     "**/node_modules": true
+  },
+  "sonarlint.connectedMode.project": {
+    "connectionId": "agileplanning-io",
+    "projectKey": "agileplanning-io_jira-flow-metrics"
   }
 }

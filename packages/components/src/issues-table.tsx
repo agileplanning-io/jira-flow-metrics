@@ -16,7 +16,7 @@ import {
 import { compareAsc, differenceInMinutes } from "date-fns";
 import { ColumnType, ColumnsType, SortOrder } from "antd/es/table/interface";
 import { FC, useEffect, useState } from "react";
-import { isNil } from "remeda";
+import { isNullish } from "remeda";
 
 import { QuestionCircleOutlined, ZoomInOutlined } from "@ant-design/icons";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
@@ -202,19 +202,10 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
         if (!percentiles) {
           return formatNumber(cycleTime);
         }
-        const percentile = isNil(cycleTime)
+        const percentile = isNullish(cycleTime)
           ? undefined
           : percentiles.find((p) => cycleTime >= p.value)?.percentile;
-        const color =
-          percentile === undefined
-            ? "blue"
-            : percentile >= 95
-            ? "rgb(244, 67, 54)"
-            : percentile >= 85
-            ? "red"
-            : percentile >= 70
-            ? "orange"
-            : "blue";
+        const color = getPercentileColor(percentile);
         return (
           <Space direction="horizontal" style={{ float: "right" }}>
             {formatNumber(cycleTime)}
@@ -455,4 +446,22 @@ const compareNumbers = (
   }
 
   return 0;
+};
+
+const percentileThresholds = [
+  { threshold: 95, color: "rgb(244, 67, 54)" },
+  { threshold: 85, color: "red" },
+  { threshold: 70, color: "orange" },
+];
+
+const getPercentileColor = (percentile: number | undefined) => {
+  if (percentile === undefined) {
+    return "blue";
+  }
+
+  const threshold = percentileThresholds.find(
+    ({ threshold }) => percentile >= threshold,
+  );
+
+  return threshold?.color ?? "blue";
 };
