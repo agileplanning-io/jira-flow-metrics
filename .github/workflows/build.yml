@@ -23,6 +23,7 @@ jobs:
         with:
           version: 8
       - run: pnpm install
+      - run: pnpm build
       - run: pnpm test:cov
       - name: SonarQube Cloud Scan
         uses: SonarSource/sonarcloud-github-action@master
