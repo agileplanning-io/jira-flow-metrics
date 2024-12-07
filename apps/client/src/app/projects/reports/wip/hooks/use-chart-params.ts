@@ -6,7 +6,7 @@ import { WipType } from "@agileplanning-io/flow-metrics";
 const chartParamsSchema = z.object({
   includeStoppedIssues: boolean.schema.default(boolean.False),
   showPercentileLabels: boolean.schema.default(boolean.True),
-  wipType: z.nativeEnum(WipType).default(WipType.LeadTime),
+  wipType: z.nativeEnum(WipType).default(WipType.Status),
 });
 
 export type ChartParams = z.infer<typeof chartParamsSchema>;

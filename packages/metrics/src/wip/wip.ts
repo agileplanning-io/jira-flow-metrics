@@ -1,4 +1,4 @@
-import { range } from "remeda";
+import { range, reverse } from "remeda";
 import { addDays, differenceInDays } from "date-fns";
 import { AbsoluteInterval } from "@agileplanning-io/flow-lib";
 import { isStarted, Issue, StartedIssue, StatusCategory } from "../issues";
@@ -49,14 +49,15 @@ export const calculateWip = ({
     return [];
   }
 
+  /**
+   * Returns the date an issue was stopped, i.e. the time of a transition from In Progress to To Do.
+   */
   const getStoppedDate = (issue: Issue) => {
-    return issue.transitions
-      .reverse()
-      .find(
-        (transition) =>
-          transition.toStatus.category === StatusCategory.ToDo &&
-          transition.fromStatus.category !== StatusCategory.ToDo,
-      )?.until;
+    return reverse(issue.transitions).find(
+      (transition) =>
+        transition.toStatus.category === StatusCategory.ToDo &&
+        transition.fromStatus.category === StatusCategory.InProgress,
+    )?.date;
   };
 
   const startedIssues = issues.filter(isStarted).filter((issue) => {

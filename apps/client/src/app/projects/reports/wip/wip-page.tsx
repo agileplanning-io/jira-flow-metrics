@@ -137,8 +137,8 @@ export const WipPage = () => {
                   })
                 }
               >
-                <Radio value={WipType.LeadTime}>Lead time</Radio>
                 <Radio value={WipType.Status}>Status</Radio>
+                <Radio value={WipType.LeadTime}>Lead time</Radio>
               </Radio.Group>
             </Form.Item>
           </Col>
