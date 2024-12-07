@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-metrics
 
+## 0.1.13
+
+### Patch Changes
+
+- 7b180d5: fix: wip lead time algorithm
+
 ## 0.1.12
 
 ### Patch Changes
