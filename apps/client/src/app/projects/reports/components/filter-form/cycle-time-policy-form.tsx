@@ -117,28 +117,29 @@ export const CycleTimePolicyForm = () => {
             borderRadius: 8,
           }}
         >
-          <span>
-            <Typography.Text type="secondary">
+          <span style={{ whiteSpace: "normal" }}>
+            <Typography.Text type="secondary" style={{ whiteSpace: "nowrap" }}>
               Cycle time policy
+              <Popover
+                placement="bottom"
+                content={
+                  <span>
+                    <Typography.Text code>Process Time</Typography.Text> is the
+                    amount of time the issue spent in the selected workflow
+                    stages.
+                    <br />
+                    <Typography.Text code>Lead Time</Typography.Text> is the
+                    total time to completion (including wait time).
+                  </span>
+                }
+              >
+                {" "}
+                <a href="#">
+                  <QuestionCircleOutlined style={{ fontSize: 13 }} />
+                </a>{" "}
+              </Popover>
             </Typography.Text>
-            <Popover
-              placement="bottom"
-              content={
-                <span>
-                  <Typography.Text code>Process Time</Typography.Text> is the
-                  amount of time the issue spent in the selected workflow
-                  stages.
-                  <br />
-                  <Typography.Text code>Lead Time</Typography.Text> is the total
-                  time to completion (including wait time).
-                </span>
-              }
-            >
-              {" "}
-              <a href="#">
-                <QuestionCircleOutlined style={{ fontSize: 13 }} />
-              </a>{" "}
-            </Popover>
+            <wbr />
             <Dropdown menu={{ items: policyItems }}>
               <Button
                 size="small"
