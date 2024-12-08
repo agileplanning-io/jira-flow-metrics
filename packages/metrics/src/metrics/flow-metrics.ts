@@ -3,7 +3,10 @@ import { filterIssues } from "../issues";
 import { getStatusFlowMetrics } from "./policies/status-flow-metrics";
 import { getComputedFlowMetrics } from "./policies/computed-flow-metrics";
 import { pipe } from "remeda";
-import { CycleTimePolicy } from "./policies/cycle-time-policy";
+import {
+  CycleTimePolicy,
+  EpicCycleTimePolicyType,
+} from "./policies/cycle-time-policy";
 
 export const getFlowMetrics = (
   issues: Issue[],
@@ -38,7 +41,7 @@ const partitionByHierarchyLevel = (issues: Issue[]): PartitionedIssues => {
 const computeStoryMetrics = (policy: CycleTimePolicy) => {
   return ([stories, epics]: PartitionedIssues): PartitionedIssues => [
     stories.map((story) => {
-      const metrics = getStatusFlowMetrics(story, policy.stories);
+      const metrics = getStatusFlowMetrics(story, policy.type, policy.statuses);
       return {
         ...story,
         metrics,
@@ -52,7 +55,7 @@ const filterStories =
   (policy: CycleTimePolicy) =>
   ([stories, epics]: PartitionedIssues): PartitionedIssues => {
     return [
-      policy.epics.type === "computed"
+      policy.epics.type === EpicCycleTimePolicyType.Derived
         ? filterIssues(stories, policy.epics, FilterUseCase.Metrics)
         : stories,
       epics,
@@ -88,9 +91,9 @@ const computeEpicMetrics = (policy: CycleTimePolicy) => {
     stories,
     epics.map((epic) => {
       const metrics =
-        policy.epics.type === "computed"
+        policy.epics.type === EpicCycleTimePolicyType.Derived
           ? getComputedFlowMetrics(epic, stories, policy)
-          : getStatusFlowMetrics(epic, policy.epics);
+          : getStatusFlowMetrics(epic, policy.type, policy.epics.statuses);
       return {
         ...epic,
         metrics,

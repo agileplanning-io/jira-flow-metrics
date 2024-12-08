@@ -5,7 +5,7 @@ import {
   StatusCategory,
   Transition,
 } from "../../issues";
-import { TransitionCycleTimePolicy } from "./cycle-time-policy";
+import { CycleTimePolicyType } from "./cycle-time-policy";
 
 type TransitionAnalysis = {
   inProgressTransitions: Transition[];
@@ -15,16 +15,33 @@ type TransitionAnalysis = {
 
 export const analyseTransitions = (
   transitions: Transition[],
-  policy: TransitionCycleTimePolicy,
+  policyType: CycleTimePolicyType,
+  statuses: string[],
 ): TransitionAnalysis => {
-  const startedIndex = getStartedDateIndex(transitions, policy.statuses);
-  const completedIndex = getCompletedDateIndex(transitions, policy.statuses);
+  const startedIndex = getStartedDateIndex(transitions, statuses);
+  const completedIndex = getCompletedDateIndex(transitions, statuses);
 
   const isStarted = startedIndex >= 0;
   const isCompleted = completedIndex >= 0;
 
+  // const isInProcess = (transition: Transition) => {
+  //   return policy.statuses.includes(transition.toStatus.name);
+  // };
+
+  // const isInLeadTime = (transitions: Transition, index: number) => {
+  //   if (!isStarted) {
+  //     return false;
+  //   }
+
+  //   if (index < startedIndex) {
+  //     return false;
+  //   }
+
+  //   return isCompleted ? index < completedIndex : true;
+  // };
+
   const isInProgress = (transition: Transition, index: number) => {
-    if (policy.includeWaitTime) {
+    if (policyType === CycleTimePolicyType.LeadTime) {
       if (!isStarted) {
         return false;
       }
@@ -35,11 +52,7 @@ export const analyseTransitions = (
 
       return isCompleted ? index < completedIndex : true;
     } else {
-      if (policy.statuses) {
-        return policy.statuses.includes(transition.toStatus.name);
-      } else {
-        return transition.toStatus.category === StatusCategory.InProgress;
-      }
+      return statuses.includes(transition.toStatus.name);
     }
   };
 
@@ -56,10 +69,11 @@ export const analyseTransitions = (
 
 export const getStatusFlowMetrics = (
   story: Issue,
-  policy: TransitionCycleTimePolicy,
+  policyType: CycleTimePolicyType,
+  statuses: string[],
 ): IssueFlowMetrics => {
   const { startedIndex, completedIndex, inProgressTransitions } =
-    analyseTransitions(story.transitions, policy);
+    analyseTransitions(story.transitions, policyType, statuses);
 
   if (startedIndex === -1 && completedIndex === -1) {
     return {};
