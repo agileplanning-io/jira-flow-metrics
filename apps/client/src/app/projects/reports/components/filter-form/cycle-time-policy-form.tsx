@@ -21,8 +21,11 @@ import {
 } from "antd";
 import {
   CaretDownOutlined,
+  EllipsisOutlined,
   ExportOutlined,
   QuestionCircleOutlined,
+  SaveFilled,
+  SaveOutlined,
 } from "@ant-design/icons";
 
 export const CycleTimePolicyForm = () => {
@@ -95,6 +98,11 @@ export const CycleTimePolicyForm = () => {
   const epicPolicyItems: MenuProps["items"] = [
     { label: "Status", key: "Status" },
     { label: "Derived", key: "Derived" },
+  ];
+
+  const saveItems: MenuProps["items"] = [
+    { label: "Save as...", key: "Status" },
+    { label: "My saved filter", key: "Derived" },
   ];
 
   return (
@@ -196,6 +204,17 @@ export const CycleTimePolicyForm = () => {
               Resolution=Done, IssueType!=Technical Debt
             </Button>
           </span>
+          <Space.Compact>
+            <Dropdown menu={{ items: saveItems }}>
+              <Button
+                size="small"
+                icon={<CaretDownOutlined />}
+                iconPosition="end"
+              >
+                <SaveOutlined />
+              </Button>
+            </Dropdown>
+          </Space.Compact>
         </Space>
 
         <Space
