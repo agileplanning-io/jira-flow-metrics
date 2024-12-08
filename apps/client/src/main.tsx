@@ -45,6 +45,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <ConfigProvider
         theme={{
+          token: {
+            fontSize: 13,
+          },
           components: {
             Layout: {
               headerBg: "#FFF",
