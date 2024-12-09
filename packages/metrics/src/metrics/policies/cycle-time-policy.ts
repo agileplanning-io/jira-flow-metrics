@@ -1,31 +1,28 @@
 import { IssueAttributesFilter } from "../../issues";
 
+export enum CycleTimePolicyType {
+  ProcessTime = "ProcessTime",
+  LeadTime = "LeadTime",
+}
+
+export enum EpicCycleTimePolicyType {
+  EpicStatus = "EpicStatus",
+  Derived = "Derived",
+}
+
 export type StatusCycleTimePolicy = {
-  type: "status";
-  includeWaitTime: boolean;
-  statuses?: string[];
+  statuses: string[];
 };
-
-export type StatusCategoryCycleTimePolicy = {
-  type: "statusCategory";
-  includeWaitTime: boolean;
-  statuses?: undefined;
-};
-
-export type ComputedCycleTimePolicy = IssueAttributesFilter & {
-  type: "computed";
-  includeWaitTime: boolean;
-};
-
-export type TransitionCycleTimePolicy =
-  | StatusCycleTimePolicy
-  | StatusCategoryCycleTimePolicy;
 
 export type EpicCycleTimePolicy =
-  | TransitionCycleTimePolicy
-  | ComputedCycleTimePolicy;
+  | ({
+      type: EpicCycleTimePolicyType.EpicStatus;
+    } & StatusCycleTimePolicy)
+  | ({
+      type: EpicCycleTimePolicyType.Derived;
+    } & IssueAttributesFilter);
 
-export type CycleTimePolicy = {
-  stories: TransitionCycleTimePolicy;
+export type CycleTimePolicy = StatusCycleTimePolicy & {
+  type: CycleTimePolicyType;
   epics: EpicCycleTimePolicy;
 };

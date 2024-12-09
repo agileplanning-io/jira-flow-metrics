@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { FilterType, ValuesFilter } from "../../issues";
 import {
-  ComputedCycleTimePolicy,
   CycleTimePolicy,
-  StatusCategoryCycleTimePolicy,
-  StatusCycleTimePolicy,
+  CycleTimePolicyType,
+  EpicCycleTimePolicy,
+  EpicCycleTimePolicyType,
 } from "./cycle-time-policy";
 
 const valuesFilterSchema: z.Schema<ValuesFilter> = z.object({
@@ -12,36 +12,23 @@ const valuesFilterSchema: z.Schema<ValuesFilter> = z.object({
   type: z.enum([FilterType.Include, FilterType.Exclude]),
 });
 
-const statusCycleTimePolicySchema: z.Schema<StatusCycleTimePolicy> = z.object({
-  type: z.literal("status"),
-  includeWaitTime: z.boolean(),
-  statuses: z.array(z.string()).optional(),
-});
-
-const statusCategoryCycleTimePolicySchema: z.Schema<StatusCategoryCycleTimePolicy> =
-  z.object({
-    type: z.literal("statusCategory"),
-    includeWaitTime: z.boolean(),
-  });
-
-const computedCycleTimePolicySchema: z.Schema<ComputedCycleTimePolicy> =
-  z.object({
-    type: z.literal("computed"),
-    includeWaitTime: z.boolean(),
-    labels: valuesFilterSchema.optional(),
-    issueTypes: valuesFilterSchema.optional(),
-    resolutions: valuesFilterSchema.optional(),
-    components: valuesFilterSchema.optional(),
-  });
+const epicCycleTimePolicySchema: z.Schema<EpicCycleTimePolicy> =
+  z.discriminatedUnion("type", [
+    z.object({
+      type: z.literal(EpicCycleTimePolicyType.EpicStatus),
+      statuses: z.array(z.string()),
+    }),
+    z.object({
+      type: z.literal(EpicCycleTimePolicyType.Derived),
+      labels: valuesFilterSchema.optional(),
+      issueTypes: valuesFilterSchema.optional(),
+      resolutions: valuesFilterSchema.optional(),
+      components: valuesFilterSchema.optional(),
+    }),
+  ]);
 
 export const cycleTimePolicySchema: z.Schema<CycleTimePolicy> = z.object({
-  stories: z.union([
-    statusCycleTimePolicySchema,
-    statusCategoryCycleTimePolicySchema,
-  ]),
-  epics: z.union([
-    statusCycleTimePolicySchema,
-    statusCategoryCycleTimePolicySchema,
-    computedCycleTimePolicySchema,
-  ]),
+  type: z.nativeEnum(CycleTimePolicyType),
+  statuses: z.array(z.string()),
+  epics: epicCycleTimePolicySchema,
 });

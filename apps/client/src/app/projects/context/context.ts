@@ -1,6 +1,11 @@
 import { createContext } from "react";
 import { Project } from "@data/projects";
-import { CycleTimePolicy, Issue } from "@agileplanning-io/flow-metrics";
+import {
+  CycleTimePolicy,
+  CycleTimePolicyType,
+  EpicCycleTimePolicyType,
+  Issue,
+} from "@agileplanning-io/flow-metrics";
 
 export type ProjectContextType = {
   project?: Project;
@@ -12,13 +17,11 @@ export type ProjectContextType = {
 export const ProjectContext = createContext<ProjectContextType>({
   setCycleTimePolicy: () => {},
   cycleTimePolicy: {
-    stories: {
-      type: "status",
-      includeWaitTime: false,
-    },
+    type: CycleTimePolicyType.LeadTime,
+    statuses: [],
     epics: {
-      type: "status",
-      includeWaitTime: false,
+      type: EpicCycleTimePolicyType.EpicStatus,
+      statuses: [],
     },
   },
 });

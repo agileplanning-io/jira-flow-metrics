@@ -1,14 +1,15 @@
 import { WorkflowStagesTable } from "@agileplanning-io/flow-components";
 import {
   CycleTimePolicy,
+  CycleTimePolicyType,
+  EpicCycleTimePolicyType,
   StatusCycleTimePolicy,
   TransitionStatus,
   WorkflowScheme,
 } from "@agileplanning-io/flow-metrics";
 import { Project } from "@data/projects";
 import { getSelectedStages } from "@data/workflows";
-import { Col, Form, Row, Select, Checkbox } from "antd";
-import { CheckboxChangeEvent } from "antd/es/checkbox";
+import { Col, Form, Row, Select } from "antd";
 import { clone, flat } from "remeda";
 import { FC, Key, useMemo } from "react";
 import { EditFilterForm } from "@app/projects/reports/components/filter-form/edit-filter-form";
@@ -26,18 +27,11 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
   setCycleTimePolicy,
 }) => {
   const selectedStoryStages = useMemo(() => {
-    if (cycleTimePolicy.stories.type !== "status") {
-      return undefined;
-    }
-
-    return getSelectedStages(
-      project.workflowScheme.stories,
-      cycleTimePolicy.stories,
-    );
+    return getSelectedStages(project.workflowScheme.stories, cycleTimePolicy);
   }, [project, cycleTimePolicy]);
 
   const selectedEpicStages = useMemo(() => {
-    if (cycleTimePolicy.epics.type !== "status") {
+    if (cycleTimePolicy.epics.type !== EpicCycleTimePolicyType.EpicStatus) {
       return undefined;
     }
 
@@ -47,65 +41,60 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
     );
   }, [project, cycleTimePolicy]);
 
-  const storyCycleTimePolicyType = cycleTimePolicy.stories.type;
-  const onStoryCycleTimePolicyTypeChanged = (
-    type: CycleTimePolicy["stories"]["type"],
-  ) => {
+  const cycleTimePolicyType = cycleTimePolicy.type;
+  const onStoryCycleTimePolicyTypeChanged = (type: CycleTimePolicyType) => {
     const policy = clone(cycleTimePolicy);
-    if (type !== policy.stories.type) {
-      if (type === "status") {
-        policy.stories = buildDefaultStatusesPolicy(project, "stories");
-      } else {
-        policy.stories = { type: "statusCategory", includeWaitTime: false };
-      }
+    if (type !== policy.type) {
+      policy.type = type;
       setCycleTimePolicy(policy);
     }
   };
 
   const onStoryStagesChanged = (keys: Key[]) => {
     const policy = clone(cycleTimePolicy);
-    if (policy.stories.type === "status") {
-      const statuses: string[] = flat(
-        project?.workflowScheme.stories.stages
-          .filter((stage) => keys.includes(stage.name))
-          .map((stage) => stage.statuses.map((status) => status.name)) ?? [],
-      );
-      policy.stories.statuses = statuses;
-      setCycleTimePolicy(policy);
-    }
+
+    const statuses: string[] = flat(
+      project?.workflowScheme.stories.stages
+        .filter((stage) => keys.includes(stage.name))
+        .map((stage) => stage.statuses.map((status) => status.name)) ?? [],
+    );
+
+    policy.statuses = statuses;
+    setCycleTimePolicy(policy);
   };
 
   const onEpicStagesChanged = (keys: Key[]) => {
     const policy = clone(cycleTimePolicy);
-    if (policy.epics.type === "status") {
+
+    if (policy.epics.type === EpicCycleTimePolicyType.EpicStatus) {
       const statuses: string[] = flat(
         project?.workflowScheme.epics.stages
           .filter((stage) => keys.includes(stage.name))
           .map((stage) => stage.statuses.map((status) => status.name)) ?? [],
       );
+
       policy.epics.statuses = statuses;
       setCycleTimePolicy(policy);
     }
   };
 
-  const onStoryIncludeWaitTimeChanged = (e: CheckboxChangeEvent) => {
-    const policy = clone(cycleTimePolicy);
-    policy.stories.includeWaitTime = e.target.checked;
-    setCycleTimePolicy(policy);
-  };
+  // const onStoryIncludeWaitTimeChanged = (e: CheckboxChangeEvent) => {
+  //   const policy = clone(cycleTimePolicy);
+  //   policy.stories.includeWaitTime = e.target.checked;
+  //   setCycleTimePolicy(policy);
+  // };
 
-  const onEpicIncludeWaitTimeChanged = (e: CheckboxChangeEvent) => {
-    const policy = clone(cycleTimePolicy);
-    policy.epics.includeWaitTime = e.target.checked;
-    setCycleTimePolicy(policy);
-  };
+  // const onEpicIncludeWaitTimeChanged = (e: CheckboxChangeEvent) => {
+  //   const policy = clone(cycleTimePolicy);
+  //   policy.epics.includeWaitTime = e.target.checked;
+  //   setCycleTimePolicy(policy);
+  // };
 
   const onFilterChanged = (filter: ClientIssueFilter) => {
     const policy = clone(cycleTimePolicy);
-    if (policy.epics.type === "computed") {
+    if (policy.epics.type === EpicCycleTimePolicyType.Derived) {
       policy.epics = {
-        type: "computed",
-        includeWaitTime: policy.epics.includeWaitTime,
+        type: EpicCycleTimePolicyType.Derived,
         ...filter,
       };
     }
@@ -118,12 +107,13 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
   ) => {
     const policy = clone(cycleTimePolicy);
     if (type !== policy.epics.type) {
-      if (type === "status") {
-        policy.epics = buildDefaultStatusesPolicy(project, "epics");
-      } else if (type === "statusCategory") {
-        policy.epics = { type: "statusCategory", includeWaitTime: false };
+      if (type === EpicCycleTimePolicyType.EpicStatus) {
+        policy.epics = {
+          ...buildDefaultStatusesPolicy(project, "epics"),
+          type: EpicCycleTimePolicyType.EpicStatus,
+        };
       } else {
-        policy.epics = { type: "computed", includeWaitTime: false };
+        policy.epics = { type: EpicCycleTimePolicyType.Derived };
       }
       setCycleTimePolicy(policy);
     }
@@ -134,32 +124,21 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
       <h3>Stories</h3>
       <Form.Item label="Story Policy Type">
         <Select
-          value={storyCycleTimePolicyType}
+          value={cycleTimePolicyType}
           onChange={onStoryCycleTimePolicyTypeChanged}
           options={[
-            { value: "status", label: "Status" },
-            { value: "statusCategory", label: "Status Category" },
+            { value: "ProcessTime", label: "Process Time" },
+            { value: "LeadTime", label: "Lead Time" },
           ]}
         />
       </Form.Item>
 
-      {storyCycleTimePolicyType === "status" ? (
-        <Form.Item label="Selected Stages">
-          <WorkflowStagesTable
-            workflowStages={project?.workflowScheme.stories.stages}
-            selectedStages={selectedStoryStages}
-            onSelectionChanged={onStoryStagesChanged}
-          />
-        </Form.Item>
-      ) : null}
-
-      <Form.Item>
-        <Checkbox
-          checked={cycleTimePolicy.stories.includeWaitTime}
-          onChange={onStoryIncludeWaitTimeChanged}
-        >
-          Include wait time
-        </Checkbox>
+      <Form.Item label="Selected Stages">
+        <WorkflowStagesTable
+          workflowStages={project?.workflowScheme.stories.stages}
+          selectedStages={selectedStoryStages}
+          onSelectionChanged={onStoryStagesChanged}
+        />
       </Form.Item>
     </Form>
   );
@@ -173,14 +152,13 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
             value={epicCycleTimePolicyType}
             onChange={onEpicCycleTimePolicyTypeChanged}
             options={[
-              { value: "computed", label: "Computed" },
-              { value: "status", label: "Status" },
-              { value: "statusCategory", label: "Status Category" },
+              { value: "Derived", label: "Derived" },
+              { value: "EpicStatus", label: "Status" },
             ]}
           />
         </Form.Item>
       </Form>
-      {epicCycleTimePolicyType === "computed" ? (
+      {epicCycleTimePolicyType === EpicCycleTimePolicyType.Derived ? (
         <EditFilterForm
           filter={cycleTimePolicy.epics}
           resolutions={project.resolutions}
@@ -197,29 +175,16 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
           wrapperColSpan={20}
         />
       ) : (
-        <>
-          {epicCycleTimePolicyType === "status" ? (
-            <Form layout="vertical">
-              <Form.Item label="Selected Stages">
-                <WorkflowStagesTable
-                  workflowStages={project?.workflowScheme.epics.stages}
-                  selectedStages={selectedEpicStages}
-                  onSelectionChanged={onEpicStagesChanged}
-                />
-              </Form.Item>
-            </Form>
-          ) : null}
-        </>
+        <Form layout="vertical">
+          <Form.Item label="Selected Stages">
+            <WorkflowStagesTable
+              workflowStages={project?.workflowScheme.epics.stages}
+              selectedStages={selectedEpicStages}
+              onSelectionChanged={onEpicStagesChanged}
+            />
+          </Form.Item>
+        </Form>
       )}
-
-      <Form.Item>
-        <Checkbox
-          checked={cycleTimePolicy.epics.includeWaitTime}
-          onChange={onEpicIncludeWaitTimeChanged}
-        >
-          Include wait time
-        </Checkbox>
-      </Form.Item>
     </>
   );
 
@@ -247,9 +212,7 @@ const buildDefaultStatusesPolicy = (
       .map((stage) => stage.statuses),
   );
   const policy: StatusCycleTimePolicy = {
-    type: "status",
     statuses: statuses.map((status) => status.name),
-    includeWaitTime: false,
   };
   return policy;
 };

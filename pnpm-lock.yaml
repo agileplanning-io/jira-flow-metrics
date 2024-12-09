@@ -75,8 +75,8 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
       zod:
-        specifier: ^3.22.4
-        version: 3.22.4
+        specifier: 3.23.8
+        version: 3.23.8
     devDependencies:
       '@faker-js/faker':
         specifier: ^8.2.0
@@ -241,8 +241,8 @@ importers:
         specifier: ^1.58.2
         version: 1.58.2
       zod:
-        specifier: ^3.22.4
-        version: 3.22.4
+        specifier: 3.23.8
+        version: 3.23.8
     devDependencies:
       '@testing-library/react':
         specifier: ^14.3.0
@@ -439,8 +439,8 @@ importers:
         specifier: ^1.58.2
         version: 1.58.2
       zod:
-        specifier: ^3.22.4
-        version: 3.22.4
+        specifier: 3.23.8
+        version: 3.23.8
     devDependencies:
       '@tsconfig/recommended':
         specifier: ^1.0.3
@@ -494,8 +494,8 @@ importers:
         specifier: ^3.0.5
         version: 3.0.5
       zod:
-        specifier: ^3.22.4
-        version: 3.22.4
+        specifier: 3.23.8
+        version: 3.23.8
     devDependencies:
       '@tsconfig/recommended':
         specifier: ^1.0.3
@@ -12352,6 +12352,6 @@ packages:
       commander: 9.5.0
     dev: true
 
-  /zod@3.22.4:
-    resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
+  /zod@3.23.8:
+    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
     dev: false

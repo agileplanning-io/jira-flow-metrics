@@ -4,6 +4,8 @@ import { MainModule } from "../src/main-module";
 import { ProjectsRepository } from "@entities/projects";
 import { IssuesRepository } from "@entities/issues";
 import {
+  CycleTimePolicyType,
+  EpicCycleTimePolicyType,
   FilterType,
   HierarchyLevel,
   Status,
@@ -51,14 +53,10 @@ const createProject = async (projects: ProjectsRepository) => {
     issueTypes: [],
     resolutions: ["Done", "duplicate", "Won't Do"],
     defaultCycleTimePolicy: {
-      stories: {
-        type: "status",
-        includeWaitTime: false,
-        statuses: [inProgress.name, inReview.name],
-      },
+      type: CycleTimePolicyType.LeadTime,
+      statuses: [inProgress.name, inReview.name],
       epics: {
-        type: "computed",
-        includeWaitTime: false,
+        type: EpicCycleTimePolicyType.Derived,
       },
     },
     defaultCompletedFilter: {
