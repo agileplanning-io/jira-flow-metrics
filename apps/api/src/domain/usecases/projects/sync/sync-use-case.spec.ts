@@ -4,7 +4,12 @@ import { SyncUseCase } from "./sync-use-case";
 import mock from "jest-mock-extended/lib/Mock";
 import { Domain, DomainsRepository } from "@entities/domains";
 import { IssuesRepository } from "@entities/issues";
-import { StatusCategory, buildIssue } from "@agileplanning-io/flow-metrics";
+import {
+  CycleTimePolicyType,
+  EpicCycleTimePolicyType,
+  StatusCategory,
+  buildIssue,
+} from "@agileplanning-io/flow-metrics";
 
 const now = new Date("2024-01-01T10:30:00.000Z");
 jest.useFakeTimers().setSystemTime(now);
@@ -92,15 +97,11 @@ describe("SyncUseCase", () => {
         issueCount: 1,
       },
       defaultCycleTimePolicy: {
+        type: CycleTimePolicyType.LeadTime,
+        statuses: ["In Progress"],
         epics: {
-          type: "status",
+          type: EpicCycleTimePolicyType.EpicStatus,
           statuses: [],
-          includeWaitTime: false,
-        },
-        stories: {
-          type: "status",
-          statuses: ["In Progress"],
-          includeWaitTime: false,
         },
       },
       defaultCompletedFilter: {},
