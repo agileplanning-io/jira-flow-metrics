@@ -97,7 +97,7 @@ describe("SyncUseCase", () => {
         issueCount: 1,
       },
       defaultCycleTimePolicy: {
-        type: CycleTimePolicyType.LeadTime,
+        type: CycleTimePolicyType.ProcessTime,
         statuses: ["In Progress"],
         epics: {
           type: EpicCycleTimePolicyType.EpicStatus,

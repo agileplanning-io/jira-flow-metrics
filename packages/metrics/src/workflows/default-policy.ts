@@ -25,7 +25,7 @@ export const buildDefaultCycleTimePolicy = (
   };
 
   return {
-    type: CycleTimePolicyType.LeadTime,
+    type: CycleTimePolicyType.ProcessTime,
     statuses: getDefaultWorkflowStatuses(scheme.stories),
     epics: {
       type: EpicCycleTimePolicyType.EpicStatus,
