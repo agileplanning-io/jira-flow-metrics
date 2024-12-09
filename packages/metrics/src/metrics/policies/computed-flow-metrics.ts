@@ -12,7 +12,7 @@ import {
   getSpanningSet,
 } from "@agileplanning-io/flow-lib";
 import { analyseTransitions } from "./status-flow-metrics";
-import { CycleTimePolicy, EpicCycleTimePolicyType } from "./cycle-time-policy";
+import { CycleTimePolicy, CycleTimePolicyType } from "./cycle-time-policy";
 
 export const getComputedFlowMetrics = (
   epic: Issue,
@@ -58,7 +58,7 @@ export const getComputedFlowMetrics = (
   const isCompleted = epic.statusCategory === StatusCategory.Done;
 
   const cycleTime =
-    policy.epics.type === EpicCycleTimePolicyType.Derived
+    policy.type === CycleTimePolicyType.LeadTime
       ? getDifferenceInDays(completed, started)
       : sumBy(spanningSet, (interval) =>
           getDifferenceInDays(interval.end, interval.start),
