@@ -1,5 +1,9 @@
 import { buildIssue } from "../fixtures";
-import { getFlowMetrics } from "../metrics";
+import {
+  CycleTimePolicyType,
+  EpicCycleTimePolicyType,
+  getFlowMetrics,
+} from "../metrics";
 import {
   HierarchyLevel,
   Issue,
@@ -72,13 +76,11 @@ describe("timeSpentInPeriod", () => {
     const issues = getFlowMetrics(
       [story1, story2, epic1, epic2, ...additionalIssues],
       {
-        stories: {
-          type: "status",
-          includeWaitTime: false,
-        },
+        type: CycleTimePolicyType.ProcessTime,
+        statuses: [inProgress.name],
         epics: {
-          type: "status",
-          includeWaitTime: false,
+          type: EpicCycleTimePolicyType.EpicStatus,
+          statuses: [],
         },
       },
     );
