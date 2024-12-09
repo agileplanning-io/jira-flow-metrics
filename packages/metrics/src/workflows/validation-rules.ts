@@ -1,5 +1,5 @@
 import { TransitionStatus } from "../issues";
-import { CycleTimePolicy } from "../metrics";
+import { CycleTimePolicy, EpicCycleTimePolicyType } from "../metrics";
 import { WorkflowScheme, Workflow, statusesInWorkflowStages } from "./types";
 
 export const isValidWorkflowScheme = (scheme: WorkflowScheme): boolean => {
@@ -16,15 +16,13 @@ export const isValidCycleTimePolicy = (
   policy: CycleTimePolicy,
   scheme: WorkflowScheme,
 ): boolean => {
-  const validStoryPolicy =
-    (policy.stories.type === "status" &&
-      policy.stories.statuses?.every(isValidStatus(scheme.stories.statuses))) ??
-    true;
+  const validStoryPolicy = policy.statuses.every(
+    isValidStatus(scheme.stories.statuses),
+  );
 
   const validEpicPolicy =
-    (policy.epics.type === "status" &&
-      policy.epics.statuses?.every(isValidStatus(scheme.epics.statuses))) ??
-    true;
+    policy.epics.type === EpicCycleTimePolicyType.EpicStatus &&
+    policy.epics.statuses.every(isValidStatus(scheme.epics.statuses));
 
   return validStoryPolicy && validEpicPolicy;
 };
