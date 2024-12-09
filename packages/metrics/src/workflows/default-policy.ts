@@ -1,4 +1,8 @@
-import { CycleTimePolicy } from "../metrics";
+import {
+  CycleTimePolicy,
+  CycleTimePolicyType,
+  EpicCycleTimePolicyType,
+} from "../metrics";
 import { WorkflowScheme, Workflow, statusesInWorkflowStages } from "./types";
 import { isValidCycleTimePolicy } from "./validation-rules";
 
@@ -21,14 +25,10 @@ export const buildDefaultCycleTimePolicy = (
   };
 
   return {
-    stories: {
-      type: "status",
-      includeWaitTime: false,
-      statuses: getDefaultWorkflowStatuses(scheme.stories),
-    },
+    type: CycleTimePolicyType.LeadTime,
+    statuses: getDefaultWorkflowStatuses(scheme.stories),
     epics: {
-      type: "status",
-      includeWaitTime: false,
+      type: EpicCycleTimePolicyType.EpicStatus,
       statuses: getDefaultWorkflowStatuses(scheme.epics),
     },
   };
