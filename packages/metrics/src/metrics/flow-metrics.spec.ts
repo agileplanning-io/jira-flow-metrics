@@ -1,7 +1,6 @@
-import { HierarchyLevel, Status, StatusCategory } from "../issues";
+import { HierarchyLevel, Status, StatusCategory, FilterType } from "../issues";
 import { getFlowMetrics } from "./flow-metrics";
 import { buildIssue } from "../fixtures/issue-factory";
-import { FilterType } from "../issues";
 import {
   CycleTimePolicyType,
   EpicCycleTimePolicy,

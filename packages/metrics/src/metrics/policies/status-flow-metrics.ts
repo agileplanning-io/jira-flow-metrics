@@ -24,22 +24,6 @@ export const analyseTransitions = (
   const isStarted = startedIndex >= 0;
   const isCompleted = completedIndex >= 0;
 
-  // const isInProcess = (transition: Transition) => {
-  //   return policy.statuses.includes(transition.toStatus.name);
-  // };
-
-  // const isInLeadTime = (transitions: Transition, index: number) => {
-  //   if (!isStarted) {
-  //     return false;
-  //   }
-
-  //   if (index < startedIndex) {
-  //     return false;
-  //   }
-
-  //   return isCompleted ? index < completedIndex : true;
-  // };
-
   const isInProgress = (transition: Transition, index: number) => {
     if (policyType === CycleTimePolicyType.LeadTime) {
       if (!isStarted) {
