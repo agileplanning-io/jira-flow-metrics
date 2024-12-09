@@ -78,18 +78,6 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
     }
   };
 
-  // const onStoryIncludeWaitTimeChanged = (e: CheckboxChangeEvent) => {
-  //   const policy = clone(cycleTimePolicy);
-  //   policy.stories.includeWaitTime = e.target.checked;
-  //   setCycleTimePolicy(policy);
-  // };
-
-  // const onEpicIncludeWaitTimeChanged = (e: CheckboxChangeEvent) => {
-  //   const policy = clone(cycleTimePolicy);
-  //   policy.epics.includeWaitTime = e.target.checked;
-  //   setCycleTimePolicy(policy);
-  // };
-
   const onFilterChanged = (filter: ClientIssueFilter) => {
     const policy = clone(cycleTimePolicy);
     if (policy.epics.type === EpicCycleTimePolicyType.Derived) {

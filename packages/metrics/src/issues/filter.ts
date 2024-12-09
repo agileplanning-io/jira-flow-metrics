@@ -1,4 +1,4 @@
-import { intersection } from "remeda";
+import { intersection, isNonNullish } from "remeda";
 import { CompletedIssue, HierarchyLevel, Issue, isCompleted } from "../issues";
 import { Interval, asAbsolute } from "@agileplanning-io/flow-lib";
 
@@ -89,7 +89,7 @@ export const filterIssues = (
     }
 
     const shouldApplyResolutionFilter =
-      (useCase === FilterUseCase.Metrics && issue.resolution) ||
+      (useCase === FilterUseCase.Metrics && isNonNullish(issue.resolution)) ||
       useCase === FilterUseCase.List;
     if (
       shouldApplyResolutionFilter &&
