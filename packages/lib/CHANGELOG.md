@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-lib
 
+## 0.1.4
+
+### Patch Changes
+
+- 0c1266e: chore: bump zod version
+
 ## 0.1.3
 
 ### Patch Changes
