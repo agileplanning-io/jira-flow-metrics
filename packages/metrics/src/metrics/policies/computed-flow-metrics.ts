@@ -1,4 +1,4 @@
-import { flat, map, pipe, sort, sumBy } from "remeda";
+import { filter, flat, map, pipe, sort, sumBy } from "remeda";
 import {
   Issue,
   IssueFlowMetrics,
@@ -19,7 +19,11 @@ export const getComputedFlowMetrics = (
   issues: Issue[],
   policy: CycleTimePolicy,
 ): IssueFlowMetrics => {
-  const children = issues.filter((child) => child.parentKey === epic.key);
+  const children = pipe(
+    issues,
+    filter(isChildOf(epic)),
+    filter(excludeToDoIssues(epic, policy)),
+  );
 
   const getInProgressTransitions = (story: Issue) =>
     analyseTransitions(story.transitions, policy.type, policy.statuses)
@@ -55,6 +59,11 @@ export const getComputedFlowMetrics = (
   );
 
   const completed = completedDates[0];
+
+  // Note: There are some inconsistencies in how we identify completed issues. An epic is completed
+  // if the status category is done (below). But in getIssueStatus we infer the status based on
+  // policy `statuses`. However, since derived cycle times are a simplifying tool, epic statuses
+  // should be preferred if more control is desired over the definition of epic completion.
   const isCompleted = epic.statusCategory === StatusCategory.Done;
 
   const cycleTime =
@@ -80,4 +89,33 @@ export const getComputedFlowMetrics = (
   }
 
   return {};
+};
+
+const isChildOf = (epic: Issue) => (child: Issue) =>
+  child.parentKey === epic.key;
+
+const excludeToDoIssues =
+  (epic: Issue, policy: CycleTimePolicy) => (child: Issue) => {
+    // ignore unstarted issues if the epic is done - e.g. leftover bugs, tech debt which are deemed unimportant
+    if (
+      epic.statusCategory === StatusCategory.Done &&
+      getIssueStatus(child, policy) === StatusCategory.ToDo
+    ) {
+      return false;
+    }
+
+    // include all issues (including incomplete issues) in metrics when the epic is not done
+    return true;
+  };
+
+const getIssueStatus = (
+  issue: Issue,
+  policy: CycleTimePolicy,
+): StatusCategory => {
+  const latestTransition = issue.transitions[issue.transitions.length - 1];
+  if (policy.statuses.includes(latestTransition.toStatus.name)) {
+    return StatusCategory.InProgress;
+  }
+
+  return latestTransition.toStatus.category;
 };
