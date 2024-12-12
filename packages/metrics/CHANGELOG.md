@@ -1,5 +1,19 @@
 # @agileplanning-io/flow-metrics
 
+## 1.0.0
+
+### Major Changes
+
+- 0c1266e: feat: simplify cycle time policies
+
+### Patch Changes
+
+- d80b4a7: fix: exclude To Do issues from derived cycle times when epic is completed
+- 7b180d5: fix: wip lead time algorithm
+- Updated dependencies [d80b4a7]
+- Updated dependencies [0c1266e]
+  - @agileplanning-io/flow-lib@0.1.4
+
 ## 0.1.12
 
 ### Patch Changes

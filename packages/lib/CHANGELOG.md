@@ -1,5 +1,12 @@
 # @agileplanning-io/flow-lib
 
+## 0.1.4
+
+### Patch Changes
+
+- d80b4a7: fix: exclude To Do issues from derived cycle times when epic is completed
+- 0c1266e: chore: bump zod version
+
 ## 0.1.3
 
 ### Patch Changes
