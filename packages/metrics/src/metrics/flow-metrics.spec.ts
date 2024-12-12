@@ -637,17 +637,47 @@ describe("getFlowMetrics", () => {
         });
       });
 
-      it("ignores To Do issues when the status category is done", () => {
-        const [result] = getFlowMetrics([epic, story1, story2, pausedStory], {
-          type: CycleTimePolicyType.ProcessTime,
-          statuses: [inProgress.name, inReview.name],
-          epics: { type: EpicCycleTimePolicyType.Derived },
+      describe("when the status category is done", () => {
+        it("ignores To Do issues", () => {
+          const [result] = getFlowMetrics([epic, story1, story2, pausedStory], {
+            type: CycleTimePolicyType.ProcessTime,
+            statuses: [inProgress.name, inReview.name],
+            epics: { type: EpicCycleTimePolicyType.Derived },
+          });
+
+          expect(result.metrics).toEqual({
+            started: story1Started,
+            completed: story2Completed,
+            cycleTime: 0.25,
+          });
         });
 
-        expect(result.metrics).toEqual({
-          started: story1Started,
-          completed: story2Completed,
-          cycleTime: 0.25,
+        it("includes In Progress issues", () => {
+          const inProgressStory = buildIssue({
+            parentKey: epic.key,
+            transitions: [
+              {
+                date: story3Started,
+                fromStatus: backlog,
+                toStatus: inProgress,
+              },
+            ],
+          });
+
+          const [result] = getFlowMetrics(
+            [epic, story1, story2, inProgressStory],
+            {
+              type: CycleTimePolicyType.ProcessTime,
+              statuses: [inProgress.name, inReview.name],
+              epics: { type: EpicCycleTimePolicyType.Derived },
+            },
+          );
+
+          expect(result.metrics).toEqual({
+            started: story1Started,
+            completed: now,
+            cycleTime: 0.375,
+          });
         });
       });
 
