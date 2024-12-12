@@ -1,4 +1,4 @@
-import { filter, flat, isNullish, map, pipe, sort, sumBy } from "remeda";
+import { filter, flat, map, pipe, sort, sumBy } from "remeda";
 import {
   Issue,
   IssueFlowMetrics,
@@ -96,18 +96,15 @@ const isChildOf = (epic: Issue) => (child: Issue) =>
 
 const excludeToDoIssues =
   (epic: Issue, policy: CycleTimePolicy) => (child: Issue) => {
-    const isInProgress = (issue: Issue) => isNullish(issue.resolution);
-
-    if (isInProgress(epic)) {
-      // include incomplete issues in metrics when the epic is in progress
-      return true;
-    }
-
-    if (getIssueStatus(child, policy) === StatusCategory.ToDo) {
-      // ignore unstarted issues if the epic is done
+    // ignore unstarted issues if the epic is done - e.g. leftover bugs, tech debt which are deemed unimportant
+    if (
+      epic.statusCategory === StatusCategory.Done &&
+      getIssueStatus(child, policy) === StatusCategory.ToDo
+    ) {
       return false;
     }
 
+    // include all issues (including incomplete issues) in metrics when the epic is not done
     return true;
   };
 

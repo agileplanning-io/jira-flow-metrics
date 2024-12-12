@@ -650,6 +650,27 @@ describe("getFlowMetrics", () => {
           cycleTime: 0.25,
         });
       });
+
+      it("includes To Do issues when the status category is In Progress", () => {
+        const inProgressEpic = {
+          ...epic,
+          statusCategory: StatusCategory.InProgress,
+        };
+
+        const [result] = getFlowMetrics(
+          [inProgressEpic, story1, story2, pausedStory],
+          {
+            type: CycleTimePolicyType.ProcessTime,
+            statuses: [inProgress.name, inReview.name],
+            epics: { type: EpicCycleTimePolicyType.Derived },
+          },
+        );
+
+        expect(result.metrics).toEqual({
+          started: story1Started,
+          age: 0.375,
+        });
+      });
     });
 
     describe("when the epic cycle time policy is 'status'", () => {
