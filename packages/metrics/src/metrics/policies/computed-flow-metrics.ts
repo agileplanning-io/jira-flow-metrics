@@ -22,7 +22,7 @@ export const getComputedFlowMetrics = (
   const children = pipe(
     issues,
     filter(isChildOf(epic)),
-    filter(excludeUnstartedIssues(epic, policy)),
+    filter(excludeToDoIssues(epic, policy)),
   );
 
   const getInProgressTransitions = (story: Issue) =>
@@ -94,7 +94,7 @@ export const getComputedFlowMetrics = (
 const isChildOf = (epic: Issue) => (child: Issue) =>
   child.parentKey === epic.key;
 
-const excludeUnstartedIssues =
+const excludeToDoIssues =
   (epic: Issue, policy: CycleTimePolicy) => (child: Issue) => {
     const isInProgress = (issue: Issue) => isNullish(issue.resolution);
 

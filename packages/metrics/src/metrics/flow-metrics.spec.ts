@@ -432,7 +432,7 @@ describe("getFlowMetrics", () => {
         });
       });
 
-      it("excludes times in ignored statuses when includeWaitTime = false", () => {
+      it("excludes times in ignored statuses when policy.type = ProcessTime", () => {
         const [result] = getFlowMetrics([issue], {
           type: CycleTimePolicyType.ProcessTime,
           statuses: [inReview.name],
@@ -505,6 +505,8 @@ describe("getFlowMetrics", () => {
       const story1Completed = new Date("2023-01-01T13:30:00.000Z");
       const story2Started = new Date("2023-01-02T13:30:00.000Z");
       const story2Completed = new Date("2023-01-02T16:30:00.000Z");
+      const story3Started = new Date("2023-01-02T16:30:00.000Z");
+      const story3Paused = new Date("2023-01-02T19:30:00.000Z");
       const now = new Date("2023-01-02T19:30:00.000Z");
 
       const epic = buildIssue({
@@ -544,6 +546,22 @@ describe("getFlowMetrics", () => {
             date: story2Completed,
             fromStatus: inProgress,
             toStatus: done,
+          },
+        ],
+      });
+
+      const pausedStory = buildIssue({
+        parentKey: epic.key,
+        transitions: [
+          {
+            date: story3Started,
+            fromStatus: backlog,
+            toStatus: inProgress,
+          },
+          {
+            date: story3Paused,
+            fromStatus: inProgress,
+            toStatus: backlog,
           },
         ],
       });
@@ -616,6 +634,20 @@ describe("getFlowMetrics", () => {
           started: story1Started,
           completed: undefined,
           age: 0.25,
+        });
+      });
+
+      it("ignores To Do issues when the status category is done", () => {
+        const [result] = getFlowMetrics([epic, story1, story2, pausedStory], {
+          type: CycleTimePolicyType.ProcessTime,
+          statuses: [inProgress.name, inReview.name],
+          epics: { type: EpicCycleTimePolicyType.Derived },
+        });
+
+        expect(result.metrics).toEqual({
+          started: story1Started,
+          completed: story2Completed,
+          cycleTime: 0.25,
         });
       });
     });
