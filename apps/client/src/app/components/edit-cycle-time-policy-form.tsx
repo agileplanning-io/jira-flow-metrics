@@ -166,7 +166,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
       <Space
         direction="horizontal"
         style={{
-          background: "rgba(0, 0, 0, 0.02)",
+          // background: "rgba(0, 0, 0, 0.02)",
           width: "100%",
           padding: 8,
           borderRadius: 8,
@@ -198,12 +198,13 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
           <Dropdown
             menu={{
               items: policyItems,
-              onClick: (e) => onStoryCycleTimePolicyTypeChanged(e.key),
+              onClick: (e: MenuProps["items"][0]) =>
+                onStoryCycleTimePolicyTypeChanged(e.key),
             }}
+            trigger={["click"]}
           >
             <Button
               size="small"
-              type="dashed"
               icon={<CaretDownOutlined />}
               iconPosition="end"
             >
@@ -244,7 +245,6 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
           >
             <Button
               size="small"
-              type="dashed"
               icon={<CaretDownOutlined />}
               iconPosition="end"
             >
@@ -260,13 +260,13 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
           <Dropdown
             menu={{
               items: epicPolicyItems,
-              onClick: (e) => onEpicCycleTimePolicyTypeChanged(e.key),
+              onClick: (e: MenuProps["items"][0]) =>
+                onEpicCycleTimePolicyTypeChanged(e.key),
             }}
             trigger={["click"]}
           >
             <Button
               size="small"
-              type="dashed"
               icon={<CaretDownOutlined />}
               iconPosition="end"
             >
@@ -305,7 +305,6 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
             >
               <Button
                 size="small"
-                type="dashed"
                 icon={<CaretDownOutlined />}
                 iconPosition="end"
               >
