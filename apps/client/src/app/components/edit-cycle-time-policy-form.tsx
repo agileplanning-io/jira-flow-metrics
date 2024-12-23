@@ -3,8 +3,11 @@ import {
   CycleTimePolicy,
   CycleTimePolicyType,
   EpicCycleTimePolicyType,
+  FilterType,
+  IssueAttributesFilter,
   StatusCycleTimePolicy,
   TransitionStatus,
+  ValuesFilter,
   WorkflowScheme,
 } from "@agileplanning-io/flow-metrics";
 import { Project } from "@data/projects";
@@ -22,7 +25,7 @@ import {
   Space,
   Typography,
 } from "antd";
-import { clone, flat } from "remeda";
+import { clone, compact, flat } from "remeda";
 import { FC, Key, useMemo } from "react";
 import { EditFilterForm } from "@app/projects/reports/components/filter-form/edit-filter-form";
 import { ClientIssueFilter } from "@app/filter/client-issue-filter";
@@ -31,6 +34,7 @@ import {
   CaretDownOutlined,
   UnorderedListOutlined,
 } from "@ant-design/icons";
+import { ellipsize } from "@agileplanning-io/flow-lib";
 
 type EditCycleTimePolicyForm = {
   project: Project;
@@ -122,6 +126,37 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
       }
       setCycleTimePolicy(policy);
     }
+  };
+
+  const summariseFilter = (filter: IssueAttributesFilter) => {
+    const summary: (string | undefined)[] = [];
+
+    const summariseValuesFilter = (
+      name: string,
+      valuesFilter?: ValuesFilter,
+    ) => {
+      if (!valuesFilter?.values?.length) {
+        return undefined;
+      }
+
+      const op =
+        valuesFilter.values.length === 1
+          ? valuesFilter.type === FilterType.Include
+            ? "="
+            : "!="
+          : valuesFilter.type === FilterType.Include
+          ? "in"
+          : "excl.";
+
+      return `${name} ${op} ${valuesFilter.values.join(",")}`;
+    };
+
+    summary.push(summariseValuesFilter("Resolution", filter.resolutions));
+    summary.push(summariseValuesFilter("Labels", filter.labels));
+    summary.push(summariseValuesFilter("Components", filter.components));
+    summary.push(summariseValuesFilter("Issue Type", filter.issueTypes));
+
+    return ellipsize(compact(summary).join(", "), 48);
   };
 
   const StoryPolicyForm = () => (
@@ -317,6 +352,90 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
               </Button>
             </Dropdown>
           </span>
+
+          {epicCycleTimePolicyType === EpicCycleTimePolicyType.Derived ? (
+            <span>
+              <Typography.Text type="secondary">
+                Completed issues:{" "}
+              </Typography.Text>
+              <Popconfirm
+                title="Completed issues filter"
+                icon={null}
+                description={
+                  <div style={{ width: 480 }}>
+                    <EditFilterForm
+                      filter={cycleTimePolicy.epics}
+                      resolutions={project.resolutions}
+                      labels={project.labels}
+                      components={project.components}
+                      issueTypes={project.issueTypes}
+                      setFilter={onFilterChanged}
+                      showDateSelector={false}
+                      showAssigneesFilter={false}
+                      showHierarchyFilter={false}
+                      showResolutionFilter={true}
+                      showStatusFilter={false}
+                      labelColSpan={6}
+                      wrapperColSpan={18}
+                    />
+                  </div>
+                }
+              >
+                <Button
+                  size="small"
+                  type="dashed"
+                  icon={<CaretDownOutlined />}
+                  iconPosition="end"
+                >
+                  {summariseFilter(cycleTimePolicy.epics)}
+                </Button>
+              </Popconfirm>
+            </span>
+          ) : (
+            <span>
+              <Typography.Text type="secondary">
+                Selected stages
+              </Typography.Text>
+              <Popover
+                placement="bottom"
+                content={
+                  <span>
+                    The workflow stages to count as 'in progress'.
+                    <br />
+                    Time spent in these stages is counted towards the cycle
+                    time, and time spent in other stages is counted as 'wait
+                    time'.
+                  </span>
+                }
+              >
+                {" "}
+                <a href="#">
+                  <QuestionCircleOutlined style={{ fontSize: 13 }} />
+                </a>{" "}
+              </Popover>
+              <Popconfirm
+                title="Select epic stages"
+                icon={null}
+                placement="bottom"
+                description={
+                  <WorkflowStagesTable
+                    workflowStages={project?.workflowScheme.epics.stages}
+                    selectedStages={selectedEpicStages}
+                    onSelectionChanged={onEpicStagesChanged}
+                  />
+                }
+              >
+                <Button
+                  size="small"
+                  type="dashed"
+                  icon={<CaretDownOutlined />}
+                  iconPosition="end"
+                >
+                  {selectedEpicStages?.join(", ")}
+                </Button>
+              </Popconfirm>
+            </span>
+          )}
         </Space>
       </Space>
       <Row gutter={[8, 8]}>
