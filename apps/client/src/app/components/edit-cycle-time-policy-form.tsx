@@ -14,14 +14,10 @@ import { Project } from "@data/projects";
 import { getSelectedStages } from "@data/workflows";
 import {
   Button,
-  Col,
   Dropdown,
-  Form,
   MenuProps,
   Popconfirm,
   Popover,
-  Row,
-  Select,
   Space,
   Typography,
 } from "antd";
@@ -29,11 +25,7 @@ import { clone, compact, flat } from "remeda";
 import { FC, Key, useMemo } from "react";
 import { EditFilterForm } from "@app/projects/reports/components/filter-form/edit-filter-form";
 import { ClientIssueFilter } from "@app/filter/client-issue-filter";
-import {
-  QuestionCircleOutlined,
-  CaretDownOutlined,
-  UnorderedListOutlined,
-} from "@ant-design/icons";
+import { QuestionCircleOutlined, CaretDownOutlined } from "@ant-design/icons";
 import { ellipsize } from "@agileplanning-io/flow-lib";
 
 type EditCycleTimePolicyForm = {
@@ -159,75 +151,6 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
     return ellipsize(compact(summary).join(", "), 48);
   };
 
-  const StoryPolicyForm = () => (
-    <Form layout="vertical">
-      <h3>Stories</h3>
-      <Form.Item label="Story Policy Type">
-        <Select
-          value={cycleTimePolicyType}
-          onChange={onStoryCycleTimePolicyTypeChanged}
-          options={[
-            { value: "ProcessTime", label: "Process Time" },
-            { value: "LeadTime", label: "Lead Time" },
-          ]}
-        />
-      </Form.Item>
-
-      <Form.Item label="Selected Stages">
-        <WorkflowStagesTable
-          workflowStages={project?.workflowScheme.stories.stages}
-          selectedStages={selectedStoryStages}
-          onSelectionChanged={onStoryStagesChanged}
-        />
-      </Form.Item>
-    </Form>
-  );
-
-  const EpicPolicyForm = () => (
-    <>
-      <Form layout="vertical">
-        <h3>Epics</h3>
-        <Form.Item label="Epic Policy Type">
-          <Select
-            value={epicCycleTimePolicyType}
-            onChange={onEpicCycleTimePolicyTypeChanged}
-            options={[
-              { value: "Derived", label: "Derived" },
-              { value: "EpicStatus", label: "Status" },
-            ]}
-          />
-        </Form.Item>
-      </Form>
-      {epicCycleTimePolicyType === EpicCycleTimePolicyType.Derived ? (
-        <EditFilterForm
-          filter={cycleTimePolicy.epics}
-          resolutions={project.resolutions}
-          labels={project.labels}
-          components={project.components}
-          issueTypes={project.issueTypes}
-          setFilter={onFilterChanged}
-          showDateSelector={false}
-          showAssigneesFilter={false}
-          showHierarchyFilter={false}
-          showResolutionFilter={true}
-          showStatusFilter={false}
-          labelColSpan={4}
-          wrapperColSpan={20}
-        />
-      ) : (
-        <Form layout="vertical">
-          <Form.Item label="Selected Stages">
-            <WorkflowStagesTable
-              workflowStages={project?.workflowScheme.epics.stages}
-              selectedStages={selectedEpicStages}
-              onSelectionChanged={onEpicStagesChanged}
-            />
-          </Form.Item>
-        </Form>
-      )}
-    </>
-  );
-
   const policyItems: MenuProps["items"] = [
     { label: "Process Time", key: CycleTimePolicyType.ProcessTime },
     { label: "Lead Time", key: CycleTimePolicyType.LeadTime },
@@ -239,45 +162,146 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
   ];
 
   return (
-    <>
-      <Space direction="vertical" style={{ marginBottom: 8, width: "100%" }}>
-        <Space
-          direction="horizontal"
-          style={{
-            background: "rgba(0, 0, 0, 0.02)",
-            width: "100%",
-            padding: 8,
-            borderRadius: 8,
-          }}
-        >
-          <span style={{ whiteSpace: "normal" }}>
-            <Typography.Text type="secondary" style={{ whiteSpace: "nowrap" }}>
-              Cycle time policy
-              <Popover
-                placement="bottom"
-                content={
-                  <span>
-                    <Typography.Text code>Process Time</Typography.Text> is the
-                    amount of time the issue spent in the selected workflow
-                    stages.
-                    <br />
-                    <Typography.Text code>Lead Time</Typography.Text> is the
-                    total time to completion (including wait time).
-                  </span>
-                }
-              >
-                {" "}
-                <a href="#">
-                  <QuestionCircleOutlined style={{ fontSize: 13 }} />
-                </a>{" "}
-              </Popover>
+    <Space direction="vertical" style={{ marginBottom: 8, width: "100%" }}>
+      <Space
+        direction="horizontal"
+        style={{
+          background: "rgba(0, 0, 0, 0.02)",
+          width: "100%",
+          padding: 8,
+          borderRadius: 8,
+        }}
+      >
+        <span style={{ whiteSpace: "normal" }}>
+          <Typography.Text type="secondary" style={{ whiteSpace: "nowrap" }}>
+            Cycle time policy
+            <Popover
+              placement="bottom"
+              content={
+                <span>
+                  <Typography.Text code>Process Time</Typography.Text> is the
+                  amount of time the issue spent in the selected workflow
+                  stages.
+                  <br />
+                  <Typography.Text code>Lead Time</Typography.Text> is the total
+                  time to completion (including wait time).
+                </span>
+              }
+            >
+              {" "}
+              <a href="#">
+                <QuestionCircleOutlined style={{ fontSize: 13 }} />
+              </a>{" "}
+            </Popover>
+          </Typography.Text>
+          <wbr />
+          <Dropdown
+            menu={{
+              items: policyItems,
+              onClick: (e) => onStoryCycleTimePolicyTypeChanged(e.key),
+            }}
+          >
+            <Button
+              size="small"
+              type="dashed"
+              icon={<CaretDownOutlined />}
+              iconPosition="end"
+            >
+              {cycleTimePolicyType}
+            </Button>
+          </Dropdown>
+        </span>
+
+        <span>
+          <Typography.Text type="secondary">Selected stages</Typography.Text>
+          <Popover
+            placement="bottom"
+            content={
+              <span>
+                The workflow stages to count as 'in progress'.
+                <br />
+                Time spent in these stages is counted towards the cycle time,
+                and time spent in other stages is counted as 'wait time'.
+              </span>
+            }
+          >
+            {" "}
+            <a href="#">
+              <QuestionCircleOutlined style={{ fontSize: 13 }} />
+            </a>{" "}
+          </Popover>
+          <Popconfirm
+            title="Select story stages"
+            icon={null}
+            placement="bottom"
+            description={
+              <WorkflowStagesTable
+                workflowStages={project?.workflowScheme.stories.stages}
+                selectedStages={selectedStoryStages}
+                onSelectionChanged={onStoryStagesChanged}
+              />
+            }
+          >
+            <Button
+              size="small"
+              type="dashed"
+              icon={<CaretDownOutlined />}
+              iconPosition="end"
+            >
+              {selectedStoryStages.join(", ")}
+            </Button>
+          </Popconfirm>
+        </span>
+
+        <span>&middot;</span>
+
+        <span>
+          <Typography.Text type="secondary">Epic policy: </Typography.Text>
+          <Dropdown
+            menu={{
+              items: epicPolicyItems,
+              onClick: (e) => onEpicCycleTimePolicyTypeChanged(e.key),
+            }}
+            trigger={["click"]}
+          >
+            <Button
+              size="small"
+              type="dashed"
+              icon={<CaretDownOutlined />}
+              iconPosition="end"
+            >
+              {epicCycleTimePolicyType}
+            </Button>
+          </Dropdown>
+        </span>
+
+        {epicCycleTimePolicyType === EpicCycleTimePolicyType.Derived ? (
+          <span>
+            <Typography.Text type="secondary">
+              Completed issues:{" "}
             </Typography.Text>
-            <wbr />
-            <Dropdown
-              menu={{
-                items: policyItems,
-                onClick: (e) => onStoryCycleTimePolicyTypeChanged(e.key),
-              }}
+            <Popconfirm
+              title="Completed issues filter"
+              icon={null}
+              description={
+                <div style={{ width: 480 }}>
+                  <EditFilterForm
+                    filter={cycleTimePolicy.epics}
+                    resolutions={project.resolutions}
+                    labels={project.labels}
+                    components={project.components}
+                    issueTypes={project.issueTypes}
+                    setFilter={onFilterChanged}
+                    showDateSelector={false}
+                    showAssigneesFilter={false}
+                    showHierarchyFilter={false}
+                    showResolutionFilter={true}
+                    showStatusFilter={false}
+                    labelColSpan={6}
+                    wrapperColSpan={18}
+                  />
+                </div>
+              }
             >
               <Button
                 size="small"
@@ -285,11 +309,11 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
                 icon={<CaretDownOutlined />}
                 iconPosition="end"
               >
-                {cycleTimePolicyType}
+                {summariseFilter(cycleTimePolicy.epics)}
               </Button>
-            </Dropdown>
+            </Popconfirm>
           </span>
-
+        ) : (
           <span>
             <Typography.Text type="secondary">Selected stages</Typography.Text>
             <Popover
@@ -309,14 +333,14 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
               </a>{" "}
             </Popover>
             <Popconfirm
-              title="Select story stages"
+              title="Select epic stages"
               icon={null}
               placement="bottom"
               description={
                 <WorkflowStagesTable
-                  workflowStages={project?.workflowScheme.stories.stages}
-                  selectedStages={selectedStoryStages}
-                  onSelectionChanged={onStoryStagesChanged}
+                  workflowStages={project?.workflowScheme.epics.stages}
+                  selectedStages={selectedEpicStages}
+                  onSelectionChanged={onEpicStagesChanged}
                 />
               }
             >
@@ -326,127 +350,13 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
                 icon={<CaretDownOutlined />}
                 iconPosition="end"
               >
-                {selectedStoryStages.join(", ")}
+                {selectedEpicStages?.join(", ")}
               </Button>
             </Popconfirm>
           </span>
-
-          <span>&middot;</span>
-
-          <span>
-            <Typography.Text type="secondary">Epic policy: </Typography.Text>
-            <Dropdown
-              menu={{
-                items: epicPolicyItems,
-                onClick: (e) => onEpicCycleTimePolicyTypeChanged(e.key),
-              }}
-              trigger={["click"]}
-            >
-              <Button
-                size="small"
-                type="dashed"
-                icon={<CaretDownOutlined />}
-                iconPosition="end"
-              >
-                {epicCycleTimePolicyType}
-              </Button>
-            </Dropdown>
-          </span>
-
-          {epicCycleTimePolicyType === EpicCycleTimePolicyType.Derived ? (
-            <span>
-              <Typography.Text type="secondary">
-                Completed issues:{" "}
-              </Typography.Text>
-              <Popconfirm
-                title="Completed issues filter"
-                icon={null}
-                description={
-                  <div style={{ width: 480 }}>
-                    <EditFilterForm
-                      filter={cycleTimePolicy.epics}
-                      resolutions={project.resolutions}
-                      labels={project.labels}
-                      components={project.components}
-                      issueTypes={project.issueTypes}
-                      setFilter={onFilterChanged}
-                      showDateSelector={false}
-                      showAssigneesFilter={false}
-                      showHierarchyFilter={false}
-                      showResolutionFilter={true}
-                      showStatusFilter={false}
-                      labelColSpan={6}
-                      wrapperColSpan={18}
-                    />
-                  </div>
-                }
-              >
-                <Button
-                  size="small"
-                  type="dashed"
-                  icon={<CaretDownOutlined />}
-                  iconPosition="end"
-                >
-                  {summariseFilter(cycleTimePolicy.epics)}
-                </Button>
-              </Popconfirm>
-            </span>
-          ) : (
-            <span>
-              <Typography.Text type="secondary">
-                Selected stages
-              </Typography.Text>
-              <Popover
-                placement="bottom"
-                content={
-                  <span>
-                    The workflow stages to count as 'in progress'.
-                    <br />
-                    Time spent in these stages is counted towards the cycle
-                    time, and time spent in other stages is counted as 'wait
-                    time'.
-                  </span>
-                }
-              >
-                {" "}
-                <a href="#">
-                  <QuestionCircleOutlined style={{ fontSize: 13 }} />
-                </a>{" "}
-              </Popover>
-              <Popconfirm
-                title="Select epic stages"
-                icon={null}
-                placement="bottom"
-                description={
-                  <WorkflowStagesTable
-                    workflowStages={project?.workflowScheme.epics.stages}
-                    selectedStages={selectedEpicStages}
-                    onSelectionChanged={onEpicStagesChanged}
-                  />
-                }
-              >
-                <Button
-                  size="small"
-                  type="dashed"
-                  icon={<CaretDownOutlined />}
-                  iconPosition="end"
-                >
-                  {selectedEpicStages?.join(", ")}
-                </Button>
-              </Popconfirm>
-            </span>
-          )}
-        </Space>
+        )}
       </Space>
-      <Row gutter={[8, 8]}>
-        <Col span={12}>
-          <StoryPolicyForm />
-        </Col>
-        <Col span={12}>
-          <EpicPolicyForm />
-        </Col>
-      </Row>
-    </>
+    </Space>
   );
 };
 
