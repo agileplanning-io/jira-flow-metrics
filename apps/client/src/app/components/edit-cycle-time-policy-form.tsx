@@ -269,7 +269,8 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
               value={cycleTimePolicy.epics as IssueAttributesFilter}
               title="Completed issues filter"
               onValueChanged={onFilterChanged}
-              content={(value, setValue) => (
+            >
+              {(value, setValue) => (
                 <div style={{ width: 480 }}>
                   <EditFilterForm
                     filter={value}
@@ -288,7 +289,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
                   />
                 </div>
               )}
-            />
+            </Popdown>
           </FormControl>
         ) : (
           <span>

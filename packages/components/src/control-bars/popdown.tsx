@@ -5,7 +5,7 @@ import { clone } from "remeda";
 
 type PopdownProps<T> = {
   title: string;
-  content: (value: T, setValue: (value: T) => void) => ReactNode;
+  children: (value: T, setValue: (value: T) => void) => ReactNode;
   value: T;
   renderLabel: (value: T) => ReactNode;
   onValueChanged: (value: T) => void;
@@ -13,7 +13,7 @@ type PopdownProps<T> = {
 
 export const Popdown = <T,>({
   title,
-  content,
+  children,
   value,
   renderLabel,
   onValueChanged,
@@ -23,7 +23,7 @@ export const Popdown = <T,>({
     <Popconfirm
       title={title}
       icon={null}
-      description={content(state, setState)}
+      description={children(state, setState)}
       onConfirm={() => onValueChanged(state)}
       onOpenChange={(open) => {
         if (open) {
