@@ -19,19 +19,11 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { Project } from "@data/projects";
 import { getSelectedStages } from "@data/workflows";
-import {
-  Button,
-  MenuProps,
-  Popconfirm,
-  Popover,
-  Space,
-  Typography,
-} from "antd";
+import { MenuProps, Space, Typography } from "antd";
 import { clone, compact, flat } from "remeda";
 import { FC, Key, ReactNode, useMemo } from "react";
 import { EditFilterForm } from "@app/projects/reports/components/filter-form/edit-filter-form";
 import { ClientIssueFilter } from "@app/filter/client-issue-filter";
-import { QuestionCircleOutlined, CaretDownOutlined } from "@ant-design/icons";
 import { ellipsize } from "@agileplanning-io/flow-lib";
 
 type EditCycleTimePolicyForm = {
@@ -230,26 +222,22 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
             </>
           }
         >
-          <Popconfirm
+          <Popdown
             title="Select story stages"
-            icon={null}
-            placement="bottom"
-            description={
+            value={selectedStoryStages}
+            renderLabel={(selectedStoryStages) =>
+              selectedStoryStages.join(", ")
+            }
+            onValueChanged={(stages) => onStoryStagesChanged(stages)}
+          >
+            {(value, setValue) => (
               <WorkflowStagesTable
                 workflowStages={project?.workflowScheme.stories.stages}
-                selectedStages={selectedStoryStages}
-                onSelectionChanged={onStoryStagesChanged}
+                selectedStages={value}
+                onSelectionChanged={(stages) => setValue(stages as string[])}
               />
-            }
-          >
-            <Button
-              size="small"
-              icon={<CaretDownOutlined />}
-              iconPosition="end"
-            >
-              {selectedStoryStages.join(", ")}
-            </Button>
-          </Popconfirm>
+            )}
+          </Popdown>
         </FormControl>
 
         <span>&middot;</span>
@@ -292,46 +280,45 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
             </Popdown>
           </FormControl>
         ) : (
-          <span>
-            <Typography.Text type="secondary">Selected stages</Typography.Text>
-            <Popover
-              placement="bottom"
-              content={
-                <span>
-                  The workflow stages to count as 'in progress'.
-                  <br />
-                  Time spent in these stages is counted towards the cycle time,
-                  and time spent in other stages is counted as 'wait time'.
-                </span>
-              }
-            >
-              {" "}
-              <a href="#">
-                <QuestionCircleOutlined style={{ fontSize: 13 }} />
-              </a>{" "}
-            </Popover>
-            <Popconfirm
-              title="Select epic stages"
-              icon={null}
-              placement="bottom"
-              description={
-                <WorkflowStagesTable
-                  workflowStages={project?.workflowScheme.epics.stages}
-                  selectedStages={selectedEpicStages}
-                  onSelectionChanged={onEpicStagesChanged}
+          <FormControl
+            label={
+              <>
+                Selected stages{" "}
+                <HelpIcon
+                  content={
+                    <span>
+                      The workflow stages to count as 'in progress'.
+                      <br />
+                      Time spent in these stages is counted towards the cycle
+                      time, and time spent in other stages is counted as 'wait
+                      time'.
+                    </span>
+                  }
                 />
+              </>
+            }
+          >
+            <Popdown
+              title="Select epic stages"
+              value={selectedEpicStages}
+              renderLabel={(selectedEpicStages) =>
+                selectedEpicStages?.join(", ")
               }
+              onValueChanged={(stages) => {
+                if (stages) {
+                  onEpicStagesChanged(stages);
+                }
+              }}
             >
-              <Button
-                size="small"
-                type="dashed"
-                icon={<CaretDownOutlined />}
-                iconPosition="end"
-              >
-                {selectedEpicStages?.join(", ")}
-              </Button>
-            </Popconfirm>
-          </span>
+              {(value, setValue) => (
+                <WorkflowStagesTable
+                  workflowStages={project?.workflowScheme.stories.stages}
+                  selectedStages={value}
+                  onSelectionChanged={(stages) => setValue(stages as string[])}
+                />
+              )}
+            </Popdown>
+          </FormControl>
         )}
       </Space>
     </Space>
