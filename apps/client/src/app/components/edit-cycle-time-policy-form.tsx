@@ -2,6 +2,7 @@ import {
   Dropdown,
   DropdownItemType,
   FormControl,
+  HelpIcon,
   WorkflowStagesTable,
 } from "@agileplanning-io/flow-components";
 import {
@@ -152,6 +153,12 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
     summary.push(summariseValuesFilter("Components", filter.components));
     summary.push(summariseValuesFilter("Issue Type", filter.issueTypes));
 
+    if (compact(summary).length === 0) {
+      return (
+        <Typography.Text type="secondary">No filter applied</Typography.Text>
+      );
+    }
+
     return ellipsize(compact(summary).join(", "), 48);
   };
 
@@ -180,10 +187,11 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
           label={
             <>
               Cycle time policy{" "}
-              <Popover
-                placement="bottom"
+              <HelpIcon
                 content={
                   <span>
+                    How to calculate cycle times.
+                    <br />
                     <Typography.Text code>Process Time</Typography.Text> is the
                     amount of time the issue spent in the selected workflow
                     stages.
@@ -192,12 +200,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
                     total time to completion (including wait time).
                   </span>
                 }
-              >
-                {" "}
-                <a href="#">
-                  <QuestionCircleOutlined style={{ fontSize: 13 }} />
-                </a>{" "}
-              </Popover>
+              />
             </>
           }
         >
@@ -208,24 +211,24 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
           />
         </FormControl>
 
-        <span>
-          <Typography.Text type="secondary">Selected stages</Typography.Text>
-          <Popover
-            placement="bottom"
-            content={
-              <span>
-                The workflow stages to count as 'in progress'.
-                <br />
-                Time spent in these stages is counted towards the cycle time,
-                and time spent in other stages is counted as 'wait time'.
-              </span>
-            }
-          >
-            {" "}
-            <a href="#">
-              <QuestionCircleOutlined style={{ fontSize: 13 }} />
-            </a>{" "}
-          </Popover>
+        <FormControl
+          label={
+            <>
+              Selected stages{" "}
+              <HelpIcon
+                content={
+                  <span>
+                    The workflow stages to count as 'in progress'.
+                    <br />
+                    Time spent in these stages is counted towards the cycle
+                    time, and time spent in other stages is counted as 'wait
+                    time'.
+                  </span>
+                }
+              />
+            </>
+          }
+        >
           <Popconfirm
             title="Select story stages"
             icon={null}
@@ -246,7 +249,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
               {selectedStoryStages.join(", ")}
             </Button>
           </Popconfirm>
-        </span>
+        </FormControl>
 
         <span>&middot;</span>
 
@@ -259,10 +262,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
         </FormControl>
 
         {epicCycleTimePolicyType === EpicCycleTimePolicyType.Derived ? (
-          <span>
-            <Typography.Text type="secondary">
-              Completed issues:{" "}
-            </Typography.Text>
+          <FormControl label="Completed issues">
             <Popconfirm
               title="Completed issues filter"
               icon={null}
@@ -294,7 +294,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
                 {summariseFilter(cycleTimePolicy.epics)}
               </Button>
             </Popconfirm>
-          </span>
+          </FormControl>
         ) : (
           <span>
             <Typography.Text type="secondary">Selected stages</Typography.Text>

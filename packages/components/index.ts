@@ -9,3 +9,4 @@ export * from "./src/date-selector";
 export * from "./src/issues-table";
 export * from "./src/control-bars/form-control";
 export * from "./src/control-bars/dropdown";
+export * from "./src/control-bars/help-icon";
