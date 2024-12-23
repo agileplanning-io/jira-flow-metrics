@@ -3,6 +3,7 @@ import {
   DropdownItemType,
   FormControl,
   HelpIcon,
+  Popdown,
   WorkflowStagesTable,
 } from "@agileplanning-io/flow-components";
 import {
@@ -27,7 +28,7 @@ import {
   Typography,
 } from "antd";
 import { clone, compact, flat } from "remeda";
-import { FC, Key, useMemo } from "react";
+import { FC, Key, ReactNode, useMemo } from "react";
 import { EditFilterForm } from "@app/projects/reports/components/filter-form/edit-filter-form";
 import { ClientIssueFilter } from "@app/filter/client-issue-filter";
 import { QuestionCircleOutlined, CaretDownOutlined } from "@ant-design/icons";
@@ -125,7 +126,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
     }
   };
 
-  const summariseFilter = (filter: IssueAttributesFilter) => {
+  const summariseFilter = (filter: IssueAttributesFilter): ReactNode => {
     const summary: (string | undefined)[] = [];
 
     const summariseValuesFilter = (
@@ -263,18 +264,20 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
 
         {epicCycleTimePolicyType === EpicCycleTimePolicyType.Derived ? (
           <FormControl label="Completed issues">
-            <Popconfirm
+            <Popdown
+              renderLabel={summariseFilter}
+              value={cycleTimePolicy.epics as IssueAttributesFilter}
               title="Completed issues filter"
-              icon={null}
-              description={
+              onValueChanged={onFilterChanged}
+              content={(value, setValue) => (
                 <div style={{ width: 480 }}>
                   <EditFilterForm
-                    filter={cycleTimePolicy.epics}
+                    filter={value}
                     resolutions={project.resolutions}
                     labels={project.labels}
                     components={project.components}
                     issueTypes={project.issueTypes}
-                    setFilter={onFilterChanged}
+                    setFilter={setValue}
                     showDateSelector={false}
                     showAssigneesFilter={false}
                     showHierarchyFilter={false}
@@ -284,16 +287,8 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
                     wrapperColSpan={18}
                   />
                 </div>
-              }
-            >
-              <Button
-                size="small"
-                icon={<CaretDownOutlined />}
-                iconPosition="end"
-              >
-                {summariseFilter(cycleTimePolicy.epics)}
-              </Button>
-            </Popconfirm>
+              )}
+            />
           </FormControl>
         ) : (
           <span>
