@@ -1,4 +1,9 @@
-import { WorkflowStagesTable } from "@agileplanning-io/flow-components";
+import {
+  Dropdown,
+  DropdownItemType,
+  FormControl,
+  WorkflowStagesTable,
+} from "@agileplanning-io/flow-components";
 import {
   CycleTimePolicy,
   CycleTimePolicyType,
@@ -14,7 +19,6 @@ import { Project } from "@data/projects";
 import { getSelectedStages } from "@data/workflows";
 import {
   Button,
-  Dropdown,
   MenuProps,
   Popconfirm,
   Popover,
@@ -151,7 +155,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
     return ellipsize(compact(summary).join(", "), 48);
   };
 
-  const policyItems: MenuProps["items"] = [
+  const policyItems: DropdownItemType<CycleTimePolicyType>[] = [
     { label: "Process Time", key: CycleTimePolicyType.ProcessTime },
     { label: "Lead Time", key: CycleTimePolicyType.LeadTime },
   ];
@@ -172,46 +176,37 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
           borderRadius: 8,
         }}
       >
-        <span style={{ whiteSpace: "normal" }}>
-          <Typography.Text type="secondary" style={{ whiteSpace: "nowrap" }}>
-            Cycle time policy
-            <Popover
-              placement="bottom"
-              content={
-                <span>
-                  <Typography.Text code>Process Time</Typography.Text> is the
-                  amount of time the issue spent in the selected workflow
-                  stages.
-                  <br />
-                  <Typography.Text code>Lead Time</Typography.Text> is the total
-                  time to completion (including wait time).
-                </span>
-              }
-            >
-              {" "}
-              <a href="#">
-                <QuestionCircleOutlined style={{ fontSize: 13 }} />
-              </a>{" "}
-            </Popover>
-          </Typography.Text>
-          <wbr />
+        <FormControl
+          label={
+            <>
+              Cycle time policy{" "}
+              <Popover
+                placement="bottom"
+                content={
+                  <span>
+                    <Typography.Text code>Process Time</Typography.Text> is the
+                    amount of time the issue spent in the selected workflow
+                    stages.
+                    <br />
+                    <Typography.Text code>Lead Time</Typography.Text> is the
+                    total time to completion (including wait time).
+                  </span>
+                }
+              >
+                {" "}
+                <a href="#">
+                  <QuestionCircleOutlined style={{ fontSize: 13 }} />
+                </a>{" "}
+              </Popover>
+            </>
+          }
+        >
           <Dropdown
-            menu={{
-              items: policyItems,
-              onClick: (e: MenuProps["items"][0]) =>
-                onStoryCycleTimePolicyTypeChanged(e.key),
-            }}
-            trigger={["click"]}
-          >
-            <Button
-              size="small"
-              icon={<CaretDownOutlined />}
-              iconPosition="end"
-            >
-              {cycleTimePolicyType}
-            </Button>
-          </Dropdown>
-        </span>
+            items={policyItems}
+            selectedKey={cycleTimePolicyType}
+            onItemSelected={onStoryCycleTimePolicyTypeChanged}
+          />
+        </FormControl>
 
         <span>
           <Typography.Text type="secondary">Selected stages</Typography.Text>
@@ -255,25 +250,13 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
 
         <span>&middot;</span>
 
-        <span>
-          <Typography.Text type="secondary">Epic policy: </Typography.Text>
+        <FormControl label="Epic policy">
           <Dropdown
-            menu={{
-              items: epicPolicyItems,
-              onClick: (e: MenuProps["items"][0]) =>
-                onEpicCycleTimePolicyTypeChanged(e.key),
-            }}
-            trigger={["click"]}
-          >
-            <Button
-              size="small"
-              icon={<CaretDownOutlined />}
-              iconPosition="end"
-            >
-              {epicCycleTimePolicyType}
-            </Button>
-          </Dropdown>
-        </span>
+            items={epicPolicyItems}
+            selectedKey={epicCycleTimePolicyType}
+            onItemSelected={onEpicCycleTimePolicyTypeChanged}
+          />
+        </FormControl>
 
         {epicCycleTimePolicyType === EpicCycleTimePolicyType.Derived ? (
           <span>
