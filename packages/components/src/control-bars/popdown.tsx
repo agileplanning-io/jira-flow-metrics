@@ -1,6 +1,6 @@
 import { CaretDownOutlined } from "@ant-design/icons";
 import { Button, Popconfirm } from "antd";
-import { FC, ReactNode, useState } from "react";
+import { ReactNode, useState } from "react";
 import { clone } from "remeda";
 
 type PopdownProps<T> = {

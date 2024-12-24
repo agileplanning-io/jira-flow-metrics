@@ -19,7 +19,7 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { Project } from "@data/projects";
 import { getSelectedStages } from "@data/workflows";
-import { MenuProps, Space, Typography } from "antd";
+import { Space, Typography } from "antd";
 import { clone, compact, flat } from "remeda";
 import { FC, Key, ReactNode, useMemo } from "react";
 import { EditFilterForm } from "@app/projects/reports/components/filter-form/edit-filter-form";
@@ -160,7 +160,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
     { label: "Lead Time", key: CycleTimePolicyType.LeadTime },
   ];
 
-  const epicPolicyItems: MenuProps["items"] = [
+  const epicPolicyItems: DropdownItemType<EpicCycleTimePolicyType>[] = [
     { label: "Status", key: EpicCycleTimePolicyType.EpicStatus },
     { label: "Derived", key: EpicCycleTimePolicyType.Derived },
   ];
