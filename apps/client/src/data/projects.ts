@@ -222,14 +222,18 @@ const policiesResponse = z.array(savedPolicy);
 
 const policiesUrl = (projectId: string) => `/projects/${projectId}/policies`;
 
-const getPolicies = async (projectId: string) => {
+const getPolicies = async (projectId?: string) => {
+  if (projectId === undefined) {
+    return [];
+  }
+
   const response = await axios.get(policiesUrl(projectId));
   return policiesResponse.parse(response.data);
 };
 
-export const useGetPolicies = (projectId: string) => {
+export const useGetPolicies = (projectId?: string) => {
   return useQuery({
-    queryKey: [policiesUrl(projectId)],
+    queryKey: [policiesUrl(projectId ?? "undefined")],
     queryFn: () => getPolicies(projectId),
   });
 };

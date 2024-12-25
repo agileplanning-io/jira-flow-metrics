@@ -1,9 +1,9 @@
 import { CycleTimePolicy, SavedPolicy } from "@agileplanning-io/flow-metrics";
 import { CaretDownOutlined, SaveOutlined } from "@ant-design/icons";
+import { useProjectContext } from "@app/projects/context";
 import { Project, useCreatePolicy, useGetPolicies } from "@data/projects";
 import { Space, Button, Dropdown, MenuProps, Form, Input, Modal } from "antd";
 import { FC, useMemo, useState } from "react";
-import { isDeepEqual } from "remeda";
 
 type PoliciesDropdownProps = {
   project: Project;
@@ -14,6 +14,8 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
   project,
   cycleTimePolicy,
 }) => {
+  const { savedPolicyId, setSavedPolicyId, setCycleTimePolicy } =
+    useProjectContext();
   const { data: savedPolicies } = useGetPolicies(project.id);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
 
@@ -21,8 +23,8 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
     return null;
   }
 
-  const currentPolicy = savedPolicies?.find((policy) =>
-    isDeepEqual(policy.policy, cycleTimePolicy),
+  const currentPolicy = savedPolicies?.find(
+    (policy) => policy.id === savedPolicyId,
   );
 
   const saveItems: MenuProps["items"] = [
@@ -44,6 +46,10 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
     ...savedPolicies.map((policy) => ({
       label: policy.name,
       key: policy.id,
+      onClick: () => {
+        setSavedPolicyId(policy.id);
+        setCycleTimePolicy(policy.policy);
+      },
     })),
   );
 
