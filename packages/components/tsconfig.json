@@ -8,6 +8,9 @@
     "emitDeclarationOnly": true,
     "outDir": "dist",
     "jsx": "react-jsx",
+    "paths": {
+      "rc-picker/*": ["./node_modules/rc-picker/*"],
+    }
   },
   "include": ["."],
   "exclude": ["node_modules", "dist"]

@@ -1,19 +1,30 @@
-import { WorkflowStagesTable } from "@agileplanning-io/flow-components";
+import {
+  Dropdown,
+  DropdownItemType,
+  FormControl,
+  HelpIcon,
+  Popdown,
+  WorkflowStagesTable,
+} from "@agileplanning-io/flow-components";
 import {
   CycleTimePolicy,
   CycleTimePolicyType,
   EpicCycleTimePolicyType,
+  FilterType,
+  IssueAttributesFilter,
   StatusCycleTimePolicy,
   TransitionStatus,
+  ValuesFilter,
   WorkflowScheme,
 } from "@agileplanning-io/flow-metrics";
 import { Project } from "@data/projects";
 import { getSelectedStages } from "@data/workflows";
-import { Col, Form, Row, Select } from "antd";
-import { clone, flat } from "remeda";
-import { FC, Key, useMemo } from "react";
+import { Space, Typography } from "antd";
+import { clone, compact, flat } from "remeda";
+import { FC, Key, ReactNode, useMemo } from "react";
 import { EditFilterForm } from "@app/projects/reports/components/filter-form/edit-filter-form";
 import { ClientIssueFilter } from "@app/filter/client-issue-filter";
+import { ellipsize } from "@agileplanning-io/flow-lib";
 
 type EditCycleTimePolicyForm = {
   project: Project;
@@ -107,86 +118,210 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
     }
   };
 
-  const StoryPolicyForm = () => (
-    <Form layout="vertical">
-      <h3>Stories</h3>
-      <Form.Item label="Story Policy Type">
-        <Select
-          value={cycleTimePolicyType}
-          onChange={onStoryCycleTimePolicyTypeChanged}
-          options={[
-            { value: "ProcessTime", label: "Process Time" },
-            { value: "LeadTime", label: "Lead Time" },
-          ]}
-        />
-      </Form.Item>
+  const summariseFilter = (filter: IssueAttributesFilter): ReactNode => {
+    const summary: (string | undefined)[] = [];
 
-      <Form.Item label="Selected Stages">
-        <WorkflowStagesTable
-          workflowStages={project?.workflowScheme.stories.stages}
-          selectedStages={selectedStoryStages}
-          onSelectionChanged={onStoryStagesChanged}
-        />
-      </Form.Item>
-    </Form>
-  );
+    const summariseValuesFilter = (
+      name: string,
+      valuesFilter?: ValuesFilter,
+    ) => {
+      if (!valuesFilter?.values?.length) {
+        return undefined;
+      }
 
-  const EpicPolicyForm = () => (
-    <>
-      <Form layout="vertical">
-        <h3>Epics</h3>
-        <Form.Item label="Epic Policy Type">
-          <Select
-            value={epicCycleTimePolicyType}
-            onChange={onEpicCycleTimePolicyTypeChanged}
-            options={[
-              { value: "Derived", label: "Derived" },
-              { value: "EpicStatus", label: "Status" },
-            ]}
-          />
-        </Form.Item>
-      </Form>
-      {epicCycleTimePolicyType === EpicCycleTimePolicyType.Derived ? (
-        <EditFilterForm
-          filter={cycleTimePolicy.epics}
-          resolutions={project.resolutions}
-          labels={project.labels}
-          components={project.components}
-          issueTypes={project.issueTypes}
-          setFilter={onFilterChanged}
-          showDateSelector={false}
-          showAssigneesFilter={false}
-          showHierarchyFilter={false}
-          showResolutionFilter={true}
-          showStatusFilter={false}
-          labelColSpan={4}
-          wrapperColSpan={20}
-        />
-      ) : (
-        <Form layout="vertical">
-          <Form.Item label="Selected Stages">
-            <WorkflowStagesTable
-              workflowStages={project?.workflowScheme.epics.stages}
-              selectedStages={selectedEpicStages}
-              onSelectionChanged={onEpicStagesChanged}
-            />
-          </Form.Item>
-        </Form>
-      )}
-    </>
-  );
+      const op =
+        valuesFilter.values.length === 1
+          ? valuesFilter.type === FilterType.Include
+            ? "="
+            : "!="
+          : valuesFilter.type === FilterType.Include
+          ? "in"
+          : "excl.";
+
+      return `${name} ${op} ${valuesFilter.values.join(",")}`;
+    };
+
+    summary.push(summariseValuesFilter("Resolution", filter.resolutions));
+    summary.push(summariseValuesFilter("Labels", filter.labels));
+    summary.push(summariseValuesFilter("Components", filter.components));
+    summary.push(summariseValuesFilter("Issue Type", filter.issueTypes));
+
+    if (compact(summary).length === 0) {
+      return (
+        <Typography.Text type="secondary">No filter applied</Typography.Text>
+      );
+    }
+
+    return ellipsize(compact(summary).join(", "), 48);
+  };
+
+  const policyItems: DropdownItemType<CycleTimePolicyType>[] = [
+    { label: "Process Time", key: CycleTimePolicyType.ProcessTime },
+    { label: "Lead Time", key: CycleTimePolicyType.LeadTime },
+  ];
+
+  const epicPolicyItems: DropdownItemType<EpicCycleTimePolicyType>[] = [
+    { label: "Status", key: EpicCycleTimePolicyType.EpicStatus },
+    { label: "Derived", key: EpicCycleTimePolicyType.Derived },
+  ];
 
   return (
-    <>
-      <Row gutter={[8, 8]}>
-        <Col span={12}>
-          <StoryPolicyForm />
-        </Col>
-        <Col span={12}>
-          <EpicPolicyForm />
-        </Col>
-      </Row>
-    </>
+    <Space direction="vertical" style={{ marginBottom: 8, width: "100%" }}>
+      <Space
+        direction="horizontal"
+        style={{
+          // background: "rgba(0, 0, 0, 0.02)",
+          width: "100%",
+          padding: 8,
+          borderRadius: 8,
+        }}
+      >
+        <FormControl
+          label={
+            <>
+              Cycle time policy{" "}
+              <HelpIcon
+                content={
+                  <span>
+                    How to calculate cycle times.
+                    <br />
+                    <Typography.Text code>Process Time</Typography.Text> is the
+                    amount of time the issue spent in the selected workflow
+                    stages.
+                    <br />
+                    <Typography.Text code>Lead Time</Typography.Text> is the
+                    total time to completion (including wait time).
+                  </span>
+                }
+              />
+            </>
+          }
+        >
+          <Dropdown
+            items={policyItems}
+            selectedKey={cycleTimePolicyType}
+            onItemSelected={onStoryCycleTimePolicyTypeChanged}
+          />
+        </FormControl>
+
+        <FormControl
+          label={
+            <>
+              Selected stages{" "}
+              <HelpIcon
+                content={
+                  <span>
+                    The workflow stages to count as 'in progress'.
+                    <br />
+                    Time spent in these stages is counted towards the cycle
+                    time, and time spent in other stages is counted as 'wait
+                    time'.
+                  </span>
+                }
+              />
+            </>
+          }
+        >
+          <Popdown
+            title="Select story stages"
+            value={selectedStoryStages}
+            renderLabel={(selectedStoryStages) =>
+              selectedStoryStages.join(", ")
+            }
+            onValueChanged={(stages) => onStoryStagesChanged(stages)}
+          >
+            {(value, setValue) => (
+              <WorkflowStagesTable
+                workflowStages={project?.workflowScheme.stories.stages}
+                selectedStages={value}
+                onSelectionChanged={(stages) => setValue(stages as string[])}
+              />
+            )}
+          </Popdown>
+        </FormControl>
+
+        <span>&middot;</span>
+
+        <FormControl label="Epic policy">
+          <Dropdown
+            items={epicPolicyItems}
+            selectedKey={epicCycleTimePolicyType}
+            onItemSelected={onEpicCycleTimePolicyTypeChanged}
+          />
+        </FormControl>
+
+        {epicCycleTimePolicyType === EpicCycleTimePolicyType.Derived ? (
+          <FormControl label="Completed issues">
+            <Popdown
+              renderLabel={summariseFilter}
+              value={cycleTimePolicy.epics as IssueAttributesFilter}
+              title="Completed issues filter"
+              onValueChanged={onFilterChanged}
+            >
+              {(value, setValue) => (
+                <div style={{ width: 480 }}>
+                  <EditFilterForm
+                    filter={value}
+                    resolutions={project.resolutions}
+                    labels={project.labels}
+                    components={project.components}
+                    issueTypes={project.issueTypes}
+                    setFilter={setValue}
+                    showDateSelector={false}
+                    showAssigneesFilter={false}
+                    showHierarchyFilter={false}
+                    showResolutionFilter={true}
+                    showStatusFilter={false}
+                    labelColSpan={6}
+                    wrapperColSpan={18}
+                  />
+                </div>
+              )}
+            </Popdown>
+          </FormControl>
+        ) : (
+          <FormControl
+            label={
+              <>
+                Selected stages{" "}
+                <HelpIcon
+                  content={
+                    <span>
+                      The workflow stages to count as 'in progress'.
+                      <br />
+                      Time spent in these stages is counted towards the cycle
+                      time, and time spent in other stages is counted as 'wait
+                      time'.
+                    </span>
+                  }
+                />
+              </>
+            }
+          >
+            <Popdown
+              title="Select epic stages"
+              value={selectedEpicStages}
+              renderLabel={(selectedEpicStages) =>
+                selectedEpicStages?.join(", ")
+              }
+              onValueChanged={(stages) => {
+                if (stages) {
+                  onEpicStagesChanged(stages);
+                }
+              }}
+            >
+              {(value, setValue) => (
+                <WorkflowStagesTable
+                  workflowStages={project?.workflowScheme.stories.stages}
+                  selectedStages={value}
+                  onSelectionChanged={(stages) => setValue(stages as string[])}
+                />
+              )}
+            </Popdown>
+          </FormControl>
+        )}
+      </Space>
+    </Space>
   );
 };
 
