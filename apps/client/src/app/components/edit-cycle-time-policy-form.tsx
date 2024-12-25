@@ -19,19 +19,13 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { Project } from "@data/projects";
 import { getSelectedStages } from "@data/workflows";
-import {
-  Space,
-  Typography,
-  Dropdown as AntDropdown,
-  Button,
-  MenuProps,
-} from "antd";
+import { Space, Typography } from "antd";
 import { clone, compact, flat } from "remeda";
 import { FC, Key, ReactNode, useMemo } from "react";
 import { EditFilterForm } from "@app/projects/reports/components/filter-form/edit-filter-form";
 import { ClientIssueFilter } from "@app/filter/client-issue-filter";
 import { ellipsize } from "@agileplanning-io/flow-lib";
-import { CaretDownOutlined, SaveOutlined } from "@ant-design/icons";
+import { PoliciesDropdown } from "./policies-dropdown";
 
 type EditCycleTimePolicyForm = {
   project: Project;
@@ -170,15 +164,6 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
   const epicPolicyItems: DropdownItemType<EpicCycleTimePolicyType>[] = [
     { label: "Status", key: EpicCycleTimePolicyType.EpicStatus },
     { label: "Derived", key: EpicCycleTimePolicyType.Derived },
-  ];
-
-  const saveItems: MenuProps["items"] = [
-    { label: "Save", key: "Save", disabled: true },
-    { label: "Save as...", key: "SaveAs" },
-    { label: "Delete...", key: "Delete" },
-    { label: "Make default", key: "MakeDefault" },
-    { type: "divider" },
-    { label: "My saved filter", key: "Filter1" },
   ];
 
   return (
@@ -337,18 +322,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
           </FormControl>
         )}
 
-        <Space.Compact>
-          <AntDropdown menu={{ items: saveItems }}>
-            <Button
-              size="small"
-              icon={<CaretDownOutlined />}
-              iconPosition="end"
-            >
-              My saved filter
-              <SaveOutlined />
-            </Button>
-          </AntDropdown>
-        </Space.Compact>
+        <PoliciesDropdown project={project} cycleTimePolicy={cycleTimePolicy} />
       </Space>
     </Space>
   );

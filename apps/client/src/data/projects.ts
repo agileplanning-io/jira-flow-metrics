@@ -3,6 +3,7 @@ import axios from "axios";
 import { queryClient } from "./client";
 import {
   CycleTimePolicy,
+  DraftPolicy,
   IssueFilter,
   savedPolicy,
   TransitionStatus,
@@ -223,11 +224,23 @@ const policiesUrl = (projectId: string) => `/projects/${projectId}/policies`;
 
 const getPolicies = async (projectId: string) => {
   const response = await axios.get(policiesUrl(projectId));
-  return policiesResponse.parse(response);
+  return policiesResponse.parse(response.data);
 };
 
-export const useGetPolicies = (projectId: string) =>
-  useQuery({
-    queryKey: policiesUrl(projectId),
-    queryFn: getPolicies,
+export const useGetPolicies = (projectId: string) => {
+  return useQuery({
+    queryKey: [policiesUrl(projectId)],
+    queryFn: () => getPolicies(projectId),
   });
+};
+
+const createPolicy = async (projectId: string, policy: DraftPolicy) => {
+  const response = await axios.post(policiesUrl(projectId), policy);
+  return savedPolicy.parse(response.data);
+};
+
+export const useCreatePolicy = (projectId: string) => {
+  return useMutation({
+    mutationFn: (policy: DraftPolicy) => createPolicy(projectId, policy),
+  });
+};
