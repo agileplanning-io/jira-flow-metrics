@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-components
 
+## 0.1.16
+
+### Patch Changes
+
+- 26417fe: feat: control bar components
+
 ## 0.1.15
 
 ### Patch Changes
