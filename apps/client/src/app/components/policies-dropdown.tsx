@@ -48,13 +48,15 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
   );
 
   return (
-    <Space.Compact>
-      <Dropdown menu={{ items: saveItems }}>
-        <Button size="small" icon={<CaretDownOutlined />} iconPosition="end">
-          {currentPolicy?.name ?? "Custom"}
-          <SaveOutlined />
-        </Button>
-      </Dropdown>
+    <>
+      <Space.Compact>
+        <Dropdown menu={{ items: saveItems }}>
+          <Button size="small" icon={<CaretDownOutlined />} iconPosition="end">
+            {currentPolicy?.name ?? "Custom"}
+            <SaveOutlined disabled={true} />
+          </Button>
+        </Dropdown>
+      </Space.Compact>
       <SaveModal
         open={showSaveDialog}
         projectId={project.id}
@@ -63,7 +65,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
         onPolicySaved={() => {}}
         onClose={() => setShowSaveDialog(false)}
       />
-    </Space.Compact>
+    </>
   );
 };
 
