@@ -1,6 +1,8 @@
 import {
   CycleTimePolicy,
+  DraftPolicy,
   IssueFilter,
+  SavedPolicy,
   TransitionStatus,
 } from "@agileplanning-io/flow-metrics";
 import { Domain } from "./domains";
@@ -63,6 +65,15 @@ export abstract class ProjectsRepository {
   ): Promise<Project>;
   abstract removeProject(projectId: string): Promise<void>;
   abstract removeProjects(domainId: string): Promise<void>;
+}
+
+export abstract class PoliciesRepository {
+  abstract getPolicies(projectId: string): Promise<SavedPolicy[]>;
+  abstract createPolicy(
+    projectId: string,
+    policy: DraftPolicy,
+  ): Promise<SavedPolicy>;
+  abstract updatePolicy(projectId, string, policy: SavedPolicy): Promise<void>;
 }
 
 export type SearchDataSourcesParams = {

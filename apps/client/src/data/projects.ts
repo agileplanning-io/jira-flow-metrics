@@ -4,9 +4,11 @@ import { queryClient } from "./client";
 import {
   CycleTimePolicy,
   IssueFilter,
+  savedPolicy,
   TransitionStatus,
 } from "@agileplanning-io/flow-metrics";
 import { WorkflowStage } from "./issues";
+import { z } from "zod";
 
 export type DataSource = {
   name: string;
@@ -214,3 +216,18 @@ export const useUpdateProject = () => {
     },
   });
 };
+
+const policiesResponse = z.array(savedPolicy);
+
+const policiesUrl = (projectId: string) => `/projects/${projectId}/policies`;
+
+const getPolicies = async (projectId: string) => {
+  const response = await axios.get(policiesUrl(projectId));
+  return policiesResponse.parse(response);
+};
+
+export const useGetPolicies = (projectId: string) =>
+  useQuery({
+    queryKey: policiesUrl(projectId),
+    queryFn: getPolicies,
+  });

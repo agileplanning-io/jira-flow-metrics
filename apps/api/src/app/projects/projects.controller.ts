@@ -1,13 +1,22 @@
-import { ProjectsRepository } from "@entities/projects";
+import { PoliciesRepository, ProjectsRepository } from "@entities/projects";
 import { IssuesRepository } from "@entities/issues";
 import {
   CycleTimePolicy,
   cycleTimePolicySchema,
+  draftPolicy,
   filterSchema,
   getFlowMetrics,
   workflowStageSchema,
 } from "@agileplanning-io/flow-metrics";
-import { Body, Controller, Delete, Get, Param, Put } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from "@nestjs/common";
 import { SyncUseCase } from "@usecases/projects/sync/sync-use-case";
 import { ZodValidationPipe } from "@lib/pipes/zod-pipe";
 import { ParsedQuery } from "@lib/decorators/parsed-query";
@@ -35,6 +44,7 @@ export class ProjectsController {
     private readonly projects: ProjectsRepository,
     private readonly issues: IssuesRepository,
     private readonly sync: SyncUseCase,
+    private readonly policies: PoliciesRepository,
   ) {}
 
   @Get(":projectId")
@@ -123,5 +133,18 @@ export class ProjectsController {
         : undefined;
       return { ...issue, parent };
     });
+  }
+
+  @Get(":projectId/policies")
+  async getPolicies(@Param("projectId") projectId) {
+    return this.policies.getPolicies(projectId);
+  }
+
+  @Post(":projectId/policies")
+  async createPolicy(
+    @Param("projectId") projectId,
+    @Body(new ZodValidationPipe(draftPolicy)) request,
+  ) {
+    return this.policies.createPolicy(projectId, request);
   }
 }

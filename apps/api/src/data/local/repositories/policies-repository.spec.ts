@@ -1,16 +1,16 @@
 import {
   CycleTimePolicyType,
+  DraftPolicy,
   EpicCycleTimePolicyType,
 } from "@agileplanning-io/flow-metrics";
-import { DraftPolicy } from "@entities/saved-policies";
 import { TestDataCache } from "@fixtures/data/storage/test-storage";
-import { PoliciesRepository } from "./policies-repository";
+import { LocalPoliciesRepository } from "./policies-repository";
 
-describe("PoliciesRepository", () => {
+describe("LocalPoliciesRepository", () => {
   it("creates policies", async () => {
     // arrange
     const cache = new TestDataCache();
-    const repo = new PoliciesRepository(cache);
+    const repo = new LocalPoliciesRepository(cache);
 
     const draft: DraftPolicy = {
       policy: {
@@ -41,7 +41,7 @@ describe("PoliciesRepository", () => {
   it("updates policies", async () => {
     // arrange
     const cache = new TestDataCache();
-    const repo = new PoliciesRepository(cache);
+    const repo = new LocalPoliciesRepository(cache);
 
     const draft: DraftPolicy = {
       policy: {

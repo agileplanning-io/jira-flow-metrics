@@ -1,5 +1,5 @@
-import { cycleTimePolicySchema } from "@agileplanning-io/flow-metrics";
 import { z } from "zod";
+import { cycleTimePolicySchema } from "./schema";
 
 export const savedPolicy = z.object({
   id: z.string(),

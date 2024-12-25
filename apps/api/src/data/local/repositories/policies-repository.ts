@@ -1,13 +1,16 @@
 import { DataCache } from "@data/storage/storage";
-import { DraftPolicy, SavedPolicy } from "@entities/saved-policies";
 import { Injectable } from "@nestjs/common";
 import { createId } from "../id";
 import { pick } from "remeda";
 import { DataError } from "node-json-db";
+import { DraftPolicy, SavedPolicy } from "@agileplanning-io/flow-metrics";
+import { PoliciesRepository } from "@entities/projects";
 
 @Injectable()
-export class PoliciesRepository {
-  constructor(private readonly cache: DataCache) {}
+export class LocalPoliciesRepository extends PoliciesRepository {
+  constructor(private readonly cache: DataCache) {
+    super();
+  }
 
   async createPolicy(projectId: string, params: DraftPolicy) {
     const id = createId(pick(params, ["name"]));
