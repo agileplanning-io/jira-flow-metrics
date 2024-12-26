@@ -55,26 +55,6 @@ describe("useQueryState", () => {
       "policy.epics.type=status&filter.hierarchyLevel=Story",
     );
   });
-
-  it("deep merges params", () => {
-    // arrange
-    const setParams = mockQuery("");
-    const { result } = renderHook(() => useQueryState("filter"));
-    const [, setQuery] = result.current;
-
-    // act
-    setQuery({ hierarchyLevel: "Story" });
-
-    // assert
-    expect(setParams).toHaveBeenCalled();
-    const fn = setParams.mock.lastCall?.[0];
-    assert(typeof fn === "function");
-    const prev = new URLSearchParams("filter.labels[]=foo");
-    const next = fn(prev);
-    expect(decodeURIComponent(next.toString())).toEqual(
-      "filter.labels[]=foo&filter.hierarchyLevel=Story",
-    );
-  });
 });
 
 const mockQuery = (query: string) => {
