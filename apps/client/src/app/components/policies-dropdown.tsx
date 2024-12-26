@@ -24,8 +24,8 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
     useProjectContext();
   const { data: savedPolicies } = useGetPolicies(project.id);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const setDefaultPolicy = useSetDefaultPolicy(project.id);
-  const deletePolicy = useDeletePolicy(project.id);
 
   if (!savedPolicies) {
     return null;
@@ -45,11 +45,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
     {
       label: "Delete...",
       key: "Delete",
-      onClick: () => {
-        if (currentPolicy) {
-          deletePolicy.mutate(currentPolicy.id);
-        }
-      },
+      onClick: () => setShowDeleteDialog(true),
     },
     {
       label: "Make default",
@@ -72,6 +68,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
       key: policy.id,
       onClick: () => {
         setSavedPolicyId(policy.id);
+        console.info("setCycleTimePolicy 3");
         setCycleTimePolicy(policy.policy);
       },
     })),
@@ -96,6 +93,13 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
         cycleTimePolicy={cycleTimePolicy}
         onPolicySaved={(policy) => setSavedPolicyId(policy.id)}
         onClose={() => setShowSaveDialog(false)}
+      />
+      <DeleteModal
+        open={showDeleteDialog}
+        projectId={project.id}
+        onPolicyDeleted={() => setSavedPolicyId(undefined)}
+        onClose={() => setShowDeleteDialog(false)}
+        cycleTimePolicy={currentPolicy}
       />
     </>
   );
@@ -183,6 +187,51 @@ const SaveModal: FC<SaveModalProps> = ({
           />
         </Form.Item>
       </Form>
+    </Modal>
+  );
+};
+
+type DeleteModalProps = {
+  open: boolean;
+  projectId: string;
+  cycleTimePolicy?: SavedPolicy;
+  onPolicyDeleted: () => void;
+  onClose: () => void;
+};
+
+const DeleteModal: FC<DeleteModalProps> = ({
+  open,
+  projectId,
+  cycleTimePolicy,
+  onPolicyDeleted,
+  onClose,
+}) => {
+  const deleteCycleTimePolicy = useDeletePolicy(projectId);
+
+  const onOk = async () => {
+    if (!cycleTimePolicy) {
+      return;
+    }
+
+    deleteCycleTimePolicy.mutate(cycleTimePolicy.id, {
+      onSuccess: () => {
+        onPolicyDeleted();
+        onClose();
+      },
+    });
+  };
+
+  return (
+    <Modal
+      title="Delete Policy"
+      open={open}
+      confirmLoading={deleteCycleTimePolicy.isLoading}
+      onOk={onOk}
+      onCancel={onClose}
+    >
+      <p>
+        Are you sure you want to delete policy <b>{cycleTimePolicy?.name}</b>?
+      </p>
     </Modal>
   );
 };

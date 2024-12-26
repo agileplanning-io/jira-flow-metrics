@@ -12,7 +12,7 @@ export type ProjectContextType = {
   cycleTimePolicy?: CycleTimePolicy;
   savedPolicyId?: string;
   setCycleTimePolicy: (policy: CycleTimePolicy) => void;
-  setSavedPolicyId: (policyId: string) => void;
+  setSavedPolicyId: (policyId?: string) => void;
   issues?: Issue[];
 };
 
