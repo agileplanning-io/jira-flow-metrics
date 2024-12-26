@@ -31,19 +31,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
     }
 
-    console.info("provider useEffect", {
-      cycleTimePolicy,
-      savedPolicyId,
-      savedPolicies,
-    });
-
     if (savedPolicies) {
-      console.info("provider", {
-        savedPolicies,
-        savedPolicyId,
-        cycleTimePolicy,
-      });
-
       if (!cycleTimePolicy) {
         if (savedPolicyId) {
           const savedPolicy = savedPolicies.find(
@@ -51,6 +39,8 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
           );
           if (savedPolicy) {
             setCycleTimePolicy(savedPolicy.policy);
+          } else {
+            setSavedPolicyId(undefined);
           }
         } else {
           const defaultPolicy = savedPolicies.find(
@@ -58,10 +48,8 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
           );
           if (defaultPolicy) {
             setSavedPolicyId(defaultPolicy.id);
-            console.info("setCycleTimePolicy 1");
             setCycleTimePolicy(defaultPolicy.policy);
           } else if (!cycleTimePolicy) {
-            console.info("setCycleTimePolicy 2");
             setCycleTimePolicy(project.defaultCycleTimePolicy);
           }
         }
