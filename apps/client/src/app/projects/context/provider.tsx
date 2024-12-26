@@ -8,6 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import { useQueryState } from "@lib/use-query-state";
 import { useGetPolicies } from "@data/projects";
+import { isDeepEqual } from "remeda";
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -29,12 +30,22 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     if (savedPolicies && !savedPolicyId) {
-      const defaultPolicy = savedPolicies.find((policy) => policy.isDefault);
-      if (defaultPolicy) {
-        setSavedPolicyId(defaultPolicy.id);
-        setCycleTimePolicy(defaultPolicy.policy);
-      } else if (!cycleTimePolicy) {
-        setCycleTimePolicy(project.defaultCycleTimePolicy);
+      if (!cycleTimePolicy) {
+        const defaultPolicy = savedPolicies.find((policy) => policy.isDefault);
+        if (defaultPolicy) {
+          setSavedPolicyId(defaultPolicy.id);
+          setCycleTimePolicy(defaultPolicy.policy);
+        } else if (!cycleTimePolicy) {
+          setCycleTimePolicy(project.defaultCycleTimePolicy);
+        }
+      } else {
+        // cycle time policy specified by parameters, so we should respect those
+        const foundPolicy = savedPolicies.find((policy) =>
+          isDeepEqual(policy.policy, cycleTimePolicy),
+        );
+        if (foundPolicy) {
+          setSavedPolicyId(foundPolicy.id);
+        }
       }
     }
   }, [
