@@ -69,6 +69,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
     {
       label: "Save as...",
       key: "SaveAs",
+      disabled: !(isNullish(currentPolicy) || changed),
       onClick: () => setShowSaveDialog(true),
     },
     {
@@ -170,7 +171,7 @@ const SaveModal: FC<SaveModalProps> = ({
     [newPolicyName],
   );
 
-  const alreadyExists = useMemo(
+  const duplicateName = useMemo(
     () => savedPolicies.some((policy) => policy.name === newPolicyName),
     [savedPolicies, newPolicyName],
   );
@@ -180,10 +181,10 @@ const SaveModal: FC<SaveModalProps> = ({
       return "Please enter a name for the policy";
     }
 
-    if (alreadyExists) {
+    if (duplicateName) {
       return "A policy with this name already exists";
     }
-  }, [invalidName, alreadyExists]);
+  }, [invalidName, duplicateName]);
 
   const onOk = async () => {
     saveCycleTimePolicy.mutate(
@@ -217,7 +218,7 @@ const SaveModal: FC<SaveModalProps> = ({
         <Form.Item
           label="Name"
           help={validationHelp}
-          validateStatus={alreadyExists ? "error" : "validating"}
+          validateStatus={duplicateName ? "error" : "validating"}
         >
           <Input
             value={newPolicyName}
