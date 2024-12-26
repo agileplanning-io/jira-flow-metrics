@@ -3,6 +3,7 @@ import { IssuesRepository } from "@entities/issues";
 import {
   CycleTimePolicy,
   cycleTimePolicySchema,
+  DraftPolicy,
   draftPolicy,
   filterSchema,
   getFlowMetrics,
@@ -142,9 +143,17 @@ export class ProjectsController {
 
   @Post(":projectId/policies")
   async createPolicy(
-    @Param("projectId") projectId,
-    @Body(new ZodValidationPipe(draftPolicy)) request,
+    @Param("projectId") projectId: string,
+    @Body(new ZodValidationPipe(draftPolicy)) request: DraftPolicy,
   ) {
     return this.policies.createPolicy(projectId, request);
+  }
+
+  @Put(":projectId/policies/:policyId/default")
+  async makeDefaultPolicy(
+    @Param("projectId") projectId: string,
+    @Param(":policyId") policyId: string,
+  ) {
+    return this.policies.setDefaultPolicy(projectId, policyId);
   }
 }

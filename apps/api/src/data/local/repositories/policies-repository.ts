@@ -37,6 +37,18 @@ export class LocalPoliciesRepository extends PoliciesRepository {
       return e;
     }
   }
+
+  async setDefaultPolicy(projectId: string, policyId: string): Promise<void> {
+    const policies = await this.getPolicies(projectId);
+
+    await this.cache.push(
+      policiesPath(projectId),
+      policies.map((policy) => ({
+        ...policy,
+        isDefault: policy.id === policyId,
+      })),
+    );
+  }
 }
 
 const policiesPath = (projectId: string) => `/projects/${projectId}/policies`;
