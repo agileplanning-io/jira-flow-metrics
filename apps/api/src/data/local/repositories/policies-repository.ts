@@ -40,13 +40,15 @@ export class LocalPoliciesRepository extends PoliciesRepository {
 
   async setDefaultPolicy(projectId: string, policyId: string): Promise<void> {
     const policies = await this.getPolicies(projectId);
+    const updatedPolicies = policies.map((policy) => ({
+      ...policy,
+      isDefault: policy.id === policyId,
+    }));
+    const updatedEntries = updatedPolicies.map((policy) => [policy.id, policy]);
 
     await this.cache.push(
       policiesPath(projectId),
-      policies.map((policy) => ({
-        ...policy,
-        isDefault: policy.id === policyId,
-      })),
+      Object.fromEntries(updatedEntries),
     );
   }
 

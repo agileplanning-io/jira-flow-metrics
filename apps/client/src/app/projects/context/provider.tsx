@@ -18,7 +18,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     CycleTimePolicy | undefined
   >("p", cycleTimePolicySchema.optional().parse);
 
-  console.info("ProjectProvider", cycleTimePolicy);
+  console.info("ProjectProvider", cycleTimePolicy, project);
 
   const { data: issues } = useIssues(project?.id, cycleTimePolicy);
 
@@ -31,21 +31,39 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
     }
 
-    if (savedPolicies && !savedPolicyId) {
+    console.info("provider useEffect", {
+      cycleTimePolicy,
+      savedPolicyId,
+      savedPolicies,
+    });
+
+    if (savedPolicies) {
       console.info("provider", {
         savedPolicies,
         savedPolicyId,
         cycleTimePolicy,
       });
+
       if (!cycleTimePolicy) {
-        const defaultPolicy = savedPolicies.find((policy) => policy.isDefault);
-        if (defaultPolicy) {
-          setSavedPolicyId(defaultPolicy.id);
-          console.info("setCycleTimePolicy 1");
-          setCycleTimePolicy(defaultPolicy.policy);
-        } else if (!cycleTimePolicy) {
-          console.info("setCycleTimePolicy 2");
-          setCycleTimePolicy(project.defaultCycleTimePolicy);
+        if (savedPolicyId) {
+          const savedPolicy = savedPolicies.find(
+            (policy) => policy.id === savedPolicyId,
+          );
+          if (savedPolicy) {
+            setCycleTimePolicy(savedPolicy.policy);
+          }
+        } else {
+          const defaultPolicy = savedPolicies.find(
+            (policy) => policy.isDefault,
+          );
+          if (defaultPolicy) {
+            setSavedPolicyId(defaultPolicy.id);
+            console.info("setCycleTimePolicy 1");
+            setCycleTimePolicy(defaultPolicy.policy);
+          } else if (!cycleTimePolicy) {
+            console.info("setCycleTimePolicy 2");
+            setCycleTimePolicy(project.defaultCycleTimePolicy);
+          }
         }
       } else {
         // cycle time policy specified by parameters, so we should respect those
