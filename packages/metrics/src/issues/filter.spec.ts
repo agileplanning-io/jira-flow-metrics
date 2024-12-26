@@ -1,6 +1,13 @@
+import { clone } from "remeda";
 import { buildIssue } from "../fixtures/issue-factory";
 import { HierarchyLevel } from "../issues";
-import { FilterType, FilterUseCase, filterIssues } from "./filter";
+import {
+  FilterType,
+  FilterUseCase,
+  IssueAttributesFilter,
+  filterIssues,
+  isAttributesFilterEqual,
+} from "./filter";
 
 describe("filterIssues", () => {
   const story = buildIssue({ hierarchyLevel: HierarchyLevel.Story });
@@ -175,5 +182,60 @@ describe("filterIssues", () => {
 
       expect(filteredIssues).toEqual([issues[0]]);
     });
+  });
+});
+
+describe("isAttributesFilterEqual", () => {
+  const filter1: IssueAttributesFilter = {
+    resolutions: {
+      type: FilterType.Include,
+      values: ["Done"],
+    },
+  };
+
+  it("returns true when the filters are identical", () => {
+    expect(isAttributesFilterEqual(filter1, clone(filter1))).toBe(true);
+  });
+
+  it("returns true when the filters are sementically identical", () => {
+    const filter2: IssueAttributesFilter = {
+      resolutions: {
+        type: FilterType.Include,
+        values: ["Done"],
+      },
+      labels: {
+        type: FilterType.Include,
+        values: [],
+      },
+      issueTypes: {
+        type: FilterType.Exclude,
+        values: [],
+      },
+    };
+
+    expect(isAttributesFilterEqual(filter1, filter2)).toBe(true);
+  });
+
+  it("returns false when the filters are semantically distinct", () => {
+    const filter2: IssueAttributesFilter = {
+      resolutions: {
+        type: FilterType.Include,
+        values: ["Won't Do"],
+      },
+    };
+
+    const filter3: IssueAttributesFilter = {
+      resolutions: {
+        type: FilterType.Include,
+        values: ["Done"],
+      },
+      labels: {
+        type: FilterType.Exclude,
+        values: ["Outlier"],
+      },
+    };
+
+    expect(isAttributesFilterEqual(filter1, filter2)).toBe(false);
+    expect(isAttributesFilterEqual(filter1, filter3)).toBe(false);
   });
 });
