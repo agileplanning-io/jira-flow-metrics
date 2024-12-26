@@ -21,6 +21,7 @@ import {
   Input,
   Modal,
   Typography,
+  Tooltip,
 } from "antd";
 import { FC, useMemo, useState } from "react";
 import { isNullish } from "remeda";
@@ -66,9 +67,15 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
       onClick: () => setShowDeleteDialog(true),
     },
     {
-      label: "Make default",
+      label: currentPolicy?.isDefault ? (
+        <Tooltip title="Selected policy is already the default">
+          Make default
+        </Tooltip>
+      ) : (
+        "Make default"
+      ),
       key: "MakeDefault",
-      disabled: isNullish(currentPolicy),
+      disabled: isNullish(currentPolicy) || currentPolicy.isDefault,
       onClick: () => {
         if (currentPolicy) {
           setDefaultPolicy.mutate(currentPolicy?.id);
