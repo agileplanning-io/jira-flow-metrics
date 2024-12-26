@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { isDeepEqual, merge, mergeDeep } from "remeda";
+import { isDeepEqual, merge } from "remeda";
 import { qsParse, qsStringify } from "@agileplanning-io/flow-lib";
 
 // inspired by https://www.inkoop.io/blog/syncing-query-parameters-with-react-state/
@@ -8,8 +8,6 @@ import { qsParse, qsStringify } from "@agileplanning-io/flow-lib";
 export const useQueryState = <T>(
   key: string,
   parser?: (value: unknown) => T,
-  // TODO: this param may not be necessary, but it slightly improves behaviour toggling between epic policy types for now
-  deepMerge: boolean = true,
 ): [T | undefined, (value: T | undefined) => void] => {
   const [params, setParams] = useSearchParams();
 
@@ -18,14 +16,12 @@ export const useQueryState = <T>(
       setParams((prev) => {
         const existingQuery = qsParse(prev.toString());
         const newQuery = { [key]: value };
-        const updatedQuery = deepMerge
-          ? mergeDeep(existingQuery, newQuery)
-          : merge(existingQuery, newQuery);
+        const updatedQuery = merge(existingQuery, newQuery);
         const changed = !isDeepEqual(existingQuery, updatedQuery);
         return changed ? new URLSearchParams(qsStringify(updatedQuery)) : prev;
       });
     },
-    [setParams, key, deepMerge],
+    [setParams, key],
   );
 
   const queryString = params.toString();
