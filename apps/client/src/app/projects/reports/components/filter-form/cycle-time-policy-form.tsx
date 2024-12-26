@@ -5,6 +5,8 @@ import { EditCycleTimePolicyForm } from "@app/components/edit-cycle-time-policy-
 export const CycleTimePolicyForm = () => {
   const { project, cycleTimePolicy, setCycleTimePolicy } = useProjectContext();
 
+  console.info("CycleTimePolicyForm", cycleTimePolicy);
+
   if (!cycleTimePolicy || !project) {
     return <LoadingSpinner />;
   }

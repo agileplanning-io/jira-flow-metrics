@@ -18,6 +18,8 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     CycleTimePolicy | undefined
   >("p", cycleTimePolicySchema.optional().parse);
 
+  console.info("ProjectProvider", cycleTimePolicy);
+
   const { data: issues } = useIssues(project?.id, cycleTimePolicy);
 
   const { data: savedPolicies } = useGetPolicies(project?.id);
@@ -30,12 +32,19 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     if (savedPolicies && !savedPolicyId) {
+      console.info("provider", {
+        savedPolicies,
+        savedPolicyId,
+        cycleTimePolicy,
+      });
       if (!cycleTimePolicy) {
         const defaultPolicy = savedPolicies.find((policy) => policy.isDefault);
         if (defaultPolicy) {
           setSavedPolicyId(defaultPolicy.id);
+          console.info("setCycleTimePolicy 1");
           setCycleTimePolicy(defaultPolicy.policy);
         } else if (!cycleTimePolicy) {
+          console.info("setCycleTimePolicy 2");
           setCycleTimePolicy(project.defaultCycleTimePolicy);
         }
       } else {
