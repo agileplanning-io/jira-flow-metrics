@@ -1,4 +1,8 @@
-import { CycleTimePolicy, SavedPolicy } from "@agileplanning-io/flow-metrics";
+import {
+  CycleTimePolicy,
+  SavedPolicy,
+  isPolicyEqual,
+} from "@agileplanning-io/flow-metrics";
 import { CaretDownOutlined, SaveOutlined } from "@ant-design/icons";
 import { useProjectContext } from "@app/projects/context";
 import {
@@ -45,8 +49,11 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
     (policy) => policy.id === savedPolicyId,
   );
 
+  const changed =
+    currentPolicy && !isPolicyEqual(currentPolicy.policy, cycleTimePolicy);
+
   const saveItems: MenuProps["items"] = [
-    { label: "Save", key: "Save", disabled: true },
+    { label: "Save", key: "Save", disabled: !changed },
     {
       label: "Save as...",
       key: "SaveAs",
@@ -95,7 +102,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
             {currentPolicy?.name ?? (
               <Typography.Text type="secondary">Custom</Typography.Text>
             )}
-            <SaveOutlined disabled={true} />
+            <SaveOutlined style={{ color: changed ? undefined : "#AAA" }} />
           </Button>
         </Dropdown>
       </Space.Compact>

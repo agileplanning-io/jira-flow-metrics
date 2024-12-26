@@ -1,4 +1,4 @@
-import { intersection, isNonNullish } from "remeda";
+import { intersection, isDeepEqual, isNonNullish, isNullish } from "remeda";
 import { CompletedIssue, HierarchyLevel, Issue, isCompleted } from "../issues";
 import { Interval, asAbsolute } from "@agileplanning-io/flow-lib";
 
@@ -162,4 +162,45 @@ export const filterCompletedIssues = (
   filter: IssueFilter,
 ): CompletedIssue[] => {
   return filterIssues(issues, filter).filter(isCompleted);
+};
+
+const isValuesFilterEqual = (
+  filter1: ValuesFilter | undefined,
+  filter2: ValuesFilter | undefined,
+) => {
+  const isNullFilter = (filter: ValuesFilter | undefined) => {
+    if (isNullish(filter)) {
+      return true;
+    }
+
+    if (isNullish(filter.values) || filter.values.length === 0) {
+      return true;
+    }
+
+    return false;
+  };
+
+  if (isNullFilter(filter1) && isNullFilter(filter2)) {
+    return true;
+  }
+
+  return isDeepEqual(filter1, filter2);
+};
+
+export const isAttributesFilterEqual = (
+  filter1: IssueAttributesFilter,
+  filter2: IssueAttributesFilter,
+) => {
+  const fields: (keyof IssueAttributesFilter)[] = [
+    "assignees",
+    "components",
+    "issueTypes",
+    "labels",
+    "resolutions",
+    "statuses",
+  ];
+
+  return fields.every((field) =>
+    isValuesFilterEqual(filter1[field], filter2[field]),
+  );
 };
