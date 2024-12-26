@@ -3,7 +3,11 @@ import {
   SavedPolicy,
   isPolicyEqual,
 } from "@agileplanning-io/flow-metrics";
-import { CaretDownOutlined, SaveOutlined } from "@ant-design/icons";
+import {
+  CaretDownOutlined,
+  CheckOutlined,
+  SaveOutlined,
+} from "@ant-design/icons";
 import { useProjectContext } from "@app/projects/context";
 import {
   Project,
@@ -55,11 +59,33 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
   const changed =
     currentPolicy && !isPolicyEqual(currentPolicy.policy, cycleTimePolicy);
 
+  const canSave = !isNullish(currentPolicy) && changed;
+  const saveReason = canSave
+    ? undefined
+    : isNullish(currentPolicy)
+    ? "Save this policy as a named policy first"
+    : "No policy changes to save";
+
+  const canSaveAs = isNullish(currentPolicy) || changed;
+  const saveAsReason = canSaveAs ? undefined : "No policy changes to save";
+
+  const canMakeDefault = !isNullish(currentPolicy) && !currentPolicy.isDefault;
+  const makeDefaultReason = canMakeDefault
+    ? undefined
+    : isNullish(currentPolicy)
+    ? "Save this policy to make it the default"
+    : "Selected policy is already the default";
+
+  const canDelete = !isNullish(currentPolicy);
+  const deleteReason = canDelete
+    ? undefined
+    : "Save this policy as a named policy first";
+
   const saveItems: MenuProps["items"] = [
     {
-      label: "Save",
+      label: <Tooltip title={saveReason}>Save</Tooltip>,
       key: "Save",
-      disabled: !changed,
+      disabled: !canSave,
       onClick: () => {
         if (currentPolicy) {
           updatePolicy.mutate({ ...currentPolicy, policy: cycleTimePolicy });
@@ -67,27 +93,21 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
       },
     },
     {
-      label: "Save as...",
+      label: <Tooltip title={saveAsReason}>Save As...</Tooltip>,
       key: "SaveAs",
-      disabled: !(isNullish(currentPolicy) || changed),
+      disabled: !canSaveAs,
       onClick: () => setShowSaveDialog(true),
     },
     {
-      label: "Delete...",
+      label: <Tooltip title={deleteReason}>Delete...</Tooltip>,
       key: "Delete",
-      disabled: isNullish(currentPolicy),
+      disabled: !canDelete,
       onClick: () => setShowDeleteDialog(true),
     },
     {
-      label: currentPolicy?.isDefault ? (
-        <Tooltip title="Selected policy is already the default">
-          Make default
-        </Tooltip>
-      ) : (
-        "Make default"
-      ),
+      label: <Tooltip title={makeDefaultReason}>Make default</Tooltip>,
       key: "MakeDefault",
-      disabled: isNullish(currentPolicy) || currentPolicy.isDefault,
+      disabled: !canMakeDefault,
       onClick: () => {
         if (currentPolicy) {
           setDefaultPolicy.mutate(currentPolicy?.id);
@@ -104,6 +124,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
     ...savedPolicies.map((policy) => ({
       label: policy.name,
       key: policy.id,
+      icon: policy.id === savedPolicyId ? <CheckOutlined /> : undefined,
       onClick: () => {
         setSavedPolicyId(policy.id);
         setCycleTimePolicy(policy.policy);
