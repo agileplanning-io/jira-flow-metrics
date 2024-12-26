@@ -8,8 +8,18 @@ import {
   useGetPolicies,
   useSetDefaultPolicy,
 } from "@data/projects";
-import { Space, Button, Dropdown, MenuProps, Form, Input, Modal } from "antd";
+import {
+  Space,
+  Button,
+  Dropdown,
+  MenuProps,
+  Form,
+  Input,
+  Modal,
+  Typography,
+} from "antd";
 import { FC, useMemo, useState } from "react";
+import { isNullish } from "remeda";
 
 type PoliciesDropdownProps = {
   project: Project;
@@ -45,11 +55,13 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
     {
       label: "Delete...",
       key: "Delete",
+      disabled: isNullish(currentPolicy),
       onClick: () => setShowDeleteDialog(true),
     },
     {
       label: "Make default",
       key: "MakeDefault",
+      disabled: isNullish(currentPolicy),
       onClick: () => {
         if (currentPolicy) {
           setDefaultPolicy.mutate(currentPolicy?.id);
@@ -80,7 +92,9 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
       <Space.Compact>
         <Dropdown menu={{ items: saveItems, selectedKeys }}>
           <Button size="small" icon={<CaretDownOutlined />} iconPosition="end">
-            {currentPolicy?.name ?? "Custom"}
+            {currentPolicy?.name ?? (
+              <Typography.Text type="secondary">Custom</Typography.Text>
+            )}
             <SaveOutlined disabled={true} />
           </Button>
         </Dropdown>
