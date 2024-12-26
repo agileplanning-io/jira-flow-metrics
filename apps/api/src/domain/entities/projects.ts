@@ -75,6 +75,7 @@ export abstract class PoliciesRepository {
   ): Promise<SavedPolicy>;
   abstract updatePolicy(projectId: string, policy: SavedPolicy): Promise<void>;
   abstract setDefaultPolicy(projectId: string, policyId: string): Promise<void>;
+  abstract deletePolicy(projectId: string, policyId: string): Promise<void>;
 }
 
 export type SearchDataSourcesParams = {

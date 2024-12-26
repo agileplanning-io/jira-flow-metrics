@@ -249,8 +249,11 @@ export const useCreatePolicy = (projectId: string) => {
   });
 };
 
+const policyUrl = (projectId: string, policyId: string) =>
+  `/projects/${projectId}/policies/${policyId}`;
+
 const setDefaultPolicyUrl = (projectId: string, policyId: string) =>
-  `/projects/${projectId}/policies/${policyId}/default`;
+  `${policyUrl(projectId, policyId)}/default`;
 
 const setDefaultPolicy = async (projectId: string, policyId: string) => {
   await axios.put(setDefaultPolicyUrl(projectId, policyId));
@@ -259,5 +262,15 @@ const setDefaultPolicy = async (projectId: string, policyId: string) => {
 export const useSetDefaultPolicy = (projectId: string) => {
   return useMutation({
     mutationFn: (policyId: string) => setDefaultPolicy(projectId, policyId),
+  });
+};
+
+const deletePolicy = async (projectId: string, policyId: string) => {
+  await axios.delete(policyUrl(projectId, policyId));
+};
+
+export const useDeletePolicy = (projectId: string) => {
+  return useMutation({
+    mutationFn: (policyId: string) => deletePolicy(projectId, policyId),
   });
 };

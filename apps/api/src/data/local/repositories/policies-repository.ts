@@ -39,7 +39,6 @@ export class LocalPoliciesRepository extends PoliciesRepository {
   }
 
   async setDefaultPolicy(projectId: string, policyId: string): Promise<void> {
-    console.info("setDefault", projectId, policyId);
     const policies = await this.getPolicies(projectId);
 
     await this.cache.push(
@@ -49,6 +48,12 @@ export class LocalPoliciesRepository extends PoliciesRepository {
         isDefault: policy.id === policyId,
       })),
     );
+  }
+
+  async deletePolicy(projectId: string, policyId: string): Promise<void> {
+    console.info("deletePolicy", projectId, policyId);
+    await this.cache.delete(policyPath(projectId, policyId));
+    await this.cache.save();
   }
 }
 

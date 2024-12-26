@@ -4,6 +4,7 @@ import { useProjectContext } from "@app/projects/context";
 import {
   Project,
   useCreatePolicy,
+  useDeletePolicy,
   useGetPolicies,
   useSetDefaultPolicy,
 } from "@data/projects";
@@ -24,6 +25,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
   const { data: savedPolicies } = useGetPolicies(project.id);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const setDefaultPolicy = useSetDefaultPolicy(project.id);
+  const deletePolicy = useDeletePolicy(project.id);
 
   if (!savedPolicies) {
     return null;
@@ -40,7 +42,15 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
       key: "SaveAs",
       onClick: () => setShowSaveDialog(true),
     },
-    { label: "Delete...", key: "Delete" },
+    {
+      label: "Delete...",
+      key: "Delete",
+      onClick: () => {
+        if (currentPolicy) {
+          deletePolicy.mutate(currentPolicy.id);
+        }
+      },
+    },
     {
       label: "Make default",
       key: "MakeDefault",

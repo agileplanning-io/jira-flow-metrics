@@ -7,6 +7,8 @@ import { TestDataCache } from "@fixtures/data/storage/test-storage";
 import { LocalPoliciesRepository } from "./policies-repository";
 
 describe("LocalPoliciesRepository", () => {
+  const projectId = "my-project";
+
   let repo: LocalPoliciesRepository;
 
   beforeEach(() => {
@@ -29,14 +31,14 @@ describe("LocalPoliciesRepository", () => {
     };
 
     // act
-    await repo.createPolicy("my-project", draft);
+    await repo.createPolicy(projectId, draft);
 
     // assert
-    const policies = await repo.getPolicies("my-project");
+    const policies = await repo.getPolicies(projectId);
 
     expect(policies).toEqual([
       {
-        id: "QuGzXH0AA-HL",
+        id: "UFUsXOAn9R_P",
         ...draft,
       },
     ]);
@@ -55,13 +57,13 @@ describe("LocalPoliciesRepository", () => {
       name: "my policy",
     };
 
-    const policy = await repo.createPolicy("my-project", draft);
+    const policy = await repo.createPolicy(projectId, draft);
 
     // act
-    await repo.updatePolicy("my-project", { ...policy, isDefault: true });
+    await repo.updatePolicy(projectId, { ...policy, isDefault: true });
 
     // assert
-    const policies = await repo.getPolicies("my-project");
+    const policies = await repo.getPolicies(projectId);
 
     expect(policies).toEqual([
       {
@@ -72,7 +74,7 @@ describe("LocalPoliciesRepository", () => {
   });
 
   it("updates the default policy", async () => {
-    const policy1 = await repo.createPolicy("my-project", {
+    const policy1 = await repo.createPolicy(projectId, {
       policy: {
         type: CycleTimePolicyType.ProcessTime,
         statuses: ["In Progress"],
@@ -84,7 +86,7 @@ describe("LocalPoliciesRepository", () => {
       name: "policy 1",
     });
 
-    const policy2 = await repo.createPolicy("my-project", {
+    const policy2 = await repo.createPolicy(projectId, {
       policy: {
         type: CycleTimePolicyType.ProcessTime,
         statuses: ["In Progress"],
@@ -98,15 +100,49 @@ describe("LocalPoliciesRepository", () => {
     });
 
     // act
-
-    await repo.setDefaultPolicy("my-project", policy2.id);
+    await repo.setDefaultPolicy(projectId, policy2.id);
 
     // assert
-    const policies = await repo.getPolicies("my-project");
+    const policies = await repo.getPolicies(projectId);
 
     expect(policies).toEqual([
       { ...policy1, isDefault: false },
       { ...policy2, isDefault: true },
     ]);
+  });
+
+  it("deletes policies", async () => {
+    const policy1 = await repo.createPolicy(projectId, {
+      policy: {
+        type: CycleTimePolicyType.ProcessTime,
+        statuses: ["In Progress"],
+        epics: {
+          type: EpicCycleTimePolicyType.Derived,
+        },
+      },
+      isDefault: true,
+      name: "policy 1",
+    });
+
+    const policy2 = await repo.createPolicy(projectId, {
+      policy: {
+        type: CycleTimePolicyType.ProcessTime,
+        statuses: ["In Progress"],
+        epics: {
+          type: EpicCycleTimePolicyType.EpicStatus,
+          statuses: ["In Progress"],
+        },
+      },
+      isDefault: false,
+      name: "policy 2",
+    });
+
+    // act
+    await repo.deletePolicy(projectId, policy2.id);
+
+    // assert
+    const policies = await repo.getPolicies(projectId);
+
+    expect(policies).toEqual([policy1]);
   });
 });

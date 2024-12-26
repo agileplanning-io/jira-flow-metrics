@@ -156,4 +156,12 @@ export class ProjectsController {
   ) {
     return this.policies.setDefaultPolicy(projectId, policyId);
   }
+
+  @Delete(":projectId/policies/:policyId")
+  async deletePolicy(
+    @Param("projectId") projectId: string,
+    @Param("policyId") policyId: string,
+  ) {
+    return this.policies.deletePolicy(projectId, policyId);
+  }
 }
