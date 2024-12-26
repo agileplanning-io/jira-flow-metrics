@@ -60,7 +60,10 @@ describe("LocalPoliciesRepository", () => {
     const policy = await repo.createPolicy(projectId, draft);
 
     // act
-    await repo.updatePolicy(projectId, { ...policy, isDefault: true });
+    await repo.updatePolicy(projectId, policy.id, {
+      ...policy,
+      isDefault: true,
+    });
 
     // assert
     const policies = await repo.getPolicies(projectId);
