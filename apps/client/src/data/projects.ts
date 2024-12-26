@@ -248,3 +248,16 @@ export const useCreatePolicy = (projectId: string) => {
     mutationFn: (policy: DraftPolicy) => createPolicy(projectId, policy),
   });
 };
+
+const setDefaultPolicyUrl = (projectId: string, policyId: string) =>
+  `/projects/${projectId}/policies/${policyId}/default`;
+
+const setDefaultPolicy = async (projectId: string, policyId: string) => {
+  await axios.put(setDefaultPolicyUrl(projectId, policyId));
+};
+
+export const useSetDefaultPolicy = (projectId: string) => {
+  return useMutation({
+    mutationFn: (policyId: string) => setDefaultPolicy(projectId, policyId),
+  });
+};

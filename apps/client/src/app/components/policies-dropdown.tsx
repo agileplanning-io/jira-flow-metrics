@@ -1,7 +1,12 @@
 import { CycleTimePolicy, SavedPolicy } from "@agileplanning-io/flow-metrics";
 import { CaretDownOutlined, SaveOutlined } from "@ant-design/icons";
 import { useProjectContext } from "@app/projects/context";
-import { Project, useCreatePolicy, useGetPolicies } from "@data/projects";
+import {
+  Project,
+  useCreatePolicy,
+  useGetPolicies,
+  useSetDefaultPolicy,
+} from "@data/projects";
 import { Space, Button, Dropdown, MenuProps, Form, Input, Modal } from "antd";
 import { FC, useMemo, useState } from "react";
 
@@ -18,6 +23,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
     useProjectContext();
   const { data: savedPolicies } = useGetPolicies(project.id);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const setDefaultPolicy = useSetDefaultPolicy(project.id);
 
   if (!savedPolicies) {
     return null;
@@ -35,7 +41,15 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
       onClick: () => setShowSaveDialog(true),
     },
     { label: "Delete...", key: "Delete" },
-    { label: "Make default", key: "MakeDefault" },
+    {
+      label: "Make default",
+      key: "MakeDefault",
+      onClick: () => {
+        if (currentPolicy) {
+          setDefaultPolicy.mutate(currentPolicy?.id);
+        }
+      },
+    },
   ];
 
   if (savedPolicies.length) {

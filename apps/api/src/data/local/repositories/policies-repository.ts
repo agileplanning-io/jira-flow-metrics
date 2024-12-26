@@ -39,6 +39,7 @@ export class LocalPoliciesRepository extends PoliciesRepository {
   }
 
   async setDefaultPolicy(projectId: string, policyId: string): Promise<void> {
+    console.info("setDefault", projectId, policyId);
     const policies = await this.getPolicies(projectId);
 
     await this.cache.push(

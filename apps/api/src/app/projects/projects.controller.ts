@@ -152,7 +152,7 @@ export class ProjectsController {
   @Put(":projectId/policies/:policyId/default")
   async makeDefaultPolicy(
     @Param("projectId") projectId: string,
-    @Param(":policyId") policyId: string,
+    @Param("policyId") policyId: string,
   ) {
     return this.policies.setDefaultPolicy(projectId, policyId);
   }
