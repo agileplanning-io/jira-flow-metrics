@@ -67,10 +67,12 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
     })),
   );
 
+  const selectedKeys = currentPolicy ? [currentPolicy.id] : [];
+
   return (
     <>
       <Space.Compact>
-        <Dropdown menu={{ items: saveItems }}>
+        <Dropdown menu={{ items: saveItems, selectedKeys }}>
           <Button size="small" icon={<CaretDownOutlined />} iconPosition="end">
             {currentPolicy?.name ?? "Custom"}
             <SaveOutlined disabled={true} />
