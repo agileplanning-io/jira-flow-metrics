@@ -7,6 +7,8 @@ import {
   draftPolicy,
   filterSchema,
   getFlowMetrics,
+  SavedPolicy,
+  savedPolicy,
   workflowStageSchema,
 } from "@agileplanning-io/flow-metrics";
 import {
@@ -147,6 +149,15 @@ export class ProjectsController {
     @Body(new ZodValidationPipe(draftPolicy)) request: DraftPolicy,
   ) {
     return this.policies.createPolicy(projectId, request);
+  }
+
+  @Put(":projectId/policies/:policyId")
+  async updatePolicy(
+    @Param("projectId") projectId: string,
+    @Param("policyId") policyId: string,
+    @Body(new ZodValidationPipe(savedPolicy)) request: SavedPolicy,
+  ) {
+    return this.policies.updatePolicy(projectId, policyId, request);
   }
 
   @Put(":projectId/policies/:policyId/default")

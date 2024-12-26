@@ -73,7 +73,11 @@ export abstract class PoliciesRepository {
     projectId: string,
     policy: DraftPolicy,
   ): Promise<SavedPolicy>;
-  abstract updatePolicy(projectId: string, policy: SavedPolicy): Promise<void>;
+  abstract updatePolicy(
+    projectId: string,
+    policyId: string,
+    policy: SavedPolicy,
+  ): Promise<void>;
   abstract setDefaultPolicy(projectId: string, policyId: string): Promise<void>;
   abstract deletePolicy(projectId: string, policyId: string): Promise<void>;
 }

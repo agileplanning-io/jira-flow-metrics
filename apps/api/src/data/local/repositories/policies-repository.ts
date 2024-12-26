@@ -1,5 +1,5 @@
 import { DataCache } from "@data/storage/storage";
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { createId } from "../id";
 import { pick } from "remeda";
 import { DataError } from "node-json-db";
@@ -20,8 +20,13 @@ export class LocalPoliciesRepository extends PoliciesRepository {
     return policy;
   }
 
-  async updatePolicy(projectId: string, policy: SavedPolicy) {
-    await this.cache.push(policyPath(projectId, policy.id), policy);
+  async updatePolicy(projectId: string, policyId: string, policy: SavedPolicy) {
+    if (policy.id !== policyId) {
+      throw new BadRequestException(
+        `policy.id (${policy.id}) does not match param (${policyId})`,
+      );
+    }
+    await this.cache.push(policyPath(projectId, policyId), policy);
   }
 
   async getPolicies(projectId: string) {

@@ -11,6 +11,7 @@ import {
   useDeletePolicy,
   useGetPolicies,
   useSetDefaultPolicy,
+  useUpdatePolicy,
 } from "@data/projects";
 import {
   Space,
@@ -41,6 +42,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const setDefaultPolicy = useSetDefaultPolicy(project.id);
+  const updatePolicy = useUpdatePolicy(project.id);
 
   if (!savedPolicies) {
     return null;
@@ -54,7 +56,16 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
     currentPolicy && !isPolicyEqual(currentPolicy.policy, cycleTimePolicy);
 
   const saveItems: MenuProps["items"] = [
-    { label: "Save", key: "Save", disabled: !changed },
+    {
+      label: "Save",
+      key: "Save",
+      disabled: !changed,
+      onClick: () => {
+        if (currentPolicy) {
+          updatePolicy.mutate({ ...currentPolicy, policy: cycleTimePolicy });
+        }
+      },
+    },
     {
       label: "Save as...",
       key: "SaveAs",
@@ -104,7 +115,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
   return (
     <>
       <Space.Compact>
-        <Dropdown menu={{ items: saveItems, selectedKeys }}>
+        <Dropdown menu={{ items: saveItems, selectedKeys }} trigger={["click"]}>
           <Button size="small" icon={<CaretDownOutlined />} iconPosition="end">
             {currentPolicy?.name ?? (
               <Typography.Text type="secondary">Custom</Typography.Text>
@@ -113,6 +124,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
           </Button>
         </Dropdown>
       </Space.Compact>
+
       <SaveModal
         open={showSaveDialog}
         projectId={project.id}
@@ -121,6 +133,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
         onPolicySaved={(policy) => setSavedPolicyId(policy.id)}
         onClose={() => setShowSaveDialog(false)}
       />
+
       <DeleteModal
         open={showDeleteDialog}
         projectId={project.id}

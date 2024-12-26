@@ -5,6 +5,7 @@ import {
   CycleTimePolicy,
   DraftPolicy,
   IssueFilter,
+  SavedPolicy,
   savedPolicy,
   TransitionStatus,
 } from "@agileplanning-io/flow-metrics";
@@ -251,6 +252,15 @@ export const useCreatePolicy = (projectId: string) => {
 
 const policyUrl = (projectId: string, policyId: string) =>
   `/projects/${projectId}/policies/${policyId}`;
+
+const updatePolicy = async (projectId: string, policy: SavedPolicy) => {
+  await axios.put(policyUrl(projectId, policy.id), policy);
+};
+
+export const useUpdatePolicy = (projectId: string) =>
+  useMutation({
+    mutationFn: (policy: SavedPolicy) => updatePolicy(projectId, policy),
+  });
 
 const setDefaultPolicyUrl = (projectId: string, policyId: string) =>
   `${policyUrl(projectId, policyId)}/default`;
