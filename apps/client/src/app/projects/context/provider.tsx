@@ -18,8 +18,6 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     CycleTimePolicy | undefined
   >("p", cycleTimePolicySchema.optional().parse);
 
-  console.info("ProjectProvider", cycleTimePolicy, project);
-
   const { data: issues } = useIssues(project?.id, cycleTimePolicy);
 
   const { data: savedPolicies } = useGetPolicies(project?.id);

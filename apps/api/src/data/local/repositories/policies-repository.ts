@@ -53,7 +53,6 @@ export class LocalPoliciesRepository extends PoliciesRepository {
   }
 
   async deletePolicy(projectId: string, policyId: string): Promise<void> {
-    console.info("deletePolicy", projectId, policyId);
     await this.cache.delete(policyPath(projectId, policyId));
     await this.cache.save();
   }

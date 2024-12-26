@@ -68,7 +68,6 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
       key: policy.id,
       onClick: () => {
         setSavedPolicyId(policy.id);
-        console.info("setCycleTimePolicy 3");
         setCycleTimePolicy(policy.policy);
       },
     })),
