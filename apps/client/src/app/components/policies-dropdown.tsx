@@ -94,7 +94,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
         projectId={project.id}
         savedPolicies={savedPolicies}
         cycleTimePolicy={cycleTimePolicy}
-        onPolicySaved={() => {}}
+        onPolicySaved={(policy) => setSavedPolicyId(policy.id)}
         onClose={() => setShowSaveDialog(false)}
       />
     </>
