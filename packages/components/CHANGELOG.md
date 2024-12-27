@@ -1,5 +1,12 @@
 # @agileplanning-io/flow-components
 
+## 0.1.17
+
+### Patch Changes
+
+- Updated dependencies [8cf33f1]
+  - @agileplanning-io/flow-metrics@1.0.1
+
 ## 0.1.16
 
 ### Patch Changes
