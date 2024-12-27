@@ -8,6 +8,8 @@ import {
   PoliciesDropdown,
   SavePolicyMutationResult,
   DeletePolicyMutationResult,
+  EditFilterForm,
+  FilterOptions,
 } from "@agileplanning-io/flow-components";
 import {
   ClientIssueFilter,
@@ -26,10 +28,6 @@ import {
 import { Space, Typography } from "antd";
 import { clone, compact, flat } from "remeda";
 import { FC, Key, ReactNode, useMemo } from "react";
-import {
-  EditFilterForm,
-  FilterOptions,
-} from "@app/projects/reports/components/filter-form/edit-filter-form";
 import { ellipsize } from "@agileplanning-io/flow-lib";
 
 type EditCycleTimePolicyForm = {

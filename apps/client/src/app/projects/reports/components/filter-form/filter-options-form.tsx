@@ -8,10 +8,12 @@ import {
 import { flatten, compact, uniq, pipe, map, isNonNullish } from "remeda";
 import { Interval } from "@agileplanning-io/flow-lib";
 import { LoadingSpinner } from "@app/components/loading-spinner";
-import { EditFilterForm } from "./edit-filter-form";
 import { ExpandableOptions } from "@app/components/expandable-options";
 import { Col, Form, Row, Select, Tag } from "antd";
-import { DateSelector } from "@agileplanning-io/flow-components";
+import {
+  DateSelector,
+  EditFilterForm,
+} from "@agileplanning-io/flow-components";
 import { getHeaderOptions } from "./header-options";
 
 type FilterOptionsProps = {

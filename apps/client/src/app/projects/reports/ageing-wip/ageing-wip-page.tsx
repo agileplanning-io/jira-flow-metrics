@@ -6,6 +6,7 @@ import {
   Issue,
   StartedIssue,
   filterIssues,
+  fromClientFilter,
 } from "@agileplanning-io/flow-metrics";
 import { isNil, omit } from "remeda";
 import { Collapse } from "antd";
@@ -22,7 +23,6 @@ import {
   defaultDateRange,
   getPercentiles,
 } from "@agileplanning-io/flow-lib";
-import { fromClientFilter } from "@app/filter/client-issue-filter";
 import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
 import { LoadingSpinner } from "@app/components/loading-spinner";
