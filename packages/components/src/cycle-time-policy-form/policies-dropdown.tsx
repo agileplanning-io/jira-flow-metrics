@@ -1,5 +1,6 @@
 import {
   CycleTimePolicy,
+  DraftPolicy,
   SavedPolicy,
   isPolicyEqual,
 } from "@agileplanning-io/flow-metrics";
@@ -9,15 +10,6 @@ import {
   SaveOutlined,
 } from "@ant-design/icons";
 import { blue } from "@ant-design/colors";
-import { useProjectContext } from "@app/projects/context";
-import {
-  Project,
-  useCreatePolicy,
-  useDeletePolicy,
-  useGetPolicies,
-  useSetDefaultPolicy,
-  useUpdatePolicy,
-} from "@data/projects";
 import {
   Space,
   Button,
@@ -31,27 +23,43 @@ import {
 } from "antd";
 import { FC, useMemo, useState } from "react";
 import { isNullish } from "remeda";
+import { UseMutationResult } from "@tanstack/react-query";
+
+type SavePolicyMutationResult = UseMutationResult<
+  SavedPolicy,
+  unknown,
+  DraftPolicy
+>;
+
+type DeletePolicyMutationResult = UseMutationResult<void, unknown, string>;
 
 type PoliciesDropdownProps = {
-  project: Project;
+  savedPolicyId?: string;
+  savedPolicies: SavedPolicy[];
   cycleTimePolicy: CycleTimePolicy;
+
+  onSaveClicked: (policy: SavedPolicy) => void;
+  onMakeDefaultClicked: (policy: SavedPolicy) => void;
+
+  onPolicySelected: (savedPolicy?: SavedPolicy) => void;
+  saveCycleTimePolicy: SavePolicyMutationResult;
+  deleteCycleTimePolicy: DeletePolicyMutationResult;
 };
 
 export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
-  project,
+  savedPolicyId,
+  savedPolicies,
   cycleTimePolicy,
+
+  onSaveClicked,
+  onMakeDefaultClicked,
+
+  onPolicySelected,
+  saveCycleTimePolicy,
+  deleteCycleTimePolicy,
 }) => {
-  const { savedPolicyId, setSavedPolicyId, setCycleTimePolicy } =
-    useProjectContext();
-  const { data: savedPolicies } = useGetPolicies(project.id);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const setDefaultPolicy = useSetDefaultPolicy(project.id);
-  const updatePolicy = useUpdatePolicy(project.id);
-
-  if (!savedPolicies) {
-    return null;
-  }
 
   const savedPolicy = savedPolicies?.find(
     (policy) => policy.id === savedPolicyId,
@@ -60,20 +68,16 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
   const { menuItems, changed } = buildPolicyItems({
     savedPolicy,
     cycleTimePolicy,
-    onSaveClicked() {
+    onSaveClicked: () => {
       if (savedPolicy) {
-        updatePolicy.mutate({ ...savedPolicy, policy: cycleTimePolicy });
+        onSaveClicked({ ...savedPolicy, policy: cycleTimePolicy });
       }
     },
-    onSaveAsClicked() {
-      setShowSaveDialog(true);
-    },
-    onDeleteClicked() {
-      setShowDeleteDialog(true);
-    },
-    onMakeDefaultClicked() {
+    onSaveAsClicked: () => setShowSaveDialog(true),
+    onDeleteClicked: () => setShowDeleteDialog(true),
+    onMakeDefaultClicked: () => {
       if (savedPolicy) {
-        setDefaultPolicy.mutate(savedPolicy?.id);
+        onMakeDefaultClicked(savedPolicy);
       }
     },
   });
@@ -87,10 +91,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
       label: policy.name,
       key: policy.id,
       icon: policy.id === savedPolicyId ? <CheckOutlined /> : undefined,
-      onClick: () => {
-        setSavedPolicyId(policy.id);
-        setCycleTimePolicy(policy.policy);
-      },
+      onClick: () => onPolicySelected(policy),
     })),
   );
 
@@ -111,17 +112,17 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
 
       <SaveModal
         open={showSaveDialog}
-        projectId={project.id}
+        saveCycleTimePolicy={saveCycleTimePolicy}
         savedPolicies={savedPolicies}
         cycleTimePolicy={cycleTimePolicy}
-        onPolicySaved={(policy) => setSavedPolicyId(policy.id)}
+        onPolicySaved={onPolicySelected}
         onClose={() => setShowSaveDialog(false)}
       />
 
       <DeleteModal
         open={showDeleteDialog}
-        projectId={project.id}
-        onPolicyDeleted={() => setSavedPolicyId(undefined)}
+        deleteCycleTimePolicy={deleteCycleTimePolicy}
+        onPolicyDeleted={() => onPolicySelected(undefined)}
         onClose={() => setShowDeleteDialog(false)}
         cycleTimePolicy={savedPolicy}
       />
@@ -224,7 +225,7 @@ const buildPolicyItems = ({
 
 type SaveModalProps = {
   open: boolean;
-  projectId: string;
+  saveCycleTimePolicy: UseMutationResult<SavedPolicy, unknown, DraftPolicy>;
   cycleTimePolicy: CycleTimePolicy;
   savedPolicies: SavedPolicy[];
   onPolicySaved: (policy: SavedPolicy) => void;
@@ -233,13 +234,12 @@ type SaveModalProps = {
 
 const SaveModal: FC<SaveModalProps> = ({
   open,
-  projectId,
+  saveCycleTimePolicy,
   cycleTimePolicy,
   savedPolicies,
   onPolicySaved,
   onClose,
 }) => {
-  const saveCycleTimePolicy = useCreatePolicy(projectId);
   const [newPolicyName, setNewPolicyName] = useState<string>("");
 
   const invalidName = useMemo(
@@ -310,7 +310,7 @@ const SaveModal: FC<SaveModalProps> = ({
 
 type DeleteModalProps = {
   open: boolean;
-  projectId: string;
+  deleteCycleTimePolicy: UseMutationResult<void, unknown, string>;
   cycleTimePolicy?: SavedPolicy;
   onPolicyDeleted: () => void;
   onClose: () => void;
@@ -318,13 +318,11 @@ type DeleteModalProps = {
 
 const DeleteModal: FC<DeleteModalProps> = ({
   open,
-  projectId,
+  deleteCycleTimePolicy,
   cycleTimePolicy,
   onPolicyDeleted,
   onClose,
 }) => {
-  const deleteCycleTimePolicy = useDeletePolicy(projectId);
-
   const onOk = async () => {
     if (!cycleTimePolicy) {
       return;
