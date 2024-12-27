@@ -25,6 +25,7 @@ import { FC, Key, ReactNode, useMemo } from "react";
 import { EditFilterForm } from "@app/projects/reports/components/filter-form/edit-filter-form";
 import { ClientIssueFilter } from "@app/filter/client-issue-filter";
 import { ellipsize } from "@agileplanning-io/flow-lib";
+import { PoliciesDropdown } from "./policies-dropdown";
 
 type EditCycleTimePolicyForm = {
   project: Project;
@@ -320,6 +321,8 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
             </Popdown>
           </FormControl>
         )}
+
+        <PoliciesDropdown project={project} cycleTimePolicy={cycleTimePolicy} />
       </Space>
     </Space>
   );

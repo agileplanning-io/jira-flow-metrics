@@ -45,7 +45,6 @@ export const useFilterParams = (
   const [filterParams, setFilterParams] = useQueryState<FilterParamsType>(
     "f",
     parse,
-    false,
   );
 
   useEffect(() => {

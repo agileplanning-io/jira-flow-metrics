@@ -1,13 +1,25 @@
-import { ProjectsRepository } from "@entities/projects";
+import { PoliciesRepository, ProjectsRepository } from "@entities/projects";
 import { IssuesRepository } from "@entities/issues";
 import {
   CycleTimePolicy,
   cycleTimePolicySchema,
+  DraftPolicy,
+  draftPolicy,
   filterSchema,
   getFlowMetrics,
+  SavedPolicy,
+  savedPolicy,
   workflowStageSchema,
 } from "@agileplanning-io/flow-metrics";
-import { Body, Controller, Delete, Get, Param, Put } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from "@nestjs/common";
 import { SyncUseCase } from "@usecases/projects/sync/sync-use-case";
 import { ZodValidationPipe } from "@lib/pipes/zod-pipe";
 import { ParsedQuery } from "@lib/decorators/parsed-query";
@@ -35,6 +47,7 @@ export class ProjectsController {
     private readonly projects: ProjectsRepository,
     private readonly issues: IssuesRepository,
     private readonly sync: SyncUseCase,
+    private readonly policies: PoliciesRepository,
   ) {}
 
   @Get(":projectId")
@@ -123,5 +136,43 @@ export class ProjectsController {
         : undefined;
       return { ...issue, parent };
     });
+  }
+
+  @Get(":projectId/policies")
+  async getPolicies(@Param("projectId") projectId) {
+    return this.policies.getPolicies(projectId);
+  }
+
+  @Post(":projectId/policies")
+  async createPolicy(
+    @Param("projectId") projectId: string,
+    @Body(new ZodValidationPipe(draftPolicy)) request: DraftPolicy,
+  ) {
+    return this.policies.createPolicy(projectId, request);
+  }
+
+  @Put(":projectId/policies/:policyId")
+  async updatePolicy(
+    @Param("projectId") projectId: string,
+    @Param("policyId") policyId: string,
+    @Body(new ZodValidationPipe(savedPolicy)) request: SavedPolicy,
+  ) {
+    return this.policies.updatePolicy(projectId, policyId, request);
+  }
+
+  @Put(":projectId/policies/:policyId/default")
+  async makeDefaultPolicy(
+    @Param("projectId") projectId: string,
+    @Param("policyId") policyId: string,
+  ) {
+    return this.policies.setDefaultPolicy(projectId, policyId);
+  }
+
+  @Delete(":projectId/policies/:policyId")
+  async deletePolicy(
+    @Param("projectId") projectId: string,
+    @Param("policyId") policyId: string,
+  ) {
+    return this.policies.deletePolicy(projectId, policyId);
   }
 }

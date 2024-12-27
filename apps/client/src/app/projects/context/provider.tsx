@@ -5,8 +5,10 @@ import {
   CycleTimePolicy,
   cycleTimePolicySchema,
 } from "@agileplanning-io/flow-metrics";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQueryState } from "@lib/use-query-state";
+import { useGetPolicies } from "@data/projects";
+import { isDeepEqual } from "remeda";
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -18,21 +20,62 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const { data: issues } = useIssues(project?.id, cycleTimePolicy);
 
+  const { data: savedPolicies } = useGetPolicies(project?.id);
+
+  const [savedPolicyId, setSavedPolicyId] = useState<string>();
+
   useEffect(() => {
     if (!project) {
       return;
     }
 
-    if (!cycleTimePolicy) {
-      setCycleTimePolicy(project.defaultCycleTimePolicy);
+    if (savedPolicies) {
+      if (!cycleTimePolicy) {
+        if (savedPolicyId) {
+          const savedPolicy = savedPolicies.find(
+            (policy) => policy.id === savedPolicyId,
+          );
+          if (savedPolicy) {
+            setCycleTimePolicy(savedPolicy.policy);
+          } else {
+            setSavedPolicyId(undefined);
+          }
+        } else {
+          const defaultPolicy = savedPolicies.find(
+            (policy) => policy.isDefault,
+          );
+          if (defaultPolicy) {
+            setSavedPolicyId(defaultPolicy.id);
+            setCycleTimePolicy(defaultPolicy.policy);
+          } else if (!cycleTimePolicy) {
+            setCycleTimePolicy(project.defaultCycleTimePolicy);
+          }
+        }
+      } else {
+        // cycle time policy specified by parameters, so we should respect those
+        const foundPolicy = savedPolicies.find((policy) =>
+          isDeepEqual(policy.policy, cycleTimePolicy),
+        );
+        if (foundPolicy) {
+          setSavedPolicyId(foundPolicy.id);
+        }
+      }
     }
-  }, [project, cycleTimePolicy, setCycleTimePolicy]);
+  }, [
+    project,
+    cycleTimePolicy,
+    setCycleTimePolicy,
+    savedPolicies,
+    savedPolicyId,
+  ]);
 
   const value: ProjectContextType = {
     project,
     issues,
     cycleTimePolicy,
     setCycleTimePolicy,
+    savedPolicyId,
+    setSavedPolicyId,
   };
 
   return (

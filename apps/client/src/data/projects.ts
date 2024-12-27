@@ -3,10 +3,14 @@ import axios from "axios";
 import { queryClient } from "./client";
 import {
   CycleTimePolicy,
+  DraftPolicy,
   IssueFilter,
+  SavedPolicy,
+  savedPolicy,
   TransitionStatus,
 } from "@agileplanning-io/flow-metrics";
 import { WorkflowStage } from "./issues";
+import { z } from "zod";
 
 export type DataSource = {
   name: string;
@@ -212,5 +216,71 @@ export const useUpdateProject = () => {
         projects[projectIndex] = project;
       }
     },
+  });
+};
+
+const policiesResponse = z.array(savedPolicy);
+
+const policiesUrl = (projectId: string) => `/projects/${projectId}/policies`;
+
+const getPolicies = async (projectId?: string) => {
+  if (projectId === undefined) {
+    return [];
+  }
+
+  const response = await axios.get(policiesUrl(projectId));
+  return policiesResponse.parse(response.data);
+};
+
+export const useGetPolicies = (projectId?: string) => {
+  return useQuery({
+    queryKey: [policiesUrl(projectId ?? "undefined")],
+    queryFn: () => getPolicies(projectId),
+  });
+};
+
+const createPolicy = async (projectId: string, policy: DraftPolicy) => {
+  const response = await axios.post(policiesUrl(projectId), policy);
+  return savedPolicy.parse(response.data);
+};
+
+export const useCreatePolicy = (projectId: string) => {
+  return useMutation({
+    mutationFn: (policy: DraftPolicy) => createPolicy(projectId, policy),
+  });
+};
+
+const policyUrl = (projectId: string, policyId: string) =>
+  `/projects/${projectId}/policies/${policyId}`;
+
+const updatePolicy = async (projectId: string, policy: SavedPolicy) => {
+  await axios.put(policyUrl(projectId, policy.id), policy);
+};
+
+export const useUpdatePolicy = (projectId: string) =>
+  useMutation({
+    mutationFn: (policy: SavedPolicy) => updatePolicy(projectId, policy),
+  });
+
+const setDefaultPolicyUrl = (projectId: string, policyId: string) =>
+  `${policyUrl(projectId, policyId)}/default`;
+
+const setDefaultPolicy = async (projectId: string, policyId: string) => {
+  await axios.put(setDefaultPolicyUrl(projectId, policyId));
+};
+
+export const useSetDefaultPolicy = (projectId: string) => {
+  return useMutation({
+    mutationFn: (policyId: string) => setDefaultPolicy(projectId, policyId),
+  });
+};
+
+const deletePolicy = async (projectId: string, policyId: string) => {
+  await axios.delete(policyUrl(projectId, policyId));
+};
+
+export const useDeletePolicy = (projectId: string) => {
+  return useMutation({
+    mutationFn: (policyId: string) => deletePolicy(projectId, policyId),
   });
 };

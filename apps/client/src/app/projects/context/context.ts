@@ -10,12 +10,15 @@ import {
 export type ProjectContextType = {
   project?: Project;
   cycleTimePolicy?: CycleTimePolicy;
+  savedPolicyId?: string;
   setCycleTimePolicy: (policy: CycleTimePolicy) => void;
+  setSavedPolicyId: (policyId?: string) => void;
   issues?: Issue[];
 };
 
 export const ProjectContext = createContext<ProjectContextType>({
   setCycleTimePolicy: () => {},
+  setSavedPolicyId: () => {},
   cycleTimePolicy: {
     type: CycleTimePolicyType.LeadTime,
     statuses: [],
