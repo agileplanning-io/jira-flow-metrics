@@ -5,12 +5,16 @@ import {
   HelpIcon,
   Popdown,
   WorkflowStagesTable,
+  PoliciesDropdown,
+  SavePolicyMutationResult,
+  DeletePolicyMutationResult,
 } from "@agileplanning-io/flow-components";
 import {
   CycleTimePolicy,
   CycleTimePolicyType,
   EpicCycleTimePolicyType,
   FilterType,
+  getSelectedStages,
   IssueAttributesFilter,
   SavedPolicy,
   StatusCycleTimePolicy,
@@ -18,7 +22,6 @@ import {
   ValuesFilter,
   WorkflowScheme,
 } from "@agileplanning-io/flow-metrics";
-import { getSelectedStages } from "@data/workflows";
 import { Space, Typography } from "antd";
 import { clone, compact, flat } from "remeda";
 import { FC, Key, ReactNode, useMemo } from "react";
@@ -28,11 +31,6 @@ import {
 } from "@app/projects/reports/components/filter-form/edit-filter-form";
 import { ClientIssueFilter } from "@app/filter/client-issue-filter";
 import { ellipsize } from "@agileplanning-io/flow-lib";
-import {
-  PoliciesDropdown,
-  SavePolicyMutationResult,
-  DeletePolicyMutationResult,
-} from "@agileplanning-io/flow-components";
 
 type EditCycleTimePolicyForm = {
   savedPolicyId?: string;
@@ -330,7 +328,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
             >
               {(value, setValue) => (
                 <WorkflowStagesTable
-                  workflowStages={workflowScheme.stories.stages}
+                  workflowStages={workflowScheme.epics.stages}
                   selectedStages={value}
                   onSelectionChanged={(stages) => setValue(stages as string[])}
                 />

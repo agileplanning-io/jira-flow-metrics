@@ -7,25 +7,14 @@ import {
   IssueFilter,
   SavedPolicy,
   savedPolicy,
-  TransitionStatus,
+  WorkflowScheme,
 } from "@agileplanning-io/flow-metrics";
-import { WorkflowStage } from "./issues";
 import { z } from "zod";
 
 export type DataSource = {
   name: string;
   jql: string;
   type: "project" | "filter";
-};
-
-export type Workflow = {
-  stages: WorkflowStage[];
-  statuses: TransitionStatus[];
-};
-
-export type WorkflowScheme = {
-  stories: Workflow;
-  epics: Workflow;
 };
 
 export type Project = {

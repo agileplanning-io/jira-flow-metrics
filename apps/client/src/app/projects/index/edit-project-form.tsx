@@ -2,7 +2,6 @@ import { LoadingSpinner } from "@app/components/loading-spinner";
 import {
   Project,
   UpdateProjectParams,
-  Workflow,
   useCreatePolicy,
   useDeletePolicy,
   useGetPolicies,
@@ -20,6 +19,7 @@ import { WorkflowStage } from "@data/issues";
 import {
   CycleTimePolicy,
   DateFilterType,
+  Workflow,
 } from "@agileplanning-io/flow-metrics";
 import { EditCycleTimePolicyForm } from "@app/components/edit-cycle-time-policy-form";
 import { FullScreenDrawer } from "@app/components/full-screen-drawer";
