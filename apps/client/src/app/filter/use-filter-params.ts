@@ -1,8 +1,11 @@
 import { z } from "zod";
-import { ClientIssueFilter } from "./client-issue-filter";
 import { useCallback, useEffect, useMemo } from "react";
 import { useQueryState } from "@lib/use-query-state";
-import { filterSchema, intervalSchema } from "@agileplanning-io/flow-metrics";
+import {
+  ClientIssueFilter,
+  filterSchema,
+  intervalSchema,
+} from "@agileplanning-io/flow-metrics";
 import { Project } from "@data/projects";
 import { useProjectContext } from "@app/projects/context";
 import { defaultDateRange } from "@agileplanning-io/flow-lib";

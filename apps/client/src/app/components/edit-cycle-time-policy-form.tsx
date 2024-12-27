@@ -10,6 +10,7 @@ import {
   DeletePolicyMutationResult,
 } from "@agileplanning-io/flow-components";
 import {
+  ClientIssueFilter,
   CycleTimePolicy,
   CycleTimePolicyType,
   EpicCycleTimePolicyType,
@@ -29,7 +30,6 @@ import {
   EditFilterForm,
   FilterOptions,
 } from "@app/projects/reports/components/filter-form/edit-filter-form";
-import { ClientIssueFilter } from "@app/filter/client-issue-filter";
 import { ellipsize } from "@agileplanning-io/flow-lib";
 
 type EditCycleTimePolicyForm = {

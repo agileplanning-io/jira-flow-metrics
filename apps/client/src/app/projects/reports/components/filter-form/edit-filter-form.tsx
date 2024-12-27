@@ -1,11 +1,11 @@
 import {
+  ClientIssueFilter,
   FilterType,
   IssueAttributesFilter,
   defaultValuesFilter,
 } from "@agileplanning-io/flow-metrics";
 import { Form, Select, SelectProps, Space } from "antd";
 import { FC } from "react";
-import { ClientIssueFilter } from "@app/filter/client-issue-filter";
 import { clone } from "remeda";
 
 export type FilterOptions = {

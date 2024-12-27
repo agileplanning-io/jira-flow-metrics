@@ -17,18 +17,16 @@ import {
 } from "@agileplanning-io/flow-components";
 import { WorkflowStage } from "@data/issues";
 import {
+  ClientIssueFilter,
   CycleTimePolicy,
   DateFilterType,
+  fromClientFilter,
+  toClientFilter,
   Workflow,
 } from "@agileplanning-io/flow-metrics";
 import { EditCycleTimePolicyForm } from "@app/components/edit-cycle-time-policy-form";
 import { FullScreenDrawer } from "@app/components/full-screen-drawer";
 import { EditFilterForm } from "../reports/components/filter-form/edit-filter-form";
-import {
-  ClientIssueFilter,
-  fromClientFilter,
-  toClientFilter,
-} from "@app/filter/client-issue-filter";
 import { useProjectContext } from "../context";
 
 export type EditProjectFormProps = {

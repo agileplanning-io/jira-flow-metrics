@@ -1,11 +1,11 @@
 import { Interval } from "@agileplanning-io/flow-lib";
-import {
-  DateFilterType,
-  IssueFilter,
-  defaultValuesFilter,
-} from "@agileplanning-io/flow-metrics";
 import { omit } from "remeda";
+import { DateFilterType, defaultValuesFilter, IssueFilter } from "./filter";
 
+/**
+ * A client app page typically has an obvious filter type, so the type doesn't need to be speified
+ * in its params. This filter type represents a filter with a known filter type.
+ */
 export type ClientIssueFilter = Omit<IssueFilter, "dates"> & {
   dates?: Interval;
 };
