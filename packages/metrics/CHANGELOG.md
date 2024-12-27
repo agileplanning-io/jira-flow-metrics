@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-metrics
 
+## 1.0.1
+
+### Patch Changes
+
+- 8cf33f1: feat: equality functions, SavedPolicy type
+
 ## 1.0.0
 
 ### Major Changes
