@@ -12,4 +12,5 @@ export * from "./src/control-bars/dropdown";
 export * from "./src/control-bars/popdown";
 export * from "./src/control-bars/help-icon";
 export * from "./src/cycle-time-policy-form/policies-dropdown";
+export * from "./src/cycle-time-policy-form/edit-cycle-time-policy-form";
 export * from "./src/edit-filter-form";

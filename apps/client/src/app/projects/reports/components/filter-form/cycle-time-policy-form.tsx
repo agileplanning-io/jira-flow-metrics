@@ -1,6 +1,5 @@
 import { useProjectContext } from "@app/projects/context";
 import { LoadingSpinner } from "@app/components/loading-spinner";
-import { EditCycleTimePolicyForm } from "@app/components/edit-cycle-time-policy-form";
 import {
   Project,
   useCreatePolicy,
@@ -10,6 +9,7 @@ import {
   useUpdatePolicy,
 } from "@data/projects";
 import { FC } from "react";
+import { EditCycleTimePolicyForm } from "@agileplanning-io/flow-components";
 
 type CycleTimePolicyFormProps = {
   project: Project;

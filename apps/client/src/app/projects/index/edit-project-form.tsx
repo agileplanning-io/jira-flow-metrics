@@ -12,6 +12,7 @@ import {
 import { Button, Form, Input } from "antd";
 import { FC, useCallback, useState } from "react";
 import {
+  EditCycleTimePolicyForm,
   EditFilterForm,
   WorkflowBoard,
   WorkflowBoardProps,
@@ -25,7 +26,6 @@ import {
   toClientFilter,
   Workflow,
 } from "@agileplanning-io/flow-metrics";
-import { EditCycleTimePolicyForm } from "@app/components/edit-cycle-time-policy-form";
 import { FullScreenDrawer } from "@app/components/full-screen-drawer";
 import { useProjectContext } from "../context";
 

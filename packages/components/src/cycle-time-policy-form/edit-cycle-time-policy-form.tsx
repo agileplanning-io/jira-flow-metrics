@@ -1,17 +1,4 @@
 import {
-  Dropdown,
-  DropdownItemType,
-  FormControl,
-  HelpIcon,
-  Popdown,
-  WorkflowStagesTable,
-  PoliciesDropdown,
-  SavePolicyMutationResult,
-  DeletePolicyMutationResult,
-  EditFilterForm,
-  FilterOptions,
-} from "@agileplanning-io/flow-components";
-import {
   ClientIssueFilter,
   CycleTimePolicy,
   CycleTimePolicyType,
@@ -29,6 +16,17 @@ import { Space, Typography } from "antd";
 import { clone, compact, flat } from "remeda";
 import { FC, Key, ReactNode, useMemo } from "react";
 import { ellipsize } from "@agileplanning-io/flow-lib";
+import {
+  DeletePolicyMutationResult,
+  PoliciesDropdown,
+  SavePolicyMutationResult,
+} from "./policies-dropdown";
+import { Dropdown, DropdownItemType } from "../control-bars/dropdown";
+import { FormControl } from "../control-bars/form-control";
+import { HelpIcon } from "../control-bars/help-icon";
+import { Popdown } from "../control-bars/popdown";
+import { FilterOptions, EditFilterForm } from "../edit-filter-form";
+import { WorkflowStagesTable } from "../workflow-stages-table";
 
 type EditCycleTimePolicyForm = {
   savedPolicyId?: string;
