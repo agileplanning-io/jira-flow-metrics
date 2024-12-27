@@ -40,7 +40,8 @@ export const CycleTimePolicyForm: FC<CycleTimePolicyFormProps> = ({
       savedPolicyId={savedPolicyId}
       setSavedPolicyId={setSavedPolicyId}
       savedPolicies={savedPolicies}
-      project={project}
+      workflowScheme={project.workflowScheme}
+      filterOptions={project}
       cycleTimePolicy={cycleTimePolicy}
       setCycleTimePolicy={setCycleTimePolicy}
       onMakeDefaultClicked={(policy) => setDefaultPolicy.mutate(policy.id)}

@@ -18,12 +18,14 @@ import {
   ValuesFilter,
   WorkflowScheme,
 } from "@agileplanning-io/flow-metrics";
-import { Project } from "@data/projects";
 import { getSelectedStages } from "@data/workflows";
 import { Space, Typography } from "antd";
 import { clone, compact, flat } from "remeda";
 import { FC, Key, ReactNode, useMemo } from "react";
-import { EditFilterForm } from "@app/projects/reports/components/filter-form/edit-filter-form";
+import {
+  EditFilterForm,
+  FilterOptions,
+} from "@app/projects/reports/components/filter-form/edit-filter-form";
 import { ClientIssueFilter } from "@app/filter/client-issue-filter";
 import { ellipsize } from "@agileplanning-io/flow-lib";
 import {
@@ -36,7 +38,8 @@ type EditCycleTimePolicyForm = {
   savedPolicyId?: string;
   setSavedPolicyId: (policyId?: string) => void;
   savedPolicies?: SavedPolicy[];
-  project: Project;
+  filterOptions: FilterOptions;
+  workflowScheme: WorkflowScheme;
   cycleTimePolicy: CycleTimePolicy;
   setCycleTimePolicy: (policy: CycleTimePolicy) => void;
   onMakeDefaultClicked: (policy: SavedPolicy) => void;
@@ -49,7 +52,8 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
   savedPolicyId,
   setSavedPolicyId,
   savedPolicies,
-  project,
+  filterOptions,
+  workflowScheme,
   cycleTimePolicy,
   setCycleTimePolicy,
   onMakeDefaultClicked,
@@ -58,19 +62,16 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
   deleteCycleTimePolicy,
 }) => {
   const selectedStoryStages = useMemo(() => {
-    return getSelectedStages(project.workflowScheme.stories, cycleTimePolicy);
-  }, [project, cycleTimePolicy]);
+    return getSelectedStages(workflowScheme.stories, cycleTimePolicy);
+  }, [workflowScheme, cycleTimePolicy]);
 
   const selectedEpicStages = useMemo(() => {
     if (cycleTimePolicy.epics.type !== EpicCycleTimePolicyType.EpicStatus) {
       return undefined;
     }
 
-    return getSelectedStages(
-      project.workflowScheme.epics,
-      cycleTimePolicy.epics,
-    );
-  }, [project, cycleTimePolicy]);
+    return getSelectedStages(workflowScheme.epics, cycleTimePolicy.epics);
+  }, [workflowScheme, cycleTimePolicy]);
 
   const cycleTimePolicyType = cycleTimePolicy.type;
   const onStoryCycleTimePolicyTypeChanged = (type: CycleTimePolicyType) => {
@@ -85,9 +86,9 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
     const policy = clone(cycleTimePolicy);
 
     const statuses: string[] = flat(
-      project?.workflowScheme.stories.stages
+      workflowScheme.stories.stages
         .filter((stage) => keys.includes(stage.name))
-        .map((stage) => stage.statuses.map((status) => status.name)) ?? [],
+        .map((stage) => stage.statuses.map((status) => status.name)),
     );
 
     policy.statuses = statuses;
@@ -99,9 +100,9 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
 
     if (policy.epics.type === EpicCycleTimePolicyType.EpicStatus) {
       const statuses: string[] = flat(
-        project?.workflowScheme.epics.stages
+        workflowScheme.epics.stages
           .filter((stage) => keys.includes(stage.name))
-          .map((stage) => stage.statuses.map((status) => status.name)) ?? [],
+          .map((stage) => stage.statuses.map((status) => status.name)),
       );
 
       policy.epics.statuses = statuses;
@@ -128,7 +129,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
     if (type !== policy.epics.type) {
       if (type === EpicCycleTimePolicyType.EpicStatus) {
         policy.epics = {
-          ...buildDefaultStatusesPolicy(project, "epics"),
+          ...buildDefaultStatusesPolicy(workflowScheme, "epics"),
           type: EpicCycleTimePolicyType.EpicStatus,
         };
       } else {
@@ -252,7 +253,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
           >
             {(value, setValue) => (
               <WorkflowStagesTable
-                workflowStages={project?.workflowScheme.stories.stages}
+                workflowStages={workflowScheme.stories.stages}
                 selectedStages={value}
                 onSelectionChanged={(stages) => setValue(stages as string[])}
               />
@@ -282,10 +283,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
                 <div style={{ width: 480 }}>
                   <EditFilterForm
                     filter={value}
-                    resolutions={project.resolutions}
-                    labels={project.labels}
-                    components={project.components}
-                    issueTypes={project.issueTypes}
+                    filterOptions={filterOptions}
                     setFilter={setValue}
                     showDateSelector={false}
                     showAssigneesFilter={false}
@@ -332,7 +330,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
             >
               {(value, setValue) => (
                 <WorkflowStagesTable
-                  workflowStages={project?.workflowScheme.stories.stages}
+                  workflowStages={workflowScheme.stories.stages}
                   selectedStages={value}
                   onSelectionChanged={(stages) => setValue(stages as string[])}
                 />
@@ -366,11 +364,11 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
 };
 
 const buildDefaultStatusesPolicy = (
-  project: Project,
+  workflowScheme: WorkflowScheme,
   hierarchyLevel: keyof WorkflowScheme,
 ): StatusCycleTimePolicy => {
   const statuses: TransitionStatus[] = flat(
-    project.workflowScheme[hierarchyLevel].stages
+    workflowScheme[hierarchyLevel].stages
       .filter((stage) => stage.selectByDefault)
       .map((stage) => stage.statuses),
   );

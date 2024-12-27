@@ -143,7 +143,8 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
         savedPolicyId={savedPolicyId}
         setSavedPolicyId={setSavedPolicyId}
         savedPolicies={savedPolicies}
-        project={project}
+        filterOptions={project}
+        workflowScheme={project.workflowScheme}
         cycleTimePolicy={updatedCycleTimePolicy}
         setCycleTimePolicy={setUpdatedCycleTimePolicy}
         onMakeDefaultClicked={(policy) => setDefaultPolicy.mutate(policy.id)}
@@ -162,10 +163,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
         showResolutionFilter={true}
         showStatusFilter={false}
         showAssigneesFilter={false}
-        issueTypes={project.issueTypes}
-        labels={project.labels}
-        components={project.components}
-        resolutions={project.resolutions}
+        filterOptions={project}
         labelColSpan={2}
         wrapperColSpan={10}
       />

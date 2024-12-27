@@ -8,6 +8,15 @@ import { FC } from "react";
 import { ClientIssueFilter } from "@app/filter/client-issue-filter";
 import { clone } from "remeda";
 
+export type FilterOptions = {
+  statuses?: string[];
+  resolutions?: string[];
+  components?: string[];
+  issueTypes?: string[];
+  assignees?: string[];
+  labels?: string[];
+};
+
 export type EditFilterFormProps = {
   filter: ClientIssueFilter;
   setFilter: (filter: ClientIssueFilter) => void;
@@ -16,11 +25,7 @@ export type EditFilterFormProps = {
   showStatusFilter: boolean;
   showHierarchyFilter: boolean;
   showAssigneesFilter: boolean;
-  statuses?: string[];
-  resolutions?: string[];
-  components?: string[];
-  issueTypes?: string[];
-  assignees?: string[];
+  filterOptions: FilterOptions;
   labels?: string[];
   labelColSpan: number;
   wrapperColSpan: number;
@@ -32,20 +37,16 @@ export const EditFilterForm: FC<EditFilterFormProps> = ({
   showResolutionFilter,
   showStatusFilter,
   showAssigneesFilter,
-  statuses,
-  resolutions,
-  components,
-  issueTypes,
-  assignees,
+  filterOptions,
   labels,
   labelColSpan,
   wrapperColSpan,
 }) => {
-  const statusOptions = makeOptions(statuses);
-  const resolutionOptions = makeOptions(resolutions);
-  const componentOptions = makeOptions(components);
-  const issueTypeOptions = makeOptions(issueTypes);
-  const assigneeOptions = makeOptions(assignees);
+  const statusOptions = makeOptions(filterOptions.statuses);
+  const resolutionOptions = makeOptions(filterOptions.resolutions);
+  const componentOptions = makeOptions(filterOptions.components);
+  const issueTypeOptions = makeOptions(filterOptions.issueTypes);
+  const assigneeOptions = makeOptions(filterOptions.assignees);
   const labelOptions = makeOptions(labels);
 
   return (
