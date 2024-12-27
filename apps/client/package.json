@@ -18,6 +18,7 @@
     "@agileplanning-io/flow-components": "workspace:*",
     "@agileplanning-io/flow-lib": "workspace:*",
     "@agileplanning-io/flow-metrics": "workspace:*",
+    "@ant-design/colors": "^7.1.0",
     "@ant-design/icons": "^5.2.6",
     "@emotion/styled": "^11.11.0",
     "@hello-pangea/dnd": "^16.5.0",
