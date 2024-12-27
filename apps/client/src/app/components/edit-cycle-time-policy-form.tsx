@@ -18,14 +18,7 @@ import {
   ValuesFilter,
   WorkflowScheme,
 } from "@agileplanning-io/flow-metrics";
-import {
-  Project,
-  useCreatePolicy,
-  useDeletePolicy,
-  useGetPolicies,
-  useSetDefaultPolicy,
-  useUpdatePolicy,
-} from "@data/projects";
+import { Project } from "@data/projects";
 import { getSelectedStages } from "@data/workflows";
 import { Space, Typography } from "antd";
 import { clone, compact, flat } from "remeda";
@@ -33,27 +26,37 @@ import { FC, Key, ReactNode, useMemo } from "react";
 import { EditFilterForm } from "@app/projects/reports/components/filter-form/edit-filter-form";
 import { ClientIssueFilter } from "@app/filter/client-issue-filter";
 import { ellipsize } from "@agileplanning-io/flow-lib";
-import { PoliciesDropdown } from "@agileplanning-io/flow-components";
-import { useProjectContext } from "@app/projects/context";
+import {
+  PoliciesDropdown,
+  SavePolicyMutationResult,
+  DeletePolicyMutationResult,
+} from "@agileplanning-io/flow-components";
 
 type EditCycleTimePolicyForm = {
+  savedPolicyId?: string;
+  setSavedPolicyId: (policyId?: string) => void;
+  savedPolicies?: SavedPolicy[];
   project: Project;
   cycleTimePolicy: CycleTimePolicy;
   setCycleTimePolicy: (policy: CycleTimePolicy) => void;
+  onMakeDefaultClicked: (policy: SavedPolicy) => void;
+  onSaveClicked: (policy: SavedPolicy) => void;
+  saveCycleTimePolicy: SavePolicyMutationResult;
+  deleteCycleTimePolicy: DeletePolicyMutationResult;
 };
 
 export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
+  savedPolicyId,
+  setSavedPolicyId,
+  savedPolicies,
   project,
   cycleTimePolicy,
   setCycleTimePolicy,
+  onMakeDefaultClicked,
+  onSaveClicked,
+  saveCycleTimePolicy,
+  deleteCycleTimePolicy,
 }) => {
-  const { savedPolicyId, setSavedPolicyId } = useProjectContext();
-  const { data: savedPolicies } = useGetPolicies(project.id);
-  const saveCycleTimePolicy = useCreatePolicy(project.id);
-  const deleteCycleTimePolicy = useDeletePolicy(project.id);
-  const setDefaultPolicy = useSetDefaultPolicy(project.id);
-  const updatePolicy = useUpdatePolicy(project.id);
-
   const selectedStoryStages = useMemo(() => {
     return getSelectedStages(project.workflowScheme.stories, cycleTimePolicy);
   }, [project, cycleTimePolicy]);
@@ -353,12 +356,8 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
                 setSavedPolicyId(undefined);
               }
             }}
-            onSaveClicked={(policy: SavedPolicy) => {
-              updatePolicy.mutate(policy);
-            }}
-            onMakeDefaultClicked={(policy: SavedPolicy) => {
-              setDefaultPolicy.mutate(policy.id);
-            }}
+            onSaveClicked={onSaveClicked}
+            onMakeDefaultClicked={onMakeDefaultClicked}
           />
         ) : null}
       </Space>

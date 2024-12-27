@@ -25,13 +25,17 @@ import { FC, useMemo, useState } from "react";
 import { isNullish } from "remeda";
 import { UseMutationResult } from "@tanstack/react-query";
 
-type SavePolicyMutationResult = UseMutationResult<
+export type SavePolicyMutationResult = UseMutationResult<
   SavedPolicy,
   unknown,
   DraftPolicy
 >;
 
-type DeletePolicyMutationResult = UseMutationResult<void, unknown, string>;
+export type DeletePolicyMutationResult = UseMutationResult<
+  void,
+  unknown,
+  string
+>;
 
 type PoliciesDropdownProps = {
   savedPolicyId?: string;

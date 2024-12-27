@@ -3,6 +3,11 @@ import {
   Project,
   UpdateProjectParams,
   Workflow,
+  useCreatePolicy,
+  useDeletePolicy,
+  useGetPolicies,
+  useSetDefaultPolicy,
+  useUpdatePolicy,
   useUpdateProject,
 } from "@data/projects";
 import { Button, Form, Input } from "antd";
@@ -24,6 +29,7 @@ import {
   fromClientFilter,
   toClientFilter,
 } from "@app/filter/client-issue-filter";
+import { useProjectContext } from "../context";
 
 export type EditProjectFormProps = {
   project: Project;
@@ -34,6 +40,8 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
   project,
   onClose,
 }) => {
+  const { savedPolicyId, setSavedPolicyId } = useProjectContext();
+
   const [updatedStoryWorkflow, setUpdatedStoryWorkflow] =
     useState<UpdateProjectParams["storyWorkflowStages"]>();
 
@@ -49,6 +57,12 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
     useState<ClientIssueFilter>(toClientFilter(project.defaultCompletedFilter));
 
   const updateProject = useUpdateProject();
+  const setDefaultPolicy = useSetDefaultPolicy(project.id);
+  const updatePolicy = useUpdatePolicy(project.id);
+  const saveCycleTimePolicy = useCreatePolicy(project.id);
+  const deleteCycleTimePolicy = useDeletePolicy(project.id);
+
+  const { data: savedPolicies } = useGetPolicies(project.id);
 
   const onStoryWorkflowChanged = useCallback(
     (workflow: WorkflowStage[]) =>
@@ -126,9 +140,16 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
       <h2>Default Cycle Time Policy</h2>
 
       <EditCycleTimePolicyForm
+        savedPolicyId={savedPolicyId}
+        setSavedPolicyId={setSavedPolicyId}
+        savedPolicies={savedPolicies}
         project={project}
         cycleTimePolicy={updatedCycleTimePolicy}
         setCycleTimePolicy={setUpdatedCycleTimePolicy}
+        onMakeDefaultClicked={(policy) => setDefaultPolicy.mutate(policy.id)}
+        onSaveClicked={(policy) => updatePolicy.mutate(policy)}
+        saveCycleTimePolicy={saveCycleTimePolicy}
+        deleteCycleTimePolicy={deleteCycleTimePolicy}
       />
 
       <h2>Default Completed Work Filter</h2>
