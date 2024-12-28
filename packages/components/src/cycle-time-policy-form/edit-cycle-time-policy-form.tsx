@@ -17,7 +17,7 @@ import { Space, Typography } from "antd";
 import { clone, compact, flat } from "remeda";
 import { FC, Key, ReactNode, useMemo } from "react";
 import { ellipsize } from "@agileplanning-io/flow-lib";
-import { PoliciesDropdown } from "./policies-dropdown";
+import { CurrentPolicy, PoliciesDropdown } from "./policies-dropdown";
 import { Dropdown, DropdownItemType } from "../control-bars/dropdown";
 import { FormControl } from "../control-bars/form-control";
 import { HelpIcon } from "../control-bars/help-icon";
@@ -26,13 +26,12 @@ import { FilterOptions, EditFilterForm } from "../edit-filter-form";
 import { WorkflowStagesTable } from "../workflow-stages-table";
 
 type EditCycleTimePolicyForm = {
-  savedPolicyId?: string;
-  setSavedPolicyId: (policyId?: string) => void;
+  currentPolicy: CurrentPolicy;
+  selectCycleTimePolicy: (policyId?: string) => void;
+  updateCurrentPolicy: (policy: CycleTimePolicy) => void;
   savedPolicies?: SavedPolicy[];
   filterOptions: FilterOptions;
   workflowScheme: WorkflowScheme;
-  cycleTimePolicy: CycleTimePolicy;
-  setCycleTimePolicy: (policy: CycleTimePolicy) => void;
   onMakeDefaultClicked: (policy: SavedPolicy) => void;
   onSaveClicked: (policy: SavedPolicy) => void;
   saveCycleTimePolicy: (policy: DraftPolicy) => Promise<SavedPolicy>;
@@ -40,41 +39,42 @@ type EditCycleTimePolicyForm = {
 };
 
 export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
-  savedPolicyId,
-  setSavedPolicyId,
+  currentPolicy,
+  selectCycleTimePolicy,
+  updateCurrentPolicy,
   savedPolicies,
   filterOptions,
   workflowScheme,
-  cycleTimePolicy,
-  setCycleTimePolicy,
   onMakeDefaultClicked,
   onSaveClicked,
   saveCycleTimePolicy,
   deleteCycleTimePolicy,
 }) => {
   const selectedStoryStages = useMemo(() => {
-    return getSelectedStages(workflowScheme.stories, cycleTimePolicy);
-  }, [workflowScheme, cycleTimePolicy]);
+    return getSelectedStages(workflowScheme.stories, currentPolicy.policy);
+  }, [workflowScheme, currentPolicy.policy]);
 
   const selectedEpicStages = useMemo(() => {
-    if (cycleTimePolicy.epics.type !== EpicCycleTimePolicyType.EpicStatus) {
+    if (
+      currentPolicy.policy.epics.type !== EpicCycleTimePolicyType.EpicStatus
+    ) {
       return undefined;
     }
 
-    return getSelectedStages(workflowScheme.epics, cycleTimePolicy.epics);
-  }, [workflowScheme, cycleTimePolicy]);
+    return getSelectedStages(workflowScheme.epics, currentPolicy.policy.epics);
+  }, [workflowScheme, currentPolicy.policy]);
 
-  const cycleTimePolicyType = cycleTimePolicy.type;
+  const cycleTimePolicyType = currentPolicy.policy.type;
   const onStoryCycleTimePolicyTypeChanged = (type: CycleTimePolicyType) => {
-    const policy = clone(cycleTimePolicy);
+    const policy = clone(currentPolicy.policy);
     if (type !== policy.type) {
       policy.type = type;
-      setCycleTimePolicy(policy);
+      updateCurrentPolicy(policy);
     }
   };
 
   const onStoryStagesChanged = (keys: Key[]) => {
-    const policy = clone(cycleTimePolicy);
+    const policy = clone(currentPolicy.policy);
 
     const statuses: string[] = flat(
       workflowScheme.stories.stages
@@ -83,11 +83,11 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
     );
 
     policy.statuses = statuses;
-    setCycleTimePolicy(policy);
+    updateCurrentPolicy(policy);
   };
 
   const onEpicStagesChanged = (keys: Key[]) => {
-    const policy = clone(cycleTimePolicy);
+    const policy = clone(currentPolicy.policy);
 
     if (policy.epics.type === EpicCycleTimePolicyType.EpicStatus) {
       const statuses: string[] = flat(
@@ -97,26 +97,26 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
       );
 
       policy.epics.statuses = statuses;
-      setCycleTimePolicy(policy);
+      updateCurrentPolicy(policy);
     }
   };
 
   const onFilterChanged = (filter: ClientIssueFilter) => {
-    const policy = clone(cycleTimePolicy);
+    const policy = clone(currentPolicy.policy);
     if (policy.epics.type === EpicCycleTimePolicyType.Derived) {
       policy.epics = {
         type: EpicCycleTimePolicyType.Derived,
         ...filter,
       };
     }
-    setCycleTimePolicy(policy);
+    updateCurrentPolicy(policy);
   };
 
-  const epicCycleTimePolicyType = cycleTimePolicy.epics.type;
+  const epicCycleTimePolicyType = currentPolicy.policy.epics.type;
   const onEpicCycleTimePolicyTypeChanged = (
     type: CycleTimePolicy["epics"]["type"],
   ) => {
-    const policy = clone(cycleTimePolicy);
+    const policy = clone(currentPolicy.policy);
     if (type !== policy.epics.type) {
       if (type === EpicCycleTimePolicyType.EpicStatus) {
         policy.epics = {
@@ -126,7 +126,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
       } else {
         policy.epics = { type: EpicCycleTimePolicyType.Derived };
       }
-      setCycleTimePolicy(policy);
+      updateCurrentPolicy(policy);
     }
   };
 
@@ -266,7 +266,7 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
           <FormControl label="Completed issues">
             <Popdown
               renderLabel={summariseFilter}
-              value={cycleTimePolicy.epics as IssueAttributesFilter}
+              value={currentPolicy.policy.epics as IssueAttributesFilter}
               title="Completed issues filter"
               onValueChanged={onFilterChanged}
             >
@@ -333,16 +333,14 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
         {savedPolicies ? (
           <PoliciesDropdown
             savedPolicies={savedPolicies}
-            savedPolicyId={savedPolicyId}
-            cycleTimePolicy={cycleTimePolicy}
+            currentPolicy={currentPolicy}
             saveCycleTimePolicy={saveCycleTimePolicy}
             deleteCycleTimePolicy={deleteCycleTimePolicy}
             onPolicySelected={(policy) => {
               if (policy) {
-                setSavedPolicyId(policy.id);
-                setCycleTimePolicy(policy.policy);
+                selectCycleTimePolicy(policy.id);
               } else {
-                setSavedPolicyId(undefined);
+                selectCycleTimePolicy(undefined);
               }
             }}
             onSaveClicked={onSaveClicked}

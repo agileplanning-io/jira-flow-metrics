@@ -1,9 +1,4 @@
-import {
-  CycleTimePolicy,
-  DraftPolicy,
-  SavedPolicy,
-  isPolicyEqual,
-} from "@agileplanning-io/flow-metrics";
+import { DraftPolicy, SavedPolicy } from "@agileplanning-io/flow-metrics";
 import {
   CaretDownOutlined,
   CheckOutlined,
@@ -22,12 +17,20 @@ import {
   Tooltip,
 } from "antd";
 import { FC, useMemo, useState } from "react";
-import { isNullish } from "remeda";
+
+export type CurrentPolicy = DraftPolicy & {
+  changed: boolean;
+};
+
+export function isSavedPolicy(
+  policy: CurrentPolicy,
+): policy is SavedPolicy & { changed: boolean } {
+  return "id" in policy;
+}
 
 type PoliciesDropdownProps = {
-  savedPolicyId?: string;
+  currentPolicy: CurrentPolicy;
   savedPolicies: SavedPolicy[];
-  cycleTimePolicy: CycleTimePolicy;
 
   onSaveClicked: (policy: SavedPolicy) => void;
   onMakeDefaultClicked: (policy: SavedPolicy) => void;
@@ -38,9 +41,8 @@ type PoliciesDropdownProps = {
 };
 
 export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
-  savedPolicyId,
+  currentPolicy,
   savedPolicies,
-  cycleTimePolicy,
 
   onSaveClicked,
   onMakeDefaultClicked,
@@ -52,23 +54,18 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const savedPolicy = savedPolicies?.find(
-    (policy) => policy.id === savedPolicyId,
-  );
-
-  const { menuItems, changed } = buildPolicyItems({
-    savedPolicy,
-    cycleTimePolicy,
+  const menuItems = buildPolicyItems({
+    currentPolicy,
     onSaveClicked: () => {
-      if (savedPolicy) {
-        onSaveClicked({ ...savedPolicy, policy: cycleTimePolicy });
+      if (isSavedPolicy(currentPolicy)) {
+        onSaveClicked(currentPolicy);
       }
     },
     onSaveAsClicked: () => setShowSaveDialog(true),
     onDeleteClicked: () => setShowDeleteDialog(true),
     onMakeDefaultClicked: () => {
-      if (savedPolicy) {
-        onMakeDefaultClicked(savedPolicy);
+      if (isSavedPolicy(currentPolicy)) {
+        onMakeDefaultClicked(currentPolicy);
       }
     },
   });
@@ -81,22 +78,29 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
     ...savedPolicies.map((policy) => ({
       label: policy.name,
       key: policy.id,
-      icon: policy.id === savedPolicyId ? <CheckOutlined /> : undefined,
+      icon:
+        isSavedPolicy(currentPolicy) && policy.id === currentPolicy.id ? (
+          <CheckOutlined />
+        ) : undefined,
       onClick: () => onPolicySelected(policy),
     })),
   );
 
-  const selectedKeys = savedPolicy ? [savedPolicy.id] : [];
+  const selectedKeys = isSavedPolicy(currentPolicy) ? [currentPolicy.id] : [];
 
   return (
     <>
       <Space.Compact>
         <Dropdown menu={{ items: menuItems, selectedKeys }} trigger={["click"]}>
           <Button size="small" icon={<CaretDownOutlined />} iconPosition="end">
-            {savedPolicy?.name ?? (
+            {isSavedPolicy(currentPolicy) ? (
+              currentPolicy.name
+            ) : (
               <Typography.Text type="secondary">Custom</Typography.Text>
             )}
-            <SaveOutlined style={{ color: changed ? blue.primary : "#AAA" }} />
+            <SaveOutlined
+              style={{ color: currentPolicy.changed ? blue.primary : "#AAA" }}
+            />
           </Button>
         </Dropdown>
       </Space.Compact>
@@ -105,7 +109,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
         open={showSaveDialog}
         saveCycleTimePolicy={saveCycleTimePolicy}
         savedPolicies={savedPolicies}
-        cycleTimePolicy={cycleTimePolicy}
+        currentPolicy={currentPolicy}
         onPolicySaved={onPolicySelected}
         onClose={() => setShowSaveDialog(false)}
       />
@@ -115,15 +119,14 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
         deleteCycleTimePolicy={deleteCycleTimePolicy}
         onPolicyDeleted={() => onPolicySelected(undefined)}
         onClose={() => setShowDeleteDialog(false)}
-        cycleTimePolicy={savedPolicy}
+        currentPolicy={currentPolicy}
       />
     </>
   );
 };
 
 type BuildPolicyItemsProps = {
-  savedPolicy?: SavedPolicy;
-  cycleTimePolicy: CycleTimePolicy;
+  currentPolicy: CurrentPolicy;
   onSaveClicked: () => void;
   onSaveAsClicked: () => void;
   onDeleteClicked: () => void;
@@ -131,17 +134,12 @@ type BuildPolicyItemsProps = {
 };
 
 const buildPolicyItems = ({
-  savedPolicy,
-  cycleTimePolicy,
+  currentPolicy,
   onSaveClicked,
   onSaveAsClicked,
   onDeleteClicked,
   onMakeDefaultClicked,
 }: BuildPolicyItemsProps) => {
-  const changed =
-    !isNullish(savedPolicy) &&
-    !isPolicyEqual(savedPolicy.policy, cycleTimePolicy);
-
   const buildTooltip = (
     canPerformAction: boolean,
     tooltip: () => string,
@@ -150,34 +148,35 @@ const buildPolicyItems = ({
     <Tooltip title={canPerformAction ? undefined : tooltip()}>{label}</Tooltip>
   );
 
-  const canSave = !isNullish(savedPolicy) && changed;
+  const canSave = isSavedPolicy(currentPolicy) && currentPolicy.changed;
   const saveTooltip = buildTooltip(
     canSave,
     () =>
-      isNullish(savedPolicy)
-        ? "Save this policy as a named policy first"
-        : "No policy changes to save",
+      isSavedPolicy(currentPolicy)
+        ? "No policy changes to save"
+        : "Save this policy as a named policy first",
     "Save",
   );
 
-  const canSaveAs = isNullish(savedPolicy) || changed;
+  const canSaveAs = !isSavedPolicy(currentPolicy) || currentPolicy.changed;
   const saveAsTooltip = buildTooltip(
     canSaveAs,
     () => "No policy changes to save",
     "Save As...",
   );
 
-  const canMakeDefault = !isNullish(savedPolicy) && !savedPolicy.isDefault;
+  const canMakeDefault =
+    isSavedPolicy(currentPolicy) && !currentPolicy.isDefault;
   const makeDefaultTooltip = buildTooltip(
     canMakeDefault,
     () =>
-      isNullish(savedPolicy)
-        ? "Save this policy to make it the default"
-        : "Selected policy is already the default",
+      isSavedPolicy(currentPolicy)
+        ? "Selected policy is already the default"
+        : "Save this policy to make it the default",
     "Make default",
   );
 
-  const canDelete = !isNullish(savedPolicy);
+  const canDelete = isSavedPolicy(currentPolicy);
   const deleteTooltip = buildTooltip(
     canDelete,
     () => "Save this policy as a named policy first",
@@ -211,13 +210,13 @@ const buildPolicyItems = ({
     },
   ];
 
-  return { menuItems, changed };
+  return menuItems;
 };
 
 type SaveModalProps = {
   open: boolean;
   saveCycleTimePolicy: (policy: DraftPolicy) => Promise<SavedPolicy>;
-  cycleTimePolicy: CycleTimePolicy;
+  currentPolicy: CurrentPolicy;
   savedPolicies: SavedPolicy[];
   onPolicySaved: (policy: SavedPolicy) => void;
   onClose: () => void;
@@ -226,7 +225,7 @@ type SaveModalProps = {
 const SaveModal: FC<SaveModalProps> = ({
   open,
   saveCycleTimePolicy,
-  cycleTimePolicy,
+  currentPolicy,
   savedPolicies,
   onPolicySaved,
   onClose,
@@ -259,7 +258,7 @@ const SaveModal: FC<SaveModalProps> = ({
       setIsLoading(true);
       const policy = await saveCycleTimePolicy({
         name: newPolicyName,
-        policy: cycleTimePolicy,
+        policy: currentPolicy.policy,
         isDefault: false,
       });
       onClose();
@@ -302,7 +301,7 @@ const SaveModal: FC<SaveModalProps> = ({
 type DeleteModalProps = {
   open: boolean;
   deleteCycleTimePolicy: (policyId: string) => Promise<void>;
-  cycleTimePolicy?: SavedPolicy;
+  currentPolicy: CurrentPolicy;
   onPolicyDeleted: () => void;
   onClose: () => void;
 };
@@ -310,20 +309,20 @@ type DeleteModalProps = {
 const DeleteModal: FC<DeleteModalProps> = ({
   open,
   deleteCycleTimePolicy,
-  cycleTimePolicy,
+  currentPolicy,
   onPolicyDeleted,
   onClose,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const onOk = async () => {
-    if (!cycleTimePolicy) {
+    if (!isSavedPolicy(currentPolicy)) {
       return;
     }
 
     try {
       setIsLoading(true);
-      await deleteCycleTimePolicy(cycleTimePolicy.id);
+      await deleteCycleTimePolicy(currentPolicy.id);
       onPolicyDeleted();
       onClose();
     } finally {
@@ -340,7 +339,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
       onCancel={onClose}
     >
       <p>
-        Are you sure you want to delete policy <b>{cycleTimePolicy?.name}</b>?
+        Are you sure you want to delete policy <b>{currentPolicy.name}</b>?
       </p>
     </Modal>
   );

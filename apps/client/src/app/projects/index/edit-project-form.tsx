@@ -38,7 +38,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
   project,
   onClose,
 }) => {
-  const { savedPolicyId, setSavedPolicyId } = useProjectContext();
+  const { currentPolicy, selectCycleTimePolicy } = useProjectContext();
 
   const [updatedStoryWorkflow, setUpdatedStoryWorkflow] =
     useState<UpdateProjectParams["storyWorkflowStages"]>();
@@ -137,19 +137,20 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
 
       <h2>Default Cycle Time Policy</h2>
 
-      <EditCycleTimePolicyForm
-        savedPolicyId={savedPolicyId}
-        setSavedPolicyId={setSavedPolicyId}
-        savedPolicies={savedPolicies}
-        filterOptions={project}
-        workflowScheme={project.workflowScheme}
-        cycleTimePolicy={updatedCycleTimePolicy}
-        setCycleTimePolicy={setUpdatedCycleTimePolicy}
-        onMakeDefaultClicked={(policy) => setDefaultPolicy.mutate(policy.id)}
-        onSaveClicked={(policy) => updatePolicy.mutate(policy)}
-        saveCycleTimePolicy={saveCycleTimePolicy.mutateAsync}
-        deleteCycleTimePolicy={deleteCycleTimePolicy.mutateAsync}
-      />
+      {currentPolicy ? (
+        <EditCycleTimePolicyForm
+          currentPolicy={currentPolicy}
+          updateCurrentPolicy={setUpdatedCycleTimePolicy}
+          selectCycleTimePolicy={selectCycleTimePolicy}
+          savedPolicies={savedPolicies}
+          filterOptions={project}
+          workflowScheme={project.workflowScheme}
+          onMakeDefaultClicked={(policy) => setDefaultPolicy.mutate(policy.id)}
+          onSaveClicked={(policy) => updatePolicy.mutate(policy)}
+          saveCycleTimePolicy={saveCycleTimePolicy.mutateAsync}
+          deleteCycleTimePolicy={deleteCycleTimePolicy.mutateAsync}
+        />
+      ) : null}
 
       <h2>Default Completed Work Filter</h2>
 
