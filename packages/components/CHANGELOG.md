@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-components
 
+## 0.1.21
+
+### Patch Changes
+
+- 0bb346c: feat: add option for default completed filter
+
 ## 0.1.20
 
 ### Patch Changes
