@@ -37,20 +37,29 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
           );
 
           if (isNonNullish(cachedPolicy)) {
-            const changed = !isPolicyEqual(
+            const isChanged = !isPolicyEqual(
               currentPolicy.policy,
               cachedPolicy.policy,
             );
 
             // We just saved the policy
-            if (currentPolicy.changed && !changed) {
-              setCurrentPolicy({ ...currentPolicy, changed: false });
+            if (currentPolicy.isChanged && !isChanged) {
+              setCurrentPolicy({ ...currentPolicy, isChanged: false });
             }
 
             // We just made the policy the default
             if (!currentPolicy.isDefault && cachedPolicy.isDefault) {
               setCurrentPolicy({ ...currentPolicy, isDefault: true });
             }
+          }
+        } else if (currentPolicyId) {
+          // We just saved a new policy, so we need to update the current policy
+          const cachedPolicy = savedPolicies.find(
+            (policy) => policy.id === currentPolicyId,
+          );
+
+          if (isNonNullish(cachedPolicy)) {
+            setCurrentPolicy({ ...cachedPolicy, isChanged: false });
           }
         }
       } else {
@@ -60,7 +69,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
             (policy) => policy.id === currentPolicyId,
           );
           if (policy) {
-            setCurrentPolicy({ ...policy, changed: false });
+            setCurrentPolicy({ ...policy, isChanged: false });
           } else {
             setCurrentPolicyId();
           }
@@ -71,13 +80,13 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
 
           if (defaultPolicy) {
             setCurrentPolicyId(defaultPolicy.id);
-            setCurrentPolicy({ ...defaultPolicy, changed: false });
+            setCurrentPolicy({ ...defaultPolicy, isChanged: false });
           } else {
             setCurrentPolicy({
               name: "Custom",
               policy: project.defaultCycleTimePolicy,
               isDefault: false,
-              changed: false,
+              isChanged: false,
             });
           }
         }
@@ -95,8 +104,8 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const updateCurrentPolicy = useCallback(
     (policy: CycleTimePolicy) => {
       if (currentPolicy) {
-        const changed = !isDeepEqual(currentPolicy.policy, policy);
-        setCurrentPolicy({ ...currentPolicy, policy, changed });
+        const isChanged = !isDeepEqual(currentPolicy.policy, policy);
+        setCurrentPolicy({ ...currentPolicy, policy, isChanged });
       }
     },
     [currentPolicy, setCurrentPolicy],
@@ -104,14 +113,27 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const selectCycleTimePolicy = useCallback(
     (policyId?: string, name?: string) => {
-      const policy = savedPolicies?.find((policy) => policy.id === policyId);
-      setCurrentPolicyId(policyId, policy?.name ?? name);
-      if (policy) {
-        setCurrentPolicy({ ...policy, changed: false });
+      if (policyId) {
+        const policy = savedPolicies?.find((policy) => policy.id === policyId);
+        setCurrentPolicyId(policyId, policy?.name ?? name);
+        if (policy) {
+          setCurrentPolicy({ ...policy, isChanged: false });
+        }
+      } else {
+        // We've just deleted a saved policy. We'll keep the same policy but as a custom (unsaved) policy.
+        setCurrentPolicyId(undefined, "Custom");
+        const prevPolicy = currentPolicy?.policy;
+        if (prevPolicy) {
+          setCurrentPolicy({
+            policy: prevPolicy,
+            name: "Custom",
+            isDefault: false,
+            isChanged: false,
+          });
+        }
       }
-      // TODO: does this work when deleting a policy?
     },
-    [savedPolicies, setCurrentPolicyId],
+    [savedPolicies, setCurrentPolicyId, currentPolicy],
   );
 
   const value: ProjectContextType = useMemo(

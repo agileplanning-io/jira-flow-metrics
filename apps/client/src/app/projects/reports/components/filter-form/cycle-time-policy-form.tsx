@@ -41,7 +41,11 @@ export const CycleTimePolicyForm: FC<CycleTimePolicyFormProps> = ({
       filterOptions={project}
       onMakeDefaultClicked={(policy) => setDefaultPolicy.mutate(policy.id)}
       onSaveClicked={(policy) => updatePolicy.mutate(policy)}
-      saveCycleTimePolicy={saveCycleTimePolicy.mutateAsync}
+      saveCycleTimePolicy={(policy) =>
+        saveCycleTimePolicy.mutateAsync(policy, {
+          onSuccess: (policy) => selectCycleTimePolicy(policy.id),
+        })
+      }
       deleteCycleTimePolicy={deleteCycleTimePolicy.mutateAsync}
     />
   );

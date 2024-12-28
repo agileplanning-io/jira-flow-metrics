@@ -19,12 +19,12 @@ import {
 import { FC, useMemo, useState } from "react";
 
 export type CurrentPolicy = DraftPolicy & {
-  changed: boolean;
+  isChanged: boolean;
 };
 
 export function isSavedPolicy(
   policy: CurrentPolicy,
-): policy is SavedPolicy & { changed: boolean } {
+): policy is SavedPolicy & { isChanged: boolean } {
   return "id" in policy;
 }
 
@@ -99,7 +99,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
               <Typography.Text type="secondary">Custom</Typography.Text>
             )}
             <SaveOutlined
-              style={{ color: currentPolicy.changed ? blue.primary : "#AAA" }}
+              style={{ color: currentPolicy.isChanged ? blue.primary : "#AAA" }}
             />
           </Button>
         </Dropdown>
@@ -148,7 +148,7 @@ const buildPolicyItems = ({
     <Tooltip title={canPerformAction ? undefined : tooltip()}>{label}</Tooltip>
   );
 
-  const canSave = isSavedPolicy(currentPolicy) && currentPolicy.changed;
+  const canSave = isSavedPolicy(currentPolicy) && currentPolicy.isChanged;
   const saveTooltip = buildTooltip(
     canSave,
     () =>
@@ -158,7 +158,7 @@ const buildPolicyItems = ({
     "Save",
   );
 
-  const canSaveAs = !isSavedPolicy(currentPolicy) || currentPolicy.changed;
+  const canSaveAs = !isSavedPolicy(currentPolicy) || currentPolicy.isChanged;
   const saveAsTooltip = buildTooltip(
     canSaveAs,
     () => "No policy changes to save",
