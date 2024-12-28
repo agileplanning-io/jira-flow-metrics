@@ -46,7 +46,16 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       } else {
         // loading the page, figure out which policy to use
-        if (!currentPolicyId) {
+        if (currentPolicyId) {
+          const policy = savedPolicies.find(
+            (policy) => policy.id === currentPolicyId,
+          );
+          if (policy) {
+            setCurrentPolicy({ ...policy, changed: false });
+          } else {
+            setCurrentPolicyId();
+          }
+        } else {
           const defaultPolicy = savedPolicies.find(
             (policy) => policy.isDefault,
           );
