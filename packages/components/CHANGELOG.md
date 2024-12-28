@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-components
 
+## 0.1.20
+
+### Patch Changes
+
+- 6a57a60: refactor: rename changed -> isChanged in CurrentPolicy
+
 ## 0.1.19
 
 ### Patch Changes
