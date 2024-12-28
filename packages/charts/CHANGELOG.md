@@ -1,5 +1,13 @@
 # @agileplanning-io/flow-charts
 
+## 0.1.17
+
+### Patch Changes
+
+- d891cac: refactor: extract EditCycleTimePolicy form
+- Updated dependencies [d891cac]
+  - @agileplanning-io/flow-metrics@1.0.2
+
 ## 0.1.16
 
 ### Patch Changes
