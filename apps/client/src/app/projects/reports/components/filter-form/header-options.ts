@@ -1,7 +1,10 @@
 import { formatDate, isAbsolute } from "@agileplanning-io/flow-lib";
-import { FilterType, ValuesFilter } from "@agileplanning-io/flow-metrics";
+import {
+  ClientIssueFilter,
+  FilterType,
+  ValuesFilter,
+} from "@agileplanning-io/flow-metrics";
 import { ExpandableOptionsHeader } from "@app/components/expandable-options";
-import { ClientIssueFilter } from "@app/filter/client-issue-filter";
 
 export const getHeaderOptions = (
   filter: ClientIssueFilter,
