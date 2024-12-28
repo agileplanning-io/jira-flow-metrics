@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { queryClient } from "./client";
 import {
@@ -234,17 +234,8 @@ const createPolicy = async (projectId: string, policy: DraftPolicy) => {
 };
 
 export const useCreatePolicy = (projectId: string) => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (policy: DraftPolicy) => createPolicy(projectId, policy),
-    onSuccess: (savedPolicy) => {
-      const mergeWithCachedData = (cache: SavedPolicy[] = []) => {
-        const mergedCache = [...cache, savedPolicy];
-        console.info({ mergedCache });
-        return mergedCache;
-      };
-      queryClient.setQueryData([policiesUrl(projectId)], mergeWithCachedData);
-    },
   });
 };
 
