@@ -35,11 +35,22 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
           const cachedPolicy = savedPolicies.find(
             (policy) => policy.id === currentPolicy.id,
           );
-          const changed =
-            isNonNullish(cachedPolicy) &&
-            !isPolicyEqual(currentPolicy.policy, cachedPolicy.policy);
-          if (currentPolicy.changed !== changed) {
-            setCurrentPolicy({ ...currentPolicy, changed });
+
+          if (isNonNullish(cachedPolicy)) {
+            const changed = !isPolicyEqual(
+              currentPolicy.policy,
+              cachedPolicy.policy,
+            );
+
+            // We just saved the policy
+            if (currentPolicy.changed && !changed) {
+              setCurrentPolicy({ ...currentPolicy, changed: false });
+            }
+
+            // We just made the policy the default
+            if (!currentPolicy.isDefault && cachedPolicy.isDefault) {
+              setCurrentPolicy({ ...currentPolicy, isDefault: true });
+            }
           }
         }
       } else {
