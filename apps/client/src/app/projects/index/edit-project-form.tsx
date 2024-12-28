@@ -147,8 +147,8 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
         setCycleTimePolicy={setUpdatedCycleTimePolicy}
         onMakeDefaultClicked={(policy) => setDefaultPolicy.mutate(policy.id)}
         onSaveClicked={(policy) => updatePolicy.mutate(policy)}
-        saveCycleTimePolicy={saveCycleTimePolicy}
-        deleteCycleTimePolicy={deleteCycleTimePolicy}
+        saveCycleTimePolicy={saveCycleTimePolicy.mutateAsync}
+        deleteCycleTimePolicy={deleteCycleTimePolicy.mutateAsync}
       />
 
       <h2>Default Completed Work Filter</h2>

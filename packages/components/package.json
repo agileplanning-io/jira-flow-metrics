@@ -41,7 +41,6 @@
   "peerDependencies": {
     "@ant-design/icons": "^5.2.6",
     "@ant-design/colors": "^7.1.0",
-    "@tanstack/react-query": "^4.35.3",
     "antd": "5.19.4",
     "react": "^18.2.0",
     "react-router-dom": "^6.16.0"

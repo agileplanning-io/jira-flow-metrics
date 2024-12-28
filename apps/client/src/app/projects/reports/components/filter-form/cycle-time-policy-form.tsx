@@ -46,8 +46,8 @@ export const CycleTimePolicyForm: FC<CycleTimePolicyFormProps> = ({
       setCycleTimePolicy={setCycleTimePolicy}
       onMakeDefaultClicked={(policy) => setDefaultPolicy.mutate(policy.id)}
       onSaveClicked={(policy) => updatePolicy.mutate(policy)}
-      saveCycleTimePolicy={saveCycleTimePolicy}
-      deleteCycleTimePolicy={deleteCycleTimePolicy}
+      saveCycleTimePolicy={saveCycleTimePolicy.mutateAsync}
+      deleteCycleTimePolicy={deleteCycleTimePolicy.mutateAsync}
     />
   );
 };

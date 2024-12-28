@@ -23,19 +23,6 @@ import {
 } from "antd";
 import { FC, useMemo, useState } from "react";
 import { isNullish } from "remeda";
-import { UseMutationResult } from "@tanstack/react-query";
-
-export type SavePolicyMutationResult = UseMutationResult<
-  SavedPolicy,
-  unknown,
-  DraftPolicy
->;
-
-export type DeletePolicyMutationResult = UseMutationResult<
-  void,
-  unknown,
-  string
->;
 
 type PoliciesDropdownProps = {
   savedPolicyId?: string;
@@ -46,8 +33,8 @@ type PoliciesDropdownProps = {
   onMakeDefaultClicked: (policy: SavedPolicy) => void;
 
   onPolicySelected: (savedPolicy?: SavedPolicy) => void;
-  saveCycleTimePolicy: SavePolicyMutationResult;
-  deleteCycleTimePolicy: DeletePolicyMutationResult;
+  saveCycleTimePolicy: (policy: DraftPolicy) => Promise<SavedPolicy>;
+  deleteCycleTimePolicy: (policyId: string) => Promise<void>;
 };
 
 export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
@@ -229,7 +216,7 @@ const buildPolicyItems = ({
 
 type SaveModalProps = {
   open: boolean;
-  saveCycleTimePolicy: UseMutationResult<SavedPolicy, unknown, DraftPolicy>;
+  saveCycleTimePolicy: (policy: DraftPolicy) => Promise<SavedPolicy>;
   cycleTimePolicy: CycleTimePolicy;
   savedPolicies: SavedPolicy[];
   onPolicySaved: (policy: SavedPolicy) => void;
@@ -245,6 +232,7 @@ const SaveModal: FC<SaveModalProps> = ({
   onClose,
 }) => {
   const [newPolicyName, setNewPolicyName] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const invalidName = useMemo(
     () => newPolicyName.length === 0,
@@ -267,26 +255,25 @@ const SaveModal: FC<SaveModalProps> = ({
   }, [invalidName, duplicateName]);
 
   const onOk = async () => {
-    saveCycleTimePolicy.mutate(
-      {
+    try {
+      setIsLoading(true);
+      const policy = await saveCycleTimePolicy({
         name: newPolicyName,
         policy: cycleTimePolicy,
         isDefault: false,
-      },
-      {
-        onSuccess: (policy) => {
-          onClose();
-          onPolicySaved(policy);
-        },
-      },
-    );
+      });
+      onClose();
+      onPolicySaved(policy);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <Modal
       title="Save Policy"
       open={open}
-      confirmLoading={saveCycleTimePolicy.isLoading}
+      confirmLoading={isLoading}
       afterOpenChange={() => {
         setNewPolicyName("");
       }}
@@ -303,7 +290,7 @@ const SaveModal: FC<SaveModalProps> = ({
           <Input
             value={newPolicyName}
             autoComplete="off"
-            disabled={saveCycleTimePolicy.isLoading}
+            disabled={isLoading}
             onChange={(event) => setNewPolicyName(event.target.value)}
           />
         </Form.Item>
@@ -314,7 +301,7 @@ const SaveModal: FC<SaveModalProps> = ({
 
 type DeleteModalProps = {
   open: boolean;
-  deleteCycleTimePolicy: UseMutationResult<void, unknown, string>;
+  deleteCycleTimePolicy: (policyId: string) => Promise<void>;
   cycleTimePolicy?: SavedPolicy;
   onPolicyDeleted: () => void;
   onClose: () => void;
@@ -327,24 +314,28 @@ const DeleteModal: FC<DeleteModalProps> = ({
   onPolicyDeleted,
   onClose,
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const onOk = async () => {
     if (!cycleTimePolicy) {
       return;
     }
 
-    deleteCycleTimePolicy.mutate(cycleTimePolicy.id, {
-      onSuccess: () => {
-        onPolicyDeleted();
-        onClose();
-      },
-    });
+    try {
+      setIsLoading(true);
+      await deleteCycleTimePolicy(cycleTimePolicy.id);
+      onPolicyDeleted();
+      onClose();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <Modal
       title="Delete Policy"
       open={open}
-      confirmLoading={deleteCycleTimePolicy.isLoading}
+      confirmLoading={isLoading}
       onOk={onOk}
       onCancel={onClose}
     >

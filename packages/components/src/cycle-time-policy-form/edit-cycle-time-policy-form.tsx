@@ -2,6 +2,7 @@ import {
   ClientIssueFilter,
   CycleTimePolicy,
   CycleTimePolicyType,
+  DraftPolicy,
   EpicCycleTimePolicyType,
   FilterType,
   getSelectedStages,
@@ -16,11 +17,7 @@ import { Space, Typography } from "antd";
 import { clone, compact, flat } from "remeda";
 import { FC, Key, ReactNode, useMemo } from "react";
 import { ellipsize } from "@agileplanning-io/flow-lib";
-import {
-  DeletePolicyMutationResult,
-  PoliciesDropdown,
-  SavePolicyMutationResult,
-} from "./policies-dropdown";
+import { PoliciesDropdown } from "./policies-dropdown";
 import { Dropdown, DropdownItemType } from "../control-bars/dropdown";
 import { FormControl } from "../control-bars/form-control";
 import { HelpIcon } from "../control-bars/help-icon";
@@ -38,8 +35,8 @@ type EditCycleTimePolicyForm = {
   setCycleTimePolicy: (policy: CycleTimePolicy) => void;
   onMakeDefaultClicked: (policy: SavedPolicy) => void;
   onSaveClicked: (policy: SavedPolicy) => void;
-  saveCycleTimePolicy: SavePolicyMutationResult;
-  deleteCycleTimePolicy: DeletePolicyMutationResult;
+  saveCycleTimePolicy: (policy: DraftPolicy) => Promise<SavedPolicy>;
+  deleteCycleTimePolicy: (policyId: string) => Promise<void>;
 };
 
 export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
