@@ -18,12 +18,8 @@ type CycleTimePolicyFormProps = {
 export const CycleTimePolicyForm: FC<CycleTimePolicyFormProps> = ({
   project,
 }) => {
-  const {
-    cycleTimePolicy,
-    setCycleTimePolicy,
-    savedPolicyId,
-    setSavedPolicyId,
-  } = useProjectContext();
+  const { currentPolicy, selectCycleTimePolicy, updateCurrentPolicy } =
+    useProjectContext();
 
   const setDefaultPolicy = useSetDefaultPolicy(project.id);
   const updatePolicy = useUpdatePolicy(project.id);
@@ -31,19 +27,18 @@ export const CycleTimePolicyForm: FC<CycleTimePolicyFormProps> = ({
   const saveCycleTimePolicy = useCreatePolicy(project.id);
   const deleteCycleTimePolicy = useDeletePolicy(project.id);
 
-  if (!cycleTimePolicy) {
+  if (!currentPolicy) {
     return <LoadingSpinner />;
   }
 
   return (
     <EditCycleTimePolicyForm
-      savedPolicyId={savedPolicyId}
-      setSavedPolicyId={setSavedPolicyId}
+      currentPolicy={currentPolicy}
+      selectCycleTimePolicy={selectCycleTimePolicy}
+      updateCurrentPolicy={updateCurrentPolicy}
       savedPolicies={savedPolicies}
       workflowScheme={project.workflowScheme}
       filterOptions={project}
-      cycleTimePolicy={cycleTimePolicy}
-      setCycleTimePolicy={setCycleTimePolicy}
       onMakeDefaultClicked={(policy) => setDefaultPolicy.mutate(policy.id)}
       onSaveClicked={(policy) => updatePolicy.mutate(policy)}
       saveCycleTimePolicy={saveCycleTimePolicy.mutateAsync}

@@ -1,30 +1,17 @@
 import { createContext } from "react";
 import { Project } from "@data/projects";
-import {
-  CycleTimePolicy,
-  CycleTimePolicyType,
-  EpicCycleTimePolicyType,
-  Issue,
-} from "@agileplanning-io/flow-metrics";
+import { CycleTimePolicy, Issue } from "@agileplanning-io/flow-metrics";
+import { CurrentPolicy } from "@agileplanning-io/flow-components";
 
 export type ProjectContextType = {
   project?: Project;
-  cycleTimePolicy?: CycleTimePolicy;
-  savedPolicyId?: string;
-  setCycleTimePolicy: (policy: CycleTimePolicy) => void;
-  setSavedPolicyId: (policyId?: string) => void;
+  currentPolicy?: CurrentPolicy;
+  selectCycleTimePolicy: (id?: string, name?: string) => void;
+  updateCurrentPolicy: (policy: CycleTimePolicy) => void;
   issues?: Issue[];
 };
 
 export const ProjectContext = createContext<ProjectContextType>({
-  setCycleTimePolicy: () => {},
-  setSavedPolicyId: () => {},
-  cycleTimePolicy: {
-    type: CycleTimePolicyType.LeadTime,
-    statuses: [],
-    epics: {
-      type: EpicCycleTimePolicyType.EpicStatus,
-      statuses: [],
-    },
-  },
+  updateCurrentPolicy: () => {},
+  selectCycleTimePolicy: () => {},
 });

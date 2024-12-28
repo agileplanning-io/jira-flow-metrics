@@ -1,28 +1,26 @@
 import { useNavigationContext } from "../../navigation/context";
 import { ProjectContext, ProjectContextType } from "./context";
 import { useIssues } from "@data/issues";
-import {
-  CycleTimePolicy,
-  cycleTimePolicySchema,
-} from "@agileplanning-io/flow-metrics";
-import { useEffect, useState } from "react";
-import { useQueryState } from "@lib/use-query-state";
+import { CycleTimePolicy } from "@agileplanning-io/flow-metrics";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
 import { useGetPolicies } from "@data/projects";
 import { isDeepEqual } from "remeda";
+import { useSearchParams } from "react-router-dom";
+import { CurrentPolicy } from "@agileplanning-io/flow-components";
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { project } = useNavigationContext();
-  const [cycleTimePolicy, setCycleTimePolicy] = useQueryState<
-    CycleTimePolicy | undefined
-  >("p", cycleTimePolicySchema.optional().parse);
+  const { currentPolicyId, setCurrentPolicyId } = useCurrentPolicyId();
+  const [currentPolicy, setCurrentPolicy] = useState<CurrentPolicy>();
 
-  const { data: issues } = useIssues(project?.id, cycleTimePolicy);
+  const { data: issues } = useIssues(project?.id, currentPolicy?.policy);
 
   const { data: savedPolicies } = useGetPolicies(project?.id);
 
-  const [savedPolicyId, setSavedPolicyId] = useState<string>();
+  console.info("provider", { currentPolicyId, currentPolicy });
 
   useEffect(() => {
     if (!project) {
@@ -30,55 +28,104 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     if (savedPolicies) {
-      if (!cycleTimePolicy) {
-        if (savedPolicyId) {
-          const savedPolicy = savedPolicies.find(
-            (policy) => policy.id === savedPolicyId,
-          );
-          if (savedPolicy) {
-            setCycleTimePolicy(savedPolicy.policy);
-          } else {
-            setSavedPolicyId(undefined);
-          }
-        } else {
+      if (!currentPolicy) {
+        if (!currentPolicyId) {
           const defaultPolicy = savedPolicies.find(
             (policy) => policy.isDefault,
           );
+
           if (defaultPolicy) {
-            setSavedPolicyId(defaultPolicy.id);
-            setCycleTimePolicy(defaultPolicy.policy);
-          } else if (!cycleTimePolicy) {
-            setCycleTimePolicy(project.defaultCycleTimePolicy);
+            setCurrentPolicyId(defaultPolicy.id);
+            setCurrentPolicy({ ...defaultPolicy, changed: false });
+          } else {
+            setCurrentPolicy({
+              name: "Custom",
+              policy: project.defaultCycleTimePolicy,
+              isDefault: false,
+              changed: false,
+            });
           }
-        }
-      } else {
-        // cycle time policy specified by parameters, so we should respect those
-        const foundPolicy = savedPolicies.find((policy) =>
-          isDeepEqual(policy.policy, cycleTimePolicy),
-        );
-        if (foundPolicy) {
-          setSavedPolicyId(foundPolicy.id);
         }
       }
     }
   }, [
+    currentPolicy,
+    currentPolicyId,
+    setCurrentPolicy,
+    setCurrentPolicyId,
     project,
-    cycleTimePolicy,
-    setCycleTimePolicy,
     savedPolicies,
-    savedPolicyId,
   ]);
 
-  const value: ProjectContextType = {
-    project,
-    issues,
-    cycleTimePolicy,
-    setCycleTimePolicy,
-    savedPolicyId,
-    setSavedPolicyId,
-  };
+  const updateCurrentPolicy = useCallback(
+    (policy: CycleTimePolicy) => {
+      if (currentPolicy) {
+        const changed = !isDeepEqual(currentPolicy.policy, policy);
+        setCurrentPolicy({ ...currentPolicy, policy, changed });
+      }
+    },
+    [currentPolicy, setCurrentPolicy],
+  );
+
+  const selectCycleTimePolicy = useCallback(
+    (policyId?: string, name?: string) => {
+      const policy = savedPolicies?.find((policy) => policy.id === policyId);
+      setCurrentPolicyId(policyId, policy?.name ?? name);
+      if (policy) {
+        setCurrentPolicy({ ...policy, changed: false });
+      }
+      // TODO: does this work when deleting a policy?
+    },
+    [savedPolicies, setCurrentPolicyId],
+  );
+
+  const value: ProjectContextType = useMemo(
+    () => ({
+      project,
+      issues,
+      currentPolicy,
+      updateCurrentPolicy,
+      selectCycleTimePolicy,
+    }),
+    [
+      project,
+      issues,
+      currentPolicy,
+      updateCurrentPolicy,
+      selectCycleTimePolicy,
+    ],
+  );
 
   return (
     <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>
   );
+};
+
+const policyKey = "policy";
+
+const useCurrentPolicyId = () => {
+  const [params, setParams] = useSearchParams();
+
+  const currentPolicyId = useMemo(() => {
+    const param = params.get(policyKey);
+    if (param?.trim().length) {
+      const parts = param.split("-");
+      return parts[parts.length - 1];
+    }
+  }, [params]);
+
+  const setCurrentPolicyId = useCallback(
+    (id?: string, name?: string) =>
+      setParams((prev) => {
+        if (id?.trim().length) {
+          prev.set(policyKey, `${name}-${id}`);
+        } else {
+          prev.delete(policyKey);
+        }
+        return prev;
+      }),
+    [setParams],
+  );
+
+  return { currentPolicyId, setCurrentPolicyId };
 };
