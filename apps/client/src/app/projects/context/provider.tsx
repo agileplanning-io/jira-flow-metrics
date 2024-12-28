@@ -1,13 +1,16 @@
 import { useNavigationContext } from "../../navigation/context";
 import { ProjectContext, ProjectContextType } from "./context";
 import { useIssues } from "@data/issues";
-import { CycleTimePolicy } from "@agileplanning-io/flow-metrics";
+import { CycleTimePolicy, isPolicyEqual } from "@agileplanning-io/flow-metrics";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useGetPolicies } from "@data/projects";
-import { isDeepEqual } from "remeda";
+import { isDeepEqual, isNonNullish } from "remeda";
 import { useSearchParams } from "react-router-dom";
-import { CurrentPolicy } from "@agileplanning-io/flow-components";
+import {
+  CurrentPolicy,
+  isSavedPolicy,
+} from "@agileplanning-io/flow-components";
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -28,7 +31,21 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     if (savedPolicies) {
-      if (!currentPolicy) {
+      if (currentPolicy) {
+        // check the policy is up to date, e.g. if we just saved it
+        if (isSavedPolicy(currentPolicy)) {
+          const cachedPolicy = savedPolicies.find(
+            (policy) => policy.id === currentPolicy.id,
+          );
+          const changed =
+            isNonNullish(cachedPolicy) &&
+            !isPolicyEqual(currentPolicy.policy, cachedPolicy.policy);
+          if (currentPolicy.changed !== changed) {
+            setCurrentPolicy({ ...currentPolicy, changed });
+          }
+        }
+      } else {
+        // loading the page, figure out which policy to use
         if (!currentPolicyId) {
           const defaultPolicy = savedPolicies.find(
             (policy) => policy.isDefault,
