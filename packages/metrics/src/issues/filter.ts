@@ -1,5 +1,5 @@
 import { intersection, isDeepEqual, isNonNullish, isNullish } from "remeda";
-import { CompletedIssue, HierarchyLevel, Issue, isCompleted } from "../issues";
+import { CompletedIssue, HierarchyLevel, Issue, isCompleted } from "./issues";
 import { Interval, asAbsolute } from "@agileplanning-io/flow-lib";
 
 export enum DateFilterType {

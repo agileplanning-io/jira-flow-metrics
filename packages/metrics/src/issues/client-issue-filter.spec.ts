@@ -18,7 +18,18 @@ describe("fromClientFilter", () => {
       DateFilterType.Completed,
     );
 
-    expect(filter).toEqual({});
-    expect(1).toBe(1);
+    expect(filter).toEqual({
+      dates: {
+        filterType: DateFilterType.Completed,
+        interval: {
+          start,
+          end,
+        },
+      },
+      resolutions: {
+        type: FilterType.Include,
+        values: ["Done"],
+      },
+    });
   });
 });
