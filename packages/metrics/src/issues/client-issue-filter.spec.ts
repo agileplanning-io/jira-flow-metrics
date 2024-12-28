@@ -1,5 +1,5 @@
-import { DateFilterType, FilterType } from "./filter";
-import { fromClientFilter } from "./client-issue-filter";
+import { DateFilterType, defaultValuesFilter, FilterType } from "./filter";
+import { fromClientFilter, toClientFilter } from "./client-issue-filter";
 import { addDays } from "date-fns";
 
 describe("fromClientFilter", () => {
@@ -30,6 +30,35 @@ describe("fromClientFilter", () => {
         type: FilterType.Include,
         values: ["Done"],
       },
+    });
+  });
+
+  it("converts an IssueFilter to a ClientIssueFilter", () => {
+    const start = new Date();
+    const end = addDays(start, 1);
+
+    const filter = toClientFilter({
+      dates: { filterType: DateFilterType.Completed, interval: { start, end } },
+      resolutions: {
+        values: ["Done"],
+        type: FilterType.Include,
+      },
+    });
+
+    expect(filter).toEqual({
+      dates: {
+        start,
+        end,
+      },
+      assignees: defaultValuesFilter(),
+      components: defaultValuesFilter(),
+      resolutions: {
+        type: FilterType.Include,
+        values: ["Done"],
+      },
+      issueTypes: defaultValuesFilter(),
+      labels: defaultValuesFilter(),
+      statuses: defaultValuesFilter(),
     });
   });
 });
