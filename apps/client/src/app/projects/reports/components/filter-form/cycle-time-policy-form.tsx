@@ -34,6 +34,7 @@ export const CycleTimePolicyForm: FC<CycleTimePolicyFormProps> = ({
   return (
     <EditCycleTimePolicyForm
       currentPolicy={currentPolicy}
+      defaultCompletedFilter={project.defaultCompletedFilter}
       selectCycleTimePolicy={selectCycleTimePolicy}
       updateCurrentPolicy={updateCurrentPolicy}
       savedPolicies={savedPolicies}
