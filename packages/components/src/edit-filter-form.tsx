@@ -26,7 +26,6 @@ export type EditFilterFormProps = {
   showHierarchyFilter: boolean;
   showAssigneesFilter: boolean;
   filterOptions: FilterOptions;
-  labels?: string[];
   labelColSpan: number;
   wrapperColSpan: number;
 };
@@ -38,7 +37,6 @@ export const EditFilterForm: FC<EditFilterFormProps> = ({
   showStatusFilter,
   showAssigneesFilter,
   filterOptions,
-  labels,
   labelColSpan,
   wrapperColSpan,
 }) => {
@@ -47,7 +45,7 @@ export const EditFilterForm: FC<EditFilterFormProps> = ({
   const componentOptions = makeOptions(filterOptions.components);
   const issueTypeOptions = makeOptions(filterOptions.issueTypes);
   const assigneeOptions = makeOptions(filterOptions.assignees);
-  const labelOptions = makeOptions(labels);
+  const labelOptions = makeOptions(filterOptions.labels);
 
   return (
     <Form
