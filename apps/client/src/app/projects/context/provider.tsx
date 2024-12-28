@@ -23,8 +23,6 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const { data: savedPolicies } = useGetPolicies(project?.id);
 
-  console.info("provider", { currentPolicyId, currentPolicy });
-
   useEffect(() => {
     if (!project) {
       return;
