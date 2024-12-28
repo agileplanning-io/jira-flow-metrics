@@ -1,5 +1,4 @@
-import { FilterUseCase, HierarchyLevel, Issue } from "../issues";
-import { filterIssues } from "../issues";
+import { FilterUseCase, HierarchyLevel, Issue, filterIssues } from "../issues";
 import { getStatusFlowMetrics } from "./policies/status-flow-metrics";
 import { getComputedFlowMetrics } from "./policies/computed-flow-metrics";
 import { pipe } from "remeda";

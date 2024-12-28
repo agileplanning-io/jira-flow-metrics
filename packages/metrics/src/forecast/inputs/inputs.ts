@@ -4,8 +4,8 @@ import {
   Interval,
   asAbsolute,
   excludeOutliersFromSeq,
+  categorizeWeekday,
 } from "@agileplanning-io/flow-lib";
-import { categorizeWeekday } from "@agileplanning-io/flow-lib";
 import { CompletedIssue } from "../../issues";
 
 export const computeThroughput = (
