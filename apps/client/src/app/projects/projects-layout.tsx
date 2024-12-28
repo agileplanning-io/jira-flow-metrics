@@ -19,7 +19,7 @@ export const ProjectsLayout = () => {
 
   return (
     <>
-      {showPolicyForm ? <CycleTimePolicyForm /> : null}
+      {showPolicyForm ? <CycleTimePolicyForm project={project} /> : null}
       <Outlet context={{ hidePolicyForm }} />
     </>
   );

@@ -1,6 +1,10 @@
-import { StatusCycleTimePolicy } from "@agileplanning-io/flow-metrics";
-import { Workflow } from "@data/projects";
+import { StatusCycleTimePolicy } from "../metrics";
+import { Workflow } from "./types";
 
+/**
+ * Returns the stages in a workflow for the given StatusCycleTimePolicy. This is helpful for
+ * displaying the selected stages for a given policy.
+ */
 export const getSelectedStages = (
   workflow: Workflow,
   policy?: StatusCycleTimePolicy,

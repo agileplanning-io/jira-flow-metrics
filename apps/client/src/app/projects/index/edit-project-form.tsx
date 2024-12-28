@@ -2,28 +2,32 @@ import { LoadingSpinner } from "@app/components/loading-spinner";
 import {
   Project,
   UpdateProjectParams,
-  Workflow,
+  useCreatePolicy,
+  useDeletePolicy,
+  useGetPolicies,
+  useSetDefaultPolicy,
+  useUpdatePolicy,
   useUpdateProject,
 } from "@data/projects";
 import { Button, Form, Input } from "antd";
 import { FC, useCallback, useState } from "react";
 import {
+  EditCycleTimePolicyForm,
+  EditFilterForm,
   WorkflowBoard,
   WorkflowBoardProps,
 } from "@agileplanning-io/flow-components";
 import { WorkflowStage } from "@data/issues";
 import {
+  ClientIssueFilter,
   CycleTimePolicy,
   DateFilterType,
-} from "@agileplanning-io/flow-metrics";
-import { EditCycleTimePolicyForm } from "@app/components/edit-cycle-time-policy-form";
-import { FullScreenDrawer } from "@app/components/full-screen-drawer";
-import { EditFilterForm } from "../reports/components/filter-form/edit-filter-form";
-import {
-  ClientIssueFilter,
   fromClientFilter,
   toClientFilter,
-} from "@app/filter/client-issue-filter";
+  Workflow,
+} from "@agileplanning-io/flow-metrics";
+import { FullScreenDrawer } from "@app/components/full-screen-drawer";
+import { useProjectContext } from "../context";
 
 export type EditProjectFormProps = {
   project: Project;
@@ -34,6 +38,8 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
   project,
   onClose,
 }) => {
+  const { savedPolicyId, setSavedPolicyId } = useProjectContext();
+
   const [updatedStoryWorkflow, setUpdatedStoryWorkflow] =
     useState<UpdateProjectParams["storyWorkflowStages"]>();
 
@@ -49,6 +55,12 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
     useState<ClientIssueFilter>(toClientFilter(project.defaultCompletedFilter));
 
   const updateProject = useUpdateProject();
+  const setDefaultPolicy = useSetDefaultPolicy(project.id);
+  const updatePolicy = useUpdatePolicy(project.id);
+  const saveCycleTimePolicy = useCreatePolicy(project.id);
+  const deleteCycleTimePolicy = useDeletePolicy(project.id);
+
+  const { data: savedPolicies } = useGetPolicies(project.id);
 
   const onStoryWorkflowChanged = useCallback(
     (workflow: WorkflowStage[]) =>
@@ -126,9 +138,17 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
       <h2>Default Cycle Time Policy</h2>
 
       <EditCycleTimePolicyForm
-        project={project}
+        savedPolicyId={savedPolicyId}
+        setSavedPolicyId={setSavedPolicyId}
+        savedPolicies={savedPolicies}
+        filterOptions={project}
+        workflowScheme={project.workflowScheme}
         cycleTimePolicy={updatedCycleTimePolicy}
         setCycleTimePolicy={setUpdatedCycleTimePolicy}
+        onMakeDefaultClicked={(policy) => setDefaultPolicy.mutate(policy.id)}
+        onSaveClicked={(policy) => updatePolicy.mutate(policy)}
+        saveCycleTimePolicy={saveCycleTimePolicy.mutateAsync}
+        deleteCycleTimePolicy={deleteCycleTimePolicy.mutateAsync}
       />
 
       <h2>Default Completed Work Filter</h2>
@@ -141,10 +161,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
         showResolutionFilter={true}
         showStatusFilter={false}
         showAssigneesFilter={false}
-        issueTypes={project.issueTypes}
-        labels={project.labels}
-        components={project.components}
-        resolutions={project.resolutions}
+        filterOptions={project}
         labelColSpan={2}
         wrapperColSpan={10}
       />

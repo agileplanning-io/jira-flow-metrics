@@ -3,6 +3,8 @@ import {
   DateFilterType,
   HierarchyLevel,
   filterCompletedIssues,
+  fromClientFilter,
+  toClientFilter,
 } from "@agileplanning-io/flow-metrics";
 import { Histogram } from "@agileplanning-io/flow-charts";
 import { useEffect, useState } from "react";
@@ -16,10 +18,6 @@ import {
   defaultDateRange,
   getPercentiles,
 } from "@agileplanning-io/flow-lib";
-import {
-  fromClientFilter,
-  toClientFilter,
-} from "@app/filter/client-issue-filter";
 import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
 import { ChartParamsForm } from "./components/chart-params-form";

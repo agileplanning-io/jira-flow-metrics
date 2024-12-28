@@ -6,16 +6,14 @@ import {
   SummaryResult,
   filterCompletedIssues,
   forecast,
+  fromClientFilter,
+  toClientFilter,
 } from "@agileplanning-io/flow-metrics";
 import { useAtomValue } from "jotai";
 import { ForecastChart } from "@agileplanning-io/flow-charts";
 import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
 import { useChartParams } from "./hooks/use-chart-params";
-import {
-  fromClientFilter,
-  toClientFilter,
-} from "@app/filter/client-issue-filter";
 import { chartStyleAtom } from "../chart-style";
 import { ChartParamsForm } from "./components/chart-params-form";
 import { useFilterParams } from "@app/filter/use-filter-params";

@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import {
+  ClientIssueFilter,
   HierarchyLevel,
   Issue,
   filterIssues,
@@ -7,11 +8,12 @@ import {
 import { flatten, compact, uniq, pipe, map, isNonNullish } from "remeda";
 import { Interval } from "@agileplanning-io/flow-lib";
 import { LoadingSpinner } from "@app/components/loading-spinner";
-import { EditFilterForm } from "./edit-filter-form";
 import { ExpandableOptions } from "@app/components/expandable-options";
 import { Col, Form, Row, Select, Tag } from "antd";
-import { DateSelector } from "@agileplanning-io/flow-components";
-import { ClientIssueFilter } from "@app/filter/client-issue-filter";
+import {
+  DateSelector,
+  EditFilterForm,
+} from "@agileplanning-io/flow-components";
 import { getHeaderOptions } from "./header-options";
 
 type FilterOptionsProps = {
@@ -121,12 +123,14 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
           showStatusFilter={showStatusFilter}
           showHierarchyFilter={showHierarchyFilter}
           showAssigneesFilter={true}
-          statuses={statusOptions}
-          resolutions={resolutionOptions}
-          components={componentOptions}
-          issueTypes={issueTypeOptions}
-          assignees={assigneeOptions}
-          labels={labelOptions}
+          filterOptions={{
+            statuses: statusOptions,
+            resolutions: resolutionOptions,
+            components: componentOptions,
+            issueTypes: issueTypeOptions,
+            assignees: assigneeOptions,
+            labels: labelOptions,
+          }}
           labelColSpan={2}
           wrapperColSpan={10}
         />
