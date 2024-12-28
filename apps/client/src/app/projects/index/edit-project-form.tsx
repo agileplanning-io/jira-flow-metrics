@@ -1,18 +1,8 @@
 import { LoadingSpinner } from "@app/components/loading-spinner";
-import {
-  Project,
-  UpdateProjectParams,
-  useCreatePolicy,
-  useDeletePolicy,
-  useGetPolicies,
-  useSetDefaultPolicy,
-  useUpdatePolicy,
-  useUpdateProject,
-} from "@data/projects";
+import { Project, UpdateProjectParams, useUpdateProject } from "@data/projects";
 import { Button, Form, Input } from "antd";
 import { FC, useCallback, useState } from "react";
 import {
-  EditCycleTimePolicyForm,
   EditFilterForm,
   WorkflowBoard,
   WorkflowBoardProps,
@@ -20,14 +10,12 @@ import {
 import { WorkflowStage } from "@data/issues";
 import {
   ClientIssueFilter,
-  CycleTimePolicy,
   DateFilterType,
   fromClientFilter,
   toClientFilter,
   Workflow,
 } from "@agileplanning-io/flow-metrics";
 import { FullScreenDrawer } from "@app/components/full-screen-drawer";
-import { useProjectContext } from "../context";
 
 export type EditProjectFormProps = {
   project: Project;
@@ -38,16 +26,11 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
   project,
   onClose,
 }) => {
-  const { currentPolicy, selectCycleTimePolicy } = useProjectContext();
-
   const [updatedStoryWorkflow, setUpdatedStoryWorkflow] =
     useState<UpdateProjectParams["storyWorkflowStages"]>();
 
   const [updatedEpicWorkflow, setUpdatedEpicWorkflow] =
     useState<UpdateProjectParams["epicWorkflowStages"]>();
-
-  const [updatedCycleTimePolicy, setUpdatedCycleTimePolicy] =
-    useState<CycleTimePolicy>(project.defaultCycleTimePolicy);
 
   const [updatedName, setUpdatedName] = useState(project.name);
 
@@ -55,12 +38,6 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
     useState<ClientIssueFilter>(toClientFilter(project.defaultCompletedFilter));
 
   const updateProject = useUpdateProject();
-  const setDefaultPolicy = useSetDefaultPolicy(project.id);
-  const updatePolicy = useUpdatePolicy(project.id);
-  const saveCycleTimePolicy = useCreatePolicy(project.id);
-  const deleteCycleTimePolicy = useDeletePolicy(project.id);
-
-  const { data: savedPolicies } = useGetPolicies(project.id);
 
   const onStoryWorkflowChanged = useCallback(
     (workflow: WorkflowStage[]) =>
@@ -100,7 +77,6 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
     if (
       updatedStoryWorkflow &&
       updatedEpicWorkflow &&
-      updatedCycleTimePolicy &&
       updatedDefaultCompletedFilter
     ) {
       updateProject.mutate(
@@ -109,7 +85,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
           name: updatedName,
           storyWorkflowStages: updatedStoryWorkflow,
           epicWorkflowStages: updatedEpicWorkflow,
-          defaultCycleTimePolicy: updatedCycleTimePolicy,
+          defaultCycleTimePolicy: project.defaultCycleTimePolicy,
           defaultCompletedFilter: fromClientFilter(
             updatedDefaultCompletedFilter,
             DateFilterType.Completed,
@@ -134,23 +110,6 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
           />
         </Form.Item>
       </Form>
-
-      <h2>Default Cycle Time Policy</h2>
-
-      {currentPolicy ? (
-        <EditCycleTimePolicyForm
-          currentPolicy={currentPolicy}
-          updateCurrentPolicy={setUpdatedCycleTimePolicy}
-          selectCycleTimePolicy={selectCycleTimePolicy}
-          savedPolicies={savedPolicies}
-          filterOptions={project}
-          workflowScheme={project.workflowScheme}
-          onMakeDefaultClicked={(policy) => setDefaultPolicy.mutate(policy.id)}
-          onSaveClicked={(policy) => updatePolicy.mutate(policy)}
-          saveCycleTimePolicy={saveCycleTimePolicy.mutateAsync}
-          deleteCycleTimePolicy={deleteCycleTimePolicy.mutateAsync}
-        />
-      ) : null}
 
       <h2>Default Completed Work Filter</h2>
 

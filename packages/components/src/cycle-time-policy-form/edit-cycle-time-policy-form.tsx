@@ -27,6 +27,7 @@ import { WorkflowStagesTable } from "../workflow-stages-table";
 
 type EditCycleTimePolicyForm = {
   currentPolicy: CurrentPolicy;
+  defaultCompletedFilter?: IssueAttributesFilter;
   selectCycleTimePolicy: (policyId?: string) => void;
   updateCurrentPolicy: (policy: CycleTimePolicy) => void;
   savedPolicies?: SavedPolicy[];
@@ -40,6 +41,7 @@ type EditCycleTimePolicyForm = {
 
 export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
   currentPolicy,
+  defaultCompletedFilter,
   selectCycleTimePolicy,
   updateCurrentPolicy,
   savedPolicies,
@@ -124,7 +126,10 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
           type: EpicCycleTimePolicyType.EpicStatus,
         };
       } else {
-        policy.epics = { type: EpicCycleTimePolicyType.Derived };
+        policy.epics = {
+          type: EpicCycleTimePolicyType.Derived,
+          ...clone(defaultCompletedFilter),
+        };
       }
       updateCurrentPolicy(policy);
     }
