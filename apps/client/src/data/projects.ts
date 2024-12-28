@@ -238,10 +238,11 @@ export const useCreatePolicy = (projectId: string) => {
   return useMutation({
     mutationFn: (policy: DraftPolicy) => createPolicy(projectId, policy),
     onSuccess: (savedPolicy) => {
-      const mergeWithCachedData = (cache: SavedPolicy[] = []) => [
-        ...cache,
-        savedPolicy,
-      ];
+      const mergeWithCachedData = (cache: SavedPolicy[] = []) => {
+        const mergedCache = [...cache, savedPolicy];
+        console.info({ mergedCache });
+        return mergedCache;
+      };
       queryClient.setQueryData([policiesUrl(projectId)], mergeWithCachedData);
     },
   });
