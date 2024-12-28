@@ -37,14 +37,14 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
           );
 
           if (isNonNullish(cachedPolicy)) {
-            const changed = !isPolicyEqual(
+            const isChanged = !isPolicyEqual(
               currentPolicy.policy,
               cachedPolicy.policy,
             );
 
             // We just saved the policy
-            if (currentPolicy.changed && !changed) {
-              setCurrentPolicy({ ...currentPolicy, changed: false });
+            if (currentPolicy.isChanged && !isChanged) {
+              setCurrentPolicy({ ...currentPolicy, isChanged: false });
             }
 
             // We just made the policy the default
@@ -60,7 +60,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
             (policy) => policy.id === currentPolicyId,
           );
           if (policy) {
-            setCurrentPolicy({ ...policy, changed: false });
+            setCurrentPolicy({ ...policy, isChanged: false });
           } else {
             setCurrentPolicyId();
           }
@@ -71,13 +71,13 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
 
           if (defaultPolicy) {
             setCurrentPolicyId(defaultPolicy.id);
-            setCurrentPolicy({ ...defaultPolicy, changed: false });
+            setCurrentPolicy({ ...defaultPolicy, isChanged: false });
           } else {
             setCurrentPolicy({
               name: "Custom",
               policy: project.defaultCycleTimePolicy,
               isDefault: false,
-              changed: false,
+              isChanged: false,
             });
           }
         }
@@ -95,8 +95,8 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const updateCurrentPolicy = useCallback(
     (policy: CycleTimePolicy) => {
       if (currentPolicy) {
-        const changed = !isDeepEqual(currentPolicy.policy, policy);
-        setCurrentPolicy({ ...currentPolicy, policy, changed });
+        const isChanged = !isDeepEqual(currentPolicy.policy, policy);
+        setCurrentPolicy({ ...currentPolicy, policy, isChanged });
       }
     },
     [currentPolicy, setCurrentPolicy],
@@ -104,12 +104,25 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const selectCycleTimePolicy = useCallback(
     (policyId?: string, name?: string) => {
+      console.info("selectCycleTimePolicy", { policyId, name });
       const policy = savedPolicies?.find((policy) => policy.id === policyId);
+      console.info("savedPolicy", policy);
       setCurrentPolicyId(policyId, policy?.name ?? name);
       if (policy) {
-        setCurrentPolicy({ ...policy, changed: false });
+        setCurrentPolicy({ ...policy, isChanged: false });
+      } else {
+        setCurrentPolicy(undefined);
+        // setCurrentPolicyId(undefined, "Custom");
+        // const prevPolicy = currentPolicy?.policy;
+        // if (prevPolicy) {
+        //   setCurrentPolicy({
+        //     policy: prevPolicy,
+        //     name: "Custom",
+        //     isDefault: false,
+        //     isChanged: false,
+        //   });
+        // }
       }
-      // TODO: does this work when deleting a policy?
     },
     [savedPolicies, setCurrentPolicyId],
   );
