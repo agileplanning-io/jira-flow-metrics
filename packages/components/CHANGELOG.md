@@ -1,5 +1,12 @@
 # @agileplanning-io/flow-components
 
+## 0.1.22
+
+### Patch Changes
+
+- dfbb3d0: refactor: rename EditFilterForm -> IssueAttributesFilterForm
+- 99c13e6: feat: add IssueFilterForm
+
 ## 0.1.21
 
 ### Patch Changes
