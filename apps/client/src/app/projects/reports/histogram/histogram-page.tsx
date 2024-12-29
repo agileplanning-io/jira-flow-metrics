@@ -18,11 +18,11 @@ import {
   getPercentiles,
 } from "@agileplanning-io/flow-lib";
 import { chartStyleAtom } from "../chart-style";
-import { useChartParams } from "./hooks/use-chart-params";
-import { ChartParamsForm } from "./components/chart-params-form";
+import { useChartParams } from "../components/completed-issue-reports/use-chart-params";
 import { Project } from "@data/projects";
 import { useFilterParams } from "@app/filter/use-filter-params";
 import { IssueFilterForm, ReportType } from "@agileplanning-io/flow-components";
+import { ChartParamsForm } from "../components/completed-issue-reports/chart-params-form";
 
 export const HistogramPage = () => {
   const { issues } = useProjectContext();

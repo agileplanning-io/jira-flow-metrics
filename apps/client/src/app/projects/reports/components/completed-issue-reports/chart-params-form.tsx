@@ -1,8 +1,8 @@
 import { FC } from "react";
-import { ChartParams } from "../hooks/use-chart-params";
 import { Checkbox, Popover } from "antd";
 import { ExportOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { ControlBar } from "@agileplanning-io/flow-components";
+import { ChartParams } from "./use-chart-params";
 
 export type ChartParamsFormOptions = {
   chartParams: ChartParams;
