@@ -18,13 +18,32 @@ import { Tag, theme, Typography } from "antd";
 import { isNonNullish } from "remeda";
 import { useFilterOptions } from "./use-filter-options";
 
+/**
+ * Used to express the type of report for purposes of selecting sensible filter options.
+ */
+export enum ReportType {
+  /**
+   * The report shows metrics for completed issues. Disable optoins for filtering by status.
+   */
+  Completed,
+
+  /**
+   * The report show metrics for in progress issues. Disable options for filtering by status and resolution.
+   */
+  Wip,
+
+  /**
+   * An index view of all issues. All filter options should be available.
+   */
+  Index,
+}
+
 export type IssueFilterFormProps = {
   filter?: ClientIssueFilter;
   setFilter: (filter: ClientIssueFilter) => void;
   issues?: Issue[];
-  showResolutionFilter: boolean;
-  showStatusFilter: boolean;
-  showAssigneesFilter: boolean;
+  reportType: ReportType;
+  showHierarchyFilter: boolean;
   filteredIssuesCount?: number;
 };
 
@@ -32,12 +51,12 @@ export const IssueFilterForm: FC<IssueFilterFormProps> = ({
   filter,
   setFilter,
   issues,
-  showResolutionFilter,
-  showStatusFilter,
-  showAssigneesFilter,
+  reportType,
+  showHierarchyFilter,
   filteredIssuesCount,
 }) => {
   const { token } = theme.useToken();
+
   const hierarchyLevelItems: DropdownItemType<HierarchyLevel>[] = [
     { label: "Story", key: HierarchyLevel.Story },
     { label: "Epic", key: HierarchyLevel.Epic },
@@ -53,24 +72,31 @@ export const IssueFilterForm: FC<IssueFilterFormProps> = ({
 
   const onDatesChanged = (dates?: Interval) => setFilter({ ...filter, dates });
 
+  const showStatusFilter = reportType === ReportType.Index;
+  const showResolutionFilter = reportType !== ReportType.Wip;
+
   return (
     <ControlBar>
-      <FormControl
-        label={
-          <>
-            Hierarchy level{" "}
-            <HelpIcon
-              content={<span>Filter to individual tasks or larger epics.</span>}
-            />
-          </>
-        }
-      >
-        <Dropdown
-          items={hierarchyLevelItems}
-          selectedKey={filter?.hierarchyLevel}
-          onItemSelected={onHierarchyLevelChanged}
-        />
-      </FormControl>
+      {showHierarchyFilter ? (
+        <FormControl
+          label={
+            <>
+              Hierarchy level{" "}
+              <HelpIcon
+                content={
+                  <span>Filter to individual tasks or larger epics.</span>
+                }
+              />
+            </>
+          }
+        >
+          <Dropdown
+            items={hierarchyLevelItems}
+            selectedKey={filter?.hierarchyLevel}
+            onItemSelected={onHierarchyLevelChanged}
+          />
+        </FormControl>
+      ) : null}
 
       <FormControl label="Filter">
         <Popdown
@@ -85,7 +111,7 @@ export const IssueFilterForm: FC<IssueFilterFormProps> = ({
                 filter={value}
                 filterOptions={filterOptions}
                 setFilter={setValue}
-                showAssigneesFilter={showAssigneesFilter}
+                showAssigneesFilter={true}
                 showResolutionFilter={showResolutionFilter}
                 showStatusFilter={showStatusFilter}
                 labelColSpan={6}

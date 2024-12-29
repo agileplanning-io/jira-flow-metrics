@@ -8,10 +8,13 @@ import { omit, pipe, sortBy } from "remeda";
 import { Col, Form, Input } from "antd";
 import * as fuzzball from "fuzzball";
 import { useProjectContext } from "../../context";
-import { FilterOptionsForm } from "../../reports/components/filter-form/filter-options-form";
 import { useFilterParams } from "@app/filter/use-filter-params";
 import { IssuesTable } from "@app/components/issues-table";
-import { SortState } from "@agileplanning-io/flow-components";
+import {
+  IssueFilterForm,
+  ReportType,
+  SortState,
+} from "@agileplanning-io/flow-components";
 
 export const IssuesIndexPage = () => {
   const { issues } = useProjectContext();
@@ -83,16 +86,15 @@ export const IssuesIndexPage = () => {
 
   return (
     <>
-      <FilterOptionsForm
-        filter={filter}
-        setFilter={setFilter}
+      <IssueFilterForm
         issues={issues}
         filteredIssuesCount={filteredIssues.length}
-        showDateSelector={false}
-        showStatusFilter={true}
-        showResolutionFilter={true}
+        filter={filter}
+        setFilter={setFilter}
+        reportType={ReportType.Index}
         showHierarchyFilter={true}
       />
+
       <Col span={6}>
         <Form.Item label="Search">
           <Input

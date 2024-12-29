@@ -6,13 +6,14 @@ import {
   timeSpentInPeriod,
 } from "@agileplanning-io/flow-metrics";
 import { useEffect, useState } from "react";
-import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
 import { Space, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import {
+  IssueFilterForm,
   IssueResolution,
   IssueStatus,
+  ReportType,
 } from "@agileplanning-io/flow-components";
 import { useNavigationContext } from "../../../navigation/context";
 import { DateFilterType, filterIssues } from "@agileplanning-io/flow-metrics";
@@ -145,15 +146,13 @@ export const TimeSpentPage = () => {
 
   return (
     <>
-      <FilterOptionsForm
-        filter={filter}
-        setFilter={setFilter}
+      <IssueFilterForm
         issues={issues}
         filteredIssuesCount={filteredIssues.length}
-        showDateSelector={true}
-        showStatusFilter={false}
+        filter={filter}
+        setFilter={setFilter}
+        reportType={ReportType.Completed}
         showHierarchyFilter={false}
-        showResolutionFilter={true}
       />
 
       <Table

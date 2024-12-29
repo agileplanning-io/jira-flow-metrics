@@ -10,7 +10,6 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { isNil, omit } from "remeda";
 import { Collapse } from "antd";
-import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
 import { AgeingWipChart } from "@agileplanning-io/flow-charts";
 import { filterCompletedIssues } from "@agileplanning-io/flow-metrics";
@@ -28,6 +27,7 @@ import { useChartParams } from "./hooks/use-chart-params";
 import { LoadingSpinner } from "@app/components/loading-spinner";
 import { ChartParamsForm } from "./components/chart-params-form";
 import { useFilterParams } from "@app/filter/use-filter-params";
+import { IssueFilterForm, ReportType } from "@agileplanning-io/flow-components";
 
 export const AgeingWipPage = () => {
   const { issues } = useProjectContext();
@@ -96,14 +96,12 @@ export const AgeingWipPage = () => {
 
   return (
     <>
-      <FilterOptionsForm
+      <IssueFilterForm
+        issues={issues}
+        filteredIssuesCount={benchmarkIssues.length}
         filter={filter}
         setFilter={setFilter}
-        issues={issues}
-        filteredIssuesCount={ageingIssues.length}
-        showDateSelector={true}
-        showStatusFilter={false}
-        showResolutionFilter={false}
+        reportType={ReportType.Wip}
         showHierarchyFilter={true}
       />
 

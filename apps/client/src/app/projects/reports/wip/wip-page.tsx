@@ -11,7 +11,6 @@ import { IssuesTable } from "../../../components/issues-table";
 import { WipChart } from "@agileplanning-io/flow-charts/src/wip/wip-chart";
 import { omit } from "remeda";
 import { Checkbox, Col, Form, Radio, Row } from "antd";
-import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
 import { ExpandableOptions } from "../../../components/expandable-options";
 import { useAtomValue } from "jotai";
@@ -19,6 +18,7 @@ import { chartStyleAtom } from "../chart-style";
 import { useChartParams } from "./hooks/use-chart-params";
 import { useFilterParams } from "@app/filter/use-filter-params";
 import { asAbsolute, defaultDateRange } from "@agileplanning-io/flow-lib";
+import { IssueFilterForm, ReportType } from "@agileplanning-io/flow-components";
 
 export const WipPage = () => {
   const { issues } = useProjectContext();
@@ -70,16 +70,15 @@ export const WipPage = () => {
 
   return (
     <>
-      <FilterOptionsForm
-        filter={filter}
-        setFilter={setFilter}
+      <IssueFilterForm
         issues={issues}
         filteredIssuesCount={filteredIssues.length}
-        showDateSelector={true}
-        showStatusFilter={false}
-        showResolutionFilter={false}
+        filter={filter}
+        setFilter={setFilter}
+        reportType={ReportType.Wip}
         showHierarchyFilter={true}
       />
+
       <ExpandableOptions
         header={{
           title: "Chart Options",

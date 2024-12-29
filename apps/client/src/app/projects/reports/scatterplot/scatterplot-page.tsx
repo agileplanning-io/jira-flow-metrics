@@ -27,7 +27,7 @@ import { Project } from "@data/projects";
 import { Button } from "antd";
 import { reverse, sortBy } from "remeda";
 import { downloadCsv } from "@data/csv";
-import { IssueFilterForm } from "@agileplanning-io/flow-components";
+import { IssueFilterForm, ReportType } from "@agileplanning-io/flow-components";
 
 export const ScatterplotPage = () => {
   const { issues } = useProjectContext();
@@ -76,9 +76,8 @@ export const ScatterplotPage = () => {
         filteredIssuesCount={filteredIssues.length}
         filter={filter}
         setFilter={setFilter}
-        showAssigneesFilter={true}
-        showStatusFilter={false}
-        showResolutionFilter={true}
+        reportType={ReportType.Completed}
+        showHierarchyFilter={true}
       />
 
       <ChartParamsForm

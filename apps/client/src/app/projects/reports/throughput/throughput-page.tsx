@@ -18,7 +18,6 @@ import {
 } from "@agileplanning-io/flow-lib";
 import { ThroughputChart } from "@agileplanning-io/flow-charts";
 import { IssuesTable } from "../../../components/issues-table";
-import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
 import { useAtomValue } from "jotai";
 import { chartStyleAtom } from "../chart-style";
@@ -26,6 +25,7 @@ import { useChartParams } from "./hooks/use-chart-params";
 import { ChartParamsForm } from "./components/chart-params-form";
 import { useFilterParams } from "@app/filter/use-filter-params";
 import { Project } from "@data/projects";
+import { IssueFilterForm, ReportType } from "@agileplanning-io/flow-components";
 
 export const ThroughputPage = () => {
   const { issues } = useProjectContext();
@@ -78,14 +78,12 @@ export const ThroughputPage = () => {
 
   return (
     <>
-      <FilterOptionsForm
-        filter={filter}
-        setFilter={setFilter}
+      <IssueFilterForm
         issues={issues}
         filteredIssuesCount={filteredIssues.length}
-        showDateSelector={true}
-        showStatusFilter={false}
-        showResolutionFilter={true}
+        filter={filter}
+        setFilter={setFilter}
+        reportType={ReportType.Completed}
         showHierarchyFilter={true}
       />
 

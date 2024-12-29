@@ -10,7 +10,6 @@ import { Histogram } from "@agileplanning-io/flow-charts";
 import { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 import { IssuesTable } from "../../../components/issues-table";
-import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import {
@@ -23,6 +22,7 @@ import { useChartParams } from "./hooks/use-chart-params";
 import { ChartParamsForm } from "./components/chart-params-form";
 import { Project } from "@data/projects";
 import { useFilterParams } from "@app/filter/use-filter-params";
+import { IssueFilterForm, ReportType } from "@agileplanning-io/flow-components";
 
 export const HistogramPage = () => {
   const { issues } = useProjectContext();
@@ -62,14 +62,12 @@ export const HistogramPage = () => {
 
   return (
     <>
-      <FilterOptionsForm
-        filter={filter}
-        setFilter={setFilter}
+      <IssueFilterForm
         issues={issues}
         filteredIssuesCount={filteredIssues.length}
-        showDateSelector={true}
-        showStatusFilter={false}
-        showResolutionFilter={true}
+        filter={filter}
+        setFilter={setFilter}
+        reportType={ReportType.Completed}
         showHierarchyFilter={true}
       />
 
