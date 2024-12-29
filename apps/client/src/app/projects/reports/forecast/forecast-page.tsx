@@ -126,7 +126,6 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
               <Form.Item label="Issue count" style={{ margin: "8px 0" }}>
                 <InputNumber
                   controls={false}
-                  style={{ width: "100%" }}
                   value={value.issueCount}
                   onChange={(issueCount) => {
                     if (isNonNullish(issueCount)) {
