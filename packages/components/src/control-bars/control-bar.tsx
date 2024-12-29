@@ -4,7 +4,7 @@ import { FC, PropsWithChildren } from "react";
 export const ControlBar: FC<PropsWithChildren> = ({ children }) => (
   <Flex
     justify="flex-start"
-    align="center"
+    align="flex-end"
     gap="small"
     style={{
       width: "100%",

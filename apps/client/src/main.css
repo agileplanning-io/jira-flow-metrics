@@ -23,3 +23,7 @@
 tr.excluded {
   opacity: 0.5;
 }
+
+.ant-picker-dropdown {
+  z-index: 10560;
+}

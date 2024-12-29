@@ -228,8 +228,6 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
         </Popdown>
       </FormControl>
 
-      <span>&middot;</span>
-
       <FormControl label="Epic policy">
         <Dropdown
           items={epicPolicyItems}

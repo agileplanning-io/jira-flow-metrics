@@ -66,7 +66,7 @@ const AbsolutePicker: FC<{
 }> = ({ dates, onChange }) => (
   <DatePicker.RangePicker
     suffixIcon={false}
-    style={{ width: "100%" }}
+    style={{ width: "100%", zIndex: 10000 }}
     allowClear={false}
     value={[dates.start, dates.end]}
     onChange={(range) => {

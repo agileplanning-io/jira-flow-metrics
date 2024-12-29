@@ -20,14 +20,14 @@ import {
   getPercentiles,
 } from "@agileplanning-io/flow-lib";
 import { chartStyleAtom } from "../chart-style";
-import { useChartParams } from "./hooks/use-chart-params";
-import { ChartParamsForm } from "./components/chart-params-form";
+import { ChartParamsForm } from "../components/completed-issue-reports/chart-params-form";
 import { useFilterParams } from "@app/filter/use-filter-params";
 import { Project } from "@data/projects";
 import { Button } from "antd";
 import { reverse, sortBy } from "remeda";
 import { downloadCsv } from "@data/csv";
 import { IssueFilterForm, ReportType } from "@agileplanning-io/flow-components";
+import { useChartParams } from "../components/completed-issue-reports/use-chart-params";
 
 export const ScatterplotPage = () => {
   const { issues } = useProjectContext();

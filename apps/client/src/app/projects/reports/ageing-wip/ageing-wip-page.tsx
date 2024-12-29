@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   CompletedIssue,
   DateFilterType,
@@ -9,7 +9,7 @@ import {
   fromClientFilter,
 } from "@agileplanning-io/flow-metrics";
 import { isNil, omit } from "remeda";
-import { Collapse } from "antd";
+import { Checkbox, Collapse } from "antd";
 import { useProjectContext } from "../../context";
 import { AgeingWipChart } from "@agileplanning-io/flow-charts";
 import { filterCompletedIssues } from "@agileplanning-io/flow-metrics";
@@ -23,11 +23,14 @@ import {
   getPercentiles,
 } from "@agileplanning-io/flow-lib";
 import { chartStyleAtom } from "../chart-style";
-import { useChartParams } from "./hooks/use-chart-params";
+import { ChartParams, useChartParams } from "./hooks/use-chart-params";
 import { LoadingSpinner } from "@app/components/loading-spinner";
-import { ChartParamsForm } from "./components/chart-params-form";
 import { useFilterParams } from "@app/filter/use-filter-params";
-import { IssueFilterForm, ReportType } from "@agileplanning-io/flow-components";
+import {
+  ControlBar,
+  IssueFilterForm,
+  ReportType,
+} from "@agileplanning-io/flow-components";
 
 export const AgeingWipPage = () => {
   const { issues } = useProjectContext();
@@ -134,5 +137,43 @@ export const AgeingWipPage = () => {
         </Collapse.Panel>
       </Collapse>
     </>
+  );
+};
+
+type ChartParamsFormProps = {
+  chartParams: ChartParams;
+  setChartParams: (params: ChartParams) => void;
+};
+
+const ChartParamsForm: FC<ChartParamsFormProps> = ({
+  chartParams,
+  setChartParams,
+}) => {
+  return (
+    <ControlBar>
+      <Checkbox
+        checked={chartParams.includeStoppedIssues}
+        onChange={(e) =>
+          setChartParams({
+            ...chartParams,
+            includeStoppedIssues: e.target.checked,
+          })
+        }
+      >
+        <span style={{ whiteSpace: "nowrap" }}>Include stopped issues</span>
+      </Checkbox>
+
+      <Checkbox
+        checked={chartParams.showPercentileLabels}
+        onChange={(e) =>
+          setChartParams({
+            ...chartParams,
+            showPercentileLabels: e.target.checked,
+          })
+        }
+      >
+        <span style={{ whiteSpace: "nowrap" }}>Show percentile labels</span>
+      </Checkbox>
+    </ControlBar>
   );
 };
