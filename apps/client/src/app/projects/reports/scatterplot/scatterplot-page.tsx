@@ -76,6 +76,9 @@ export const ScatterplotPage = () => {
         filteredIssuesCount={filteredIssues.length}
         filter={filter}
         setFilter={setFilter}
+        showAssigneesFilter={true}
+        showStatusFilter={false}
+        showResolutionFilter={true}
       />
 
       <ChartParamsForm

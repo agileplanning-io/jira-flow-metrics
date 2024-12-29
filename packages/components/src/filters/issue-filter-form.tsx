@@ -22,6 +22,9 @@ export type IssueFilterFormProps = {
   filter?: ClientIssueFilter;
   setFilter: (filter: ClientIssueFilter) => void;
   issues?: Issue[];
+  showResolutionFilter: boolean;
+  showStatusFilter: boolean;
+  showAssigneesFilter: boolean;
   filteredIssuesCount?: number;
 };
 
@@ -29,6 +32,9 @@ export const IssueFilterForm: FC<IssueFilterFormProps> = ({
   filter,
   setFilter,
   issues,
+  showResolutionFilter,
+  showStatusFilter,
+  showAssigneesFilter,
   filteredIssuesCount,
 }) => {
   const { token } = theme.useToken();
@@ -70,7 +76,7 @@ export const IssueFilterForm: FC<IssueFilterFormProps> = ({
         <Popdown
           renderLabel={summariseFilter}
           value={filter as IssueAttributesFilter}
-          title="Properties"
+          title="Issues filter"
           onValueChanged={onFilterChanged}
         >
           {(value, setValue) => (
@@ -79,9 +85,9 @@ export const IssueFilterForm: FC<IssueFilterFormProps> = ({
                 filter={value}
                 filterOptions={filterOptions}
                 setFilter={setValue}
-                showAssigneesFilter={false}
-                showResolutionFilter={true}
-                showStatusFilter={false}
+                showAssigneesFilter={showAssigneesFilter}
+                showResolutionFilter={showResolutionFilter}
+                showStatusFilter={showStatusFilter}
                 labelColSpan={6}
                 wrapperColSpan={18}
               />
