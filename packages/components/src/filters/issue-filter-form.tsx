@@ -6,6 +6,7 @@ import {
   ClientIssueFilter,
   DatesFilter,
   HierarchyLevel,
+  Issue,
   IssueAttributesFilter,
 } from "@agileplanning-io/flow-metrics";
 import { FC } from "react";
@@ -17,19 +18,23 @@ import {
 import { summariseFilter } from "./summarise-filter";
 import { DateSelector } from "../date-selector";
 import { formatDate, Interval, isAbsolute } from "@agileplanning-io/flow-lib";
-import { Typography } from "antd";
+import { Tag, theme, Typography } from "antd";
+import { isNonNullish } from "remeda";
 
 export type IssueFilterFormProps = {
   filter?: ClientIssueFilter;
   setFilter: (filter: ClientIssueFilter) => void;
   filterOptions: FilterOptions;
+  meta: { issuesCount?: number; filteredIssuesCount?: number };
 };
 
 export const IssueFilterForm: FC<IssueFilterFormProps> = ({
   filter,
   setFilter,
   filterOptions,
+  meta: { issuesCount, filteredIssuesCount },
 }) => {
+  const { token } = theme.useToken();
   const hierarchyLevelItems: DropdownItemType<HierarchyLevel>[] = [
     { label: "Story", key: HierarchyLevel.Story },
     { label: "Epic", key: HierarchyLevel.Epic },
@@ -98,6 +103,18 @@ export const IssueFilterForm: FC<IssueFilterFormProps> = ({
           )}
         </Popdown>
       </FormControl>
+
+      {isNonNullish(filteredIssuesCount) ? (
+        <Tag
+          style={{
+            marginRight: 0,
+            marginLeft: "auto",
+            backgroundColor: token.colorBgContainer,
+          }}
+        >
+          {filteredIssuesCount} / {issuesCount} issues
+        </Tag>
+      ) : null}
     </ControlBar>
   );
 };

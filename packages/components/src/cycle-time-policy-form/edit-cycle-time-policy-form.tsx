@@ -149,6 +149,24 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
 
   return (
     <ControlBar>
+      {savedPolicies ? (
+        <PoliciesDropdown
+          savedPolicies={savedPolicies}
+          currentPolicy={currentPolicy}
+          saveCycleTimePolicy={saveCycleTimePolicy}
+          deleteCycleTimePolicy={deleteCycleTimePolicy}
+          onPolicySelected={(policy) => {
+            if (policy) {
+              selectCycleTimePolicy(policy.id);
+            } else {
+              selectCycleTimePolicy(undefined);
+            }
+          }}
+          onSaveClicked={onSaveClicked}
+          onMakeDefaultClicked={onMakeDefaultClicked}
+        />
+      ) : null}
+
       <FormControl
         label={
           <>
@@ -283,24 +301,6 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
           </Popdown>
         </FormControl>
       )}
-
-      {savedPolicies ? (
-        <PoliciesDropdown
-          savedPolicies={savedPolicies}
-          currentPolicy={currentPolicy}
-          saveCycleTimePolicy={saveCycleTimePolicy}
-          deleteCycleTimePolicy={deleteCycleTimePolicy}
-          onPolicySelected={(policy) => {
-            if (policy) {
-              selectCycleTimePolicy(policy.id);
-            } else {
-              selectCycleTimePolicy(undefined);
-            }
-          }}
-          onSaveClicked={onSaveClicked}
-          onMakeDefaultClicked={onMakeDefaultClicked}
-        />
-      ) : null}
     </ControlBar>
   );
 };

@@ -16,7 +16,7 @@ import {
   Typography,
   Tooltip,
 } from "antd";
-import { FC, useMemo, useState } from "react";
+import { CSSProperties, FC, useMemo, useState } from "react";
 
 export type CurrentPolicy = DraftPolicy & {
   isChanged: boolean;
