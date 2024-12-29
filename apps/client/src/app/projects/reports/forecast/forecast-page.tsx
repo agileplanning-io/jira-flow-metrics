@@ -25,9 +25,9 @@ import {
   Popdown,
   ReportType,
 } from "@agileplanning-io/flow-components";
-import { Button, Checkbox, Flex, InputNumber, Space, Tag, Tooltip } from "antd";
+import { Button, Checkbox, Form, InputNumber, Space, Tooltip } from "antd";
 import { isNonNullish } from "remeda";
-import { RedoOutlined, TagOutlined } from "@ant-design/icons";
+import { RedoOutlined } from "@ant-design/icons";
 
 export const ForecastPage = () => {
   const { issues } = useProjectContext();
@@ -117,12 +117,16 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
           )}
         >
           {(value, setValue) => (
-            <Space direction="vertical">
-              <FormControl label="Issue count">
+            <Form
+              style={{ width: "350px" }}
+              layout="horizontal"
+              labelCol={{ span: 8 }}
+              wrapperCol={{ span: 16 }}
+            >
+              <Form.Item label="Issue count" style={{ margin: "8px 0" }}>
                 <InputNumber
-                  size="small"
                   controls={false}
-                  style={{ width: "60px" }}
+                  style={{ width: "100%" }}
                   value={value.issueCount}
                   onChange={(issueCount) => {
                     if (isNonNullish(issueCount)) {
@@ -130,12 +134,14 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
                     }
                   }}
                 />
-              </FormControl>
+              </Form.Item>
 
-              <FormControl label="Start date">
+              <Form.Item
+                label="Start date"
+                style={{ margin: "8px 0", width: "100%" }}
+              >
                 <DatePicker
-                  style={{ width: "150px" }}
-                  size="small"
+                  style={{ width: "100%" }}
                   value={value.startDate}
                   allowClear={true}
                   onChange={(e) => {
@@ -145,14 +151,16 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
                     });
                   }}
                 />
-              </FormControl>
+              </Form.Item>
 
-              <FormControl label="Seed">
-                <Space.Compact>
+              <Form.Item
+                label="Seed"
+                style={{ margin: "8px 0", width: "100%" }}
+              >
+                <Space.Compact style={{ width: "100%" }}>
                   <InputNumber
-                    size="small"
                     controls={false}
-                    style={{ width: "160px" }}
+                    style={{ width: "100%" }}
                     value={value.seed}
                     onChange={(e) => {
                       if (e) {
@@ -162,7 +170,6 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
                   />
                   <Tooltip title="New seed">
                     <Button
-                      size="small"
                       icon={
                         <RedoOutlined
                           onClick={() =>
@@ -176,8 +183,8 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
                     />
                   </Tooltip>
                 </Space.Compact>
-              </FormControl>
-            </Space>
+              </Form.Item>
+            </Form>
           )}
         </Popdown>
       </FormControl>
