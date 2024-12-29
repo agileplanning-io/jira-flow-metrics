@@ -11,7 +11,6 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { useAtomValue } from "jotai";
 import { ForecastChart } from "@agileplanning-io/flow-charts";
-import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
 import { useChartParams } from "./hooks/use-chart-params";
 import { chartStyleAtom } from "../chart-style";
@@ -19,6 +18,7 @@ import { ChartParamsForm } from "./components/chart-params-form";
 import { useFilterParams } from "@app/filter/use-filter-params";
 import { defaultDateRange } from "@agileplanning-io/flow-lib";
 import { Project } from "@data/projects";
+import { IssueFilterForm, ReportType } from "@agileplanning-io/flow-components";
 
 export const ForecastPage = () => {
   const { issues } = useProjectContext();
@@ -58,16 +58,15 @@ export const ForecastPage = () => {
 
   return (
     <>
-      <FilterOptionsForm
-        filter={filter}
-        setFilter={setFilter}
+      <IssueFilterForm
         issues={issues}
         filteredIssuesCount={filteredIssues.length}
-        showDateSelector={true}
-        showStatusFilter={false}
-        showResolutionFilter={true}
+        filter={filter}
+        setFilter={setFilter}
+        reportType={ReportType.Completed}
         showHierarchyFilter={true}
       />
+
       <ChartParamsForm
         chartParams={chartParams}
         setChartParams={setChartParams}

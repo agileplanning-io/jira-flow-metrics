@@ -12,7 +12,6 @@ import { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 import { IssuesTable } from "../../../components/issues-table";
-import { FilterOptionsForm } from "../components/filter-form/filter-options-form";
 import { useProjectContext } from "../../context";
 import {
   Percentile,
@@ -28,6 +27,7 @@ import { Project } from "@data/projects";
 import { Button } from "antd";
 import { reverse, sortBy } from "remeda";
 import { downloadCsv } from "@data/csv";
+import { IssueFilterForm, ReportType } from "@agileplanning-io/flow-components";
 
 export const ScatterplotPage = () => {
   const { issues } = useProjectContext();
@@ -71,18 +71,14 @@ export const ScatterplotPage = () => {
 
   return (
     <>
-      {filter ? (
-        <FilterOptionsForm
-          issues={issues}
-          filteredIssuesCount={filteredIssues?.length}
-          filter={filter}
-          setFilter={setFilter}
-          showDateSelector={true}
-          showStatusFilter={false}
-          showResolutionFilter={true}
-          showHierarchyFilter={true}
-        />
-      ) : null}
+      <IssueFilterForm
+        issues={issues}
+        filteredIssuesCount={filteredIssues.length}
+        filter={filter}
+        setFilter={setFilter}
+        reportType={ReportType.Completed}
+        showHierarchyFilter={true}
+      />
 
       <ChartParamsForm
         chartParams={chartParams}

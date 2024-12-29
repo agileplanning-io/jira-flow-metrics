@@ -25,6 +25,7 @@ export const Popdown = <T,>({
       icon={null}
       description={children(state, setState)}
       onConfirm={() => onValueChanged(state)}
+      placement="bottom"
       onOpenChange={(open) => {
         if (open) {
           setState(clone(value));
