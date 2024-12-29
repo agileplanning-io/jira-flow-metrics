@@ -1,9 +1,5 @@
-import {
-  CaretDownOutlined,
-  CloseCircleFilled,
-  CloseCircleOutlined,
-} from "@ant-design/icons";
-import { blue, grey } from "@ant-design/colors";
+import { CaretDownOutlined, CloseCircleFilled } from "@ant-design/icons";
+import { grey } from "@ant-design/colors";
 import { Dropdown as AntDropdown, Button, Typography } from "antd";
 import { MenuItemType } from "antd/es/menu/interface";
 import { useState } from "react";

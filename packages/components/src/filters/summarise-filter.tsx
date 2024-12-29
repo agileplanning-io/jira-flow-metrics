@@ -32,6 +32,10 @@ export const summariseFilter = (filter: IssueAttributesFilter): ReactNode => {
   summary.push(summariseValuesFilter("Labels", filter.labels));
   summary.push(summariseValuesFilter("Components", filter.components));
   summary.push(summariseValuesFilter("Issue Type", filter.issueTypes));
+  summary.push(summariseValuesFilter("Assignees", filter.assignees));
+  summary.push(summariseValuesFilter("Statuses", filter.statuses));
+
+  console.info(summary);
 
   if (compact(summary).length === 0) {
     return (
