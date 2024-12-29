@@ -25,7 +25,7 @@ import { Popdown } from "../control-bars/popdown";
 import {
   FilterOptions,
   IssueAttributesFilterForm,
-} from "../issue-attributes-filter-form";
+} from "../filters/issue-attributes-filter-form";
 import { WorkflowStagesTable } from "../workflow-stages-table";
 
 type EditCycleTimePolicyForm = {
