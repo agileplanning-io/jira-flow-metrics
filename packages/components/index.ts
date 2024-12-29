@@ -7,6 +7,7 @@ export * from "./src/workflow-board/workflow-board";
 export * from "./src/workflow-stages-table";
 export * from "./src/date-selector";
 export * from "./src/issues-table";
+export * from "./src/control-bars/control-bar";
 export * from "./src/control-bars/form-control";
 export * from "./src/control-bars/dropdown";
 export * from "./src/control-bars/popdown";
