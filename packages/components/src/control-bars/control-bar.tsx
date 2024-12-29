@@ -2,7 +2,7 @@ import { Space } from "antd";
 import { FC, PropsWithChildren } from "react";
 
 export const ControlBar: FC<PropsWithChildren> = ({ children }) => (
-  <Space direction="vertical" style={{ marginBottom: 8, width: "100%" }}>
+  <Space direction="vertical" style={{ width: "100%" }}>
     <Space
       direction="horizontal"
       style={{
