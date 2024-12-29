@@ -64,7 +64,7 @@ export const IssueFilterForm: FC<IssueFilterFormProps> = ({
 
   const filterOptions = useFilterOptions(issues, filter);
 
-  const onHierarchyLevelChanged = (hierarchyLevel: HierarchyLevel) =>
+  const onHierarchyLevelChanged = (hierarchyLevel?: HierarchyLevel) =>
     setFilter({ ...filter, hierarchyLevel });
 
   const onFilterChanged = (attributes: IssueAttributesFilter) =>
@@ -94,6 +94,7 @@ export const IssueFilterForm: FC<IssueFilterFormProps> = ({
             items={hierarchyLevelItems}
             selectedKey={filter?.hierarchyLevel}
             onItemSelected={onHierarchyLevelChanged}
+            allowClear={true}
           />
         </FormControl>
       ) : null}
