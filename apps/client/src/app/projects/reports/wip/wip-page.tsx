@@ -132,7 +132,7 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
           })
         }
       >
-        <span style={{ whiteSpace: "nowrap" }}>Include stopped issues</span>
+        Include stopped issues
       </Checkbox>
 
       <Checkbox
@@ -144,7 +144,7 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
           })
         }
       >
-        <span style={{ whiteSpace: "nowrap" }}>Show percentile labels</span>
+        Show percentile labels
       </Checkbox>
 
       <FormControl label="WIP algorithm">
