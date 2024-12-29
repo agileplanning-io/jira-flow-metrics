@@ -14,3 +14,4 @@ export * from "./src/control-bars/help-icon";
 export * from "./src/cycle-time-policy-form/policies-dropdown";
 export * from "./src/cycle-time-policy-form/edit-cycle-time-policy-form";
 export * from "./src/filters/issue-attributes-filter-form";
+export * from "./src/filters/issue-filter-form";

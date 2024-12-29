@@ -1,11 +1,10 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import {
   ClientIssueFilter,
   HierarchyLevel,
   Issue,
-  filterIssues,
 } from "@agileplanning-io/flow-metrics";
-import { flatten, compact, uniq, pipe, map, isNonNullish } from "remeda";
+import { isNonNullish } from "remeda";
 import { Interval } from "@agileplanning-io/flow-lib";
 import { LoadingSpinner } from "@app/components/loading-spinner";
 import { ExpandableOptions } from "@app/components/expandable-options";
@@ -15,6 +14,7 @@ import {
   IssueAttributesFilterForm,
 } from "@agileplanning-io/flow-components";
 import { getHeaderOptions } from "./header-options";
+import { useFilterOptions } from "./use-filter-options";
 
 type FilterOptionsProps = {
   issues?: Issue[];
@@ -37,35 +37,7 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
   filter,
   setFilter,
 }) => {
-  const [resolutionOptions, setResolutionOptions] = useState<string[]>();
-  const [statusOptions, setStatusOptions] = useState<string[]>();
-  const [labelOptions, setLabelOptions] = useState<string[]>();
-  const [componentOptions, setComponentOptions] = useState<string[]>();
-  const [issueTypeOptions, setIssueTypeOptions] = useState<string[]>();
-  const [assigneeOptions, setAssigneeOptions] = useState<string[]>();
-
-  useEffect(() => {
-    if (!issues) {
-      return;
-    }
-
-    const filteredIssues = filterIssues(issues, {
-      hierarchyLevel: filter?.hierarchyLevel,
-    });
-
-    setResolutionOptions(getUniqueValues(filteredIssues, "resolution"));
-    setIssueTypeOptions(getUniqueValues(filteredIssues, "issueType"));
-    setStatusOptions(getUniqueValues(filteredIssues, "status"));
-    setAssigneeOptions(getUniqueValues(filteredIssues, "assignee"));
-    setLabelOptions(makeLabelOptions(filteredIssues));
-    setComponentOptions(makeComponentOptions(filteredIssues));
-  }, [
-    issues,
-    filter,
-    setResolutionOptions,
-    setIssueTypeOptions,
-    setStatusOptions,
-  ]);
+  const filterOptions = useFilterOptions(issues, filter);
 
   if (!filter) {
     return <LoadingSpinner />;
@@ -121,39 +93,11 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
           showResolutionFilter={showResolutionFilter}
           showStatusFilter={showStatusFilter}
           showAssigneesFilter={true}
-          filterOptions={{
-            statuses: statusOptions,
-            resolutions: resolutionOptions,
-            components: componentOptions,
-            issueTypes: issueTypeOptions,
-            assignees: assigneeOptions,
-            labels: labelOptions,
-          }}
+          filterOptions={filterOptions}
           labelColSpan={2}
           wrapperColSpan={10}
         />
       </ExpandableOptions>
     </>
   );
-};
-
-const getUniqueValues = (issues: Issue[], property: keyof Issue): string[] => {
-  return pipe(
-    issues,
-    map((issue) => issue[property]?.toString()),
-    compact,
-    uniq(),
-  );
-};
-
-const makeLabelOptions = (issues: Issue[]): string[] => {
-  const options: string[] = uniq(flatten(issues.map((issue) => issue.labels)));
-  return options;
-};
-
-const makeComponentOptions = (issues: Issue[]): string[] => {
-  const options: string[] = uniq(
-    flatten(issues.map((issue) => issue.components)),
-  );
-  return options;
 };

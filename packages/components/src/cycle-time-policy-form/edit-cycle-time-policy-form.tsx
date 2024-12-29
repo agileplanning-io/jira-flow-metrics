@@ -4,19 +4,16 @@ import {
   CycleTimePolicyType,
   DraftPolicy,
   EpicCycleTimePolicyType,
-  FilterType,
   getSelectedStages,
   IssueAttributesFilter,
   SavedPolicy,
   StatusCycleTimePolicy,
   TransitionStatus,
-  ValuesFilter,
   WorkflowScheme,
 } from "@agileplanning-io/flow-metrics";
-import { Space, Typography } from "antd";
-import { clone, compact, flat } from "remeda";
-import { FC, Key, ReactNode, useMemo } from "react";
-import { ellipsize } from "@agileplanning-io/flow-lib";
+import { Typography } from "antd";
+import { clone, flat } from "remeda";
+import { FC, Key, useMemo } from "react";
 import { CurrentPolicy, PoliciesDropdown } from "./policies-dropdown";
 import { Dropdown, DropdownItemType } from "../control-bars/dropdown";
 import { FormControl } from "../control-bars/form-control";
@@ -28,6 +25,7 @@ import {
 } from "../filters/issue-attributes-filter-form";
 import { WorkflowStagesTable } from "../workflow-stages-table";
 import { ControlBar } from "../control-bars/control-bar";
+import { summariseFilter } from "../filters/summarise-filter";
 
 type EditCycleTimePolicyForm = {
   currentPolicy: CurrentPolicy;
@@ -137,43 +135,6 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
       }
       updateCurrentPolicy(policy);
     }
-  };
-
-  const summariseFilter = (filter: IssueAttributesFilter): ReactNode => {
-    const summary: (string | undefined)[] = [];
-
-    const summariseValuesFilter = (
-      name: string,
-      valuesFilter?: ValuesFilter,
-    ) => {
-      if (!valuesFilter?.values?.length) {
-        return undefined;
-      }
-
-      const op =
-        valuesFilter.values.length === 1
-          ? valuesFilter.type === FilterType.Include
-            ? "="
-            : "!="
-          : valuesFilter.type === FilterType.Include
-          ? "in"
-          : "excl.";
-
-      return `${name} ${op} ${valuesFilter.values.join(",")}`;
-    };
-
-    summary.push(summariseValuesFilter("Resolution", filter.resolutions));
-    summary.push(summariseValuesFilter("Labels", filter.labels));
-    summary.push(summariseValuesFilter("Components", filter.components));
-    summary.push(summariseValuesFilter("Issue Type", filter.issueTypes));
-
-    if (compact(summary).length === 0) {
-      return (
-        <Typography.Text type="secondary">No filter applied</Typography.Text>
-      );
-    }
-
-    return ellipsize(compact(summary).join(", "), 48);
   };
 
   const policyItems: DropdownItemType<CycleTimePolicyType>[] = [
