@@ -1,7 +1,7 @@
 import { TimeUnit } from "@agileplanning-io/flow-lib";
 import { boolean } from "@agileplanning-io/flow-lib";
 import { z } from "zod";
-import { useChartParamsState } from "../../hooks/use-chart-params";
+import { useChartParamsState } from "../hooks/use-chart-params";
 
 const chartParamsSchema = z.object({
   timeUnit: z
