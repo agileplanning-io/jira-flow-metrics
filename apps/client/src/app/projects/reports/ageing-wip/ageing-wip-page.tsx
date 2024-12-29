@@ -98,7 +98,7 @@ export const AgeingWipPage = () => {
     <>
       <IssueFilterForm
         issues={issues}
-        filteredIssuesCount={benchmarkIssues.length}
+        filteredIssuesCount={ageingIssues.length}
         filter={filter}
         setFilter={setFilter}
         reportType={ReportType.Wip}
