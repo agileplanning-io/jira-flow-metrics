@@ -15,18 +15,19 @@ import { useProjectContext } from "../../context";
 import { ChartParams, newSeed, useChartParams } from "./use-chart-params";
 import { chartStyleAtom } from "../chart-style";
 import { useFilterParams } from "@app/filter/use-filter-params";
-import { defaultDateRange } from "@agileplanning-io/flow-lib";
+import { defaultDateRange, formatDate } from "@agileplanning-io/flow-lib";
 import { Project } from "@data/projects";
 import {
   ControlBar,
   DatePicker,
   FormControl,
   IssueFilterForm,
+  Popdown,
   ReportType,
 } from "@agileplanning-io/flow-components";
-import { Button, Checkbox, InputNumber, Space, Tooltip } from "antd";
+import { Button, Checkbox, Flex, InputNumber, Space, Tag, Tooltip } from "antd";
 import { isNonNullish } from "remeda";
-import { RedoOutlined } from "@ant-design/icons";
+import { RedoOutlined, TagOutlined } from "@ant-design/icons";
 
 export const ForecastPage = () => {
   const { issues } = useProjectContext();
@@ -161,8 +162,179 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
             </Tooltip>
           </Space.Compact>
         </FormControl>
+
+        <FormControl label="Simulation inputs">
+          <Popdown
+            title="Simulation inputs"
+            value={chartParams}
+            onValueChanged={setChartParams}
+            renderLabel={(value) => (
+              <Space direction="horizontal">
+                <span>{value.issueCount} issues</span>
+                &middot;
+                <span>start {formatDate(value.startDate)}</span>
+                &middot;
+                <span>seed {value.seed}</span>
+              </Space>
+            )}
+          >
+            {(value, setValue) => (
+              <Space direction="vertical">
+                <FormControl label="Issue count">
+                  <InputNumber
+                    size="small"
+                    controls={false}
+                    style={{ width: "60px" }}
+                    value={value.issueCount}
+                    onChange={(issueCount) => {
+                      if (isNonNullish(issueCount)) {
+                        setValue({ ...value, issueCount });
+                      }
+                    }}
+                  />
+                </FormControl>
+
+                <FormControl label="Start date">
+                  <DatePicker
+                    style={{ width: "150px" }}
+                    size="small"
+                    value={value.startDate}
+                    allowClear={true}
+                    onChange={(e) => {
+                      setValue({
+                        ...value,
+                        startDate: e ?? undefined,
+                      });
+                    }}
+                  />
+                </FormControl>
+
+                <FormControl label="Seed">
+                  <Space.Compact>
+                    <InputNumber
+                      size="small"
+                      controls={false}
+                      style={{ width: "160px" }}
+                      value={value.seed}
+                      onChange={(e) => {
+                        if (e) {
+                          setValue({ ...value, seed: e });
+                        }
+                      }}
+                    />
+                    <Tooltip title="New seed">
+                      <Button
+                        size="small"
+                        icon={
+                          <RedoOutlined
+                            onClick={() =>
+                              setValue({
+                                ...value,
+                                seed: newSeed(),
+                              })
+                            }
+                          />
+                        }
+                      />
+                    </Tooltip>
+                  </Space.Compact>
+                </FormControl>
+              </Space>
+            )}
+          </Popdown>
+        </FormControl>
+
+        <Popdown
+          title="Options"
+          value={chartParams}
+          onValueChanged={setChartParams}
+          renderLabel={() => "Simulation options"}
+          // renderLabel={(value) => (
+          //   <Space direction="horizontal">
+          //     {value.includeLongTail ? "Incl. long tail" : "Excl. long tail"}
+          //     &middot;
+          //     {value.includeLeadTimes ? "Incl. lead times" : "Excl. lead times"}
+          //     &middot;
+          //     {value.excludeOutliers ? "Excl. outliers" : "Incl. outliers"}
+          //   </Space>
+          // )}
+        >
+          {(value, setValue) => <span>{JSON.stringify(value)}</span>}
+        </Popdown>
+
+        <Checkbox
+          checked={chartParams.showPercentileLabels}
+          onChange={(e) =>
+            setChartParams({
+              ...chartParams,
+              showPercentileLabels: e.target.checked,
+            })
+          }
+        >
+          Show percentile labels
+        </Checkbox>
+        {/* <Flex gap="0px">
+          <Tag.CheckableTag
+            style={{ border: "solid 1px #f00" }}
+            checked={chartParams.includeLongTail}
+            onChange={(includeLongTail) =>
+              setChartParams({
+                ...chartParams,
+                includeLongTail,
+              })
+            }
+          >
+            Include long tail
+          </Tag.CheckableTag>
+
+          <Tag.CheckableTag
+            checked={chartParams.includeLeadTimes}
+            onChange={(includeLeadTimes) =>
+              setChartParams({
+                ...chartParams,
+                includeLeadTimes,
+              })
+            }
+          >
+            Include lead times
+          </Tag.CheckableTag>
+        </Flex> */}
+
+        {/* <Checkbox
+          checked={chartParams.includeLongTail}
+          onChange={(e) =>
+            setChartParams({
+              ...chartParams,
+              includeLongTail: e.target.checked,
+            })
+          }
+        >
+          Include long tail
+        </Checkbox> */}
+        {/* <Checkbox
+          checked={chartParams.includeLeadTimes}
+          onChange={(e) =>
+            setChartParams({
+              ...chartParams,
+              includeLeadTimes: e.target.checked,
+            })
+          }
+        >
+          Include lead times
+        </Checkbox> */}
+        {/* <Checkbox
+          checked={chartParams.excludeOutliers}
+          onChange={(e) =>
+            setChartParams({
+              ...chartParams,
+              excludeOutliers: e.target.checked,
+            })
+          }
+        >
+          Exclude cycle time outliers
+        </Checkbox> */}
       </ControlBar>
-      <ControlBar>
+      {/* <ControlBar>
         <Checkbox
           checked={chartParams.includeLongTail}
           onChange={(e) =>
@@ -207,7 +379,7 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
         >
           Show percentile labels
         </Checkbox>
-      </ControlBar>
+      </ControlBar> */}
     </>
   );
 };
