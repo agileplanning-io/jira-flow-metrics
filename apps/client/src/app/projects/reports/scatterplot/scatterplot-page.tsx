@@ -28,7 +28,6 @@ import { Button } from "antd";
 import { reverse, sortBy } from "remeda";
 import { downloadCsv } from "@data/csv";
 import { IssueFilterForm } from "@agileplanning-io/flow-components";
-import { useFilterOptions } from "../components/filter-form/use-filter-options";
 
 export const ScatterplotPage = () => {
   const { issues } = useProjectContext();
@@ -38,8 +37,6 @@ export const ScatterplotPage = () => {
     dates: defaultDateRange(),
     hierarchyLevel: HierarchyLevel.Story,
   }));
-
-  const filterOptions = useFilterOptions(issues, filter);
 
   const [excludedIssues, setExcludedIssues] = useState<string[]>([]);
 
@@ -75,13 +72,10 @@ export const ScatterplotPage = () => {
   return (
     <>
       <IssueFilterForm
-        meta={{
-          issuesCount: issues?.length,
-          filteredIssuesCount: filteredIssues.length,
-        }}
+        issues={issues}
+        filteredIssuesCount={filteredIssues.length}
         filter={filter}
         setFilter={setFilter}
-        filterOptions={filterOptions}
       />
 
       <ChartParamsForm

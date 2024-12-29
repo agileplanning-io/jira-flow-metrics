@@ -4,41 +4,40 @@ import { FormControl } from "../control-bars/form-control";
 import { HelpIcon } from "../control-bars/help-icon";
 import {
   ClientIssueFilter,
-  DatesFilter,
   HierarchyLevel,
   Issue,
   IssueAttributesFilter,
 } from "@agileplanning-io/flow-metrics";
 import { FC } from "react";
 import { Popdown } from "../control-bars/popdown";
-import {
-  FilterOptions,
-  IssueAttributesFilterForm,
-} from "./issue-attributes-filter-form";
+import { IssueAttributesFilterForm } from "./issue-attributes-filter-form";
 import { summariseFilter } from "./summarise-filter";
 import { DateSelector } from "../date-selector";
 import { formatDate, Interval, isAbsolute } from "@agileplanning-io/flow-lib";
 import { Tag, theme, Typography } from "antd";
 import { isNonNullish } from "remeda";
+import { useFilterOptions } from "./use-filter-options";
 
 export type IssueFilterFormProps = {
   filter?: ClientIssueFilter;
   setFilter: (filter: ClientIssueFilter) => void;
-  filterOptions: FilterOptions;
-  meta: { issuesCount?: number; filteredIssuesCount?: number };
+  issues?: Issue[];
+  filteredIssuesCount?: number;
 };
 
 export const IssueFilterForm: FC<IssueFilterFormProps> = ({
   filter,
   setFilter,
-  filterOptions,
-  meta: { issuesCount, filteredIssuesCount },
+  issues,
+  filteredIssuesCount,
 }) => {
   const { token } = theme.useToken();
   const hierarchyLevelItems: DropdownItemType<HierarchyLevel>[] = [
     { label: "Story", key: HierarchyLevel.Story },
     { label: "Epic", key: HierarchyLevel.Epic },
   ];
+
+  const filterOptions = useFilterOptions(issues, filter);
 
   const onHierarchyLevelChanged = (hierarchyLevel: HierarchyLevel) =>
     setFilter({ ...filter, hierarchyLevel });
@@ -112,7 +111,7 @@ export const IssueFilterForm: FC<IssueFilterFormProps> = ({
             backgroundColor: token.colorBgContainer,
           }}
         >
-          {filteredIssuesCount} / {issuesCount} issues
+          {filteredIssuesCount} / {issues?.length} issues
         </Tag>
       ) : null}
     </ControlBar>

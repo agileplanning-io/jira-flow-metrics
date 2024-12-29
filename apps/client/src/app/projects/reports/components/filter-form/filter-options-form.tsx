@@ -12,9 +12,9 @@ import { Col, Form, Row, Select, Tag } from "antd";
 import {
   DateSelector,
   IssueAttributesFilterForm,
+  useFilterOptions,
 } from "@agileplanning-io/flow-components";
 import { getHeaderOptions } from "./header-options";
-import { useFilterOptions } from "./use-filter-options";
 
 type FilterOptionsProps = {
   issues?: Issue[];

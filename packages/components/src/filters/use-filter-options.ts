@@ -1,4 +1,3 @@
-import { FilterOptions } from "@agileplanning-io/flow-components";
 import {
   ClientIssueFilter,
   filterIssues,
@@ -6,6 +5,7 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { useEffect, useState } from "react";
 import { pipe, compact, uniq, flatten, map } from "remeda";
+import { FilterOptions } from "./issue-attributes-filter-form";
 
 export const useFilterOptions = (
   issues?: Issue[],
