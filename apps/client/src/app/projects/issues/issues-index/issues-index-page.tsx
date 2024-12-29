@@ -107,6 +107,7 @@ export const IssuesIndexPage = () => {
           />
         </FormControl>
       </ControlBar>
+
       <IssuesTable
         issues={filteredIssues}
         defaultSortField="created"

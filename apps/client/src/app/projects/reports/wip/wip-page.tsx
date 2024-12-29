@@ -43,7 +43,7 @@ export const WipPage = () => {
   useEffect(() => {
     // reset the selected issue list if we change the filter
     setSelectedIssues([]);
-  }, [filter, chartParams.includeStoppedIssues]);
+  }, [filter, chartParams.includeStoppedIssues, chartParams.wipType]);
 
   useEffect(() => {
     if (filter && issues) {
