@@ -17,20 +17,18 @@ export type FilterOptions = {
   labels?: string[];
 };
 
-export type EditFilterFormProps = {
+export type IssueAttributesFilterFormProps = {
   filter: ClientIssueFilter;
   setFilter: (filter: ClientIssueFilter) => void;
-  showDateSelector: boolean;
   showResolutionFilter: boolean;
   showStatusFilter: boolean;
-  showHierarchyFilter: boolean;
   showAssigneesFilter: boolean;
   filterOptions: FilterOptions;
   labelColSpan: number;
   wrapperColSpan: number;
 };
 
-export const EditFilterForm: FC<EditFilterFormProps> = ({
+export const IssueAttributesFilterForm: FC<IssueAttributesFilterFormProps> = ({
   filter,
   setFilter,
   showResolutionFilter,
