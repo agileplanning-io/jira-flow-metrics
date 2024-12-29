@@ -101,285 +101,153 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
   chartParams,
   setChartParams,
 }) => {
-  const onCountChanged = (issueCount: number | null) => {
-    if (isNonNullish(issueCount)) {
-      setChartParams({ ...chartParams, issueCount });
-    }
-  };
-
   return (
-    <>
-      <ControlBar>
-        <FormControl label="Issue count">
-          <InputNumber
-            size="small"
-            controls={false}
-            style={{ width: "60px" }}
-            value={chartParams.issueCount}
-            onChange={onCountChanged}
-          />
-        </FormControl>
-
-        <FormControl label="Start date">
-          <DatePicker
-            style={{ width: "150px" }}
-            size="small"
-            value={chartParams.startDate}
-            allowClear={true}
-            onChange={(e) => {
-              setChartParams({
-                ...chartParams,
-                startDate: e ?? undefined,
-              });
-            }}
-          />
-        </FormControl>
-
-        <FormControl label="Seed">
-          <Space.Compact>
-            <InputNumber
-              size="small"
-              controls={false}
-              style={{ width: "160px" }}
-              value={chartParams.seed}
-              onChange={(e) => {
-                if (e) {
-                  setChartParams({ ...chartParams, seed: e });
-                }
-              }}
-            />
-            <Tooltip title="New seed">
-              <Button
-                size="small"
-                icon={
-                  <RedoOutlined
-                    onClick={() =>
-                      setChartParams({ ...chartParams, seed: newSeed() })
+    <ControlBar>
+      <FormControl label="Inputs">
+        <Popdown
+          title="Simulation inputs"
+          value={chartParams}
+          onValueChanged={setChartParams}
+          renderLabel={(value) => (
+            <Space direction="horizontal">
+              <span>{value.issueCount} issues</span>
+              <span>&middot;</span>
+              <span>Start {formatDate(value.startDate)}</span>
+            </Space>
+          )}
+        >
+          {(value, setValue) => (
+            <Space direction="vertical">
+              <FormControl label="Issue count">
+                <InputNumber
+                  size="small"
+                  controls={false}
+                  style={{ width: "60px" }}
+                  value={value.issueCount}
+                  onChange={(issueCount) => {
+                    if (isNonNullish(issueCount)) {
+                      setValue({ ...value, issueCount });
                     }
-                  />
-                }
-              />
-            </Tooltip>
-          </Space.Compact>
-        </FormControl>
+                  }}
+                />
+              </FormControl>
 
-        <FormControl label="Simulation inputs">
-          <Popdown
-            title="Simulation inputs"
-            value={chartParams}
-            onValueChanged={setChartParams}
-            renderLabel={(value) => (
-              <Space direction="horizontal">
-                <span>{value.issueCount} issues</span>
-                &middot;
-                <span>start {formatDate(value.startDate)}</span>
-                &middot;
-                <span>seed {value.seed}</span>
-              </Space>
-            )}
-          >
-            {(value, setValue) => (
-              <Space direction="vertical">
-                <FormControl label="Issue count">
+              <FormControl label="Start date">
+                <DatePicker
+                  style={{ width: "150px" }}
+                  size="small"
+                  value={value.startDate}
+                  allowClear={true}
+                  onChange={(e) => {
+                    setValue({
+                      ...value,
+                      startDate: e ?? undefined,
+                    });
+                  }}
+                />
+              </FormControl>
+
+              <FormControl label="Seed">
+                <Space.Compact>
                   <InputNumber
                     size="small"
                     controls={false}
-                    style={{ width: "60px" }}
-                    value={value.issueCount}
-                    onChange={(issueCount) => {
-                      if (isNonNullish(issueCount)) {
-                        setValue({ ...value, issueCount });
+                    style={{ width: "160px" }}
+                    value={value.seed}
+                    onChange={(e) => {
+                      if (e) {
+                        setValue({ ...value, seed: e });
                       }
                     }}
                   />
-                </FormControl>
-
-                <FormControl label="Start date">
-                  <DatePicker
-                    style={{ width: "150px" }}
-                    size="small"
-                    value={value.startDate}
-                    allowClear={true}
-                    onChange={(e) => {
-                      setValue({
-                        ...value,
-                        startDate: e ?? undefined,
-                      });
-                    }}
-                  />
-                </FormControl>
-
-                <FormControl label="Seed">
-                  <Space.Compact>
-                    <InputNumber
+                  <Tooltip title="New seed">
+                    <Button
                       size="small"
-                      controls={false}
-                      style={{ width: "160px" }}
-                      value={value.seed}
-                      onChange={(e) => {
-                        if (e) {
-                          setValue({ ...value, seed: e });
-                        }
-                      }}
+                      icon={
+                        <RedoOutlined
+                          onClick={() =>
+                            setValue({
+                              ...value,
+                              seed: newSeed(),
+                            })
+                          }
+                        />
+                      }
                     />
-                    <Tooltip title="New seed">
-                      <Button
-                        size="small"
-                        icon={
-                          <RedoOutlined
-                            onClick={() =>
-                              setValue({
-                                ...value,
-                                seed: newSeed(),
-                              })
-                            }
-                          />
-                        }
-                      />
-                    </Tooltip>
-                  </Space.Compact>
-                </FormControl>
-              </Space>
-            )}
-          </Popdown>
-        </FormControl>
+                  </Tooltip>
+                </Space.Compact>
+              </FormControl>
+            </Space>
+          )}
+        </Popdown>
+      </FormControl>
 
+      <FormControl label="Options">
         <Popdown
-          title="Options"
+          title="Simulation options"
           value={chartParams}
           onValueChanged={setChartParams}
-          renderLabel={() => "Simulation options"}
-          // renderLabel={(value) => (
-          //   <Space direction="horizontal">
-          //     {value.includeLongTail ? "Incl. long tail" : "Excl. long tail"}
-          //     &middot;
-          //     {value.includeLeadTimes ? "Incl. lead times" : "Excl. lead times"}
-          //     &middot;
-          //     {value.excludeOutliers ? "Excl. outliers" : "Incl. outliers"}
-          //   </Space>
-          // )}
+          renderLabel={(value) => (
+            <Space direction="horizontal">
+              {value.includeLongTail ? "Incl. long tail" : "Excl. long tail"}
+              &middot;
+              {value.includeLeadTimes ? "Incl. lead times" : "Excl. lead times"}
+              &middot;
+              {value.excludeOutliers ? "Excl. outliers" : "Incl. outliers"}
+            </Space>
+          )}
         >
-          {(value, setValue) => <span>{JSON.stringify(value)}</span>}
+          {(value, setValue) => (
+            <Space direction="vertical">
+              <Checkbox
+                checked={value.includeLongTail}
+                onChange={(e) =>
+                  setValue({
+                    ...value,
+                    includeLongTail: e.target.checked,
+                  })
+                }
+              >
+                Include long tail
+              </Checkbox>
+              <Checkbox
+                checked={value.includeLeadTimes}
+                onChange={(e) =>
+                  setValue({
+                    ...value,
+                    includeLeadTimes: e.target.checked,
+                  })
+                }
+              >
+                Include lead times
+              </Checkbox>
+              <Checkbox
+                checked={value.excludeOutliers}
+                onChange={(e) =>
+                  setValue({
+                    ...value,
+                    excludeOutliers: e.target.checked,
+                  })
+                }
+              >
+                Exclude cycle time outliers
+              </Checkbox>
+            </Space>
+          )}
         </Popdown>
+      </FormControl>
 
-        <Checkbox
-          checked={chartParams.showPercentileLabels}
-          onChange={(e) =>
-            setChartParams({
-              ...chartParams,
-              showPercentileLabels: e.target.checked,
-            })
-          }
-        >
-          Show percentile labels
-        </Checkbox>
-        {/* <Flex gap="0px">
-          <Tag.CheckableTag
-            style={{ border: "solid 1px #f00" }}
-            checked={chartParams.includeLongTail}
-            onChange={(includeLongTail) =>
-              setChartParams({
-                ...chartParams,
-                includeLongTail,
-              })
-            }
-          >
-            Include long tail
-          </Tag.CheckableTag>
-
-          <Tag.CheckableTag
-            checked={chartParams.includeLeadTimes}
-            onChange={(includeLeadTimes) =>
-              setChartParams({
-                ...chartParams,
-                includeLeadTimes,
-              })
-            }
-          >
-            Include lead times
-          </Tag.CheckableTag>
-        </Flex> */}
-
-        {/* <Checkbox
-          checked={chartParams.includeLongTail}
-          onChange={(e) =>
-            setChartParams({
-              ...chartParams,
-              includeLongTail: e.target.checked,
-            })
-          }
-        >
-          Include long tail
-        </Checkbox> */}
-        {/* <Checkbox
-          checked={chartParams.includeLeadTimes}
-          onChange={(e) =>
-            setChartParams({
-              ...chartParams,
-              includeLeadTimes: e.target.checked,
-            })
-          }
-        >
-          Include lead times
-        </Checkbox> */}
-        {/* <Checkbox
-          checked={chartParams.excludeOutliers}
-          onChange={(e) =>
-            setChartParams({
-              ...chartParams,
-              excludeOutliers: e.target.checked,
-            })
-          }
-        >
-          Exclude cycle time outliers
-        </Checkbox> */}
-      </ControlBar>
-      {/* <ControlBar>
-        <Checkbox
-          checked={chartParams.includeLongTail}
-          onChange={(e) =>
-            setChartParams({
-              ...chartParams,
-              includeLongTail: e.target.checked,
-            })
-          }
-        >
-          Include long tail
-        </Checkbox>
-        <Checkbox
-          checked={chartParams.includeLeadTimes}
-          onChange={(e) =>
-            setChartParams({
-              ...chartParams,
-              includeLeadTimes: e.target.checked,
-            })
-          }
-        >
-          Include lead times
-        </Checkbox>
-        <Checkbox
-          checked={chartParams.excludeOutliers}
-          onChange={(e) =>
-            setChartParams({
-              ...chartParams,
-              excludeOutliers: e.target.checked,
-            })
-          }
-        >
-          Exclude cycle time outliers
-        </Checkbox>
-        <Checkbox
-          checked={chartParams.showPercentileLabels}
-          onChange={(e) =>
-            setChartParams({
-              ...chartParams,
-              showPercentileLabels: e.target.checked,
-            })
-          }
-        >
-          Show percentile labels
-        </Checkbox>
-      </ControlBar> */}
-    </>
+      <Checkbox
+        checked={chartParams.showPercentileLabels}
+        onChange={(e) =>
+          setChartParams({
+            ...chartParams,
+            showPercentileLabels: e.target.checked,
+          })
+        }
+      >
+        Show percentile labels
+      </Checkbox>
+    </ControlBar>
   );
 };
