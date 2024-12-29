@@ -12,7 +12,7 @@ import { ExpandableOptions } from "@app/components/expandable-options";
 import { Col, Form, Row, Select, Tag } from "antd";
 import {
   DateSelector,
-  EditFilterForm,
+  IssueAttributesFilterForm,
 } from "@agileplanning-io/flow-components";
 import { getHeaderOptions } from "./header-options";
 
@@ -115,13 +115,11 @@ export const FilterOptionsForm: FC<FilterOptionsProps> = ({
           ) : null
         }
       >
-        <EditFilterForm
+        <IssueAttributesFilterForm
           filter={filter}
           setFilter={setFilter}
-          showDateSelector={showDateSelector}
           showResolutionFilter={showResolutionFilter}
           showStatusFilter={showStatusFilter}
-          showHierarchyFilter={showHierarchyFilter}
           showAssigneesFilter={true}
           filterOptions={{
             statuses: statusOptions,

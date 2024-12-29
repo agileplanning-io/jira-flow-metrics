@@ -3,7 +3,7 @@ import { Project, UpdateProjectParams, useUpdateProject } from "@data/projects";
 import { Button, Form, Input } from "antd";
 import { FC, useCallback, useState } from "react";
 import {
-  EditFilterForm,
+  IssueAttributesFilterForm,
   WorkflowBoard,
   WorkflowBoardProps,
 } from "@agileplanning-io/flow-components";
@@ -113,11 +113,9 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
 
       <h2>Default Completed Work Filter</h2>
 
-      <EditFilterForm
+      <IssueAttributesFilterForm
         filter={updatedDefaultCompletedFilter}
         setFilter={setUpdatedDefaultCompletedFilter}
-        showDateSelector={false}
-        showHierarchyFilter={false}
         showResolutionFilter={true}
         showStatusFilter={false}
         showAssigneesFilter={false}

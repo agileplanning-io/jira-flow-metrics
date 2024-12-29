@@ -22,7 +22,10 @@ import { Dropdown, DropdownItemType } from "../control-bars/dropdown";
 import { FormControl } from "../control-bars/form-control";
 import { HelpIcon } from "../control-bars/help-icon";
 import { Popdown } from "../control-bars/popdown";
-import { FilterOptions, EditFilterForm } from "../edit-filter-form";
+import {
+  FilterOptions,
+  IssueAttributesFilterForm,
+} from "../issue-attributes-filter-form";
 import { WorkflowStagesTable } from "../workflow-stages-table";
 
 type EditCycleTimePolicyForm = {
@@ -277,13 +280,11 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
             >
               {(value, setValue) => (
                 <div style={{ width: 480 }}>
-                  <EditFilterForm
+                  <IssueAttributesFilterForm
                     filter={value}
                     filterOptions={filterOptions}
                     setFilter={setValue}
-                    showDateSelector={false}
                     showAssigneesFilter={false}
-                    showHierarchyFilter={false}
                     showResolutionFilter={true}
                     showStatusFilter={false}
                     labelColSpan={6}
