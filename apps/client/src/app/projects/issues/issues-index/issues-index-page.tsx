@@ -5,12 +5,14 @@ import {
   filterIssues,
 } from "@agileplanning-io/flow-metrics";
 import { omit, pipe, sortBy } from "remeda";
-import { Col, Form, Input } from "antd";
+import { Input } from "antd";
 import * as fuzzball from "fuzzball";
 import { useProjectContext } from "../../context";
 import { useFilterParams } from "@app/filter/use-filter-params";
 import { IssuesTable } from "@app/components/issues-table";
 import {
+  ControlBar,
+  FormControl,
   IssueFilterForm,
   ReportType,
   SortState,
@@ -95,14 +97,16 @@ export const IssuesIndexPage = () => {
         showHierarchyFilter={true}
       />
 
-      <Col span={6}>
-        <Form.Item label="Search">
+      <ControlBar>
+        <FormControl label="Search">
           <Input
+            size="small"
+            style={{ width: "250px" }}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-        </Form.Item>
-      </Col>
+        </FormControl>
+      </ControlBar>
       <IssuesTable
         issues={filteredIssues}
         defaultSortField="created"

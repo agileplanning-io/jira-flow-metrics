@@ -123,6 +123,14 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
 
   return (
     <ControlBar>
+      <FormControl label="WIP algorithm">
+        <Dropdown
+          items={wipTypeItems}
+          selectedKey={chartParams.wipType}
+          onItemSelected={onWipTypeChanged}
+        />
+      </FormControl>
+
       <Checkbox
         checked={chartParams.includeStoppedIssues}
         onChange={(e) =>
@@ -146,14 +154,6 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
       >
         Show percentile labels
       </Checkbox>
-
-      <FormControl label="WIP algorithm">
-        <Dropdown
-          items={wipTypeItems}
-          selectedKey={chartParams.wipType}
-          onItemSelected={onWipTypeChanged}
-        />
-      </FormControl>
     </ControlBar>
   );
 };
