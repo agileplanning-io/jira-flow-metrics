@@ -1,4 +1,4 @@
-import { Typography } from "antd";
+import { Flex, Typography } from "antd";
 import React, { FC, PropsWithChildren } from "react";
 
 type FormControlProps = {
@@ -7,12 +7,11 @@ type FormControlProps = {
 
 export const FormControl: FC<FormControlProps> = ({ label, children }) => {
   return (
-    <span style={{ whiteSpace: "normal" }}>
+    <Flex wrap justify="flex-start" align="flex-end" gap="small">
       <Typography.Text type="secondary" style={{ whiteSpace: "nowrap" }}>
-        {label}{" "}
+        {label}
       </Typography.Text>
-      <wbr />
       {children}
-    </span>
+    </Flex>
   );
 };

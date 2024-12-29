@@ -1,6 +1,6 @@
 import { boolean } from "@agileplanning-io/flow-lib";
 import { z } from "zod";
-import { useChartParamsState } from "../../hooks/use-chart-params";
+import { useChartParamsState } from "../hooks/use-chart-params";
 
 export const newSeed = () =>
   Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
