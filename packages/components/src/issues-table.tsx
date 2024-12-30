@@ -16,7 +16,7 @@ import {
 import { compareAsc, differenceInMinutes } from "date-fns";
 import { ColumnType, ColumnsType, SortOrder } from "antd/es/table/interface";
 import { FC, useEffect, useState } from "react";
-import { isNullish } from "remeda";
+import { isNullish, sortBy } from "remeda";
 
 import { QuestionCircleOutlined, ZoomInOutlined } from "@ant-design/icons";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
@@ -72,6 +72,10 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
   const [excludedIssueKeys, setExcludedIssueKeys] = useState<string[]>(
     defaultExcludedIssueKeys ?? [],
   );
+
+  const sortedPercentiles = percentiles
+    ? sortBy(percentiles, (percentile) => -percentile.percentile)
+    : undefined;
 
   const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
 
@@ -199,12 +203,12 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
       key: "cycleTime",
       render: (metrics: IssueFlowMetrics) => {
         const cycleTime = metrics.cycleTime ?? metrics.age;
-        if (!percentiles) {
+        if (!sortedPercentiles) {
           return formatNumber(cycleTime);
         }
         const percentile = isNullish(cycleTime)
           ? undefined
-          : percentiles.find((p) => cycleTime >= p.value)?.percentile;
+          : sortedPercentiles.find((p) => cycleTime >= p.value)?.percentile;
         const color = getPercentileColor(percentile);
         return (
           <Space direction="horizontal" style={{ float: "right" }}>

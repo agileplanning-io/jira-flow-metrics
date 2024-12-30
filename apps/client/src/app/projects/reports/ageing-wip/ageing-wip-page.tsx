@@ -82,8 +82,7 @@ export const AgeingWipPage = () => {
       const percentiles = getPercentiles(
         benchmarkIssues.map((issue) => issue.metrics.cycleTime),
       );
-      // reversing the percentiles make the bar color lookup easier
-      setPercentiles(percentiles?.reverse() ?? []);
+      setPercentiles(percentiles);
     }
   }, [
     issues,
