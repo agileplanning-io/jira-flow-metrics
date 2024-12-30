@@ -2,18 +2,24 @@ import {
   HierarchyLevel,
   Issue,
   TimeSpentRow,
+  WorkflowScheme,
   fromClientFilter,
+  getSelectedStages,
   timeSpentInPeriod,
 } from "@agileplanning-io/flow-metrics";
-import { useEffect, useState } from "react";
+import { FC, Key, useEffect, useState } from "react";
 import { useProjectContext } from "../../context";
 import { Space, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import {
+  ControlBar,
+  FormControl,
   IssueFilterForm,
   IssueResolution,
   IssueStatus,
+  Popdown,
   ReportType,
+  WorkflowStagesTable,
 } from "@agileplanning-io/flow-components";
 import { useNavigationContext } from "../../../navigation/context";
 import { DateFilterType, filterIssues } from "@agileplanning-io/flow-metrics";
@@ -28,10 +34,13 @@ import { useOutletContext } from "react-router-dom";
 import { ProjectsContext } from "@app/projects/projects-layout";
 import { useFilterParams } from "@app/filter/use-filter-params";
 import { asAbsolute, defaultDateRange } from "@agileplanning-io/flow-lib";
+import { z } from "zod";
+import { useChartParamsState } from "../hooks/use-chart-params";
+import { flat } from "remeda";
 
 export const TimeSpentPage = () => {
   const { projectId } = useNavigationContext();
-  const { issues } = useProjectContext();
+  const { issues, project } = useProjectContext();
   const { hidePolicyForm } = useOutletContext<ProjectsContext>();
 
   const { filter, setFilter } = useFilterParams({
@@ -40,6 +49,8 @@ export const TimeSpentPage = () => {
 
   const [filteredIssues, setFilteredIssues] = useState<Issue[]>([]);
   const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
+
+  const { chartParams, setChartParams } = useChartParams();
 
   hidePolicyForm();
 
@@ -58,6 +69,17 @@ export const TimeSpentPage = () => {
       setFilteredIssues([...filteredStories, ...epics]);
     }
   }, [issues, filter, setFilteredIssues]);
+
+  useEffect(() => {
+    if (chartParams && !chartParams.statuses && project) {
+      const defaultStatuses = flat(
+        project.workflowScheme.stories.stages
+          .filter((stage) => stage.selectByDefault)
+          .map((stage) => stage.statuses.map((status) => status.name)),
+      );
+      setChartParams({ statuses: defaultStatuses });
+    }
+  }, [chartParams, setChartParams, project]);
 
   const columns: ColumnsType<TimeSpentRow> = [
     {
@@ -141,7 +163,11 @@ export const TimeSpentPage = () => {
   ];
 
   const result = filter?.dates
-    ? timeSpentInPeriod(filteredIssues, asAbsolute(filter.dates))
+    ? timeSpentInPeriod(
+        filteredIssues,
+        asAbsolute(filter.dates),
+        chartParams.statuses ?? [],
+      )
     : [];
 
   return (
@@ -154,6 +180,14 @@ export const TimeSpentPage = () => {
         reportType={ReportType.Completed}
         showHierarchyFilter={false}
       />
+
+      {project ? (
+        <ChartParamsForm
+          chartParams={chartParams}
+          setChartParams={setChartParams}
+          workflowScheme={project?.workflowScheme}
+        />
+      ) : null}
 
       <Table
         rowClassName={(row) => `${row.rowType}-header`}
@@ -170,5 +204,60 @@ export const TimeSpentPage = () => {
         open={selectedIssue !== null}
       />
     </>
+  );
+};
+
+const chartParamsSchema = z.object({
+  statuses: z.array(z.string()).optional(),
+});
+
+type ChartParams = z.infer<typeof chartParamsSchema>;
+
+const useChartParams = () => useChartParamsState(chartParamsSchema);
+
+type ChartParamsFormProps = {
+  workflowScheme: WorkflowScheme;
+  chartParams: ChartParams;
+  setChartParams: (params: ChartParams) => void;
+};
+
+const ChartParamsForm: FC<ChartParamsFormProps> = ({
+  chartParams,
+  setChartParams,
+  workflowScheme,
+}) => {
+  const selectedStages = getSelectedStages(
+    workflowScheme.stories,
+    chartParams.statuses,
+  );
+
+  const onStagesChanged = (keys: Key[]) => {
+    const statuses: string[] = flat(
+      workflowScheme.stories.stages
+        .filter((stage) => keys.includes(stage.name))
+        .map((stage) => stage.statuses.map((status) => status.name)),
+    );
+    setChartParams({ statuses });
+  };
+
+  return (
+    <ControlBar>
+      <FormControl label="Selected stages">
+        <Popdown
+          title="Select story stages"
+          value={selectedStages}
+          renderLabel={(selectedStoryStages) => selectedStoryStages.join(", ")}
+          onValueChanged={onStagesChanged}
+        >
+          {(value, setValue) => (
+            <WorkflowStagesTable
+              workflowStages={workflowScheme.stories.stages}
+              selectedStages={value}
+              onSelectionChanged={(stages) => setValue(stages as string[])}
+            />
+          )}
+        </Popdown>
+      </FormControl>
+    </ControlBar>
   );
 };

@@ -25,6 +25,7 @@ const secondsInDay = 60 * 60 * 24;
 export const timeSpentInPeriod = (
   issues: Issue[],
   period: AbsoluteInterval,
+  statuses: string[],
 ): TimeSpentRow[] => {
   const timesInPeriod = Object.fromEntries(
     issues
@@ -32,7 +33,7 @@ export const timeSpentInPeriod = (
       .map((issue) => {
         const overlaps = compact(
           issue.transitions.map((transition) =>
-            transition.toStatus.category === "In Progress"
+            statuses.includes(transition.toStatus.name)
               ? getIntersectingInterval(period, {
                   start: transition.date,
                   end: transition.until,

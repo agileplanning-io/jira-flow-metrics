@@ -55,7 +55,10 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
   deleteCycleTimePolicy,
 }) => {
   const selectedStoryStages = useMemo(() => {
-    return getSelectedStages(workflowScheme.stories, currentPolicy.policy);
+    return getSelectedStages(
+      workflowScheme.stories,
+      currentPolicy.policy.statuses,
+    );
   }, [workflowScheme, currentPolicy.policy]);
 
   const selectedEpicStages = useMemo(() => {
@@ -65,7 +68,10 @@ export const EditCycleTimePolicyForm: FC<EditCycleTimePolicyForm> = ({
       return undefined;
     }
 
-    return getSelectedStages(workflowScheme.epics, currentPolicy.policy.epics);
+    return getSelectedStages(
+      workflowScheme.epics,
+      currentPolicy.policy.epics.statuses,
+    );
   }, [workflowScheme, currentPolicy.policy]);
 
   const cycleTimePolicyType = currentPolicy.policy.type;

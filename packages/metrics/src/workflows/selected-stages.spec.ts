@@ -64,7 +64,7 @@ describe("getSelectedStages", () => {
       statuses: [],
     };
 
-    const stages = getSelectedStages(workflow, policy);
+    const stages = getSelectedStages(workflow, policy.statuses);
 
     expect(stages).toEqual(["In Progress", "In Staging"]);
   });
