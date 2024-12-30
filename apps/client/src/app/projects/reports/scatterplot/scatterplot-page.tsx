@@ -30,7 +30,7 @@ import { IssueFilterForm, ReportType } from "@agileplanning-io/flow-components";
 import { useChartParams } from "../components/completed-issue-reports/use-chart-params";
 
 export const ScatterplotPage = () => {
-  const { issues } = useProjectContext();
+  const { project, issues, currentPolicy } = useProjectContext();
 
   const { filter, setFilter } = useFilterParams((project: Project) => ({
     ...toClientFilter(project.defaultCompletedFilter),
@@ -66,7 +66,12 @@ export const ScatterplotPage = () => {
   const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
 
   const exportIssues = () => {
-    downloadCsv(sortBy(filteredIssues, (issue) => -issue.metrics.cycleTime));
+    if (!project || !currentPolicy) {
+      return;
+    }
+
+    const issues = sortBy(filteredIssues, (issue) => -issue.metrics.cycleTime);
+    downloadCsv(project, currentPolicy, issues);
   };
 
   return (
