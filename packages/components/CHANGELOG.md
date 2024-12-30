@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-components
 
+## 0.1.26
+
+### Patch Changes
+
+- 16c0607: fix: percentile tags
+
 ## 0.1.25
 
 ### Patch Changes
