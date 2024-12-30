@@ -33,12 +33,37 @@ export type Transition = {
   timeInStatus: number;
 };
 
+export enum ParentMetricsReason {
+  /**
+   * Epic policy is EpicStatus, so we don't compute metrics from stories (but none are excluded for this reason).
+   */
+  StatusPolicy = "StatusPolicy",
+
+  /**
+   * Epic policy is Derived, and we exclude To Do stories if the epic is completed.
+   */
+  ExcludedToDo = "ExcludedToDo",
+
+  /**
+   * Epic policy is Derived, and the story failed to match the policy filter.
+   */
+  ExcludedPolicyFilter = "ExcludedPolicyFilter",
+
+  /**
+   * Epic policy is Derived, and the story matched the policy filter.
+   */
+  MatchesPolicyFilter = "MatchesPolicyFilter",
+}
+
 export type IssueFlowMetrics = {
   started?: Date;
   completed?: Date;
   cycleTime?: number;
   age?: number;
-  includedInEpic?: boolean;
+  parent?: {
+    includedInMetrics: boolean;
+    reason: ParentMetricsReason;
+  };
 };
 
 export type StartedFlowMetrics = IssueFlowMetrics & {
