@@ -74,6 +74,7 @@ export const IssueFilterForm: FC<IssueFilterFormProps> = ({
 
   const showStatusFilter = reportType === ReportType.Index;
   const showResolutionFilter = reportType !== ReportType.Wip;
+  const showDatesFilter = reportType !== ReportType.Index;
 
   return (
     <ControlBar>
@@ -123,18 +124,20 @@ export const IssueFilterForm: FC<IssueFilterFormProps> = ({
         </Popdown>
       </FormControl>
 
-      <FormControl label="Dates">
-        <Popdown
-          title="Dates"
-          renderLabel={summariseDatesFilter}
-          value={filter?.dates}
-          onValueChanged={onDatesChanged}
-        >
-          {(value, setValue) => (
-            <DateSelector dates={value} onChange={setValue} />
-          )}
-        </Popdown>
-      </FormControl>
+      {showDatesFilter ? (
+        <FormControl label="Dates">
+          <Popdown
+            title="Dates"
+            renderLabel={summariseDatesFilter}
+            value={filter?.dates}
+            onValueChanged={onDatesChanged}
+          >
+            {(value, setValue) => (
+              <DateSelector dates={value} onChange={setValue} />
+            )}
+          </Popdown>
+        </FormControl>
+      ) : null}
 
       {isNonNullish(filteredIssuesCount) ? (
         <Tag
