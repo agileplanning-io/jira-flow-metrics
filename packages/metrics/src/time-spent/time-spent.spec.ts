@@ -22,6 +22,8 @@ const inProgress: TransitionStatus = {
 };
 const done: TransitionStatus = { name: "Done", category: StatusCategory.Done };
 
+const inProgressStatuses = [inProgress.name];
+
 describe("timeSpentInPeriod", () => {
   const buildIssues = (additionalIssues: Issue[] = []) => {
     const epic1 = buildIssue({
@@ -92,10 +94,14 @@ describe("timeSpentInPeriod", () => {
     const issues = buildIssues();
     const [epic1, epic2, story1, story2] = issues;
 
-    const timeSpent = timeSpentInPeriod(issues, {
-      start: new Date("2021-01-01T00:00:00.000Z"),
-      end: new Date("2021-02-01T00:00:00.000Z"),
-    });
+    const timeSpent = timeSpentInPeriod(
+      issues,
+      {
+        start: new Date("2021-01-01T00:00:00.000Z"),
+        end: new Date("2021-02-01T00:00:00.000Z"),
+      },
+      inProgressStatuses,
+    );
 
     expect(timeSpent).toEqual([
       {
@@ -173,10 +179,14 @@ describe("timeSpentInPeriod", () => {
     ]);
     const [epic1, epic2, story1, story2, task] = issues;
 
-    const timeSpent = timeSpentInPeriod(issues, {
-      start: new Date("2021-01-01T00:00:00.000Z"),
-      end: new Date("2021-02-01T00:00:00.000Z"),
-    });
+    const timeSpent = timeSpentInPeriod(
+      issues,
+      {
+        start: new Date("2021-01-01T00:00:00.000Z"),
+        end: new Date("2021-02-01T00:00:00.000Z"),
+      },
+      inProgressStatuses,
+    );
 
     expect(timeSpent).toEqual([
       {
