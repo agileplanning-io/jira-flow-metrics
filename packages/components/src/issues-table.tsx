@@ -266,8 +266,8 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
         const included = !excludedIssueKeys.includes(issue.key);
 
         const tooltip = included
-          ? `Uncheck to exclude from project`
-          : `Check to include in project`;
+          ? `Uncheck to exclude from chart`
+          : `Check to include in chart`;
 
         const onCheckboxChanged = (event: CheckboxChangeEvent) =>
           onSelectIssueChanged(issue.key, event.target.checked);
