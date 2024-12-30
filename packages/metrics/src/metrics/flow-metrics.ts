@@ -1,4 +1,9 @@
-import { HierarchyLevel, Issue } from "../issues";
+import {
+  HierarchyLevel,
+  Issue,
+  IssueFlowMetrics,
+  ParentMetricsReason,
+} from "../issues";
 import { getStatusFlowMetrics } from "./policies/status-flow-metrics";
 import { getComputedFlowMetrics } from "./policies/computed-flow-metrics";
 import { pipe } from "remeda";
@@ -64,7 +69,14 @@ const checkEpicInclusion = ([
   return [
     stories.map((story) => {
       if (includedStoryKeys.has(story.key)) {
-        const metrics = { ...story.metrics, includedInEpic: true };
+        const metrics: IssueFlowMetrics = {
+          ...story.metrics,
+          parent: {
+            includedInMetrics: true,
+            // This isn't inherently true, but it's the default until overridden later
+            reason: ParentMetricsReason.StatusPolicy,
+          },
+        };
         return { ...story, metrics };
       }
 

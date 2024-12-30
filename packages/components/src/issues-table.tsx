@@ -1,4 +1,8 @@
-import { Issue, IssueFlowMetrics } from "@agileplanning-io/flow-metrics";
+import {
+  Issue,
+  IssueFlowMetrics,
+  ParentMetricsReason,
+} from "@agileplanning-io/flow-metrics";
 import {
   Checkbox,
   Space,
@@ -290,9 +294,10 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
   const IssueProgress = ({ issue }: { issue: Issue }) => {
     if (!parentEpic) return null;
 
-    if (!issue.metrics.includedInEpic) {
+    if (!issue.metrics.parent?.includedInMetrics) {
+      const reason = getExcludedReason(issue.metrics.parent?.reason);
       return (
-        <Tooltip title="Excluded from epic metrics by cycle time policy">
+        <Tooltip title={reason}>
           N/A <QuestionCircleOutlined />
         </Tooltip>
       );
@@ -385,7 +390,9 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
             : true,
         )}
         rowClassName={(issue) =>
-          parentEpic && !issue.metrics.includedInEpic ? "excluded" : "included"
+          parentEpic && !issue.metrics.parent?.includedInMetrics
+            ? "excluded"
+            : "included"
         }
         onChange={(_pagination, _filters, sorter) => {
           if ("columnKey" in sorter) {
@@ -468,4 +475,15 @@ const getPercentileColor = (percentile: number | undefined) => {
   );
 
   return threshold?.color ?? "blue";
+};
+
+const getExcludedReason = (reason?: ParentMetricsReason) => {
+  switch (reason) {
+    case ParentMetricsReason.ExcludedPolicyFilter:
+      return "Excluded by Derived policy filter for epics";
+    case ParentMetricsReason.ExcludedToDo:
+      return "Unstarted issues are excluded from epic cycle times when policy is Derived and parent is completed";
+    default:
+      return undefined;
+  }
 };

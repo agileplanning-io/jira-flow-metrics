@@ -4,6 +4,7 @@ import {
   FilterUseCase,
   Issue,
   IssueFlowMetrics,
+  ParentMetricsReason,
   StatusCategory,
   Transition,
 } from "../../issues";
@@ -112,7 +113,10 @@ const applyDerivedFilter =
 
     stories.forEach((story) => {
       if (!filteredChildrenKeys.has(story.key)) {
-        story.metrics.includedInEpic = false;
+        story.metrics.parent = {
+          includedInMetrics: false,
+          reason: ParentMetricsReason.ExcludedPolicyFilter,
+        };
       }
     });
 
@@ -129,6 +133,12 @@ const excludeToDoIssues =
       epic.statusCategory === StatusCategory.Done &&
       getIssueStatus(child, policy) === StatusCategory.ToDo
     ) {
+      if (child.metrics.parent?.includedInMetrics) {
+        child.metrics.parent = {
+          includedInMetrics: false,
+          reason: ParentMetricsReason.ExcludedToDo,
+        };
+      }
       return false;
     }
 

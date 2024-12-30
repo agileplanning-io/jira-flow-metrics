@@ -20,7 +20,7 @@ export const EpicTimelinePage: FC<EpicTimelinePageProps> = ({
     return issues
       .filter(
         (issue) =>
-          !issue.metrics.includedInEpic ||
+          !issue.metrics.parent?.includedInMetrics ||
           !issue.transitions.some((t) => t.toStatus.category === "In Progress"),
       )
       .map((issue) => issue.key);

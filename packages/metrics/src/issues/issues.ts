@@ -33,12 +33,21 @@ export type Transition = {
   timeInStatus: number;
 };
 
+export enum ParentMetricsReason {
+  StatusPolicy = "StatusPolicy",
+  ExcludedToDo = "ExcludedToDo",
+  ExcludedPolicyFilter = "ExcludedPolicyFilter",
+}
+
 export type IssueFlowMetrics = {
   started?: Date;
   completed?: Date;
   cycleTime?: number;
   age?: number;
-  includedInEpic?: boolean;
+  parent?: {
+    includedInMetrics: boolean;
+    reason: ParentMetricsReason;
+  };
 };
 
 export type StartedFlowMetrics = IssueFlowMetrics & {
