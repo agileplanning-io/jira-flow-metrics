@@ -112,7 +112,12 @@ const applyDerivedFilter =
     );
 
     stories.forEach((story) => {
-      if (!filteredChildrenKeys.has(story.key)) {
+      if (filteredChildrenKeys.has(story.key)) {
+        story.metrics.parent = {
+          includedInMetrics: true,
+          reason: ParentMetricsReason.MatchesPolicyFilter,
+        };
+      } else {
         story.metrics.parent = {
           includedInMetrics: false,
           reason: ParentMetricsReason.ExcludedPolicyFilter,

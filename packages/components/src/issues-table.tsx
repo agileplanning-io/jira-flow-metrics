@@ -482,7 +482,7 @@ const getExcludedReason = (reason?: ParentMetricsReason) => {
     case ParentMetricsReason.ExcludedPolicyFilter:
       return "Excluded by Derived policy filter for epics";
     case ParentMetricsReason.ExcludedToDo:
-      return "Unstarted issues are excluded from epic cycle times when policy is Derived and parent is completed";
+      return "To Do issues are excluded from epic cycle times when policy is Derived and parent is completed";
     default:
       return undefined;
   }

@@ -1,4 +1,10 @@
-import { HierarchyLevel, Status, StatusCategory, FilterType } from "../issues";
+import {
+  HierarchyLevel,
+  Status,
+  StatusCategory,
+  FilterType,
+  ParentMetricsReason,
+} from "../issues";
 import { getFlowMetrics } from "./flow-metrics";
 import { buildIssue } from "../fixtures/issue-factory";
 import {
@@ -571,7 +577,7 @@ describe("getFlowMetrics", () => {
       });
 
       it("measures total in progress time when policy.type = ProcessTime", () => {
-        const [result] = getFlowMetrics([epic, story1, story2], {
+        const [result, ...stories] = getFlowMetrics([epic, story1, story2], {
           type: CycleTimePolicyType.ProcessTime,
           statuses: [inProgress.name, inReview.name],
           epics: { type: EpicCycleTimePolicyType.Derived },
@@ -582,6 +588,29 @@ describe("getFlowMetrics", () => {
           completed: story2Completed,
           cycleTime: 0.25,
         });
+
+        const storyMetrics = stories.map((story) => story.metrics);
+
+        expect(storyMetrics).toEqual([
+          {
+            started: story1Started,
+            completed: story1Completed,
+            cycleTime: 0.125,
+            parent: {
+              includedInMetrics: true,
+              reason: ParentMetricsReason.MatchesPolicyFilter,
+            },
+          },
+          {
+            started: story2Started,
+            completed: story2Completed,
+            cycleTime: 0.125,
+            parent: {
+              includedInMetrics: true,
+              reason: ParentMetricsReason.MatchesPolicyFilter,
+            },
+          },
+        ]);
       });
 
       it("measures total cycle time when policy.type = LeadTime", () => {
@@ -599,7 +628,7 @@ describe("getFlowMetrics", () => {
       });
 
       it("applies policy filters", () => {
-        const [result] = getFlowMetrics([epic, story1, story2], {
+        const [result, ...stories] = getFlowMetrics([epic, story1, story2], {
           type: CycleTimePolicyType.ProcessTime,
           statuses: [inProgress.name, inReview.name],
           epics: {
@@ -616,6 +645,29 @@ describe("getFlowMetrics", () => {
           completed: story1Completed,
           cycleTime: 0.125,
         });
+
+        const storyMetrics = stories.map((story) => story.metrics);
+
+        expect(storyMetrics).toEqual([
+          {
+            started: story1Started,
+            completed: story1Completed,
+            cycleTime: 0.125,
+            parent: {
+              includedInMetrics: true,
+              reason: ParentMetricsReason.MatchesPolicyFilter,
+            },
+          },
+          {
+            started: story2Started,
+            completed: story2Completed,
+            cycleTime: 0.125,
+            parent: {
+              includedInMetrics: false,
+              reason: ParentMetricsReason.ExcludedPolicyFilter,
+            },
+          },
+        ]);
       });
 
       it("computes the age when the epic is not done", () => {
@@ -639,17 +691,51 @@ describe("getFlowMetrics", () => {
 
       describe("when the status category is done", () => {
         it("ignores To Do issues", () => {
-          const [result] = getFlowMetrics([epic, story1, story2, pausedStory], {
-            type: CycleTimePolicyType.ProcessTime,
-            statuses: [inProgress.name, inReview.name],
-            epics: { type: EpicCycleTimePolicyType.Derived },
-          });
+          const [result, ...stories] = getFlowMetrics(
+            [epic, story1, story2, pausedStory],
+            {
+              type: CycleTimePolicyType.ProcessTime,
+              statuses: [inProgress.name, inReview.name],
+              epics: { type: EpicCycleTimePolicyType.Derived },
+            },
+          );
 
           expect(result.metrics).toEqual({
             started: story1Started,
             completed: story2Completed,
             cycleTime: 0.25,
           });
+
+          const storyMetrics = stories.map((story) => story.metrics);
+
+          expect(storyMetrics).toEqual([
+            {
+              started: story1Started,
+              completed: story1Completed,
+              cycleTime: 0.125,
+              parent: {
+                includedInMetrics: true,
+                reason: ParentMetricsReason.MatchesPolicyFilter,
+              },
+            },
+            {
+              started: story2Started,
+              completed: story2Completed,
+              cycleTime: 0.125,
+              parent: {
+                includedInMetrics: true,
+                reason: ParentMetricsReason.MatchesPolicyFilter,
+              },
+            },
+            {
+              age: 0.125,
+              started: story3Started,
+              parent: {
+                includedInMetrics: false,
+                reason: ParentMetricsReason.ExcludedToDo,
+              },
+            },
+          ]);
         });
 
         it("includes In Progress issues", () => {
@@ -687,7 +773,7 @@ describe("getFlowMetrics", () => {
           statusCategory: StatusCategory.InProgress,
         };
 
-        const [result] = getFlowMetrics(
+        const [result, , , pausedStoryResult] = getFlowMetrics(
           [inProgressEpic, story1, story2, pausedStory],
           {
             type: CycleTimePolicyType.ProcessTime,
@@ -699,6 +785,15 @@ describe("getFlowMetrics", () => {
         expect(result.metrics).toEqual({
           started: story1Started,
           age: 0.375,
+        });
+
+        expect(pausedStoryResult.metrics).toEqual({
+          age: 0.125,
+          started: story3Started,
+          parent: {
+            includedInMetrics: true,
+            reason: ParentMetricsReason.MatchesPolicyFilter,
+          },
         });
       });
     });
