@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-components
 
+## 0.1.25
+
+### Patch Changes
+
+- ccfdff6: fix: tooltips for select issue checkboxes
+
 ## 0.1.24
 
 ### Patch Changes
