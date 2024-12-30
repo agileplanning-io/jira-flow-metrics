@@ -24,7 +24,7 @@ import { ChartParamsForm } from "../components/completed-issue-reports/chart-par
 import { useFilterParams } from "@app/filter/use-filter-params";
 import { Project } from "@data/projects";
 import { Button } from "antd";
-import { reverse, sortBy } from "remeda";
+import { sortBy } from "remeda";
 import { downloadCsv } from "@data/csv";
 import { IssueFilterForm, ReportType } from "@agileplanning-io/flow-components";
 import { useChartParams } from "../components/completed-issue-reports/use-chart-params";
@@ -59,7 +59,7 @@ export const ScatterplotPage = () => {
           .map((issue) => issue.metrics.cycleTime),
       );
       setFilteredIssues(filteredIssues);
-      setPercentiles(reverse(percentiles));
+      setPercentiles(percentiles);
     }
   }, [issues, filter, setFilteredIssues, setPercentiles, excludedIssues]);
 
