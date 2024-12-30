@@ -1,5 +1,13 @@
 # @agileplanning-io/flow-components
 
+## 0.1.27
+
+### Patch Changes
+
+- 1df5626: fix: includedInMetrics flag
+- Updated dependencies [1df5626]
+  - @agileplanning-io/flow-metrics@1.0.3
+
 ## 0.1.26
 
 ### Patch Changes
