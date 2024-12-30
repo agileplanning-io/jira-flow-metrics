@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-components
 
+## 0.1.24
+
+### Patch Changes
+
+- 5567b5d: fix: hide dates filter on index page
+
 ## 0.1.23
 
 ### Patch Changes
