@@ -1,5 +1,13 @@
 # @agileplanning-io/flow-components
 
+## 0.1.28
+
+### Patch Changes
+
+- a95dbb0: feat: parameterise timeSpent by statuses
+- Updated dependencies [a95dbb0]
+  - @agileplanning-io/flow-metrics@1.0.4
+
 ## 0.1.27
 
 ### Patch Changes
