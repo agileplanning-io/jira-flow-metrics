@@ -292,7 +292,7 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
 
     if (!issue.metrics.includedInEpic) {
       return (
-        <Tooltip title="Excluded from epic metrics by project filters">
+        <Tooltip title="Excluded from epic metrics by cycle time policy">
           N/A <QuestionCircleOutlined />
         </Tooltip>
       );

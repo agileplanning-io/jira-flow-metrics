@@ -1,4 +1,4 @@
-import { FilterUseCase, HierarchyLevel, Issue, filterIssues } from "../issues";
+import { HierarchyLevel, Issue } from "../issues";
 import { getStatusFlowMetrics } from "./policies/status-flow-metrics";
 import { getComputedFlowMetrics } from "./policies/computed-flow-metrics";
 import { pipe } from "remeda";
@@ -15,7 +15,6 @@ export const getFlowMetrics = (
     issues,
     partitionByHierarchyLevel,
     computeStoryMetrics(policy),
-    filterStories(policy),
     checkEpicInclusion,
     computeEpicMetrics(policy),
   );
@@ -50,22 +49,12 @@ const computeStoryMetrics = (policy: CycleTimePolicy) => {
   ];
 };
 
-const filterStories =
-  (policy: CycleTimePolicy) =>
-  ([stories, epics]: PartitionedIssues): PartitionedIssues => {
-    return [
-      policy.epics.type === EpicCycleTimePolicyType.Derived
-        ? filterIssues(stories, policy.epics, FilterUseCase.Metrics)
-        : stories,
-      epics,
-    ];
-  };
-
 const checkEpicInclusion = ([
   stories,
   epics,
 ]: PartitionedIssues): PartitionedIssues => {
   const epicKeys = new Set(epics.map((epic) => epic.key));
+
   const includedStoryKeys = new Set(
     stories
       .filter((story) => story.parentKey && epicKeys.has(story.parentKey))

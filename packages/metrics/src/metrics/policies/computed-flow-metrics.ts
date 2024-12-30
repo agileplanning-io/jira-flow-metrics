@@ -1,5 +1,7 @@
 import { filter, flat, map, pipe, sort, sumBy } from "remeda";
 import {
+  filterIssues,
+  FilterUseCase,
   Issue,
   IssueFlowMetrics,
   StatusCategory,
@@ -12,7 +14,11 @@ import {
   getSpanningSet,
 } from "@agileplanning-io/flow-lib";
 import { analyseTransitions } from "./status-flow-metrics";
-import { CycleTimePolicy, CycleTimePolicyType } from "./cycle-time-policy";
+import {
+  CycleTimePolicy,
+  CycleTimePolicyType,
+  EpicCycleTimePolicyType,
+} from "./cycle-time-policy";
 
 export const getComputedFlowMetrics = (
   epic: Issue,
@@ -22,6 +28,7 @@ export const getComputedFlowMetrics = (
   const children = pipe(
     issues,
     filter(isChildOf(epic)),
+    applyDerivedFilter(policy),
     filter(excludeToDoIssues(epic, policy)),
   );
 
@@ -90,6 +97,27 @@ export const getComputedFlowMetrics = (
 
   return {};
 };
+
+const applyDerivedFilter =
+  (policy: CycleTimePolicy) =>
+  (stories: Issue[]): Issue[] => {
+    const filteredChildren =
+      policy.epics.type === EpicCycleTimePolicyType.Derived
+        ? filterIssues(stories, policy.epics, FilterUseCase.Metrics)
+        : stories;
+
+    const filteredChildrenKeys = new Set(
+      filteredChildren.map((child) => child.key),
+    );
+
+    stories.forEach((story) => {
+      if (!filteredChildrenKeys.has(story.key)) {
+        story.metrics.includedInEpic = false;
+      }
+    });
+
+    return filteredChildren;
+  };
 
 const isChildOf = (epic: Issue) => (child: Issue) =>
   child.parentKey === epic.key;
