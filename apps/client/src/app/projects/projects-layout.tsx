@@ -1,8 +1,8 @@
 import { useProjectContext } from "./context";
 import { LoadingSpinner } from "../components/loading-spinner";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { CycleTimePolicyForm } from "./reports/components/filter-form/cycle-time-policy-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export type ProjectsContext = {
   hidePolicyForm: () => void;
@@ -12,6 +12,11 @@ export const ProjectsLayout = () => {
   const { project } = useProjectContext();
   const [showPolicyForm, setShowPolicyForm] = useState(true);
   const hidePolicyForm = () => setShowPolicyForm(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    setShowPolicyForm(true);
+  }, [location.pathname]);
 
   if (!project) {
     return <LoadingSpinner />;

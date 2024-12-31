@@ -22,8 +22,8 @@ export const summariseFilter = (filter: IssueAttributesFilter): ReactNode => {
           ? "="
           : "!="
         : valuesFilter.type === FilterType.Include
-        ? "in"
-        : "excl.";
+          ? "in"
+          : "excl.";
 
     return `${name} ${op} ${valuesFilter.values.join(",")}`;
   };
@@ -34,8 +34,6 @@ export const summariseFilter = (filter: IssueAttributesFilter): ReactNode => {
   summary.push(summariseValuesFilter("Issue Type", filter.issueTypes));
   summary.push(summariseValuesFilter("Assignees", filter.assignees));
   summary.push(summariseValuesFilter("Statuses", filter.statuses));
-
-  console.info(summary);
 
   if (compact(summary).length === 0) {
     return (
