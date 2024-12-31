@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-components
 
+## 0.1.29
+
+### Patch Changes
+
+- a1c7428: fix: remove console.info
+
 ## 0.1.28
 
 ### Patch Changes
