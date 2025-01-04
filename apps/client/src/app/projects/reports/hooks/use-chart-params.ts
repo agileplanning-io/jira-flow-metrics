@@ -23,7 +23,7 @@ export const useChartParamsState = <T extends z.ZodTypeAny>(
 
   useEffect(() => {
     if (!chartParams) {
-      setChartParams(defaultValues);
+      setChartParams(defaultValues, { replace: true });
     }
   }, [chartParams, setChartParams, defaultValues]);
 
