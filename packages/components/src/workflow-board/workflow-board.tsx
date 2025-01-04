@@ -19,6 +19,7 @@ import {
 } from "./state";
 import { WorkflowStageCard } from "./column";
 import { Flex } from "antd";
+import { validateWorkflow } from "./validation";
 
 const Container = styled.div`
   display: flex;
@@ -26,7 +27,10 @@ const Container = styled.div`
 
 export type WorkflowBoardProps = {
   workflow: Workflow;
-  onWorkflowChanged: (workflow: WorkflowStage[]) => void;
+  onWorkflowChanged: (
+    workflow: WorkflowStage[],
+    validationErrors?: string[],
+  ) => void;
   disabled: boolean;
   readonly: boolean;
 };
@@ -40,7 +44,9 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
   const [state, setState] = useState(() => projectToState(project));
 
   useEffect(() => {
-    onWorkflowChanged(stateToWorkflow(state));
+    const workflow = stateToWorkflow(state);
+    const validationErrors = validateWorkflow(workflow);
+    onWorkflowChanged(workflow, validationErrors);
   }, [state, onWorkflowChanged]);
 
   const onDragEnd: OnDragEndResponder = (event) => {

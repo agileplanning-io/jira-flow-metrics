@@ -167,11 +167,13 @@ export const useCreateProject = () => {
   });
 };
 
+export type UpdateWorkflowStage = { name: string; statuses: string[] };
+
 export type UpdateProjectParams = {
   id: string;
   name: string;
-  storyWorkflowStages: { name: string; statuses: string[] }[];
-  epicWorkflowStages: { name: string; statuses: string[] }[];
+  storyWorkflowStages: UpdateWorkflowStage[];
+  epicWorkflowStages: UpdateWorkflowStage[];
   defaultCycleTimePolicy: CycleTimePolicy;
   defaultCompletedFilter: IssueFilter;
 };
