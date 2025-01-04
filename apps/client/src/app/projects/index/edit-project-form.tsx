@@ -39,6 +39,7 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
 
   const [validationErrors, setValidationErrors] = useState<string[]>();
   const [showValidationErrors, setShowValidationErrors] = useState(false);
+
   const updateValidationErrors = (validationErrors?: string[]) => {
     if (!validationErrors) {
       setShowValidationErrors(false);

@@ -91,7 +91,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
             setCurrentPolicy({ ...defaultPolicy, isChanged: false });
           } else {
             setCurrentPolicy({
-              name: "Custom",
+              name: "Unsaved",
               policy: project.defaultCycleTimePolicy,
               isDefault: false,
               isChanged: false,
@@ -137,7 +137,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         if (prevPolicy) {
           setCurrentPolicy({
             policy: prevPolicy,
-            name: "Custom",
+            name: "Unsaved",
             isDefault: false,
             isChanged: false,
           });
