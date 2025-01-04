@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-components
 
+## 0.1.32
+
+### Patch Changes
+
+- 5ac7408: feat: validate uniqueness of policies
+
 ## 0.1.31
 
 ### Patch Changes
