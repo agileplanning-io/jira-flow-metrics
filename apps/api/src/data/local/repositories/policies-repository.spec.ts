@@ -16,32 +16,56 @@ describe("LocalPoliciesRepository", () => {
     repo = new LocalPoliciesRepository(cache);
   });
 
-  it("creates policies", async () => {
-    // arrange
-    const draft: DraftPolicy = {
-      policy: {
-        type: CycleTimePolicyType.ProcessTime,
-        statuses: ["In Progress"],
-        epics: {
-          type: EpicCycleTimePolicyType.Derived,
+  describe("createPolicy", () => {
+    it("creates policies", async () => {
+      // arrange
+      const draft: DraftPolicy = {
+        policy: {
+          type: CycleTimePolicyType.ProcessTime,
+          statuses: ["In Progress"],
+          epics: {
+            type: EpicCycleTimePolicyType.Derived,
+          },
         },
-      },
-      isDefault: false,
-      name: "my policy",
-    };
+        isDefault: false,
+        name: "my policy",
+      };
 
-    // act
-    await repo.createPolicy(projectId, draft);
+      // act
+      await repo.createPolicy(projectId, draft);
 
-    // assert
-    const policies = await repo.getPolicies(projectId);
+      // assert
+      const policies = await repo.getPolicies(projectId);
 
-    expect(policies).toEqual([
-      {
-        id: "UFUsXOAn9R_P",
-        ...draft,
-      },
-    ]);
+      expect(policies).toEqual([
+        {
+          id: "UFUsXOAn9R_P",
+          ...draft,
+        },
+      ]);
+    });
+
+    it("returns the existing policy instead of creating duplicates", async () => {
+      // arrange
+      const draft: DraftPolicy = {
+        policy: {
+          type: CycleTimePolicyType.ProcessTime,
+          statuses: ["In Progress"],
+          epics: {
+            type: EpicCycleTimePolicyType.Derived,
+          },
+        },
+        isDefault: false,
+        name: "my policy",
+      };
+
+      // act
+      const policy1 = await repo.createPolicy(projectId, draft);
+      const policy2 = await repo.createPolicy(projectId, draft);
+
+      // assert
+      expect(policy1).toEqual(policy2);
+    });
   });
 
   it("updates policies", async () => {
