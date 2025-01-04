@@ -37,12 +37,10 @@ export const useFilterParams = (
       return undefined;
     }
 
-    const defaultValues = {
+    return {
       ...schemaDefaults,
       ...(typeof defaults === "function" ? defaults(project) : defaults),
     };
-
-    return defaultValues;
   }, [project, defaults]);
 
   const [filterParams, setFilterParams] = useQueryState<FilterParamsType>(
@@ -52,7 +50,7 @@ export const useFilterParams = (
 
   useEffect(() => {
     if (!filterParams && defaultValues) {
-      setFilterParams(defaultValues);
+      setFilterParams(defaultValues, { replace: true });
     }
   }, [filterParams, setFilterParams, defaultValues]);
 
