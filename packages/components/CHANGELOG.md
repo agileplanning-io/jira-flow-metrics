@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-components
 
+## 0.1.33
+
+### Patch Changes
+
+- 88647d6: fix: policy validation message
+
 ## 0.1.32
 
 ### Patch Changes
