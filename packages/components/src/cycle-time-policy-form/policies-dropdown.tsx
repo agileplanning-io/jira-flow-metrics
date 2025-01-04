@@ -186,7 +186,7 @@ const buildPolicyItems = ({
     canSaveAs,
     () =>
       isDuplicate
-        ? `Configured policy is already saved as '(${duplicatePolicy.name})'`
+        ? `Configured policy is already saved as '${duplicatePolicy.name}'`
         : "No policy changes to save",
     "Save As...",
   );
