@@ -179,7 +179,7 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
     {
       title: "Status",
       key: "status",
-      render: (_, issue) => <IssueStatus {...issue} />,
+      render: (_, { key: _key, ...issue }) => <IssueStatus {...issue} />,
     },
     configureSort({
       title: "Started",
@@ -238,7 +238,7 @@ export const IssuesTable: React.FC<IssuesTableProps> = ({
     {
       title: "Resolution",
       key: "resolution",
-      render: (_, issue) => <IssueResolution {...issue} />,
+      render: (_, { key: _key, ...issue }) => <IssueResolution {...issue} />,
     },
     configureSort({
       title: "Created",

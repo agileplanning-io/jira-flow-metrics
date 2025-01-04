@@ -4,6 +4,7 @@ import { Card, Descriptions, Space, Tag } from "antd";
 import { formatTime } from "@agileplanning-io/flow-lib";
 import { IssueResolution, IssueStatus } from "./issue-fields";
 import { IssueExternalLinkComponent, IssueLinkComponent } from "./issue-links";
+import { omit } from "remeda";
 
 export type IssueDetailsCardProps = {
   issue: Issue;
@@ -20,6 +21,8 @@ export const IssueDetailsCard: React.FC<IssueDetailsCardProps> = ({
   IssueLinkComponent,
   IssueExternalLinkComponent,
 }) => {
+  // you shouldn't use the spread operator on an object with a key field
+  const spreadableIssue = omit(issue, ["key"]);
   return (
     <Card title="Details" size="small">
       <Descriptions
@@ -39,10 +42,10 @@ export const IssueDetailsCard: React.FC<IssueDetailsCardProps> = ({
           {issue.issueType}
         </Descriptions.Item>
         <Descriptions.Item label="Status">
-          <IssueStatus {...issue} />
+          <IssueStatus {...spreadableIssue} />
         </Descriptions.Item>
         <Descriptions.Item label="Resolution">
-          <IssueResolution {...issue} />
+          <IssueResolution {...spreadableIssue} />
         </Descriptions.Item>
         <Descriptions.Item label="Created">
           {formatTime(issue.created)}
