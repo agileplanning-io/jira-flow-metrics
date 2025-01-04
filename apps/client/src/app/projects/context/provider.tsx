@@ -177,7 +177,7 @@ const useCurrentPolicyId = () => {
   const currentPolicyId = useMemo(() => {
     const param = params.get(policyKey);
     if (param?.trim().length) {
-      const parts = param.split("-");
+      const parts = param.split(".");
       return parts[parts.length - 1];
     }
   }, [params]);
@@ -191,7 +191,7 @@ const useCurrentPolicyId = () => {
     (params?: CurrentPolicyParams) =>
       setParams((prev) => {
         if (params) {
-          prev.set(policyKey, `${params.name}-${params.id}`);
+          prev.set(policyKey, `${params.name}.${params.id}`);
         } else {
           prev.delete(policyKey);
         }
