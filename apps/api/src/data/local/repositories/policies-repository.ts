@@ -1,7 +1,7 @@
 import { DataCache } from "@data/storage/storage";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { createId } from "../id";
-import { pick } from "remeda";
+import { isDeepEqual, pick } from "remeda";
 import { DataError } from "node-json-db";
 import { DraftPolicy, SavedPolicy } from "@agileplanning-io/flow-metrics";
 import { PoliciesRepository } from "@entities/projects";
@@ -13,6 +13,16 @@ export class LocalPoliciesRepository extends PoliciesRepository {
   }
 
   async createPolicy(projectId: string, params: DraftPolicy) {
+    const policies = await this.getPolicies(projectId);
+    const existingPolicy = policies.find((policy) =>
+      isDeepEqual(policy.policy, params.policy),
+    );
+
+    // Avoid creating duplicate policies
+    if (existingPolicy) {
+      return existingPolicy;
+    }
+
     const id = createId(pick(params, ["name"]));
     const policy = { id, ...params };
     await this.cache.push(policyPath(projectId, id), policy);
@@ -39,7 +49,7 @@ export class LocalPoliciesRepository extends PoliciesRepository {
       if (e instanceof DataError) {
         return [];
       }
-      return e;
+      throw e;
     }
   }
 

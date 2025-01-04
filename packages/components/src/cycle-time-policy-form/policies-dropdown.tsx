@@ -17,6 +17,7 @@ import {
   Tooltip,
 } from "antd";
 import { FC, useMemo, useState } from "react";
+import { isDeepEqual, isNonNullish, isNullish } from "remeda";
 
 export type CurrentPolicy = DraftPolicy & {
   isChanged: boolean;
@@ -56,6 +57,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
 
   const menuItems = buildPolicyItems({
     currentPolicy,
+    savedPolicies,
     onSaveClicked: () => {
       if (isSavedPolicy(currentPolicy)) {
         onSaveClicked(currentPolicy);
@@ -127,6 +129,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
 
 type BuildPolicyItemsProps = {
   currentPolicy: CurrentPolicy;
+  savedPolicies: SavedPolicy[];
   onSaveClicked: () => void;
   onSaveAsClicked: () => void;
   onDeleteClicked: () => void;
@@ -135,6 +138,7 @@ type BuildPolicyItemsProps = {
 
 const buildPolicyItems = ({
   currentPolicy,
+  savedPolicies,
   onSaveClicked,
   onSaveAsClicked,
   onDeleteClicked,
@@ -145,23 +149,45 @@ const buildPolicyItems = ({
     tooltip: () => string,
     label: string,
   ) => (
-    <Tooltip title={canPerformAction ? undefined : tooltip()}>{label}</Tooltip>
+    <Tooltip placement="right" title={canPerformAction ? undefined : tooltip()}>
+      {label}
+    </Tooltip>
   );
 
-  const canSave = isSavedPolicy(currentPolicy) && currentPolicy.isChanged;
+  const duplicatePolicy = savedPolicies.find(
+    (policy) =>
+      (!isSavedPolicy(currentPolicy) || policy.id !== currentPolicy.id) &&
+      isDeepEqual(policy.policy, currentPolicy.policy),
+  );
+  const isDuplicate = currentPolicy.isChanged && isNonNullish(duplicatePolicy);
+
+  const canSave =
+    isSavedPolicy(currentPolicy) && currentPolicy.isChanged && !isDuplicate;
   const saveTooltip = buildTooltip(
     canSave,
-    () =>
-      isSavedPolicy(currentPolicy)
-        ? "No policy changes to save"
-        : "Save this policy as a named policy first",
+    () => {
+      if (!isSavedPolicy(currentPolicy)) {
+        return "Save this policy as a named policy first";
+      }
+
+      if (isDuplicate) {
+        return `Configured policy is already saved as '${duplicatePolicy.name}'`;
+      }
+
+      return "No policy changes to save";
+    },
     "Save",
   );
 
-  const canSaveAs = !isSavedPolicy(currentPolicy) || currentPolicy.isChanged;
+  const canSaveAs =
+    !isSavedPolicy(currentPolicy) ||
+    (currentPolicy.isChanged && isNullish(duplicatePolicy));
   const saveAsTooltip = buildTooltip(
     canSaveAs,
-    () => "No policy changes to save",
+    () =>
+      isDuplicate
+        ? `Configured policy is already saved as '(${duplicatePolicy.name})'`
+        : "No policy changes to save",
     "Save As...",
   );
 
