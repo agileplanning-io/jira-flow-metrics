@@ -1,6 +1,6 @@
 import { LoadingSpinner } from "@app/components/loading-spinner";
 import { Project, UpdateProjectParams, useUpdateProject } from "@data/projects";
-import { Button, Form, Input } from "antd";
+import { Alert, Button, Form, Input } from "antd";
 import { FC, useCallback, useState } from "react";
 import {
   IssueAttributesFilterForm,
@@ -37,27 +37,41 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
   const [updatedDefaultCompletedFilter, setUpdatedDefaultCompletedFilter] =
     useState<ClientIssueFilter>(toClientFilter(project.defaultCompletedFilter));
 
+  const [validationErrors, setValidationErrors] = useState<string[]>();
+  const [showValidationErrors, setShowValidationErrors] = useState(false);
+  const updateValidationErrors = (validationErrors?: string[]) => {
+    if (!validationErrors) {
+      setShowValidationErrors(false);
+    }
+
+    setValidationErrors(validationErrors);
+  };
+
   const updateProject = useUpdateProject();
 
   const onStoryWorkflowChanged = useCallback(
-    (workflow: WorkflowStage[]) =>
+    (workflow: WorkflowStage[], validationErrors?: string[]) => {
+      updateValidationErrors(validationErrors);
       setUpdatedStoryWorkflow(
         workflow.map((stage) => ({
           ...stage,
           statuses: stage.statuses.map((status) => status.name),
         })),
-      ),
+      );
+    },
     [setUpdatedStoryWorkflow],
   );
 
   const onEpicWorkflowChanged = useCallback(
-    (workflow: WorkflowStage[]) =>
+    (workflow: WorkflowStage[], validationErrors?: string[]) => {
+      updateValidationErrors(validationErrors);
       setUpdatedEpicWorkflow(
         workflow.map((stage) => ({
           ...stage,
           statuses: stage.statuses.map((status) => status.name),
         })),
-      ),
+      );
+    },
     [setUpdatedEpicWorkflow],
   );
 
@@ -79,6 +93,11 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
       updatedEpicWorkflow &&
       updatedDefaultCompletedFilter
     ) {
+      if (validationErrors?.length) {
+        setShowValidationErrors(true);
+        return;
+      }
+
       updateProject.mutate(
         {
           id: project.id,
@@ -192,12 +211,27 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
       >
         {workflowToEdit ? (
           <>
+            {showValidationErrors && (
+              <Alert
+                type="error"
+                style={{ padding: 0, marginBottom: "8px" }}
+                description={
+                  <ul>
+                    {validationErrors?.map((error) => (
+                      <li key={error}>{error}</li>
+                    ))}
+                  </ul>
+                }
+              />
+            )}
+
             <WorkflowBoard
               workflow={workflowToEdit.workflow}
               onWorkflowChanged={workflowToEdit.onWorkflowChanged}
               disabled={updateProject.isLoading}
               readonly={false}
             />
+
             <Button
               type="primary"
               style={{ width: "fit-content", marginTop: "8px" }}
