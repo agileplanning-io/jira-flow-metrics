@@ -98,7 +98,7 @@ export const PoliciesDropdown: FC<PoliciesDropdownProps> = ({
             {isSavedPolicy(currentPolicy) ? (
               currentPolicy.name
             ) : (
-              <Typography.Text type="secondary">Custom</Typography.Text>
+              <Typography.Text type="secondary">Unsaved</Typography.Text>
             )}
             <SaveOutlined
               style={{ color: currentPolicy.isChanged ? blue.primary : "#AAA" }}
