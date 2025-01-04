@@ -1,7 +1,11 @@
 import { useNavigationContext } from "../../navigation/context";
 import { ProjectContext, ProjectContextType } from "./context";
 import { useIssues } from "@data/issues";
-import { CycleTimePolicy, isPolicyEqual } from "@agileplanning-io/flow-metrics";
+import {
+  CycleTimePolicy,
+  isPolicyEqual,
+  SavedPolicy,
+} from "@agileplanning-io/flow-metrics";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useGetPolicies } from "@data/projects";
@@ -33,23 +37,27 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
         // check the policy is up to date, e.g. if we just saved it
         if (isSavedPolicy(currentPolicy)) {
           const cachedPolicy = savedPolicies.find(
-            (policy) => policy.id === currentPolicy.id,
+            (policy) => policy.id === currentPolicyId,
           );
 
           if (isNonNullish(cachedPolicy)) {
-            const isChanged = !isPolicyEqual(
-              currentPolicy.policy,
-              cachedPolicy.policy,
-            );
+            if (currentPolicy.id !== currentPolicyId) {
+              setCurrentPolicy({ ...cachedPolicy, isChanged: false });
+            } else {
+              const isChanged = !isPolicyEqual(
+                currentPolicy.policy,
+                cachedPolicy.policy,
+              );
 
-            // We just saved the policy
-            if (currentPolicy.isChanged && !isChanged) {
-              setCurrentPolicy({ ...currentPolicy, isChanged: false });
-            }
+              // We just saved the policy
+              if (currentPolicy.isChanged && !isChanged) {
+                setCurrentPolicy({ ...currentPolicy, isChanged: false });
+              }
 
-            // We just made the policy the default
-            if (!currentPolicy.isDefault && cachedPolicy.isDefault) {
-              setCurrentPolicy({ ...currentPolicy, isDefault: true });
+              // We just made the policy the default
+              if (!currentPolicy.isDefault && cachedPolicy.isDefault) {
+                setCurrentPolicy({ ...currentPolicy, isDefault: true });
+              }
             }
           }
         } else if (currentPolicyId) {
@@ -79,7 +87,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
           );
 
           if (defaultPolicy) {
-            setCurrentPolicyId(defaultPolicy.id);
+            setCurrentPolicyId(defaultPolicy);
             setCurrentPolicy({ ...defaultPolicy, isChanged: false });
           } else {
             setCurrentPolicy({
@@ -112,16 +120,19 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const selectCycleTimePolicy = useCallback(
-    (policyId?: string, name?: string) => {
+    (policyId?: string, savedPolicy?: SavedPolicy) => {
       if (policyId) {
-        const policy = savedPolicies?.find((policy) => policy.id === policyId);
-        setCurrentPolicyId(policyId, policy?.name ?? name);
-        if (policy) {
-          setCurrentPolicy({ ...policy, isChanged: false });
+        const selectedPolicy =
+          savedPolicy ??
+          savedPolicies?.find((policy) => policy.id === policyId);
+
+        if (selectedPolicy) {
+          setCurrentPolicyId(selectedPolicy);
+          setCurrentPolicy({ ...selectedPolicy, isChanged: false });
         }
       } else {
         // We've just deleted a saved policy. We'll keep the same policy but as a custom (unsaved) policy.
-        setCurrentPolicyId(undefined, "Custom");
+        setCurrentPolicyId();
         const prevPolicy = currentPolicy?.policy;
         if (prevPolicy) {
           setCurrentPolicy({
@@ -171,11 +182,16 @@ const useCurrentPolicyId = () => {
     }
   }, [params]);
 
+  type CurrentPolicyParams = {
+    id: string;
+    name: string;
+  };
+
   const setCurrentPolicyId = useCallback(
-    (id?: string, name?: string) =>
+    (params?: CurrentPolicyParams) =>
       setParams((prev) => {
-        if (id?.trim().length) {
-          prev.set(policyKey, `${name}-${id}`);
+        if (params) {
+          prev.set(policyKey, `${params.name}-${params.id}`);
         } else {
           prev.delete(policyKey);
         }
