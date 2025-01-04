@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-components
 
+## 0.1.31
+
+### Patch Changes
+
+- dac0f3b: feat: validate workflows
+
 ## 0.1.30
 
 ### Patch Changes
