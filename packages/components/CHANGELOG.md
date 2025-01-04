@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-components
 
+## 0.1.30
+
+### Patch Changes
+
+- 202a735: fix: react spread operator warning
+
 ## 0.1.29
 
 ### Patch Changes
