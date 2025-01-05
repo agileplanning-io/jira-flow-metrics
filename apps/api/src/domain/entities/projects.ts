@@ -92,3 +92,14 @@ export abstract class DataSourcesRepository {
     params: SearchDataSourcesParams,
   ): Promise<DataSource[]>;
 }
+
+export type BoardSource = {
+  id: number;
+  name?: string;
+  type?: string;
+  location?: string;
+};
+
+export abstract class BoardsRepository {
+  abstract getBoards(domain: Domain, name: string): Promise<BoardSource[]>;
+}

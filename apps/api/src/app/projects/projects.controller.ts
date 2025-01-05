@@ -1,4 +1,8 @@
-import { PoliciesRepository, ProjectsRepository } from "@entities/projects";
+import {
+  BoardsRepository,
+  PoliciesRepository,
+  ProjectsRepository,
+} from "@entities/projects";
 import { IssuesRepository } from "@entities/issues";
 import {
   CycleTimePolicy,
@@ -19,11 +23,13 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from "@nestjs/common";
 import { SyncUseCase } from "@usecases/projects/sync/sync-use-case";
 import { ZodValidationPipe } from "@lib/pipes/zod-pipe";
 import { ParsedQuery } from "@lib/decorators/parsed-query";
 import { z } from "zod";
+import { DomainsRepository } from "@entities/domains";
 
 const workflowStageRequestSchema = workflowStageSchema.extend({
   statuses: z.array(z.string()),
@@ -44,10 +50,12 @@ type UpdateProjectBodyResponse = z.infer<
 @Controller("projects")
 export class ProjectsController {
   constructor(
+    private readonly domains: DomainsRepository,
     private readonly projects: ProjectsRepository,
     private readonly issues: IssuesRepository,
     private readonly sync: SyncUseCase,
     private readonly policies: PoliciesRepository,
+    private readonly boards: BoardsRepository,
   ) {}
 
   @Get(":projectId")
@@ -174,5 +182,15 @@ export class ProjectsController {
     @Param("policyId") policyId: string,
   ) {
     return this.policies.deletePolicy(projectId, policyId);
+  }
+
+  @Get(":projectId/boards")
+  async getBoards(
+    @Param("projectId") projectId: string,
+    @Query("query") query: string,
+  ) {
+    const project = await this.projects.getProject(projectId);
+    const domain = await this.domains.getDomain(project.domainId);
+    return this.boards.getBoards(domain, query);
   }
 }

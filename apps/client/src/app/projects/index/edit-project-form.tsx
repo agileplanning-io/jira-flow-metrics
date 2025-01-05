@@ -1,6 +1,21 @@
 import { LoadingSpinner } from "@app/components/loading-spinner";
-import { Project, UpdateProjectParams, useUpdateProject } from "@data/projects";
-import { Alert, Button, Form, Input } from "antd";
+import {
+  Project,
+  UpdateProjectParams,
+  useGetBoards,
+  useUpdateProject,
+} from "@data/projects";
+import {
+  Alert,
+  Button,
+  Empty,
+  Form,
+  Input,
+  Select,
+  Space,
+  Spin,
+  Tag,
+} from "antd";
 import { FC, useCallback, useState } from "react";
 import {
   IssueAttributesFilterForm,
@@ -49,6 +64,13 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
   };
 
   const updateProject = useUpdateProject();
+
+  const [boardsQuery, setBoardsQuery] = useState<string>("");
+
+  const { data: boards, isLoading: isLoadingBoards } = useGetBoards(
+    project.id,
+    boardsQuery,
+  );
 
   const onStoryWorkflowChanged = useCallback(
     (workflow: WorkflowStage[], validationErrors?: string[]) => {
@@ -117,6 +139,21 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
       );
     }
   };
+
+  const notFoundContent = isLoadingBoards ? (
+    <Empty
+      className="ant-empty-normal"
+      image={<Spin style={{ margin: 0 }} size="large" />}
+      description="Loading"
+    />
+  ) : boardsQuery.trim().length > 0 ? (
+    <Empty
+      image={Empty.PRESENTED_IMAGE_SIMPLE}
+      description="No data sources found"
+    />
+  ) : (
+    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Type to search" />
+  );
 
   return (
     <>
@@ -203,6 +240,28 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
       >
         Apply Changes
       </Button>
+
+      <h3>Project boards</h3>
+
+      <Form.Item label="Add board">
+        <Select
+          showSearch
+          onSearch={setBoardsQuery}
+          // onChange={onSelectDataSource}
+          // filterOption={filterOption}
+          notFoundContent={notFoundContent}
+        >
+          {boards?.map((board, index) => (
+            <Select.Option value={index} label={board.name} key={board.id}>
+              <Space>
+                <Tag color="blue">{board.location}</Tag>
+                <Tag color="green">{board.type}</Tag>
+                {board.name}
+              </Space>
+            </Select.Option>
+          ))}
+        </Select>
+      </Form.Item>
 
       <FullScreenDrawer
         title={workflowToEdit?.title}
