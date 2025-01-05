@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { createAgileClient } from "../client/jira-client";
 import { Domain } from "@entities/domains";
 import { BoardSource, BoardsRepository } from "@entities/projects";
+import { AgileModels } from "jira.js";
 
 @Injectable()
 export class HttpJiraBoardsRepository implements BoardsRepository {
@@ -21,5 +22,15 @@ export class HttpJiraBoardsRepository implements BoardsRepository {
       type: board.type,
       location: board.location?.displayName,
     }));
+  }
+
+  async getBoardConfig(
+    domain: Domain,
+    boardId: number,
+  ): Promise<AgileModels.BoardConfig> {
+    const client = createAgileClient(domain);
+    // const result = await client.board.getIssuesForBoard({ boardId });
+    const result = await client.board.getConfiguration({ boardId });
+    return result;
   }
 }

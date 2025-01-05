@@ -191,6 +191,13 @@ export class ProjectsController {
   ) {
     const project = await this.projects.getProject(projectId);
     const domain = await this.domains.getDomain(project.domainId);
-    return this.boards.getBoards(domain, query);
+    const boards = await this.boards.getBoards(domain, query);
+
+    for (const board of boards) {
+      const config = await this.boards.getBoardConfig(domain, board.id);
+      console.info(JSON.stringify(config));
+    }
+
+    return boards;
   }
 }
