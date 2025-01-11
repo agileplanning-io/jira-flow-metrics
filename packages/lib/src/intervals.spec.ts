@@ -1,5 +1,10 @@
 import { addDays, subDays } from "date-fns";
-import { getSpanningInterval, getSpanningSet } from "./intervals";
+import {
+  AbsoluteInterval,
+  getSpanningInterval,
+  getSpanningSet,
+  intervalContainsDate,
+} from "./intervals";
 
 describe("intervals", () => {
   const now = new Date();
@@ -48,6 +53,28 @@ describe("intervals", () => {
       ]);
 
       expect(spanningSet).toEqual([earlierInterval, spanningInterval]);
+    });
+  });
+
+  describe("intervalContainsDate", () => {
+    it("checks if an interval contains a date", () => {
+      const interval: AbsoluteInterval = {
+        start: new Date("2024-03-02"),
+        end: new Date("2024-03-04"),
+      };
+
+      expect(intervalContainsDate(interval, interval.start)).toEqual(true);
+      expect(intervalContainsDate(interval, interval.end)).toEqual(true);
+      expect(intervalContainsDate(interval, new Date("2024-03-03"))).toEqual(
+        true,
+      );
+
+      expect(intervalContainsDate(interval, new Date("2024-03-01"))).toEqual(
+        false,
+      );
+      expect(intervalContainsDate(interval, new Date("2024-03-05"))).toEqual(
+        false,
+      );
     });
   });
 });

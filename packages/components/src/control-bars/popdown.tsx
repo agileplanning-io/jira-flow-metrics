@@ -9,6 +9,7 @@ type PopdownProps<T> = {
   value: T;
   renderLabel: (value: T) => ReactNode;
   onValueChanged: (value: T) => void;
+  onClose?: () => void;
 };
 
 export const Popdown = <T,>({
@@ -17,6 +18,7 @@ export const Popdown = <T,>({
   value,
   renderLabel,
   onValueChanged,
+  onClose,
 }: PopdownProps<T>) => {
   const [state, setState] = useState(value);
   return (
@@ -24,7 +26,11 @@ export const Popdown = <T,>({
       title={title}
       icon={null}
       description={children(state, setState)}
-      onConfirm={() => onValueChanged(state)}
+      onConfirm={() => {
+        onValueChanged(state);
+        onClose?.();
+      }}
+      onCancel={() => onClose?.()}
       placement="bottom"
       onOpenChange={(open) => {
         if (open) {

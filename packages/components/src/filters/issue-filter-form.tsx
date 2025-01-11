@@ -13,7 +13,11 @@ import { Popdown } from "../control-bars/popdown";
 import { IssueAttributesFilterForm } from "./issue-attributes-filter-form";
 import { summariseFilter } from "./summarise-filter";
 import { DateSelector } from "../date-selector";
-import { formatDate, Interval, isAbsolute } from "@agileplanning-io/flow-lib";
+import {
+  formatInterval,
+  Interval,
+  isAbsolute,
+} from "@agileplanning-io/flow-lib";
 import { Tag, theme, Typography } from "antd";
 import { isNonNullish } from "remeda";
 import { useFilterOptions } from "./use-filter-options";
@@ -162,7 +166,7 @@ const summariseDatesFilter = (dates?: Interval) => {
   }
 
   if (isAbsolute(dates)) {
-    return `${formatDate(dates.start)}-${formatDate(dates.end)}`;
+    return formatInterval(dates);
   } else {
     return `Last ${dates.unitCount} ${
       dates.unitCount === 1 ? dates.unit : `${dates.unit}s`

@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { isNil } from "remeda";
+import { AbsoluteInterval } from "./intervals";
 
 export const formatNumber = (x?: number): string | undefined => {
   if (!isNil(x)) {
@@ -16,6 +17,9 @@ export const formatDate = (
     return sameYear ? format(date, "d MMM") : format(date, "d MMM yyyy");
   }
 };
+
+export const formatInterval = (interval: AbsoluteInterval) =>
+  `${formatDate(interval.start)}-${formatDate(interval.end)}`;
 
 export const formatTime = (date?: Date): string | undefined => {
   if (date) {

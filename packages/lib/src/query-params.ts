@@ -34,5 +34,5 @@ export const qsStringify = (obj: unknown) =>
     skipNulls: true,
     serializeDate: (date: Date) => format(date, "yyyy-MM-dd"),
     allowDots: true,
-    arrayFormat: "brackets",
+    arrayFormat: "indices",
   });

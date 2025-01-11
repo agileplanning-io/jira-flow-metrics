@@ -106,4 +106,17 @@ describe("computeInputs", () => {
       },
     });
   });
+
+  it("optionally ignores data from excluded intervals", () => {
+    const exclusions = [
+      { start: new Date("2020-01-06"), end: new Date("2020-01-07") },
+    ];
+    expect(computeInputs(interval, issues, true, exclusions)).toEqual({
+      cycleTimes: [1, 3, 200],
+      throughputs: {
+        weekend: [0, 0],
+        weekday: [2, 0],
+      },
+    });
+  });
 });

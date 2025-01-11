@@ -13,6 +13,9 @@ const chartParamsSchema = z.object({
   includeLeadTimes: boolean.schema.default(boolean.True),
   excludeOutliers: boolean.schema.default(boolean.False),
   showPercentileLabels: boolean.schema.default(boolean.True),
+  exclusions: z
+    .array(z.object({ start: z.coerce.date(), end: z.coerce.date() }))
+    .optional(),
 });
 
 const defaults = {

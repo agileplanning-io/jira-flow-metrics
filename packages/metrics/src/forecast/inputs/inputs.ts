@@ -5,6 +5,8 @@ import {
   asAbsolute,
   excludeOutliersFromSeq,
   categorizeWeekday,
+  AbsoluteInterval,
+  intervalContainsDate,
 } from "@agileplanning-io/flow-lib";
 import { CompletedIssue } from "../../issues";
 
@@ -40,19 +42,30 @@ export const computeInputs = (
   interval: Interval,
   issues: CompletedIssue[],
   excludeCycleTimeOutliers: boolean,
+  exclusions?: AbsoluteInterval[],
 ): SimulationInputs => {
+  const excludeDate = (date: Date) =>
+    exclusions?.some((interval) => intervalContainsDate(interval, date));
+
   const throughputs: Record<string, number[]> = {};
   for (const { date, count } of computeThroughput(interval, issues)) {
-    const category = categorizeWeekday(getISODay(date));
-    if (!throughputs[category]) {
-      throughputs[category] = [];
+    if (!excludeDate(date)) {
+      const category = categorizeWeekday(getISODay(date));
+      if (!throughputs[category]) {
+        throughputs[category] = [];
+      }
+      throughputs[category].push(count);
     }
-    throughputs[category].push(count);
   }
-  let cycleTimes = issues.map((issue) => issue.metrics.cycleTime);
+
+  let cycleTimes = issues
+    .filter((issue) => !excludeDate(issue.metrics.completed))
+    .map((issue) => issue.metrics.cycleTime);
+
   if (excludeCycleTimeOutliers) {
     cycleTimes = excludeOutliersFromSeq(cycleTimes, (x: number) => x);
   }
+
   return {
     cycleTimes,
     throughputs,

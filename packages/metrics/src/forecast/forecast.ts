@@ -5,6 +5,7 @@ import { SeedRandomGenerator } from "./simulation/select";
 import { computeInputs } from "./inputs/inputs";
 import { CompletedIssue } from "../issues";
 import {
+  AbsoluteInterval,
   Interval,
   Percentile,
   getPercentiles,
@@ -15,6 +16,7 @@ export type ForecastParams = {
   selectedIssues: CompletedIssue[];
   issueCount: number;
   startDate?: Date;
+  exclusions?: AbsoluteInterval[];
   excludeOutliers: boolean;
   includeLeadTimes: boolean;
   includeLongTail: boolean;
@@ -52,13 +54,23 @@ export const forecast = ({
   selectedIssues,
   issueCount,
   startDate,
+  exclusions,
   excludeOutliers,
   includeLeadTimes,
   includeLongTail,
   seed,
 }: ForecastParams): SummaryResult => {
   const generator = new SeedRandomGenerator(seed);
-  const inputs = computeInputs(interval, selectedIssues, excludeOutliers);
+  const inputs = computeInputs(
+    interval,
+    selectedIssues,
+    excludeOutliers,
+    exclusions,
+  );
+
+  if (!Object.values(inputs.throughputs).length) {
+    return { startDate, rows: [], percentiles: [] };
+  }
 
   const runs = runSimulation({
     issueCount,
