@@ -3,6 +3,7 @@ import {
   CompletedIssue,
   DateFilterType,
   HierarchyLevel,
+  Issue,
   SummaryResult,
   filterCompletedIssues,
   forecast,
@@ -10,12 +11,16 @@ import {
   toClientFilter,
 } from "@agileplanning-io/flow-metrics";
 import { useAtomValue } from "jotai";
-import { ForecastChart } from "@agileplanning-io/flow-charts";
+import { ForecastChart, Scatterplot } from "@agileplanning-io/flow-charts";
 import { useProjectContext } from "../../context";
 import { ChartParams, newSeed, useChartParams } from "./use-chart-params";
 import { chartStyleAtom } from "../chart-style";
 import { useFilterParams } from "@app/filter/use-filter-params";
-import { defaultDateRange, formatDate } from "@agileplanning-io/flow-lib";
+import {
+  asAbsolute,
+  defaultDateRange,
+  formatDate,
+} from "@agileplanning-io/flow-lib";
 import { Project } from "@data/projects";
 import {
   ControlBar,
@@ -25,9 +30,18 @@ import {
   Popdown,
   ReportType,
 } from "@agileplanning-io/flow-components";
-import { Button, Checkbox, Form, InputNumber, Space, Tooltip } from "antd";
+import {
+  Button,
+  Checkbox,
+  Form,
+  InputNumber,
+  Space,
+  Tooltip,
+  Typography,
+} from "antd";
 import { isNonNullish } from "remeda";
 import { RedoOutlined } from "@ant-design/icons";
+import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 
 export const ForecastPage = () => {
   const { issues } = useProjectContext();
@@ -37,6 +51,7 @@ export const ForecastPage = () => {
     hierarchyLevel: HierarchyLevel.Story,
   }));
   const [filteredIssues, setFilteredIssues] = useState<CompletedIssue[]>([]);
+  const [selectedIssues, setSelectedIssues] = useState<Issue[]>([]);
   const { chartParams, setChartParams } = useChartParams();
   const chartStyle = useAtomValue(chartStyleAtom);
 
@@ -88,6 +103,30 @@ export const ForecastPage = () => {
           showPercentiles={chartParams.showPercentileLabels}
         />
       ) : null}
+
+      {filter?.dates && (
+        <>
+          <Typography.Title level={3}>Input Data</Typography.Title>
+          <Scatterplot
+            issues={filteredIssues}
+            range={asAbsolute(filter.dates)}
+            showPercentileLabels={false}
+            setSelectedIssues={setSelectedIssues}
+            hideOutliers={false}
+            options={{
+              scales: { x: { title: { display: false } } },
+              aspectRatio: 10,
+              plugins: { legend: { display: false } },
+            }}
+          />
+        </>
+      )}
+
+      <IssueDetailsDrawer
+        selectedIssues={selectedIssues}
+        onClose={() => setSelectedIssues([])}
+        open={selectedIssues.length > 0}
+      />
     </>
   );
 };

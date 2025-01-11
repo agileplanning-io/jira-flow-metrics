@@ -10,10 +10,9 @@ const defaultStyle: ChartStyle = {
 
 export const buildFontSpec = (style?: ChartStyle): Partial<FontSpec> => {
   const fontSize = style?.fontSize ?? defaultStyle.fontSize;
-  const font = {
+  return {
     size: fontSize,
   };
-  return font;
 };
 
 export const defaultBarStyle = Object.freeze({
