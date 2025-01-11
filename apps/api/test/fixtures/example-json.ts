@@ -1,4 +1,4 @@
-import { Field, Status } from "../../src/domain/entities/issues";
+import { Field, Status } from "@agileplanning-io/flow-metrics";
 import { Version3Models } from "jira.js";
 
 export const exampleIssue: Version3Models.Issue = {

@@ -3,6 +3,7 @@ import { ProjectContext, ProjectContextType } from "./context";
 import { useIssues } from "@data/issues";
 import {
   CycleTimePolicy,
+  getFlowMetrics,
   isPolicyEqual,
   SavedPolicy,
 } from "@agileplanning-io/flow-metrics";
@@ -23,7 +24,12 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const { currentPolicyId, setCurrentPolicyId } = useCurrentPolicyId();
   const [currentPolicy, setCurrentPolicy] = useState<CurrentPolicy>();
 
-  const { data: issues } = useIssues(project?.id, currentPolicy?.policy);
+  const { data: issues } = useIssues(project?.id);
+
+  const metricIssues =
+    issues && currentPolicy
+      ? getFlowMetrics(issues, currentPolicy.policy)
+      : undefined;
 
   const { data: savedPolicies } = useGetPolicies(project?.id);
 
@@ -150,14 +156,14 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({
   const value: ProjectContextType = useMemo(
     () => ({
       project,
-      issues,
+      issues: metricIssues,
       currentPolicy,
       updateCurrentPolicy,
       selectCycleTimePolicy,
     }),
     [
       project,
-      issues,
+      metricIssues,
       currentPolicy,
       updateCurrentPolicy,
       selectCycleTimePolicy,

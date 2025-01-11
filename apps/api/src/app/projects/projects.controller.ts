@@ -1,12 +1,10 @@
 import { PoliciesRepository, ProjectsRepository } from "@entities/projects";
 import { IssuesRepository } from "@entities/issues";
 import {
-  CycleTimePolicy,
   cycleTimePolicySchema,
   DraftPolicy,
   draftPolicy,
   filterSchema,
-  getFlowMetrics,
   SavedPolicy,
   savedPolicy,
   workflowStageSchema,
@@ -22,7 +20,6 @@ import {
 } from "@nestjs/common";
 import { SyncUseCase } from "@usecases/projects/sync/sync-use-case";
 import { ZodValidationPipe } from "@lib/pipes/zod-pipe";
-import { ParsedQuery } from "@lib/decorators/parsed-query";
 import { z } from "zod";
 
 const workflowStageRequestSchema = workflowStageSchema.extend({
@@ -121,15 +118,8 @@ export class ProjectsController {
   }
 
   @Get(":projectId/issues")
-  async getIssues(
-    @Param("projectId") projectId: string,
-    @ParsedQuery("policy", new ZodValidationPipe(cycleTimePolicySchema))
-    policy: CycleTimePolicy,
-  ) {
-    let issues = await this.issues.getIssues(projectId);
-
-    issues = getFlowMetrics(issues, policy);
-
+  async getIssues(@Param("projectId") projectId: string) {
+    const issues = await this.issues.getIssues(projectId);
     return issues.map((issue) => {
       const parent = issue.parentKey
         ? issues.find((parent) => parent.key === issue.parentKey)
