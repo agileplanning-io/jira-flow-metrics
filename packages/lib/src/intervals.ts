@@ -181,3 +181,7 @@ export const defaultDateRange = (): Interval => {
   const defaultEnd = endOfDay(today);
   return { end: defaultEnd, unit: TimeUnit.Day, unitCount: 30 };
 };
+
+export const containsDate = (interval: AbsoluteInterval, date: Date) => {
+  return interval.start <= date && date <= interval.end;
+};

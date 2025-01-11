@@ -1,10 +1,15 @@
 import { intersection, isDeepEqual, isNonNullish, isNullish } from "remeda";
 import { CompletedIssue, HierarchyLevel, Issue, isCompleted } from "./issues";
-import { Interval, asAbsolute } from "@agileplanning-io/flow-lib";
+import {
+  AbsoluteInterval,
+  Interval,
+  asAbsolute,
+  containsDate,
+} from "@agileplanning-io/flow-lib";
 
 export enum DateFilterType {
   Completed = "completed",
-  Intersects = "intersects",
+  Overlaps = "overlaps",
 }
 
 export enum FilterType {
@@ -22,10 +27,18 @@ export const defaultValuesFilter = (): ValuesFilter => ({
   type: FilterType.Include,
 });
 
-export type DatesFilter = {
+type CompletedDatesFilter = {
   interval: Interval;
-  filterType: DateFilterType;
+  filterType: DateFilterType.Completed;
+  exclude?: AbsoluteInterval[];
 };
+
+type OverlapsDatesFilter = {
+  interval: Interval;
+  filterType: DateFilterType.Overlaps;
+};
+
+export type DatesFilter = CompletedDatesFilter | OverlapsDatesFilter;
 
 export type IssueAttributesFilter = {
   resolutions?: ValuesFilter;
@@ -122,39 +135,48 @@ export const filterIssues = (
       const interval = asAbsolute(filter.dates.interval);
 
       if (filter.dates.filterType === DateFilterType.Completed) {
-        if (!issue.metrics.completed) {
-          return false;
-        }
-
-        if (issue.metrics.completed < interval.start) {
-          return false;
-        }
-
-        if (issue.metrics.completed > interval.end) {
-          return false;
-        }
-      } else {
-        if (!issue.metrics.started) {
-          return false;
-        }
-
-        if (issue.metrics.started > interval.end) {
+        if (!completedInInterval(issue, interval)) {
           return false;
         }
 
         if (
-          issue.metrics.completed &&
-          issue.metrics.completed < interval.start
+          filter.dates.exclude?.some((interval) =>
+            completedInInterval(issue, interval),
+          )
         ) {
           return false;
         }
-
-        return true;
+      } else if (!overlapsInterval(issue, interval)) {
+        return false;
       }
     }
 
     return true;
   });
+};
+
+const completedInInterval = (issue: Issue, interval: AbsoluteInterval) => {
+  if (!issue.metrics.completed) {
+    return false;
+  }
+
+  return containsDate(interval, issue.metrics.completed);
+};
+
+const overlapsInterval = (issue: Issue, interval: AbsoluteInterval) => {
+  if (!issue.metrics.started) {
+    return false;
+  }
+
+  if (issue.metrics.started > interval.end) {
+    return false;
+  }
+
+  if (issue.metrics.completed && issue.metrics.completed < interval.start) {
+    return false;
+  }
+
+  return true;
 };
 
 export const filterCompletedIssues = (

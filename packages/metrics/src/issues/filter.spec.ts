@@ -1,7 +1,8 @@
 import { clone } from "remeda";
-import { buildIssue } from "../fixtures/issue-factory";
+import { buildCompletedIssue, buildIssue } from "../fixtures/issue-factory";
 import { HierarchyLevel } from "../issues";
 import {
+  DateFilterType,
   FilterType,
   FilterUseCase,
   IssueAttributesFilter,
@@ -20,6 +21,80 @@ describe("filterIssues", () => {
     });
 
     expect(filteredIssues).toEqual([story]);
+  });
+
+  describe("date filters", () => {
+    const issue1Started = new Date("2024-03-01");
+    const issue1Completed = new Date("2024-03-03");
+    const issue2Started = new Date("2024-02-02");
+    const issue2Completed = new Date("2024-03-04");
+    const issue3Started = new Date("2024-03-03");
+    const issue3Completed = new Date("2024-03-05");
+    const issue4Completed = new Date("2024-03-06");
+
+    const issue1 = buildCompletedIssue({
+      metrics: {
+        started: issue1Started,
+        completed: issue1Completed,
+        cycleTime: 1,
+      },
+    });
+    const issue2 = buildCompletedIssue({
+      metrics: {
+        started: issue2Started,
+        completed: issue2Completed,
+        cycleTime: 1,
+      },
+    });
+    const issue3 = buildCompletedIssue({
+      metrics: {
+        started: issue3Started,
+        completed: issue3Completed,
+        cycleTime: 1,
+      },
+    });
+    const issue4 = buildCompletedIssue({
+      metrics: {
+        completed: issue4Completed,
+        cycleTime: 1,
+      },
+    });
+    const issues = [issue1, issue2, issue3, issue4];
+
+    describe("when the filter type is 'completed'", () => {
+      const interval = { start: issue1Started, end: issue2Completed };
+      const filterType = DateFilterType.Completed;
+
+      it("filters issues within the given interval", () => {
+        const filteredIssues = filterIssues(issues, {
+          dates: { filterType, interval },
+        });
+        expect(filteredIssues).toEqual([issue1, issue2]);
+      });
+
+      it("ignores issues completed in exclusion intervals", () => {
+        const filteredIssues = filterIssues(issues, {
+          dates: {
+            filterType,
+            interval,
+            exclude: [{ start: issue1Started, end: issue1Completed }],
+          },
+        });
+        expect(filteredIssues).toEqual([issue2]);
+      });
+    });
+
+    describe("when the filter type is 'overlaps'", () => {
+      it("filters issues which overlap the given interval", () => {
+        const filteredIssues = filterIssues(issues, {
+          dates: {
+            filterType: DateFilterType.Overlaps,
+            interval: { start: issue1Started, end: issue2Completed },
+          },
+        });
+        expect(filteredIssues).toEqual([issue1, issue2, issue3]);
+      });
+    });
   });
 
   describe("issueType filters", () => {

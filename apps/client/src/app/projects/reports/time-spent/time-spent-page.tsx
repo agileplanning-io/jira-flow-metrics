@@ -60,7 +60,7 @@ export const TimeSpentPage = () => {
         issues,
         fromClientFilter(
           { ...filter, hierarchyLevel: HierarchyLevel.Story },
-          DateFilterType.Intersects,
+          DateFilterType.Overlaps,
         ),
       );
       const epics = issues.filter(
