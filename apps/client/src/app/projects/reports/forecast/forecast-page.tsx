@@ -26,13 +26,13 @@ import {
 } from "@agileplanning-io/flow-lib";
 import { Project } from "@data/projects";
 import {
-  AbsolutePicker,
   ControlBar,
   DatePicker,
   FormControl,
   HelpIcon,
   IssueFilterForm,
   Popdown,
+  RangePicker,
   ReportType,
 } from "@agileplanning-io/flow-components";
 import {
@@ -309,7 +309,7 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
                 ))}
 
                 <Space direction="horizontal">
-                  <AbsolutePicker
+                  <RangePicker.Absolute
                     dates={newExclusion}
                     onChange={setNewExclusion}
                   />

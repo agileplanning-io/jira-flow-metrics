@@ -12,7 +12,7 @@ import { FC } from "react";
 import { Popdown } from "../control-bars/popdown";
 import { IssueAttributesFilterForm } from "./issue-attributes-filter-form";
 import { summariseFilter } from "./summarise-filter";
-import { DateSelector } from "../date-selector";
+import { RangePicker } from "../date-selector";
 import {
   formatInterval,
   Interval,
@@ -137,7 +137,7 @@ export const IssueFilterForm: FC<IssueFilterFormProps> = ({
             onValueChanged={onDatesChanged}
           >
             {(value, setValue) => (
-              <DateSelector dates={value} onChange={setValue} />
+              <RangePicker dates={value} onChange={setValue} />
             )}
           </Popdown>
         </FormControl>
