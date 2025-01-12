@@ -1,5 +1,12 @@
 # @agileplanning-io/flow-lib
 
+## 0.1.5
+
+### Patch Changes
+
+- 8eeaedb: feat: improve formatting of ranges which span years
+- cfc54de: fix: objects in arrays in query params
+
 ## 0.1.4
 
 ### Patch Changes
