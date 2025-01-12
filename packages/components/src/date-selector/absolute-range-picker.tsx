@@ -4,17 +4,25 @@ import { endOfDay } from "date-fns";
 import { FC } from "react";
 import { DatePicker } from "./date-picker";
 
-export const AbsoluteRangePicker: FC<{
-  dates: AbsoluteInterval;
+type AbsoluteRangePickerProps = {
+  dates?: AbsoluteInterval;
   onChange: (interval: AbsoluteInterval) => void;
   size?: SizeType;
-}> = ({ dates, onChange, size }) => (
+  allowClear?: boolean;
+};
+
+export const AbsoluteRangePicker: FC<AbsoluteRangePickerProps> = ({
+  dates,
+  onChange,
+  size,
+  allowClear,
+}) => (
   <DatePicker.RangePicker
     size={size}
     suffixIcon={false}
     style={{ width: "100%", zIndex: 10000 }}
-    allowClear={false}
-    value={[dates.start, dates.end]}
+    allowClear={allowClear}
+    value={[dates?.start, dates?.end]}
     onChange={(range) => {
       if (range) {
         const [start, end] = range;
