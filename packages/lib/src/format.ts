@@ -10,16 +10,23 @@ export const formatNumber = (x?: number): string | undefined => {
 
 export const formatDate = (
   date?: Date,
-  now = new Date(),
+  alwaysIncludeYear = false,
 ): string | undefined => {
   if (date) {
-    const sameYear = date.getFullYear() === now.getFullYear();
-    return sameYear ? format(date, "d MMM") : format(date, "d MMM yyyy");
+    const now = new Date();
+    return !alwaysIncludeYear && isSameYear(date, now)
+      ? format(date, "d MMM")
+      : format(date, "d MMM yyyy");
   }
 };
 
-export const formatInterval = (interval: AbsoluteInterval) =>
-  `${formatDate(interval.start)}-${formatDate(interval.end)}`;
+export const formatInterval = (interval: AbsoluteInterval) => {
+  const alwaysIncludeYear = !isSameYear(interval.start, interval.end);
+  return `${formatDate(interval.start, alwaysIncludeYear)}-${formatDate(
+    interval.end,
+    alwaysIncludeYear,
+  )}`;
+};
 
 export const formatTime = (date?: Date): string | undefined => {
   if (date) {
@@ -29,3 +36,6 @@ export const formatTime = (date?: Date): string | undefined => {
 
 export const ellipsize = (text: string, maxLength = 32) =>
   text.length > maxLength ? `${text.slice(0, maxLength)}…` : text;
+
+const isSameYear = (date1: Date, date2: Date) =>
+  date1.getFullYear() === date2.getFullYear();
