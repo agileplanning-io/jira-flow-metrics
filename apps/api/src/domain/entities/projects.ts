@@ -7,6 +7,7 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { Domain } from "./domains";
 import { flatten } from "remeda";
+import { AgileModels } from "jira.js";
 
 export type WorkflowStage = {
   name: string;
@@ -91,4 +92,28 @@ export abstract class DataSourcesRepository {
   abstract getDataSources(
     params: SearchDataSourcesParams,
   ): Promise<DataSource[]>;
+}
+
+export type BoardSource = {
+  id: number;
+  name?: string;
+  type?: string;
+  location?: string;
+};
+
+// type BoardColumn = {
+//   name?: string;
+//   statuses?:
+// }
+
+// export type BoardConfig = {
+//   columns: { name?: string; }
+// }
+
+export abstract class BoardsRepository {
+  abstract getBoards(domain: Domain, name: string): Promise<BoardSource[]>;
+  abstract getBoardConfig(
+    domain: Domain,
+    boardId: number,
+  ): Promise<AgileModels.BoardConfig>;
 }

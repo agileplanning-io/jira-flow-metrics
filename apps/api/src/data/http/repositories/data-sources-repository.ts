@@ -1,6 +1,12 @@
 import { DataSource, DataSourcesRepository } from "@entities/projects";
 import { Injectable } from "@nestjs/common";
 import { createJiraClient } from "../client/jira-client";
+import { Domain } from "@entities/domains";
+
+export type SearchDataSourcesParams = {
+  domain: Pick<Domain, "host" | "email" | "token">;
+  query: string;
+};
 
 @Injectable()
 export class HttpJiraDataSourcesRepository extends DataSourcesRepository {

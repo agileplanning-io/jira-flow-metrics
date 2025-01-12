@@ -275,3 +275,33 @@ export const useDeletePolicy = (projectId: string) => {
     mutationFn: (policyId: string) => deletePolicy(projectId, policyId),
   });
 };
+
+const boardsUrl = (projectId: string, query: string) =>
+  `/projects/${projectId}/boards?query=${query}`;
+
+const boardResponseSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  type: z.string(),
+  location: z.string(),
+});
+
+export type Board = z.infer<typeof boardResponseSchema>;
+
+const boardsResponse = z.array(boardResponseSchema);
+
+const getBoards = async (projectId: string, query: string) => {
+  if (projectId === undefined) {
+    return [];
+  }
+
+  const response = await axios.get(boardsUrl(projectId, query));
+  return boardsResponse.parse(response.data);
+};
+
+export const useGetBoards = (projectId: string, query: string) => {
+  return useQuery({
+    queryKey: [boardsUrl(projectId, query)],
+    queryFn: () => getBoards(projectId, query),
+  });
+};

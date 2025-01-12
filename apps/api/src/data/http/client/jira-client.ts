@@ -1,4 +1,4 @@
-import { Version3Client } from "jira.js";
+import { AgileClient, Version3Client } from "jira.js";
 import { Domain, DomainsRepository } from "@entities/domains";
 import { Logger } from "@nestjs/common";
 import { Request } from "express";
@@ -28,19 +28,23 @@ export const jiraClientFactory = async (
   });
 };
 
-export const createJiraClient = (
-  domain: Pick<Domain, "host" | "email" | "token">,
-): Version3Client => {
+export const createJiraClient = (domain: Domain): Version3Client => {
   logger.log(`Creating Jira client for host ${domain.host}`);
-
-  return new Version3Client({
-    host: `https://${domain.host}`,
-    authentication: {
-      basic: {
-        email: domain.email,
-        apiToken: domain.token,
-      },
-    },
-    newErrorHandling: true,
-  });
+  return new Version3Client(buildConfig(domain));
 };
+
+export const createAgileClient = (domain: Domain) => {
+  logger.log(`Creating Agile client for host ${domain.host}`);
+  return new AgileClient(buildConfig(domain));
+};
+
+const buildConfig = (domain: Domain) => ({
+  host: `https://${domain.host}`,
+  authentication: {
+    basic: {
+      email: domain.email,
+      apiToken: domain.token,
+    },
+  },
+  newErrorHandling: true,
+});

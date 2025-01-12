@@ -1,5 +1,6 @@
 import { Global, Module } from "@nestjs/common";
 import {
+  BoardsRepository,
   DataSourcesRepository,
   PoliciesRepository,
   ProjectsRepository,
@@ -14,6 +15,7 @@ import { JiraIssuesRepository } from "@usecases/projects/sync/jira-issues-reposi
 import { HttpJiraIssuesRepository } from "./http/repositories/jira-issues-repository";
 import { StorageModule } from "./storage/storage-module";
 import { LocalPoliciesRepository } from "./local/repositories/policies-repository";
+import { HttpJiraBoardsRepository } from "./http/repositories/jira-boards-repository";
 
 @Global()
 @Module({
@@ -40,6 +42,10 @@ import { LocalPoliciesRepository } from "./local/repositories/policies-repositor
       useClass: HttpJiraDataSourcesRepository,
     },
     {
+      provide: BoardsRepository,
+      useClass: HttpJiraBoardsRepository,
+    },
+    {
       provide: JiraIssuesRepository,
       useClass: HttpJiraIssuesRepository,
     },
@@ -49,6 +55,7 @@ import { LocalPoliciesRepository } from "./local/repositories/policies-repositor
     ProjectsRepository,
     PoliciesRepository,
     DataSourcesRepository,
+    BoardsRepository,
     IssuesRepository,
     JiraIssuesRepository,
   ],
