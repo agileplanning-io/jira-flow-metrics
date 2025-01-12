@@ -20,6 +20,7 @@ import {
 import { getDateRanges } from "./ranges";
 import { endOfDay } from "date-fns";
 import { isNumber } from "remeda";
+import { SizeType } from "antd/es/config-provider/SizeContext";
 
 export type DateSelectorProps = {
   dates?: Interval;
@@ -60,11 +61,13 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
   );
 };
 
-const AbsolutePicker: FC<{
+export const AbsolutePicker: FC<{
   dates: AbsoluteInterval;
-  onChange: (interval: Interval) => void;
-}> = ({ dates, onChange }) => (
+  onChange: (interval: AbsoluteInterval) => void;
+  size?: SizeType;
+}> = ({ dates, onChange, size }) => (
   <DatePicker.RangePicker
+    size={size}
     suffixIcon={false}
     style={{ width: "100%", zIndex: 10000 }}
     allowClear={false}
@@ -87,7 +90,7 @@ const timeUnitOptions: SelectProps["options"] = [
   TimeUnit.Month,
 ].map((unit) => ({ label: `${unit}s ago`, value: unit }));
 
-const RelativePicker: FC<{
+export const RelativePicker: FC<{
   dates: RelativeInterval;
   onChange: (interval: Interval) => void;
 }> = ({ dates, onChange }) => {

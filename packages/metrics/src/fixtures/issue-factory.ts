@@ -56,6 +56,7 @@ export const buildIssue = (
 
 type BuildCompletedIssueParams = Partial<Omit<CompletedIssue, "metrics">> & {
   metrics: {
+    started?: Date;
     completed: Date;
     cycleTime: number;
   };

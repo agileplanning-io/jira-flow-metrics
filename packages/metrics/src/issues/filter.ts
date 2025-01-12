@@ -1,10 +1,15 @@
 import { intersection, isDeepEqual, isNonNullish, isNullish } from "remeda";
 import { CompletedIssue, HierarchyLevel, Issue, isCompleted } from "./issues";
-import { Interval, asAbsolute } from "@agileplanning-io/flow-lib";
+import {
+  AbsoluteInterval,
+  Interval,
+  asAbsolute,
+  intervalContainsDate,
+} from "@agileplanning-io/flow-lib";
 
 export enum DateFilterType {
   Completed = "completed",
-  Intersects = "intersects",
+  Overlaps = "overlaps",
 }
 
 export enum FilterType {
@@ -122,34 +127,11 @@ export const filterIssues = (
       const interval = asAbsolute(filter.dates.interval);
 
       if (filter.dates.filterType === DateFilterType.Completed) {
-        if (!issue.metrics.completed) {
+        if (!completedInInterval(issue, interval)) {
           return false;
         }
-
-        if (issue.metrics.completed < interval.start) {
-          return false;
-        }
-
-        if (issue.metrics.completed > interval.end) {
-          return false;
-        }
-      } else {
-        if (!issue.metrics.started) {
-          return false;
-        }
-
-        if (issue.metrics.started > interval.end) {
-          return false;
-        }
-
-        if (
-          issue.metrics.completed &&
-          issue.metrics.completed < interval.start
-        ) {
-          return false;
-        }
-
-        return true;
+      } else if (!overlapsInterval(issue, interval)) {
+        return false;
       }
     }
 
@@ -203,4 +185,28 @@ export const isAttributesFilterEqual = (
   return fields.every((field) =>
     isValuesFilterEqual(filter1[field], filter2[field]),
   );
+};
+
+const completedInInterval = (issue: Issue, interval: AbsoluteInterval) => {
+  if (!issue.metrics.completed) {
+    return false;
+  }
+
+  return intervalContainsDate(interval, issue.metrics.completed);
+};
+
+const overlapsInterval = (issue: Issue, interval: AbsoluteInterval) => {
+  if (!issue.metrics.started) {
+    return false;
+  }
+
+  if (issue.metrics.started > interval.end) {
+    return false;
+  }
+
+  if (issue.metrics.completed && issue.metrics.completed < interval.start) {
+    return false;
+  }
+
+  return true;
 };

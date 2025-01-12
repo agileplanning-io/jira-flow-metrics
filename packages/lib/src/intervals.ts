@@ -145,6 +145,13 @@ export const getSpanningSet = (
   return spans;
 };
 
+export const intervalContainsDate = (
+  interval: AbsoluteInterval,
+  date: Date,
+) => {
+  return interval.start <= date && date <= interval.end;
+};
+
 export const addTime = (date: Date, count: number, unit: TimeUnit): Date => {
   switch (unit) {
     case TimeUnit.Day:
@@ -175,9 +182,6 @@ export const difference = (
   }
 };
 
-export const defaultDateRange = (): Interval => {
-  const today = new Date();
-  //const defaultStart = startOfDay(subDays(today, 30));
-  const defaultEnd = endOfDay(today);
-  return { end: defaultEnd, unit: TimeUnit.Day, unitCount: 30 };
+export const defaultDateRange = (): RelativeInterval => {
+  return { unit: TimeUnit.Day, unitCount: 30 };
 };

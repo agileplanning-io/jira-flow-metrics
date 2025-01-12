@@ -6,10 +6,12 @@ import { ChartStyle, buildFontSpec } from "../util/style";
 import { isDate, mergeDeep } from "remeda";
 import { getAnnotationOptions } from "../util/annotations";
 import { addDays } from "date-fns";
+import { ReactElement } from "react";
 
 export type ForecastChartProps = {
   result: SummaryResult;
   showPercentiles: boolean;
+  renderNoData: () => ReactElement;
   style?: ChartStyle;
   options?: ChartOptions<"bar">;
 };
@@ -19,6 +21,7 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({
   showPercentiles,
   style,
   options: overrideOptions,
+  renderNoData,
 }) => {
   const { rows, percentiles, startDate } = result;
 
@@ -111,6 +114,10 @@ export const ForecastChart: React.FC<ForecastChartProps> = ({
   };
 
   const options = mergeDeep(defaultOptions, overrideOptions ?? {});
+
+  if (!rows.length) {
+    return renderNoData();
+  }
 
   return <Bar data={data} options={options} />;
 };

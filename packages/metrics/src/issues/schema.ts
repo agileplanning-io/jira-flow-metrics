@@ -42,7 +42,7 @@ export const intervalSchema: z.Schema<Interval> = z.union([
 
 const dateFilterSchema: z.Schema<DatesFilter> = z.object({
   interval: intervalSchema,
-  filterType: z.enum([DateFilterType.Completed, DateFilterType.Intersects]),
+  filterType: z.enum([DateFilterType.Completed, DateFilterType.Overlaps]),
 });
 
 export const filterSchema = z.object({
