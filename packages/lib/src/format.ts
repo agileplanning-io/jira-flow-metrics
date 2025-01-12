@@ -35,7 +35,7 @@ export const formatTime = (date?: Date): string | undefined => {
 };
 
 export const ellipsize = (text: string, maxLength = 32) =>
-  text.length > maxLength ? `${text.slice(0, maxLength)}…` : text;
+  text.length > maxLength ? `${text.slice(0, maxLength).trim()}…` : text;
 
 const isSameYear = (date1: Date, date2: Date) =>
   date1.getFullYear() === date2.getFullYear();

@@ -26,13 +26,13 @@ import {
 } from "@agileplanning-io/flow-lib";
 import { Project } from "@data/projects";
 import {
-  AbsolutePicker,
   ControlBar,
   DatePicker,
   FormControl,
   HelpIcon,
   IssueFilterForm,
   Popdown,
+  RangePicker,
   ReportType,
 } from "@agileplanning-io/flow-components";
 import {
@@ -47,7 +47,7 @@ import {
   Tooltip,
   Typography,
 } from "antd";
-import { isNonNullish, splice } from "remeda";
+import { isNonNullish, isNullish, splice } from "remeda";
 import { RedoOutlined } from "@ant-design/icons";
 import { IssueDetailsDrawer } from "../components/issue-details-drawer";
 
@@ -155,9 +155,7 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
   chartParams,
   setChartParams,
 }) => {
-  const [newExclusion, setNewExclusion] = useState<AbsoluteInterval>(() =>
-    asAbsolute(defaultDateRange()),
-  );
+  const [newExclusion, setNewExclusion] = useState<AbsoluteInterval>();
 
   return (
     <>
@@ -270,7 +268,7 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
             title="Exclude intervals"
             value={chartParams}
             onValueChanged={setChartParams}
-            onClose={() => {}}
+            onClose={() => setNewExclusion(undefined)}
             renderLabel={() => {
               if (!chartParams.exclusions) {
                 return <Typography.Text type="secondary">None</Typography.Text>;
@@ -309,17 +307,20 @@ const ChartParamsForm: FC<ChartParamsFormProps> = ({
                 ))}
 
                 <Space direction="horizontal">
-                  <AbsolutePicker
+                  <RangePicker.Absolute
                     dates={newExclusion}
                     onChange={setNewExclusion}
                   />
                   <Button
+                    disabled={isNullish(newExclusion)}
                     onClick={() => {
-                      const exclusions = [
-                        ...(value.exclusions ?? []),
-                        newExclusion,
-                      ];
-                      setValue({ ...value, exclusions });
+                      const currentExclusions = value.exclusions ?? [];
+
+                      if (newExclusion) {
+                        const exclusions = [...currentExclusions, newExclusion];
+                        setValue({ ...value, exclusions });
+                        setNewExclusion(undefined);
+                      }
                     }}
                   >
                     Add

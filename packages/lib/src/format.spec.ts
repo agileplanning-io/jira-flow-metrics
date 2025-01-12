@@ -1,4 +1,10 @@
-import { formatDate, formatInterval, formatNumber, formatTime } from "./format";
+import {
+  ellipsize,
+  formatDate,
+  formatInterval,
+  formatNumber,
+  formatTime,
+} from "./format";
 
 describe("format", () => {
   const now = new Date("2025-01-01");
@@ -57,8 +63,12 @@ describe("format", () => {
   });
 
   describe("ellipsize", () => {
-    it("returns short text verbatim", () => {});
+    it("returns short text verbatim", () => {
+      expect(ellipsize("foo bar", 8)).toEqual("foo bar");
+    });
 
-    it("truncates long text", () => {});
+    it("truncates long text, trimming white space", () => {
+      expect(ellipsize("foo bar baz", 8)).toEqual("foo bar…");
+    });
   });
 });
