@@ -101,7 +101,11 @@ export const AddProjectModal: React.FC<AddProjectModalParams> = ({
             notFoundContent={notFoundContent}
           >
             {dataSources?.map((dataSource, index) => (
-              <Select.Option value={index} label={dataSource.name} key={index}>
+              <Select.Option
+                value={index}
+                label={dataSource.name}
+                key={JSON.stringify(dataSource)}
+              >
                 <Space>
                   {dataSource.type === "project" ? (
                     <Tag color="blue">project</Tag>
