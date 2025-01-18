@@ -3,7 +3,7 @@ import { getAllPages } from "./page-utils";
 describe("getAllPages", () => {
   const makeStubbedDataFunction =
     ({ total, maxResults }: { total: number; maxResults: number }) =>
-    async (startAt: number = 0) =>
+    async (startAt = 0) =>
       Promise.resolve({ startAt, total, maxResults });
 
   it("fetches the first page", async () => {

@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { createJiraClient } from "../client/jira-client";
 import { flat } from "remeda";
 import { Version3Client } from "jira.js";
-import { getAllPages } from "./page-utils";
+import { getAllPages } from "../../../../../../packages/data/src/page-utils";
 
 @Injectable()
 export class HttpJiraDataSourcesRepository extends DataSourcesRepository {
