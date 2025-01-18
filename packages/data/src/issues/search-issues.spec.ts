@@ -15,13 +15,17 @@ describe("searchIssues", () => {
   jest.useFakeTimers({ now });
 
   it("searches for issues in Jira", async () => {
+    const parentFieldId = "101";
+
     const workflowStatuses = mock<WorkflowStatuses>();
     workflowStatuses.getStatuses.mockResolvedValue([
-      // { id: 123, name: "In Review", statusCategory: { name: "In Progress" } },
+      { id: 123, name: "In Review", statusCategory: { name: "In Progress" } },
     ]);
 
     const issueFields = mock<IssueFields>();
-    issueFields.getFields.mockResolvedValue([]);
+    issueFields.getFields.mockResolvedValue([
+      { id: parentFieldId, name: "Parent" },
+    ]);
 
     const issueSearch = mock<IssueSearch>();
     issueSearch.searchForIssuesUsingJqlPost.mockResolvedValue({
@@ -39,6 +43,9 @@ describe("searchIssues", () => {
             issuetype: { name: "Story" },
             components: [{ name: "Mobile" }],
             created: created.toISOString(),
+            [parentFieldId]: {
+              key: "TEST-102",
+            },
           },
         },
       ],
@@ -67,7 +74,7 @@ describe("searchIssues", () => {
         key: "TEST-101",
         labels: undefined,
         metrics: {},
-        parentKey: undefined,
+        parentKey: "TEST-102",
         resolution: undefined,
         status: "In Review",
         statusCategory: "In Progress",
@@ -90,6 +97,7 @@ describe("searchIssues", () => {
       },
     ]);
     expect(canonicalStatuses).toEqual([
+      { category: StatusCategory.InProgress, name: "In Review" },
       { category: StatusCategory.ToDo, name: "Created" },
     ]);
   });
