@@ -21,6 +21,7 @@ const inProgress = {
   category: StatusCategory.InProgress,
 };
 const done = { name: "Done", category: StatusCategory.Done };
+const statuses = [created, toDo, inProgress, done];
 
 describe("SyncUseCase", () => {
   it("syncs issues", async () => {
@@ -49,13 +50,6 @@ describe("SyncUseCase", () => {
       token: "token",
     };
 
-    jiraIssues.getFields.mockResolvedValue([]);
-    jiraIssues.getStatuses.mockResolvedValue([
-      { jiraId: "todo", ...toDo },
-      { jiraId: "inProgress", ...inProgress },
-      { jiraId: "done", ...done },
-    ]);
-
     const startedDate = new Date("2023-01-01T10:30:00.000Z");
     const doneDate = new Date("2023-01-01T16:30:00.000Z");
 
@@ -75,7 +69,10 @@ describe("SyncUseCase", () => {
         },
       ],
     });
-    jiraIssues.search.mockResolvedValue([story1]);
+    jiraIssues.search.mockResolvedValue({
+      issues: [story1],
+      canonicalStatuses: statuses,
+    });
 
     domains.getDomain.calledWith(domainId).mockResolvedValue(domain);
 
@@ -128,7 +125,7 @@ describe("SyncUseCase", () => {
             },
             { name: "Done", statuses: [done], selectByDefault: false },
           ],
-          statuses: [created, toDo, inProgress, done],
+          statuses,
         },
       },
     });
