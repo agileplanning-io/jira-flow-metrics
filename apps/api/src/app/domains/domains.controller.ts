@@ -4,7 +4,15 @@ import {
   ProjectsRepository,
 } from "@entities/projects";
 import { Domain, DomainsRepository } from "@entities/domains";
-import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
 import { omit } from "remeda";
 import { URL } from "url";
@@ -80,7 +88,10 @@ export class DomainsController {
   }
 
   @Get(":domainId/sources")
-  async getDataSources(@Param("domainId") domainId: string, query: string) {
+  async getDataSources(
+    @Param("domainId") domainId: string,
+    @Query("query") query: string,
+  ) {
     const domain = await this.domains.getDomain(domainId);
     return this.dataSources.getDataSources({ domain, query });
   }

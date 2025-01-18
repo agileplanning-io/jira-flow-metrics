@@ -84,7 +84,7 @@ export abstract class PoliciesRepository {
 
 export type SearchDataSourcesParams = {
   domain: Pick<Domain, "host" | "email" | "token">;
-  query: string;
+  query?: string;
 };
 
 export abstract class DataSourcesRepository {

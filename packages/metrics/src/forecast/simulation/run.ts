@@ -50,7 +50,7 @@ export function runOnce({
       generator,
     );
 
-    issueCount -= throughput;
+    issueCount -= throughput; // TODO: adj throughput here if scaled
     durationInDays += 1;
   }
 

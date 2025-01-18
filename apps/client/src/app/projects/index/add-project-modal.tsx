@@ -1,6 +1,6 @@
 import { Empty, Form, Input, Modal, Select, Space, Spin, Tag } from "antd";
 import { DataSource, useCreateProject, useDataSources } from "@data/projects";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 
 export type AddProjectModalParams = {
   isOpen: boolean;
@@ -17,10 +17,19 @@ export const AddProjectModal: React.FC<AddProjectModalParams> = ({
 
   const [dataSourceQuery, setDataSourceQuery] = useState<string>("");
 
-  const { data: dataSources, isLoading: isLoadingDataSources } = useDataSources(
-    domainId,
-    dataSourceQuery,
-  );
+  const dataSources = useDataSources(domainId, dataSourceQuery);
+
+  // Cache the previous search results in order to continue showing them while performing a new
+  // search.
+  const cachedDataSources = useRef<DataSource[]>();
+
+  useEffect(() => {
+    if (dataSources.isSuccess) {
+      cachedDataSources.current = dataSources.data;
+    }
+  }, [dataSources]);
+
+  const dataSourceOptions = dataSources.data ?? cachedDataSources.current ?? [];
 
   const [dataSource, setDataSource] = useState<DataSource>();
 
@@ -43,11 +52,11 @@ export const AddProjectModal: React.FC<AddProjectModalParams> = ({
   };
 
   const onSelectDataSource = (value: string) => {
-    if (!dataSources) {
+    if (!dataSources.data) {
       return;
     }
 
-    const dataSource = dataSources[parseInt(value, 10)];
+    const dataSource = dataSources.data[parseInt(value, 10)];
     setDataSource(dataSource);
 
     form.setFieldValue("name", dataSource.name);
@@ -58,26 +67,6 @@ export const AddProjectModal: React.FC<AddProjectModalParams> = ({
       close();
     }
   }, [createProject.isSuccess, close]);
-
-  const filterOption = (
-    input: string,
-    option: { label: string; value: string } | undefined,
-  ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
-
-  const notFoundContent = isLoadingDataSources ? (
-    <Empty
-      className="ant-empty-normal"
-      image={<Spin style={{ margin: 0 }} size="large" />}
-      description="Loading"
-    />
-  ) : dataSourceQuery.trim().length > 0 ? (
-    <Empty
-      image={Empty.PRESENTED_IMAGE_SIMPLE}
-      description="No data sources found"
-    />
-  ) : (
-    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Type to search" />
-  );
 
   return (
     <Modal
@@ -97,21 +86,34 @@ export const AddProjectModal: React.FC<AddProjectModalParams> = ({
             showSearch
             onSearch={setDataSourceQuery}
             onChange={onSelectDataSource}
-            filterOption={filterOption}
-            notFoundContent={notFoundContent}
+            filterOption={false}
+            notFoundContent={
+              <NotFoundContent
+                query={dataSourceQuery}
+                isLoading={dataSources.isLoading}
+                hasOptions={dataSourceOptions.length > 0}
+              />
+            }
+            loading={dataSources.isLoading}
           >
-            {dataSources?.map((dataSource, index) => (
-              <Select.Option value={index} label={dataSource.name} key={index}>
-                <Space>
-                  {dataSource.type === "project" ? (
-                    <Tag color="blue">project</Tag>
-                  ) : (
-                    <Tag color="orange">filter</Tag>
-                  )}
-                  {dataSource.name}
-                </Space>
-              </Select.Option>
-            ))}
+            {(dataSources.data ?? cachedDataSources.current)?.map(
+              (dataSource, index) => (
+                <Select.Option
+                  value={index}
+                  label={dataSource.name}
+                  key={JSON.stringify(dataSource)}
+                >
+                  <Space>
+                    {dataSource.type === "project" ? (
+                      <Tag color="blue">project</Tag>
+                    ) : (
+                      <Tag color="orange">filter</Tag>
+                    )}
+                    {dataSource.name}
+                  </Space>
+                </Select.Option>
+              ),
+            )}
           </Select>
         </Form.Item>
         <Form.Item name="name" label="Name" rules={[{ required: true }]}>
@@ -119,5 +121,47 @@ export const AddProjectModal: React.FC<AddProjectModalParams> = ({
         </Form.Item>
       </Form>
     </Modal>
+  );
+};
+
+type NotFoundContentProps = {
+  query: string;
+  isLoading: boolean;
+  hasOptions: boolean;
+};
+
+const NotFoundContent: FC<NotFoundContentProps> = ({
+  query,
+  isLoading,
+  hasOptions,
+}) => {
+  if (isLoading) {
+    if (hasOptions) {
+      return null;
+    }
+
+    return (
+      <Empty
+        className="ant-empty-normal"
+        image={<Spin style={{ margin: 0 }} size="large" />}
+        description="Loading"
+      />
+    );
+  }
+
+  if (query.trim().length === 0) {
+    return (
+      <Empty
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        description="Type to search"
+      />
+    );
+  }
+
+  return (
+    <Empty
+      image={Empty.PRESENTED_IMAGE_SIMPLE}
+      description="No data sources found"
+    />
   );
 };
