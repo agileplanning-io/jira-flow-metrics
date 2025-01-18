@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { Domain } from "@entities/domains";
-import { Issue } from "@agileplanning-io/flow-metrics";
+import { SearchIssuesResult } from "@agileplanning-io/flow-data";
 
 @Injectable()
 export abstract class JiraIssuesRepository {
-  abstract search(domain: Domain, jql: string): Promise<Issue[]>;
+  abstract search(domain: Domain, jql: string): Promise<SearchIssuesResult>;
 }

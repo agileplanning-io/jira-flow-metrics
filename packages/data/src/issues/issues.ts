@@ -1,15 +1,25 @@
 import { Version3Client } from "jira.js";
 import { getAllPages } from "../jira/page-utils";
 import { filter, isTruthy } from "remeda";
-import { Field, Issue, StatusCategory } from "@agileplanning-io/flow-metrics";
+import {
+  Field,
+  Issue,
+  StatusCategory,
+  TransitionStatus,
+} from "@agileplanning-io/flow-metrics";
 import { StatusBuilder } from "./status-builder";
 import { JiraIssueBuilder } from "./issue_builder";
+
+export type SearchIssuesResult = {
+  issues: Issue[];
+  canonicalStatuses: TransitionStatus[];
+};
 
 export const searchIssues = async (
   client: Version3Client,
   jql: string,
   host: string,
-) => {
+): Promise<SearchIssuesResult> => {
   const [fields, jiraStatuses] = await Promise.all([
     getFields(client),
     getStatuses(client),
@@ -28,7 +38,7 @@ export const searchIssues = async (
     }),
   );
 
-  return issuePages.reduce<Issue[]>((issues, page) => {
+  const issues = issuePages.reduce<Issue[]>((issues, page) => {
     if (!page.issues) {
       return issues;
     }
@@ -37,6 +47,10 @@ export const searchIssues = async (
 
     return [...issues, ...pageIssues];
   }, []);
+
+  const canonicalStatuses = statusBuilder.getStatuses();
+
+  return { issues, canonicalStatuses };
 };
 
 export const getFields = async (client: Version3Client): Promise<Field[]> => {
