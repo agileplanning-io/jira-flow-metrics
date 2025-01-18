@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-metrics
 
+## 1.0.1
+
+### Patch Changes
+
+- 2463dfb: feat: add findDataSources function
+
 ## 1.0.5
 
 ### Patch Changes
