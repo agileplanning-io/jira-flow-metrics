@@ -435,6 +435,9 @@ importers:
       eslint-plugin-prettier:
         specifier: ^5.0.0
         version: 5.2.1(eslint-config-prettier@9.1.0)(eslint@8.57.1)(prettier@3.0.3)
+      jira.js:
+        specifier: ^2.19.1
+        version: 2.20.1
       remeda:
         specifier: ^1.58.2
         version: 1.61.0
