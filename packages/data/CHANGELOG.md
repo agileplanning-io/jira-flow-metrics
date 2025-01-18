@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- 2463dfb: feat: add findDataSources function
+- 2463dfb: feat: add findDataSets function
 
 ## 1.0.5
 

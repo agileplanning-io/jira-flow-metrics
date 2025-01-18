@@ -1,13 +1,13 @@
 import { Global, Module } from "@nestjs/common";
 import {
-  DataSourcesRepository,
+  DataSetsRepository,
   PoliciesRepository,
   ProjectsRepository,
 } from "@entities/projects";
 import { LocalProjectsRepository } from "./local/repositories/projects-repository";
 import { DomainsRepository } from "@entities/domains";
 import { LocalDomainsRepository } from "./local/repositories/domains-repository";
-import { HttpJiraDataSourcesRepository } from "./http/repositories/data-sources-repository";
+import { HttpJiraDataSetsRepository } from "./http/repositories/data-sources-repository";
 import { IssuesRepository } from "@entities/issues";
 import { LocalIssuesRepository } from "./local/issues-repository";
 import { JiraIssuesRepository } from "@usecases/projects/sync/jira-issues-repository";
@@ -36,8 +36,8 @@ import { LocalPoliciesRepository } from "./local/repositories/policies-repositor
       useClass: LocalIssuesRepository,
     },
     {
-      provide: DataSourcesRepository,
-      useClass: HttpJiraDataSourcesRepository,
+      provide: DataSetsRepository,
+      useClass: HttpJiraDataSetsRepository,
     },
     {
       provide: JiraIssuesRepository,
@@ -48,7 +48,7 @@ import { LocalPoliciesRepository } from "./local/repositories/policies-repositor
     DomainsRepository,
     ProjectsRepository,
     PoliciesRepository,
-    DataSourcesRepository,
+    DataSetsRepository,
     IssuesRepository,
     JiraIssuesRepository,
   ],

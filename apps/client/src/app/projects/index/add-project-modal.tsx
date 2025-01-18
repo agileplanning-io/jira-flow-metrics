@@ -1,5 +1,5 @@
 import { Empty, Form, Input, Modal, Select, Space, Spin, Tag } from "antd";
-import { DataSource, useCreateProject, useDataSources } from "@data/projects";
+import { DataSet, useCreateProject, useDataSets } from "@data/projects";
 import { FC, useEffect, useRef, useState } from "react";
 
 export type AddProjectModalParams = {
@@ -15,23 +15,23 @@ export const AddProjectModal: React.FC<AddProjectModalParams> = ({
 }) => {
   const [form] = Form.useForm();
 
-  const [dataSourceQuery, setDataSourceQuery] = useState<string>("");
+  const [dataSetQuery, setDataSetQuery] = useState<string>("");
 
-  const dataSources = useDataSources(domainId, dataSourceQuery);
+  const dataSets = useDataSets(domainId, dataSetQuery);
 
   // Cache the previous search results in order to continue showing them while performing a new
   // search.
-  const cachedDataSources = useRef<DataSource[]>();
+  const cachedDataSets = useRef<DataSet[]>();
 
   useEffect(() => {
-    if (dataSources.isSuccess) {
-      cachedDataSources.current = dataSources.data;
+    if (dataSets.isSuccess) {
+      cachedDataSets.current = dataSets.data;
     }
-  }, [dataSources]);
+  }, [dataSets]);
 
-  const dataSourceOptions = dataSources.data ?? cachedDataSources.current ?? [];
+  const dataSetOptions = dataSets.data ?? cachedDataSets.current ?? [];
 
-  const [dataSource, setDataSource] = useState<DataSource>();
+  const [dataSet, setDataSet] = useState<DataSet>();
 
   const createProject = useCreateProject();
 
@@ -39,7 +39,7 @@ export const AddProjectModal: React.FC<AddProjectModalParams> = ({
     try {
       const values = await form.validateFields();
       createProject.mutate(
-        { domainId, project: { jql: dataSource?.jql, domainId, ...values } },
+        { domainId, project: { jql: dataSet?.jql, domainId, ...values } },
         {
           onSuccess: () => {
             form.resetFields();
@@ -51,15 +51,15 @@ export const AddProjectModal: React.FC<AddProjectModalParams> = ({
     }
   };
 
-  const onSelectDataSource = (value: string) => {
-    if (!dataSources.data) {
+  const onSelectDataSet = (value: string) => {
+    if (!dataSets.data) {
       return;
     }
 
-    const dataSource = dataSources.data[parseInt(value, 10)];
-    setDataSource(dataSource);
+    const dataSet = dataSets.data[parseInt(value, 10)];
+    setDataSet(dataSet);
 
-    form.setFieldValue("name", dataSource.name);
+    form.setFieldValue("name", dataSet.name);
   };
 
   useEffect(() => {
@@ -78,38 +78,38 @@ export const AddProjectModal: React.FC<AddProjectModalParams> = ({
     >
       <Form form={form}>
         <Form.Item
-          name="data-source"
-          label="Data source"
+          name="data-set"
+          label="Data sets"
           rules={[{ required: true }]}
         >
           <Select
             showSearch
-            onSearch={setDataSourceQuery}
-            onChange={onSelectDataSource}
+            onSearch={setDataSetQuery}
+            onChange={onSelectDataSet}
             filterOption={false}
             notFoundContent={
               <NotFoundContent
-                query={dataSourceQuery}
-                isLoading={dataSources.isLoading}
-                hasOptions={dataSourceOptions.length > 0}
+                query={dataSetQuery}
+                isLoading={dataSets.isLoading}
+                hasOptions={dataSetOptions.length > 0}
               />
             }
-            loading={dataSources.isLoading}
+            loading={dataSets.isLoading}
           >
-            {(dataSources.data ?? cachedDataSources.current)?.map(
-              (dataSource, index) => (
+            {(dataSets.data ?? cachedDataSets.current)?.map(
+              (dataSet, index) => (
                 <Select.Option
                   value={index}
-                  label={dataSource.name}
-                  key={JSON.stringify(dataSource)}
+                  label={dataSet.name}
+                  key={JSON.stringify(dataSet)}
                 >
                   <Space>
-                    {dataSource.type === "project" ? (
+                    {dataSet.type === "project" ? (
                       <Tag color="blue">project</Tag>
                     ) : (
                       <Tag color="orange">filter</Tag>
                     )}
-                    {dataSource.name}
+                    {dataSet.name}
                   </Space>
                 </Select.Option>
               ),
@@ -161,7 +161,7 @@ const NotFoundContent: FC<NotFoundContentProps> = ({
   return (
     <Empty
       image={Empty.PRESENTED_IMAGE_SIMPLE}
-      description="No data sources found"
+      description="No data sets found"
     />
   );
 };

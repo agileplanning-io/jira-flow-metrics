@@ -1,24 +1,24 @@
 import { mock } from "jest-mock-extended";
 import { Version3Client } from "jira.js";
-import { findDataSources } from "./data-sources";
+import { findDataSets } from "./data-sets";
 import { Filters, Projects } from "jira.js/out/version3";
 import { Filter, Project } from "jira.js/out/version3/models";
 
-describe("findDataSources", () => {
-  it("searches Jira matching data sources", async () => {
+describe("findDataSets", () => {
+  it("searches Jira matching data sets", async () => {
     const projects = [{ name: "My Project", key: "MYPROJ" }];
     const filters = [{ name: "My Project Filter", jql: "project = MYPROJ" }];
     const client = buildClient(projects, filters);
 
-    const dataSources = await findDataSources(client, "proj");
+    const dataSets = await findDataSets(client, "proj");
 
-    expect(dataSources).toEqual([
+    expect(dataSets).toEqual([
       { name: "My Project (MYPROJ)", jql: "project=MYPROJ", type: "project" },
       { name: "My Project Filter", jql: "project = MYPROJ", type: "filter" },
     ]);
   });
 
-  it("filters data sources by the query text", async () => {
+  it("filters data sets by the query text", async () => {
     const filters = [
       // this filter includes the query term ("proj")
       { name: "My Project Filter", jql: "project = MYPROJ" },
@@ -27,9 +27,9 @@ describe("findDataSources", () => {
     ];
     const client = buildClient([], filters);
 
-    const dataSources = await findDataSources(client, "proj");
+    const dataSets = await findDataSets(client, "proj");
 
-    expect(dataSources).toEqual([
+    expect(dataSets).toEqual([
       { name: "My Project Filter", jql: "project = MYPROJ", type: "filter" },
     ]);
   });

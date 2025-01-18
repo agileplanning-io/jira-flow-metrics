@@ -1,5 +1,5 @@
 import {
-  DataSourcesRepository,
+  DataSetsRepository,
   Project,
   ProjectsRepository,
 } from "@entities/projects";
@@ -42,7 +42,7 @@ export class DomainsController {
   constructor(
     private readonly domains: DomainsRepository,
     private readonly projects: ProjectsRepository,
-    private readonly dataSources: DataSourcesRepository,
+    private readonly dataSets: DataSetsRepository,
   ) {}
 
   @Get()
@@ -87,13 +87,13 @@ export class DomainsController {
     });
   }
 
-  @Get(":domainId/sources")
-  async getDataSources(
+  @Get(":domainId/data-sets")
+  async getDataSets(
     @Param("domainId") domainId: string,
     @Query("query") query: string,
   ) {
     const domain = await this.domains.getDomain(domainId);
-    return this.dataSources.getDataSources({ domain, query });
+    return this.dataSets.getDataSets({ domain, query });
   }
 }
 

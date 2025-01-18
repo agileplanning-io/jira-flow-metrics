@@ -11,7 +11,7 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { z } from "zod";
 
-export type DataSource = {
+export type DataSet = {
   name: string;
   jql: string;
   type: "project" | "filter";
@@ -43,31 +43,31 @@ const projectsQueryKey = (domainId?: string) => [
 
 const projectQueryKey = (projectId?: string) => ["projects", projectId];
 
-const dataSourcesQueryKey = (domainId: string | undefined, query: string) => [
+const dataSetsQueryKey = (domainId: string | undefined, query: string) => [
   "domains",
   domainId,
-  "datasources",
+  "datasets",
   query,
 ];
 
-const getDataSources = async (
+const getDataSets = async (
   domainId: string | undefined,
   query: string,
-): Promise<DataSource[]> => {
+): Promise<DataSet[]> => {
   if (query.trim().length === 0) {
     return [];
   }
 
   const response = await axios.get(
-    `/domains/${domainId}/sources?query=${encodeURI(query)}`,
+    `/domains/${domainId}/data-sets?query=${encodeURI(query)}`,
   );
   return response.data;
 };
 
-export const useDataSources = (domainId: string | undefined, query: string) => {
+export const useDataSets = (domainId: string | undefined, query: string) => {
   return useQuery({
-    queryKey: dataSourcesQueryKey(domainId, query),
-    queryFn: () => getDataSources(domainId, query),
+    queryKey: dataSetsQueryKey(domainId, query),
+    queryFn: () => getDataSets(domainId, query),
     enabled: domainId !== undefined,
   });
 };

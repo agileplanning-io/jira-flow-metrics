@@ -45,7 +45,7 @@ export type Project = {
   defaultCompletedFilter?: IssueFilter;
 };
 
-export type DataSource = {
+export type DataSet = {
   name: string;
   type: "filter" | "project";
   jql: string;
@@ -82,13 +82,11 @@ export abstract class PoliciesRepository {
   abstract deletePolicy(projectId: string, policyId: string): Promise<void>;
 }
 
-export type SearchDataSourcesParams = {
+export type SearchDataSetsParams = {
   domain: Pick<Domain, "host" | "email" | "token">;
   query?: string;
 };
 
-export abstract class DataSourcesRepository {
-  abstract getDataSources(
-    params: SearchDataSourcesParams,
-  ): Promise<DataSource[]>;
+export abstract class DataSetsRepository {
+  abstract getDataSets(params: SearchDataSetsParams): Promise<DataSet[]>;
 }

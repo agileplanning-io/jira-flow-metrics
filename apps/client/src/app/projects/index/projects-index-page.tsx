@@ -35,7 +35,7 @@ export const ProjectsIndexPage = () => {
 
   const { projects } = useNavigationContext();
 
-  const dataSource = projects?.map((project) => ({
+  const dataSet = projects?.map((project) => ({
     key: project.id,
     ...project,
   }));
@@ -65,7 +65,7 @@ export const ProjectsIndexPage = () => {
       </Button>
 
       <Table
-        dataSource={dataSource}
+        dataSource={dataSet}
         columns={[
           { title: "Name", dataIndex: "name", key: "name" },
           {

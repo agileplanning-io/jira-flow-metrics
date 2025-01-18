@@ -13,7 +13,7 @@ export const DomainsIndexPage = () => {
   const [isAddDomainModalOpen, setIsAddDomainModalOpen] = useState(false);
   const [domainToRemove, setDomainToRemove] = useState<Domain>();
 
-  const dataSource = domains?.map((domain) => ({
+  const dataSet = domains?.map((domain) => ({
     key: domain.id,
     ...domain,
   }));
@@ -29,7 +29,7 @@ export const DomainsIndexPage = () => {
         Add Domain
       </Button>
       <Table
-        dataSource={dataSource}
+        dataSource={dataSet}
         columns={[
           {
             title: "Host",
