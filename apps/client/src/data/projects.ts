@@ -69,7 +69,6 @@ export const useDataSources = (domainId: string | undefined, query: string) => {
     queryKey: dataSourcesQueryKey(domainId, query),
     queryFn: () => getDataSources(domainId, query),
     enabled: domainId !== undefined,
-    // keepPreviousData: true,
   });
 };
 
