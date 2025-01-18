@@ -7,7 +7,7 @@ import {
   Issue,
   StatusCategory,
   Transition,
-} from "../issues";
+} from "../../../metrics/src/issues";
 import { compareAsc } from "date-fns";
 import { StatusBuilder } from "./status-builder";
 import { getDifferenceInDays } from "@agileplanning-io/flow-lib";

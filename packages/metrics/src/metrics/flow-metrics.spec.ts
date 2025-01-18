@@ -6,7 +6,7 @@ import {
   ParentMetricsReason,
 } from "../issues";
 import { getFlowMetrics } from "./flow-metrics";
-import { buildIssue } from "../fixtures/issue-factory";
+import { buildIssue } from "../../../data/src/fixtures/issue-factory";
 import {
   CycleTimePolicyType,
   EpicCycleTimePolicy,

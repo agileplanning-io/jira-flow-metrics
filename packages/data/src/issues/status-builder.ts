@@ -1,4 +1,8 @@
-import { Status, StatusCategory, TransitionStatus } from "../issues";
+import {
+  Status,
+  StatusCategory,
+  TransitionStatus,
+} from "@agileplanning-io/flow-metrics";
 
 export class StatusBuilder {
   private readonly map: Record<string, TransitionStatus> = {

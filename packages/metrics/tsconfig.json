@@ -7,6 +7,6 @@
     "declarationMap": true,
     "outDir": "dist"
   },
-  "include": ["."],
+  "include": [".", "../data/src/fixtures/issue-factory.ts", "../data/src/fixtures/example-json.ts"],
   "exclude": ["node_modules", "dist"]
 }

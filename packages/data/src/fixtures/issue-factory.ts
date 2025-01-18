@@ -3,8 +3,8 @@ import {
   HierarchyLevel,
   Issue,
   StatusCategory,
-} from "../issues";
-import { TransitionContext, buildTransitions } from "../parse/issue_builder";
+} from "@agileplanning-io/flow-metrics/src/issues";
+import { TransitionContext, buildTransitions } from "../issues/issue_builder";
 
 let issueCount = 100;
 
