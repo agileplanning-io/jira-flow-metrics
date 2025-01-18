@@ -16,7 +16,7 @@ export class HttpJiraDataSourcesRepository extends DataSourcesRepository {
     const filters = await this.getFilters(client, query);
 
     const dataSources = [...projects, ...filters];
-    console.info(JSON.stringify({ normalisedQuery, dataSources }, null, " "));
+
     return dataSources.filter(
       (dataSource) => dataSource.name?.toLowerCase().includes(normalisedQuery),
     );
