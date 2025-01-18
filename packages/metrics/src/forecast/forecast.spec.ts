@@ -1,6 +1,6 @@
 import { subDays } from "date-fns";
-import { buildCompletedIssue } from "../fixtures";
 import { forecast } from "./forecast";
+import { buildCompletedIssue } from "../fixtures";
 
 describe("forecast", () => {
   it("returns a forecast", () => {

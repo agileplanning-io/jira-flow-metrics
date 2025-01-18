@@ -1,8 +1,5 @@
 import { clone } from "remeda";
-import {
-  buildCompletedIssue,
-  buildIssue,
-} from "../../../data/src/fixtures/issue-factory";
+import { buildCompletedIssue, buildIssue } from "../fixtures/issue-factory";
 import { HierarchyLevel } from "../issues";
 import {
   DateFilterType,

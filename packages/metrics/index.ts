@@ -5,3 +5,4 @@ export * from "./src/wip";
 export * from "./src/time-spent";
 export * from "./src/forecast";
 export * from "./src/workflows";
+export * from "./src/fixtures";

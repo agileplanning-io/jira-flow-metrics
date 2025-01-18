@@ -8,6 +8,6 @@
     "outDir": "dist",
     "target": "es2021"
   },
-  "include": ["."],
+  "include": [".", "../metrics/src/fixtures/issue-factory.ts"],
   "exclude": ["node_modules", "dist"]
 }
