@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-metrics
 
+## 1.0.6
+
+### Patch Changes
+
+- 2d56e21: refactor: extract searchIssues function to data package
+
 ## 1.0.5
 
 ### Patch Changes
