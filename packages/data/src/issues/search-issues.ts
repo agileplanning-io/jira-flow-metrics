@@ -1,4 +1,3 @@
-import { Version3Client } from "jira.js";
 import { getAllPages } from "../jira/page-utils";
 import { filter, isTruthy } from "remeda";
 import {
@@ -9,6 +8,7 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { StatusBuilder } from "./status-builder";
 import { JiraIssueBuilder } from "./issue_builder";
+import { JiraClient } from "../jira";
 
 export type SearchIssuesResult = {
   issues: Issue[];
@@ -16,7 +16,7 @@ export type SearchIssuesResult = {
 };
 
 export const searchIssues = async (
-  client: Version3Client,
+  client: JiraClient,
   jql: string,
   host: string,
 ): Promise<SearchIssuesResult> => {
@@ -30,9 +30,8 @@ export const searchIssues = async (
   const builder = new JiraIssueBuilder(fields, statusBuilder, host);
 
   const issuePages = await getAllPages((startAt) =>
-    client.issueSearch.searchForIssuesUsingJqlPost({
+    client.searchIssues({
       jql,
-      expand: ["changelog"],
       fields: builder.getRequiredFields(),
       startAt,
     }),
@@ -53,8 +52,8 @@ export const searchIssues = async (
   return { issues, canonicalStatuses };
 };
 
-export const getFields = async (client: Version3Client): Promise<Field[]> => {
-  const jiraFields = await client.issueFields.getFields();
+export const getFields = async (client: JiraClient): Promise<Field[]> => {
+  const jiraFields = await client.getFields();
   return filter(
     jiraFields.map((field) => {
       if (field.id === undefined) {
@@ -71,8 +70,8 @@ export const getFields = async (client: Version3Client): Promise<Field[]> => {
   );
 };
 
-export const getStatuses = async (client: Version3Client) => {
-  const jiraStatuses = await client.workflowStatuses.getStatuses();
+export const getStatuses = async (client: JiraClient) => {
+  const jiraStatuses = await client.getStatuses();
   return filter(
     jiraStatuses.map((status) => {
       if (status.id === undefined) {

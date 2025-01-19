@@ -1,6 +1,6 @@
-import { Version3Client } from "jira.js";
 import { getAllPages } from "../jira/page-utils";
 import { flat } from "remeda";
+import { JiraClient } from "../jira/jira-client";
 
 export type DataSource = {
   name: string;
@@ -8,10 +8,7 @@ export type DataSource = {
   jql: string;
 };
 
-export const findDataSources = async (
-  client: Version3Client,
-  query: string,
-) => {
+export const findDataSources = async (client: JiraClient, query: string) => {
   const normalisedQuery = query?.toLowerCase();
 
   const projects = await findProjects(client, query);
@@ -25,13 +22,12 @@ export const findDataSources = async (
 };
 
 const findFilters = async (
-  client: Version3Client,
+  client: JiraClient,
   query: string,
 ): Promise<DataSource[]> => {
   const filterPages = await getAllPages(async (startAt) =>
-    client.filters.getFiltersPaginated({
-      filterName: query,
-      expand: "jql",
+    client.findFilters({
+      query,
       startAt,
     }),
   );
@@ -49,11 +45,11 @@ const findFilters = async (
 };
 
 const findProjects = async (
-  client: Version3Client,
+  client: JiraClient,
   query: string,
 ): Promise<DataSource[]> => {
   const projectPages = await getAllPages((startAt) =>
-    client.projects.searchProjects({
+    client.findProjects({
       query,
       startAt,
     }),
