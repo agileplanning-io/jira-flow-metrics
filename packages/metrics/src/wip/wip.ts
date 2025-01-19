@@ -104,8 +104,6 @@ const filterByStatus = (date: Date) => (issue: StartedIssue) =>
       transition.toStatus.category === StatusCategory.InProgress &&
       transition.date < date &&
       transition.until > date;
-    if (issue.key === "CORE-491" && inProgress) {
-      console.log(date, transition);
-    }
+
     return inProgress;
   });

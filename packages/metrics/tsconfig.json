@@ -7,6 +7,6 @@
     "declarationMap": true,
     "outDir": "dist"
   },
-  "include": ["."],
+  "include": [".", "src/fixtures/issue-factory.ts"],
   "exclude": ["node_modules", "dist"]
 }

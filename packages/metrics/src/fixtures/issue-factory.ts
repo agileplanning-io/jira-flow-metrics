@@ -1,10 +1,11 @@
 import {
-  CompletedIssue,
-  HierarchyLevel,
   Issue,
+  HierarchyLevel,
   StatusCategory,
+  CompletedIssue,
+  TransitionContext,
+  buildTransitions,
 } from "../issues";
-import { TransitionContext, buildTransitions } from "../parse/issue_builder";
 
 let issueCount = 100;
 

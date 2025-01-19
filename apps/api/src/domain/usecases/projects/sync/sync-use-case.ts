@@ -5,14 +5,12 @@ import { JiraIssuesRepository } from "./jira-issues-repository";
 import {
   FilterType,
   IssueFilter,
-  JiraIssueBuilder,
-  StatusBuilder,
   buildDefaultWorkflowScheme,
+  isValidWorkflowScheme,
+  buildDefaultCycleTimePolicy,
 } from "@agileplanning-io/flow-metrics";
 import { DomainsRepository } from "@entities/domains";
 import { filter, flat, isNonNullish, unique } from "remeda";
-import { isValidWorkflowScheme } from "@agileplanning-io/flow-metrics";
-import { buildDefaultCycleTimePolicy } from "@agileplanning-io/flow-metrics";
 
 @Injectable()
 export class SyncUseCase {
@@ -27,24 +25,12 @@ export class SyncUseCase {
     const project = await this.projects.getProject(projectId);
     const domain = await this.domains.getDomain(project.domainId);
 
-    const [fields, jiraStatuses] = await Promise.all([
-      this.jiraIssues.getFields(domain),
-      this.jiraIssues.getStatuses(domain),
-    ]);
-
-    const statusBuilder = new StatusBuilder(jiraStatuses);
-
-    const builder = new JiraIssueBuilder(fields, statusBuilder, domain.host);
-
-    const issues = await this.jiraIssues.search(domain, {
-      jql: project.jql,
-      onProgress: () => {},
-      builder,
-    });
+    const { issues, canonicalStatuses } = await this.jiraIssues.search(
+      domain,
+      project.jql,
+    );
 
     await this.issues.setIssues(projectId, issues);
-
-    const canonicalStatuses = statusBuilder.getStatuses();
 
     const workflowScheme =
       project.workflowScheme && isValidWorkflowScheme(project.workflowScheme)

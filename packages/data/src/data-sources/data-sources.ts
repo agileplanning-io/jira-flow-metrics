@@ -1,5 +1,5 @@
 import { Version3Client } from "jira.js";
-import { getAllPages } from "./page-utils";
+import { getAllPages } from "../jira/page-utils";
 import { flat } from "remeda";
 
 export type DataSource = {

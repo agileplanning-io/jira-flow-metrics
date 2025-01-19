@@ -1,4 +1,4 @@
-import { StatusCategory } from "../issues";
+import { StatusCategory } from "@agileplanning-io/flow-metrics";
 import { StatusBuilder } from "./status-builder";
 
 describe("StatusBuilder", () => {
