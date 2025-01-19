@@ -1,12 +1,15 @@
 import { mock } from "jest-mock-extended";
-import { Version3Client } from "jira.js";
 import { findDataSources } from "./data-sources";
-import { Filters, Projects } from "jira.js/out/version3";
-import { Filter, Project } from "jira.js/out/version3/models";
+import { FilterDetails, Project, User } from "jira.js/out/version3/models";
+import { JiraClient } from "../jira";
 
 describe("findDataSources", () => {
+  const projectLead = mock<User>();
+
   it("searches Jira matching data sources", async () => {
-    const projects = [{ name: "My Project", key: "MYPROJ" }];
+    const projects = [
+      { id: "1", lead: projectLead, name: "My Project", key: "MYPROJ" },
+    ];
     const filters = [{ name: "My Project Filter", jql: "project = MYPROJ" }];
     const client = buildClient(projects, filters);
 
@@ -35,28 +38,20 @@ describe("findDataSources", () => {
   });
 });
 
-const buildClient = (
-  jiraProjects: Partial<Project>[],
-  jiraFilters: Partial<Filter>[],
-) => {
-  const projects = mock<Projects>();
-  const filters = mock<Filters>();
+const buildClient = (jiraProjects: Project[], jiraFilters: FilterDetails[]) => {
+  const client = mock<JiraClient>();
 
-  const client = mock<Version3Client>({ projects, filters });
-
-  projects.searchProjects.mockResolvedValue({
-    startAt: 0,
-    total: 1,
-    maxResults: 10,
-    values: jiraProjects,
-  });
-
-  filters.getFiltersPaginated.mockResolvedValue({
-    startAt: 0,
-    total: 1,
-    maxResults: 10,
-    values: jiraFilters,
-  });
+  client.findProjects.mockResolvedValue(buildPageResponse(jiraProjects));
+  client.findFilters.mockResolvedValue(buildPageResponse(jiraFilters));
 
   return client;
 };
+
+const buildPageResponse = <T>(values: T[]) => ({
+  self: "https://example.com/self",
+  values,
+  startAt: 0,
+  maxResults: 10,
+  total: values.length,
+  isLast: true,
+});

@@ -1,3 +1,3 @@
 export * from "./src/data-sources/data-sources";
 export * from "./src/issues";
-export * from "./src/jira/page-utils";
+export * from "./src/jira";

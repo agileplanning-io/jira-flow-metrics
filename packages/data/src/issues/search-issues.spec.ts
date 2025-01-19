@@ -1,12 +1,8 @@
 import { mock } from "jest-mock-extended";
 import { searchIssues } from "./search-issues";
-import { Version3Client } from "jira.js";
-import {
-  IssueFields,
-  IssueSearch,
-  WorkflowStatuses,
-} from "jira.js/out/version3";
 import { StatusCategory } from "@agileplanning-io/flow-metrics";
+import { JiraClient } from "../jira";
+import { Fields } from "jira.js/out/version3/models";
 
 describe("searchIssues", () => {
   const created = new Date("2024-03-01");
@@ -16,25 +12,22 @@ describe("searchIssues", () => {
 
   it("searches for issues in Jira", async () => {
     const parentFieldId = "101";
+    const client = mock<JiraClient>();
 
-    const workflowStatuses = mock<WorkflowStatuses>();
-    workflowStatuses.getStatuses.mockResolvedValue([
-      { id: 123, name: "In Review", statusCategory: { name: "In Progress" } },
+    client.getStatuses.mockResolvedValue([
+      { id: "123", name: "In Review", statusCategory: { name: "In Progress" } },
     ]);
 
-    const issueFields = mock<IssueFields>();
-    issueFields.getFields.mockResolvedValue([
-      { id: parentFieldId, name: "Parent" },
-    ]);
+    client.getFields.mockResolvedValue([{ id: parentFieldId, name: "Parent" }]);
 
-    const issueSearch = mock<IssueSearch>();
-    issueSearch.searchForIssuesUsingJqlPost.mockResolvedValue({
+    client.searchIssues.mockResolvedValue({
       startAt: 0,
       total: 1,
       maxResults: 10,
       issues: [
         {
           key: "TEST-101",
+          id: "456",
           fields: {
             status: {
               name: "In Review",
@@ -46,15 +39,9 @@ describe("searchIssues", () => {
             [parentFieldId]: {
               key: "TEST-102",
             },
-          },
+          } as unknown as Fields, // to avoid filling out a bunch of fields we don't use
         },
       ],
-    });
-
-    const client = mock<Version3Client>({
-      issueSearch,
-      issueFields,
-      workflowStatuses,
     });
 
     const { issues, canonicalStatuses } = await searchIssues(
