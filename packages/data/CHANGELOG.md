@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-metrics
 
+## 1.0.3
+
+### Patch Changes
+
+- 086794b: refactor: define JiraClient interface
+
 ## 1.0.2
 
 ### Patch Changes
