@@ -1,5 +1,13 @@
 # @agileplanning-io/flow-metrics
 
+## 1.0.4
+
+### Patch Changes
+
+- 0dda564: fix: build types for data package
+- Updated dependencies [0dda564]
+  - @agileplanning-io/flow-metrics@1.0.7
+
 ## 1.0.3
 
 ### Patch Changes
