@@ -2,6 +2,7 @@ import {
   ClientIssueFilter,
   filterIssues,
   Issue,
+  WorkflowScheme,
 } from "@agileplanning-io/flow-metrics";
 import { useEffect, useState } from "react";
 import { pipe, compact, uniq, flatten, map } from "remeda";
@@ -10,13 +11,15 @@ import { FilterOptions } from "./issue-attributes-filter-form";
 export const useFilterOptions = (
   issues?: Issue[],
   filter?: ClientIssueFilter,
+  workflowScheme?: WorkflowScheme,
 ): FilterOptions => {
   const [resolutions, setResolutions] = useState<string[]>();
-  const [statuses, setStatuses] = useState<string[]>();
+  //const [statuses, setStatuses] = useState<string[]>();
   const [labels, setLabels] = useState<string[]>();
   const [components, setComponents] = useState<string[]>();
   const [issueTypes, setIssueTypes] = useState<string[]>();
   const [assignees, setAssignees] = useState<string[]>();
+  const statuses = getStatusesForScheme(filter, workflowSchema);
 
   useEffect(() => {
     if (!issues) {

@@ -7,6 +7,7 @@ import {
   HierarchyLevel,
   Issue,
   IssueAttributesFilter,
+  WorkflowScheme,
 } from "@agileplanning-io/flow-metrics";
 import { FC } from "react";
 import { Popdown } from "../control-bars/popdown";
@@ -46,6 +47,7 @@ export type IssueFilterFormProps = {
   filter?: ClientIssueFilter;
   setFilter: (filter: ClientIssueFilter) => void;
   issues?: Issue[];
+  workflowSchema?: WorkflowScheme;
   reportType: ReportType;
   showHierarchyFilter: boolean;
   filteredIssuesCount?: number;
@@ -55,6 +57,7 @@ export const IssueFilterForm: FC<IssueFilterFormProps> = ({
   filter,
   setFilter,
   issues,
+  workflowSchema,
   reportType,
   showHierarchyFilter,
   filteredIssuesCount,
@@ -66,7 +69,7 @@ export const IssueFilterForm: FC<IssueFilterFormProps> = ({
     { label: "Epic", key: HierarchyLevel.Epic },
   ];
 
-  const filterOptions = useFilterOptions(issues, filter);
+  const filterOptions = useFilterOptions(issues, filter, workflowSchema);
 
   const onHierarchyLevelChanged = (hierarchyLevel?: HierarchyLevel) =>
     setFilter({ ...filter, hierarchyLevel });

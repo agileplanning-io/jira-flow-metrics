@@ -19,7 +19,7 @@ import {
 } from "@agileplanning-io/flow-components";
 
 export const IssuesIndexPage = () => {
-  const { issues } = useProjectContext();
+  const { issues, project } = useProjectContext();
   const { filter, setFilter } = useFilterParams();
 
   const [filteredIssues, setFilteredIssues] = useState<Issue[]>([]);

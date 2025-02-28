@@ -25,6 +25,8 @@ export const searchIssues = async (
     getStatuses(client),
   ]);
 
+  console.info(JSON.stringify({ jiraStatuses }, null, " "));
+
   const statusBuilder = new StatusBuilder(jiraStatuses);
 
   const builder = new JiraIssueBuilder(fields, statusBuilder, host);
