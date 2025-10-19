@@ -16,6 +16,11 @@ export type EnhancedSearchParams = {
   nextPageToken?: string;
 };
 
+export type BulkFetchParams = {
+  fields: string[];
+  keys: string[];
+};
+
 export interface JiraClient {
   getFields(): Promise<Version3Models.FieldDetails[]>;
   getStatuses(): Promise<Version3Models.StatusDetails[]>;
@@ -25,6 +30,7 @@ export interface JiraClient {
   enhancedSearch(
     params: EnhancedSearchParams,
   ): Promise<Version3Models.SearchAndReconcileResults>;
+  fetchIssues(params: BulkFetchParams): Promise<Version3Models.BulkIssue>;
   findProjects(params: FindPageParams): Promise<Version3Models.PageProject>;
   findFilters(
     params: FindPageParams,

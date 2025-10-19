@@ -1,4 +1,4 @@
-import { filter, isNot, isNullish, isTruthy, reject } from "remeda";
+import { chunk, filter, isNot, isNullish, isTruthy } from "remeda";
 import {
   Field,
   Issue,
@@ -7,8 +7,9 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { StatusBuilder } from "./status-builder";
 import { JiraIssueBuilder } from "./issue_builder";
-import { JiraClient } from "../jira";
+import { BulkFetchParams, JiraClient } from "../jira";
 import { Version3Models } from "jira.js";
+import { mapLimit } from "async";
 
 export type SearchIssuesResult = {
   issues: Issue[];
@@ -37,9 +38,12 @@ export const searchIssues = async (
   //   }),
   // );
 
-  const issueIds = await getIssueIds(client, jql);
+  const issueKeys = await getIssueKeys(client, jql);
 
-  console.info(issueIds);
+  const jiraIssues = await getIssueDetails(client, {
+    keys: issueKeys,
+    fields: builder.getRequiredFields(),
+  });
 
   // const issues = issuePages.reduce<Issue[]>((issues, page) => {
   //   if (!page.issues) {
@@ -51,14 +55,14 @@ export const searchIssues = async (
   //   return [...issues, ...pageIssues];
   // }, []);
 
-  const issues: Issue[] = [];
+  const issues = jiraIssues.map((issue) => builder.build(issue));
 
   const canonicalStatuses = statusBuilder.getStatuses();
 
   return { issues, canonicalStatuses };
 };
 
-const getIssueIds = async (
+const getIssueKeys = async (
   client: JiraClient,
   jql: string,
 ): Promise<string[]> => {
@@ -81,14 +85,42 @@ const getIssueIds = async (
   const keys: string[] = getKeys(page);
 
   while (page.nextPageToken) {
-    console.info({ nextPageToken: page.nextPageToken });
     page = await getPage(page.nextPageToken);
     keys.push(...getKeys(page));
   }
 
-  console.info({ keys });
-
   return keys;
+};
+
+const getIssueDetails = async (
+  client: JiraClient,
+  { keys, fields }: BulkFetchParams,
+) => {
+  console.info("getIssueDetails", { keys });
+  const keyChunks = chunk(keys, 100);
+
+  const result = await client.fetchIssues({ fields, keys: keyChunks[0] });
+
+  return result.issues!;
+
+  // const details = await mapLimit(keyChunks, 5, async (keys: string[]) => {
+  //   console.info("fetching issues", { keys });
+  //   try {
+  //     const result = await client.fetchIssues({ fields, keys });
+
+  //     console.info({ result });
+
+  //     return result;
+  //   } catch (e) {
+  //     console.error(e);
+  //     throw e;
+  //   }
+  // });
+
+  // return details.reduce<Version3Models.Issue[]>(
+  //   (issues, result) => issues.concat(...result.issues!),
+  //   [],
+  // );
 };
 
 export const getFields = async (client: JiraClient): Promise<Field[]> => {

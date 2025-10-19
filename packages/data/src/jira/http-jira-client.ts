@@ -1,4 +1,5 @@
 import {
+  BulkFetchParams,
   EnhancedSearchParams,
   FindPageParams,
   JiraClient,
@@ -39,6 +40,14 @@ export class HttpJiraClient implements JiraClient {
       fields: ["key"],
       maxResults: 500,
       nextPageToken,
+    });
+  }
+
+  fetchIssues({ keys, fields }: BulkFetchParams) {
+    return this.client.issues.bulkFetchIssues({
+      issueIdsOrKeys: keys,
+      expand: ["changelog"],
+      fields,
     });
   }
 
