@@ -120,13 +120,13 @@ export class JiraIssueBuilder {
         assert(statusChange.toString);
 
         const fromStatus = this.statusBuilder.getStatus(
-          statusChange.from,
-          statusChange.fromString,
+          statusChange.from!,
+          statusChange.fromString!,
         );
 
         const toStatus = this.statusBuilder.getStatus(
-          statusChange.to,
-          statusChange.toString,
+          statusChange.to!,
+          statusChange.toString!,
         );
 
         const transition: TransitionContext = {

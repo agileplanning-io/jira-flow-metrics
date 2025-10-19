@@ -460,6 +460,9 @@ importers:
       '@types/jest':
         specifier: ^29.5.2
         version: 29.5.14
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.17.10
       '@types/seedrandom':
         specifier: ^3.0.7
         version: 3.0.8

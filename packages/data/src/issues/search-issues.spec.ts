@@ -2,7 +2,7 @@ import { mock } from "jest-mock-extended";
 import { searchIssues } from "./search-issues";
 import { StatusCategory } from "@agileplanning-io/flow-metrics";
 import { JiraClient } from "../jira";
-import { Fields } from "jira.js/out/version3/models";
+import { Version3Models } from "jira.js";
 
 describe("searchIssues", () => {
   const created = new Date("2024-03-01");
@@ -39,7 +39,7 @@ describe("searchIssues", () => {
             [parentFieldId]: {
               key: "TEST-102",
             },
-          } as unknown as Fields, // to avoid filling out a bunch of fields we don't use
+          } as unknown as Version3Models.Fields, // to avoid filling out a bunch of fields we don't use
         },
       ],
     });

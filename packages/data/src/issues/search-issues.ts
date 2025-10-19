@@ -29,23 +29,29 @@ export const searchIssues = async (
 
   const builder = new JiraIssueBuilder(fields, statusBuilder, host);
 
-  const issuePages = await getAllPages((startAt) =>
-    client.searchIssues({
-      jql,
-      fields: builder.getRequiredFields(),
-      startAt,
-    }),
-  );
+  // const issuePages = await getAllPages((startAt) =>
+  //   client.searchIssues({
+  //     jql,
+  //     fields: builder.getRequiredFields(),
+  //     startAt,
+  //   }),
+  // );
 
-  const issues = issuePages.reduce<Issue[]>((issues, page) => {
-    if (!page.issues) {
-      return issues;
-    }
+  const issuePages = await client.searchIssuesNew({ jql, fields: [] });
 
-    const pageIssues = page.issues.map((issue) => builder.build(issue));
+  console.info(issuePages);
 
-    return [...issues, ...pageIssues];
-  }, []);
+  // const issues = issuePages.reduce<Issue[]>((issues, page) => {
+  //   if (!page.issues) {
+  //     return issues;
+  //   }
+
+  //   const pageIssues = page.issues.map((issue) => builder.build(issue));
+
+  //   return [...issues, ...pageIssues];
+  // }, []);
+
+  const issues: Issue[] = [];
 
   const canonicalStatuses = statusBuilder.getStatuses();
 

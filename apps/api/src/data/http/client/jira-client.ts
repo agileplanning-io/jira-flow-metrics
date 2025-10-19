@@ -20,7 +20,7 @@ export const createJiraClient = (
         apiToken: domain.token,
       },
     },
-    newErrorHandling: true,
+    // newErrorHandling: true,
   });
 
   return new HttpJiraClient(v3Client);

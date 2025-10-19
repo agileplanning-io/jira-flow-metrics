@@ -1,21 +1,14 @@
-import {
-  FieldDetails,
-  StatusDetails,
-  SearchResults,
-  PageProject,
-  PageFilterDetails,
-} from "jira.js/out/version3/models";
 import { FindPageParams, JiraClient, SearchIssuesParams } from "./jira-client";
-import { Version3Client } from "jira.js";
+import { Version3Client, Version3Models } from "jira.js";
 
 export class HttpJiraClient implements JiraClient {
   constructor(private readonly client: Version3Client) {}
 
-  getFields(): Promise<FieldDetails[]> {
+  getFields(): Promise<Version3Models.FieldDetails[]> {
     return this.client.issueFields.getFields();
   }
 
-  getStatuses(): Promise<StatusDetails[]> {
+  getStatuses(): Promise<Version3Models.StatusDetails[]> {
     return this.client.workflowStatuses.getStatuses();
   }
 
@@ -23,7 +16,7 @@ export class HttpJiraClient implements JiraClient {
     jql,
     fields,
     startAt,
-  }: SearchIssuesParams): Promise<SearchResults> {
+  }: SearchIssuesParams): Promise<Version3Models.SearchResults> {
     return this.client.issueSearch.searchForIssuesUsingJqlPost({
       jql,
       expand: ["changelog"],
@@ -32,14 +25,32 @@ export class HttpJiraClient implements JiraClient {
     });
   }
 
-  findProjects({ query, startAt }: FindPageParams): Promise<PageProject> {
+  async searchIssuesNew({
+    jql,
+  }: SearchIssuesParams): Promise<Version3Models.SearchAndReconcileResults> {
+    const ids =
+      await this.client.issueSearch.searchForIssuesUsingJqlEnhancedSearchPost({
+        jql,
+        fields: ["id"],
+      });
+
+    return ids;
+  }
+
+  findProjects({
+    query,
+    startAt,
+  }: FindPageParams): Promise<Version3Models.PageProject> {
     return this.client.projects.searchProjects({
       query,
       startAt,
     });
   }
 
-  findFilters({ query, startAt }: FindPageParams): Promise<PageFilterDetails> {
+  findFilters({
+    query,
+    startAt,
+  }: FindPageParams): Promise<Version3Models.PageFilterDetails> {
     return this.client.filters.getFiltersPaginated({
       filterName: query,
       startAt,

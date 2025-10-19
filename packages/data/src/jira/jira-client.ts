@@ -1,10 +1,4 @@
-import {
-  FieldDetails,
-  PageFilterDetails,
-  PageProject,
-  SearchResults,
-  StatusDetails,
-} from "jira.js/out/version3/models";
+import { Version3Models } from "jira.js";
 
 export type SearchIssuesParams = {
   jql: string;
@@ -18,9 +12,16 @@ export type FindPageParams = {
 };
 
 export interface JiraClient {
-  getFields(): Promise<FieldDetails[]>;
-  getStatuses(): Promise<StatusDetails[]>;
-  searchIssues(params: SearchIssuesParams): Promise<SearchResults>;
-  findProjects(params: FindPageParams): Promise<PageProject>;
-  findFilters(params: FindPageParams): Promise<PageFilterDetails>;
+  getFields(): Promise<Version3Models.FieldDetails[]>;
+  getStatuses(): Promise<Version3Models.StatusDetails[]>;
+  searchIssues(
+    params: SearchIssuesParams,
+  ): Promise<Version3Models.SearchResults>;
+  searchIssuesNew(
+    params: SearchIssuesParams,
+  ): Promise<Version3Models.SearchAndReconcileResults>;
+  findProjects(params: FindPageParams): Promise<Version3Models.PageProject>;
+  findFilters(
+    params: FindPageParams,
+  ): Promise<Version3Models.PageFilterDetails>;
 }
