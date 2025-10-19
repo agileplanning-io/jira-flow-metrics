@@ -11,14 +11,19 @@ export type FindPageParams = {
   startAt?: number;
 };
 
+export type EnhancedSearchParams = {
+  jql: string;
+  nextPageToken?: string;
+};
+
 export interface JiraClient {
   getFields(): Promise<Version3Models.FieldDetails[]>;
   getStatuses(): Promise<Version3Models.StatusDetails[]>;
   searchIssues(
     params: SearchIssuesParams,
   ): Promise<Version3Models.SearchResults>;
-  searchIssuesNew(
-    params: SearchIssuesParams,
+  enhancedSearch(
+    params: EnhancedSearchParams,
   ): Promise<Version3Models.SearchAndReconcileResults>;
   findProjects(params: FindPageParams): Promise<Version3Models.PageProject>;
   findFilters(

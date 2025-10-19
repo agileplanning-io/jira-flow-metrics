@@ -1,5 +1,4 @@
-import { getAllPages } from "../jira/page-utils";
-import { filter, isTruthy } from "remeda";
+import { filter, isNot, isNullish, isTruthy, reject } from "remeda";
 import {
   Field,
   Issue,
@@ -9,6 +8,7 @@ import {
 import { StatusBuilder } from "./status-builder";
 import { JiraIssueBuilder } from "./issue_builder";
 import { JiraClient } from "../jira";
+import { Version3Models } from "jira.js";
 
 export type SearchIssuesResult = {
   issues: Issue[];
@@ -37,9 +37,9 @@ export const searchIssues = async (
   //   }),
   // );
 
-  const issuePages = await client.searchIssuesNew({ jql, fields: [] });
+  const issueIds = await getIssueIds(client, jql);
 
-  console.info(issuePages);
+  console.info(issueIds);
 
   // const issues = issuePages.reduce<Issue[]>((issues, page) => {
   //   if (!page.issues) {
@@ -56,6 +56,39 @@ export const searchIssues = async (
   const canonicalStatuses = statusBuilder.getStatuses();
 
   return { issues, canonicalStatuses };
+};
+
+const getIssueIds = async (
+  client: JiraClient,
+  jql: string,
+): Promise<string[]> => {
+  const getPage = (
+    nextPageToken?: string,
+  ): Promise<Version3Models.SearchAndReconcileResults> =>
+    client.enhancedSearch({ jql, nextPageToken });
+
+  const getKeys = (
+    page: Version3Models.SearchAndReconcileResults,
+  ): string[] => {
+    return filter(
+      page.issues?.map((issue) => issue.key) ?? [],
+      isNot(isNullish),
+    );
+  };
+
+  let page = await getPage();
+
+  const keys: string[] = getKeys(page);
+
+  while (page.nextPageToken) {
+    console.info({ nextPageToken: page.nextPageToken });
+    page = await getPage(page.nextPageToken);
+    keys.push(...getKeys(page));
+  }
+
+  console.info({ keys });
+
+  return keys;
 };
 
 export const getFields = async (client: JiraClient): Promise<Field[]> => {

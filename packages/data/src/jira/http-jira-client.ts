@@ -1,4 +1,9 @@
-import { FindPageParams, JiraClient, SearchIssuesParams } from "./jira-client";
+import {
+  EnhancedSearchParams,
+  FindPageParams,
+  JiraClient,
+  SearchIssuesParams,
+} from "./jira-client";
 import { Version3Client, Version3Models } from "jira.js";
 
 export class HttpJiraClient implements JiraClient {
@@ -25,16 +30,16 @@ export class HttpJiraClient implements JiraClient {
     });
   }
 
-  async searchIssuesNew({
+  async enhancedSearch({
     jql,
-  }: SearchIssuesParams): Promise<Version3Models.SearchAndReconcileResults> {
-    const ids =
-      await this.client.issueSearch.searchForIssuesUsingJqlEnhancedSearchPost({
-        jql,
-        fields: ["id"],
-      });
-
-    return ids;
+    nextPageToken,
+  }: EnhancedSearchParams): Promise<Version3Models.SearchAndReconcileResults> {
+    return this.client.issueSearch.searchForIssuesUsingJqlEnhancedSearchPost({
+      jql,
+      fields: ["key"],
+      maxResults: 500,
+      nextPageToken,
+    });
   }
 
   findProjects({
