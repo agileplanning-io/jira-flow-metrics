@@ -9,7 +9,7 @@ async function bootstrap() {
   const logger = new Logger("main");
 
   const app = await NestFactory.create(MainModule);
-  app.setGlobalPrefix("api");
+  app.setGlobalPrefix("/api");
   app.enableCors();
 
   const config = new DocumentBuilder()
