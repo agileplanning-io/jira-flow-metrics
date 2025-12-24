@@ -1,11 +1,5 @@
 import { Version3Models } from "jira.js";
 
-export type SearchIssuesParams = {
-  jql: string;
-  fields: string[];
-  startAt?: number;
-};
-
 export type FindPageParams = {
   query: string;
   startAt?: number;
@@ -24,9 +18,6 @@ export type BulkFetchParams = {
 export interface JiraClient {
   getFields(): Promise<Version3Models.FieldDetails[]>;
   getStatuses(): Promise<Version3Models.StatusDetails[]>;
-  searchIssues(
-    params: SearchIssuesParams,
-  ): Promise<Version3Models.SearchResults>;
   enhancedSearch(
     params: EnhancedSearchParams,
   ): Promise<Version3Models.SearchAndReconcileResults>;

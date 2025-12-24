@@ -80,7 +80,8 @@ const getIssueDetails = async (
 ) => {
   const keyChunks = chunk(keys, 100);
 
-  const fetchIssues = (keys: string[]) => client.fetchIssues({ fields, keys });
+  const fetchIssues = async (keys: string[]) =>
+    client.fetchIssues({ fields, keys });
 
   const results = await mapLimit(keyChunks, 5, fetchIssues);
 

@@ -3,7 +3,6 @@ import {
   EnhancedSearchParams,
   FindPageParams,
   JiraClient,
-  SearchIssuesParams,
 } from "./jira-client";
 import { Version3Client, Version3Models } from "jira.js";
 
@@ -16,19 +15,6 @@ export class HttpJiraClient implements JiraClient {
 
   getStatuses(): Promise<Version3Models.StatusDetails[]> {
     return this.client.workflowStatuses.getStatuses();
-  }
-
-  searchIssues({
-    jql,
-    fields,
-    startAt,
-  }: SearchIssuesParams): Promise<Version3Models.SearchResults> {
-    return this.client.issueSearch.searchForIssuesUsingJqlPost({
-      jql,
-      expand: ["changelog"],
-      fields,
-      startAt,
-    });
   }
 
   async enhancedSearch({
