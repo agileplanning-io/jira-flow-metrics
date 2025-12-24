@@ -99,9 +99,22 @@ const getIssueDetails = async (
   console.info("getIssueDetails", { keys });
   const keyChunks = chunk(keys, 100);
 
-  const result = await client.fetchIssues({ fields, keys: keyChunks[0] });
+  const fetchIssues = async (keys: string[]) => {
+    const result = await client.fetchIssues({ fields, keys });
+    console.info({ result });
+    return result;
+  };
 
-  return result.issues!;
+  // const result = await fetchIssues(keyChunks[0]);
+
+  // return result.issues!;
+
+  const results = await mapLimit(keyChunks, 5, fetchIssues);
+
+  return results.reduce<Version3Models.Issue[]>(
+    (issues, result) => issues.concat(...result.issues!),
+    [],
+  );
 
   // const details = await mapLimit(keyChunks, 5, async (keys: string[]) => {
   //   console.info("fetching issues", { keys });
