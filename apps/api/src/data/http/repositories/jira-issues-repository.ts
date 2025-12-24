@@ -6,7 +6,7 @@ import { searchIssues, SearchIssuesResult } from "@agileplanning-io/flow-data";
 @Injectable()
 export class HttpJiraIssuesRepository extends JiraIssuesRepository {
   async search(domain, jql: string): Promise<SearchIssuesResult> {
-    const client = createJiraClient(domain);
+    const client = await createJiraClient(domain);
     return searchIssues(client, jql, domain.host);
   }
 }

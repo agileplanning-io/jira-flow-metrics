@@ -6,7 +6,7 @@ import { findDataSources } from "@agileplanning-io/flow-data";
 @Injectable()
 export class HttpJiraDataSourcesRepository extends DataSourcesRepository {
   async getDataSources({ domain, query }): Promise<DataSource[]> {
-    const client = createJiraClient(domain);
+    const client = await createJiraClient(domain);
     return findDataSources(client, query);
   }
 }

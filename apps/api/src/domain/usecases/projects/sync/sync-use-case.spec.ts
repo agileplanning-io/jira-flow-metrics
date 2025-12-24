@@ -1,7 +1,7 @@
 import { Project, ProjectsRepository } from "@entities/projects";
 import { JiraIssuesRepository } from "./jira-issues-repository";
 import { SyncUseCase } from "./sync-use-case";
-import mock from "jest-mock-extended/lib/Mock";
+import { mock } from "jest-mock-extended";
 import { Domain, DomainsRepository } from "@entities/domains";
 import { IssuesRepository } from "@entities/issues";
 import {
@@ -10,6 +10,7 @@ import {
   StatusCategory,
   buildIssue,
 } from "@agileplanning-io/flow-metrics";
+import { jest } from "@jest/globals";
 
 const now = new Date("2024-01-01T10:30:00.000Z");
 jest.useFakeTimers().setSystemTime(now);
