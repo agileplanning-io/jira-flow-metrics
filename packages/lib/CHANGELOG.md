@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-lib
 
+## 1.0.0
+
+### Major Changes
+
+- 47b4327: chore: update jira.js and node versions
+
 ## 0.1.5
 
 ### Patch Changes
