@@ -1,45 +1,56 @@
 import {
-  FieldDetails,
-  StatusDetails,
-  SearchResults,
-  PageProject,
-  PageFilterDetails,
-} from "jira.js/out/version3/models";
-import { FindPageParams, JiraClient, SearchIssuesParams } from "./jira-client";
-import { Version3Client } from "jira.js";
+  BulkFetchParams,
+  EnhancedSearchParams,
+  FindPageParams,
+  JiraClient,
+} from "./jira-client";
+import { Version3Client, Version3Models } from "jira.js";
 
 export class HttpJiraClient implements JiraClient {
   constructor(private readonly client: Version3Client) {}
 
-  getFields(): Promise<FieldDetails[]> {
+  getFields(): Promise<Version3Models.FieldDetails[]> {
     return this.client.issueFields.getFields();
   }
 
-  getStatuses(): Promise<StatusDetails[]> {
+  getStatuses(): Promise<Version3Models.StatusDetails[]> {
     return this.client.workflowStatuses.getStatuses();
   }
 
-  searchIssues({
+  async enhancedSearch({
     jql,
-    fields,
-    startAt,
-  }: SearchIssuesParams): Promise<SearchResults> {
-    return this.client.issueSearch.searchForIssuesUsingJqlPost({
+    nextPageToken,
+  }: EnhancedSearchParams): Promise<Version3Models.SearchAndReconcileResults> {
+    return this.client.issueSearch.searchForIssuesUsingJqlEnhancedSearchPost({
       jql,
-      expand: ["changelog"],
-      fields,
-      startAt,
+      fields: ["key"],
+      maxResults: 500,
+      nextPageToken,
     });
   }
 
-  findProjects({ query, startAt }: FindPageParams): Promise<PageProject> {
+  fetchIssues({ keys, fields }: BulkFetchParams) {
+    return this.client.issues.bulkFetchIssues({
+      issueIdsOrKeys: keys,
+      expand: ["changelog"],
+      fields,
+    });
+  }
+
+  findProjects({
+    query,
+    startAt,
+  }: FindPageParams): Promise<Version3Models.PageProject> {
     return this.client.projects.searchProjects({
       query,
       startAt,
     });
   }
 
-  findFilters({ query, startAt }: FindPageParams): Promise<PageFilterDetails> {
+  findFilters({
+    query,
+    startAt,
+  }: FindPageParams): Promise<Version3Models.PageFilterDetails> {
     return this.client.filters.getFiltersPaginated({
       filterName: query,
       startAt,

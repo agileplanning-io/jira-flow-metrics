@@ -1,7 +1,7 @@
 import { DataModule } from "@data/data-module";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ProjectsModule } from "./projects.module";
-import * as request from "supertest";
+import request from "supertest";
 import { INestApplication } from "@nestjs/common";
 import { StorageModule } from "@data/storage/storage-module";
 import { TestStorageModule } from "@fixtures/data/storage/test-storage-module";
@@ -15,6 +15,7 @@ import {
   buildIssue,
 } from "@agileplanning-io/flow-metrics";
 import { qsStringify } from "@agileplanning-io/flow-lib";
+import { jest } from "@jest/globals";
 
 jest.useFakeTimers().setSystemTime(Date.parse("2023-01-01T13:00:00.000Z"));
 

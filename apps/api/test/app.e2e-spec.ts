@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import request from "supertest";
 import { MainModule } from "../src/main-module";
 
 describe("AppController (e2e)", () => {

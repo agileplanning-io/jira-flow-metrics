@@ -1,7 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { DomainsModule } from "./domains.module";
 import { INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import request from "supertest";
 import { DomainsRepository } from "@entities/domains";
 import { DataModule } from "@data/data-module";
 import { StorageModule } from "@data/storage/storage-module";

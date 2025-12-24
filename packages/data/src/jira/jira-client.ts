@@ -1,26 +1,29 @@
-import {
-  FieldDetails,
-  PageFilterDetails,
-  PageProject,
-  SearchResults,
-  StatusDetails,
-} from "jira.js/out/version3/models";
-
-export type SearchIssuesParams = {
-  jql: string;
-  fields: string[];
-  startAt?: number;
-};
+import { Version3Models } from "jira.js";
 
 export type FindPageParams = {
   query: string;
   startAt?: number;
 };
 
+export type EnhancedSearchParams = {
+  jql: string;
+  nextPageToken?: string;
+};
+
+export type BulkFetchParams = {
+  fields: string[];
+  keys: string[];
+};
+
 export interface JiraClient {
-  getFields(): Promise<FieldDetails[]>;
-  getStatuses(): Promise<StatusDetails[]>;
-  searchIssues(params: SearchIssuesParams): Promise<SearchResults>;
-  findProjects(params: FindPageParams): Promise<PageProject>;
-  findFilters(params: FindPageParams): Promise<PageFilterDetails>;
+  getFields(): Promise<Version3Models.FieldDetails[]>;
+  getStatuses(): Promise<Version3Models.StatusDetails[]>;
+  enhancedSearch(
+    params: EnhancedSearchParams,
+  ): Promise<Version3Models.SearchAndReconcileResults>;
+  fetchIssues(params: BulkFetchParams): Promise<Version3Models.BulkIssue>;
+  findProjects(params: FindPageParams): Promise<Version3Models.PageProject>;
+  findFilters(
+    params: FindPageParams,
+  ): Promise<Version3Models.PageFilterDetails>;
 }

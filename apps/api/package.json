@@ -17,14 +17,14 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.js",
+    "test:e2e": "jest --config ./test/jest-e2e.config.ts",
     "clean": "rm -rf node_modules && rm -rf dist",
     "seed": "ts-node scripts/seed.ts"
   },
   "dependencies": {
+    "@agileplanning-io/flow-data": "workspace:*",
     "@agileplanning-io/flow-lib": "workspace:*",
     "@agileplanning-io/flow-metrics": "workspace:*",
-    "@agileplanning-io/flow-data": "workspace:*",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-express": "^11.0.0",
@@ -34,7 +34,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "date-fns": "^2.30.0",
-    "jira.js": "^2.19.1",
+    "jira.js": "^5.2.2",
     "node-json-db": "^2.2.0",
     "reflect-metadata": "^0.1.13",
     "remeda": "^1.58.2",
@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.2.0",
+    "@jest/globals": "^30.2.0",
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.0",

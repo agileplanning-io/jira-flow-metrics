@@ -1,10 +1,10 @@
 import { mock } from "jest-mock-extended";
 import { findDataSources } from "./data-sources";
-import { FilterDetails, Project, User } from "jira.js/out/version3/models";
+import { Version3Models } from "jira.js";
 import { JiraClient } from "../jira";
 
 describe("findDataSources", () => {
-  const projectLead = mock<User>();
+  const projectLead = mock<Version3Models.User>();
 
   it("searches Jira matching data sources", async () => {
     const projects = [
@@ -38,7 +38,10 @@ describe("findDataSources", () => {
   });
 });
 
-const buildClient = (jiraProjects: Project[], jiraFilters: FilterDetails[]) => {
+const buildClient = (
+  jiraProjects: Version3Models.Project[],
+  jiraFilters: Version3Models.FilterDetails[],
+) => {
   const client = mock<JiraClient>();
 
   client.findProjects.mockResolvedValue(buildPageResponse(jiraProjects));
