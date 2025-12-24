@@ -1,5 +1,17 @@
 # @agileplanning-io/flow-charts
 
+## 1.0.0
+
+### Major Changes
+
+- 47b4327: chore: update jira.js and node versions
+
+### Patch Changes
+
+- Updated dependencies [47b4327]
+  - @agileplanning-io/flow-metrics@2.0.0
+  - @agileplanning-io/flow-lib@1.0.0
+
 ## 0.1.22
 
 ### Patch Changes
