@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-metrics
 
+## 2.0.1
+
+### Patch Changes
+
+- d62cb12: chore: export jira.js types
+
 ## 2.0.0
 
 ### Major Changes
