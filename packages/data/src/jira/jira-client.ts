@@ -1,5 +1,21 @@
 import { Version3Models } from "jira.js";
 
+type SearchAndReconcileResults = Version3Models.SearchAndReconcileResults;
+type BulkIssue = Version3Models.BulkIssue;
+type PageProject = Version3Models.PageProject;
+type FieldDetails = Version3Models.FieldDetails;
+type StatusDetails = Version3Models.StatusDetails;
+type PageFilterDetails = Version3Models.PageFilterDetails;
+
+export type {
+  BulkIssue,
+  PageProject,
+  SearchAndReconcileResults,
+  FieldDetails,
+  StatusDetails,
+  PageFilterDetails,
+};
+
 export type FindPageParams = {
   query: string;
   startAt?: number;
@@ -16,14 +32,12 @@ export type BulkFetchParams = {
 };
 
 export interface JiraClient {
-  getFields(): Promise<Version3Models.FieldDetails[]>;
-  getStatuses(): Promise<Version3Models.StatusDetails[]>;
+  getFields(): Promise<FieldDetails[]>;
+  getStatuses(): Promise<StatusDetails[]>;
   enhancedSearch(
     params: EnhancedSearchParams,
-  ): Promise<Version3Models.SearchAndReconcileResults>;
-  fetchIssues(params: BulkFetchParams): Promise<Version3Models.BulkIssue>;
-  findProjects(params: FindPageParams): Promise<Version3Models.PageProject>;
-  findFilters(
-    params: FindPageParams,
-  ): Promise<Version3Models.PageFilterDetails>;
+  ): Promise<SearchAndReconcileResults>;
+  fetchIssues(params: BulkFetchParams): Promise<BulkIssue>;
+  findProjects(params: FindPageParams): Promise<PageProject>;
+  findFilters(params: FindPageParams): Promise<PageFilterDetails>;
 }
