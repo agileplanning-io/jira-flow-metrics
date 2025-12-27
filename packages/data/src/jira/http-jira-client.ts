@@ -1,3 +1,4 @@
+import { JiraHost } from "../domain/hosts";
 import {
   BulkFetchParams,
   EnhancedSearchParams,
@@ -7,7 +8,10 @@ import {
 import { Version3Client, Version3Models } from "jira.js";
 
 export class HttpJiraClient implements JiraClient {
-  constructor(private readonly client: Version3Client) {}
+  constructor(
+    readonly host: JiraHost,
+    private readonly client: Version3Client,
+  ) {}
 
   getFields(): Promise<Version3Models.FieldDetails[]> {
     return this.client.issueFields.getFields();

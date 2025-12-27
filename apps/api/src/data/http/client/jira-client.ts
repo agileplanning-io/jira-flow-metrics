@@ -2,6 +2,11 @@
 import { Domain } from "@entities/domains";
 import { Logger } from "@nestjs/common";
 import { HttpJiraClient } from "@agileplanning-io/flow-data";
+import {
+  normaliseHost,
+  isJiraHost,
+} from "@agileplanning-io/flow-data/dist/src/domain/hosts";
+import assert from "assert";
 
 const logger = new Logger("jira-client");
 
@@ -24,5 +29,9 @@ export const createJiraClient = async (
     },
   });
 
-  return new HttpJiraClient(v3Client);
+  const host = normaliseHost(domain.host);
+
+  assert(isJiraHost(host));
+
+  return new HttpJiraClient(host, v3Client);
 };

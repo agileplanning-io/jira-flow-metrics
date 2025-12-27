@@ -6,9 +6,13 @@ import {
   PageProject,
   SearchAndReconcileResults,
 } from "../jira/jira-client";
+import { JiraHost } from "../domain/hosts";
 
 export class HttpLinearClient implements JiraClient {
-  constructor(private readonly client: LinearClient) {}
+  constructor(
+    readonly host: JiraHost,
+    private readonly client: LinearClient,
+  ) {}
 
   getFields() {
     return Promise.resolve([]); // return this.client.issueFields.getFields();

@@ -1,12 +1,7 @@
 import { getAllPages } from "../jira/page-utils";
 import { flat } from "remeda";
 import { JiraClient } from "../jira/jira-client";
-
-export type DataSource = {
-  name: string;
-  type: "filter" | "project";
-  jql: string;
-};
+import { DataSource } from "../domain/data-sources";
 
 export const findDataSources = async (client: JiraClient, query: string) => {
   const normalisedQuery = query?.toLowerCase();
@@ -36,6 +31,7 @@ const findFilters = async (
     filterPages.map(
       (page) =>
         page.values?.map((filter) => ({
+          host: client.host,
           name: filter.name,
           jql: filter.jql ?? "",
           type: "filter" as const,
@@ -58,6 +54,7 @@ const findProjects = async (
   return flat(
     projectPages.map((page) =>
       page.values.map((project) => ({
+        host: client.host,
         name: `${project.name} (${project.key})`,
         jql: `project=${project.key}`,
         type: "project" as const,

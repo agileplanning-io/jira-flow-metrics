@@ -1,8 +1,13 @@
 // import { Version3Client } from "jira.js";
 import { Domain } from "@entities/domains";
 import { Logger } from "@nestjs/common";
-import { HttpLinearClient } from "@agileplanning-io/flow-data";
+import {
+  HttpLinearClient,
+  isLinearHost,
+  normaliseHost,
+} from "@agileplanning-io/flow-data";
 import { LinearClient } from "@linear/sdk";
+import assert from "assert";
 
 const logger = new Logger("jira-client");
 
@@ -27,5 +32,9 @@ export const createLinearClient = async (
 
   const linearClient = new LinearClient({ apiKey: domain.token });
 
-  return new HttpLinearClient(linearClient);
+  const host = normaliseHost(domain.host);
+
+  assert(isLinearHost(host));
+
+  return new HttpLinearClient(host, linearClient);
 };
