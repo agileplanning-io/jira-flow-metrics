@@ -1,9 +1,10 @@
 import { mock } from "jest-mock-extended";
-import { findDataSources } from "./data-sources";
 import { Version3Models } from "jira.js";
 import { JiraClient } from "../jira";
+import { JiraMetricsClient, LinearMetricsClient } from "./data-sources";
+import { HttpLinearClient, Team } from "../linear";
 
-describe("findDataSources", () => {
+describe("JiraMetricsClient", () => {
   const projectLead = mock<Version3Models.User>();
 
   it("searches Jira matching data sources", async () => {
@@ -11,9 +12,10 @@ describe("findDataSources", () => {
       { id: "1", lead: projectLead, name: "My Project", key: "MYPROJ" },
     ];
     const filters = [{ name: "My Project Filter", jql: "project = MYPROJ" }];
-    const client = buildClient(projects, filters);
+    const client = buildJiraClient(projects, filters);
+    const metricsClient = new JiraMetricsClient(client);
 
-    const dataSources = await findDataSources(client, "proj");
+    const dataSources = await metricsClient.findDataSources("proj");
 
     expect(dataSources).toEqual([
       { name: "My Project (MYPROJ)", jql: "project=MYPROJ", type: "project" },
@@ -28,9 +30,10 @@ describe("findDataSources", () => {
       // this filter doesn't, so should be excluded
       { name: "Another Filter", jql: "filter = another_filter" },
     ];
-    const client = buildClient([], filters);
+    const client = buildJiraClient([], filters);
+    const metricsClient = new JiraMetricsClient(client);
 
-    const dataSources = await findDataSources(client, "proj");
+    const dataSources = await metricsClient.findDataSources("proj");
 
     expect(dataSources).toEqual([
       { name: "My Project Filter", jql: "project = MYPROJ", type: "filter" },
@@ -38,7 +41,20 @@ describe("findDataSources", () => {
   });
 });
 
-const buildClient = (
+describe("LinearMetricsClient", () => {
+  it("searches Linear matching data sources", async () => {
+    const teams: Team[] = [{ id: "1", name: "My Team" }];
+
+    const client = buildLinearClient(teams);
+    const metricsClient = new LinearMetricsClient(client);
+
+    const dataSources = await metricsClient.findDataSources("team");
+
+    expect(dataSources).toEqual([{ id: "1", name: "My Team", type: "team" }]);
+  });
+});
+
+const buildJiraClient = (
   jiraProjects: Version3Models.Project[],
   jiraFilters: Version3Models.FilterDetails[],
 ) => {
@@ -58,3 +74,11 @@ const buildPageResponse = <T>(values: T[]) => ({
   total: values.length,
   isLast: true,
 });
+
+const buildLinearClient = (teams: Team[]) => {
+  const client = mock<HttpLinearClient>();
+
+  client.findTeams.mockResolvedValue(teams);
+
+  return client;
+};

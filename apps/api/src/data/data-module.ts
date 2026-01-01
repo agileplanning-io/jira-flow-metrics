@@ -7,7 +7,7 @@ import {
 import { LocalProjectsRepository } from "./local/repositories/projects-repository";
 import { DomainsRepository } from "@entities/domains";
 import { LocalDomainsRepository } from "./local/repositories/domains-repository";
-import { HttpJiraDataSourcesRepository } from "./http/repositories/data-sources-repository";
+import { HttpDataSourcesRepository } from "./http/repositories/data-sources-repository";
 import { IssuesRepository } from "@entities/issues";
 import { LocalIssuesRepository } from "./local/issues-repository";
 import { JiraIssuesRepository } from "@usecases/projects/sync/jira-issues-repository";
@@ -37,7 +37,7 @@ import { LocalPoliciesRepository } from "./local/repositories/policies-repositor
     },
     {
       provide: DataSourcesRepository,
-      useClass: HttpJiraDataSourcesRepository,
+      useClass: HttpDataSourcesRepository,
     },
     {
       provide: JiraIssuesRepository,

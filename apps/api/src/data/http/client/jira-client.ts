@@ -24,5 +24,5 @@ export const createJiraClient = async (
     },
   });
 
-  return new HttpJiraClient(v3Client);
+  return new HttpJiraClient(domain.host, v3Client);
 };

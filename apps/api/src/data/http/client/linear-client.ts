@@ -13,19 +13,7 @@ export const createLinearClient = async (
 ): Promise<HttpLinearClient> => {
   logger.log(`Creating Linear client for host ${domain.host}`);
 
-  // const { Version3Client } = await import("jira.js");
-
-  // const v3Client = new Version3Client({
-  //   host: `https://${domain.host}`,
-  //   authentication: {
-  //     basic: {
-  //       email: domain.email,
-  //       apiToken: domain.token,
-  //     },
-  //   },
-  // });
-
   const linearClient = new LinearClient({ apiKey: domain.token });
 
-  return new HttpLinearClient(linearClient);
+  return new HttpLinearClient(domain.host, linearClient);
 };

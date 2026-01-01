@@ -7,6 +7,7 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { Domain } from "./domains";
 import { flatten } from "remeda";
+import { DataSource } from "@agileplanning-io/flow-data";
 
 export type WorkflowStage = {
   name: string;
@@ -43,12 +44,6 @@ export type Project = {
   workflowScheme?: WorkflowScheme;
   defaultCycleTimePolicy?: CycleTimePolicy;
   defaultCompletedFilter?: IssueFilter;
-};
-
-export type DataSource = {
-  name: string;
-  type: "filter" | "project";
-  jql: string;
 };
 
 export type CreateProjectParams = Omit<Project, "id" | "lastSync">;
