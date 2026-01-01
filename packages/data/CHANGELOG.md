@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-metrics
 
+## 2.0.2
+
+### Patch Changes
+
+- b88b3cd: refactor: extact MetricsClient
+
 ## 2.0.1
 
 ### Patch Changes
