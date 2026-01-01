@@ -1,4 +1,6 @@
-import { LinearClient, Team } from "@linear/sdk";
+import Linear, { LinearClient } from "@linear/sdk";
+
+export type Team = Pick<Linear.Team, "id" | "name">;
 
 export class HttpLinearClient {
   constructor(
