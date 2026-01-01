@@ -1,20 +1,47 @@
 import { getAllPages } from "../jira/page-utils";
 import { flat } from "remeda";
 import { JiraClient } from "../jira/jira-client";
-import { DataSource } from "../domain/data-sources";
+import { HttpLinearClient } from "../linear";
 
-export const findDataSources = async (client: JiraClient, query: string) => {
-  const normalisedQuery = query?.toLowerCase();
-
-  const projects = await findProjects(client, query);
-  const filters = await findFilters(client, query);
-
-  const dataSources = [...projects, ...filters];
-
-  return dataSources.filter(
-    (dataSource) => dataSource.name?.toLowerCase().includes(normalisedQuery),
-  );
+type BaseDataSource = {
+  host: string;
+  name: string;
 };
+
+export type JiraDataSource = BaseDataSource & {
+  host: string;
+  type: "filter" | "project";
+  jql: string;
+};
+
+export type LinearDataSource = BaseDataSource & {
+  host: string;
+  type: "team";
+  id: string;
+};
+
+export type DataSource = JiraDataSource | LinearDataSource;
+
+export interface MetricsClient {
+  findDataSources: (query: string) => Promise<DataSource[]>;
+}
+
+export class JiraMetricsClient implements MetricsClient {
+  constructor(private readonly client: JiraClient) {}
+
+  async findDataSources(query: string): Promise<DataSource[]> {
+    const normalisedQuery = query?.toLowerCase();
+
+    const projects = await findProjects(this.client, query);
+    const filters = await findFilters(this.client, query);
+
+    const dataSources = [...projects, ...filters];
+
+    return dataSources.filter(
+      (dataSource) => dataSource.name?.toLowerCase().includes(normalisedQuery),
+    );
+  }
+}
 
 const findFilters = async (
   client: JiraClient,
@@ -62,3 +89,18 @@ const findProjects = async (
     ),
   );
 };
+
+export class LinearMetricsClient implements MetricsClient {
+  constructor(private readonly client: HttpLinearClient) {}
+
+  async findDataSources(query: string): Promise<DataSource[]> {
+    const teams = await this.client.findTeams(query);
+
+    return teams.map((team) => ({
+      host: this.client.host,
+      id: team.id,
+      name: team.name,
+      type: "team",
+    }));
+  }
+}

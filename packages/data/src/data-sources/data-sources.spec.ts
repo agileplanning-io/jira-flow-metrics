@@ -1,7 +1,7 @@
 import { mock } from "jest-mock-extended";
-import { findDataSources } from "./data-sources";
 import { Version3Models } from "jira.js";
 import { JiraClient } from "../jira";
+import { JiraMetricsClient } from "./data-sources";
 
 describe("findDataSources", () => {
   const projectLead = mock<Version3Models.User>();
@@ -12,12 +12,23 @@ describe("findDataSources", () => {
     ];
     const filters = [{ name: "My Project Filter", jql: "project = MYPROJ" }];
     const client = buildClient(projects, filters);
+    const metricsClient = new JiraMetricsClient(client);
 
-    const dataSources = await findDataSources(client, "proj");
+    const dataSources = await metricsClient.findDataSources("proj");
 
     expect(dataSources).toEqual([
-      { name: "My Project (MYPROJ)", jql: "project=MYPROJ", type: "project" },
-      { name: "My Project Filter", jql: "project = MYPROJ", type: "filter" },
+      {
+        host: client.host,
+        name: "My Project (MYPROJ)",
+        jql: "project=MYPROJ",
+        type: "project",
+      },
+      {
+        host: client.host,
+        name: "My Project Filter",
+        jql: "project = MYPROJ",
+        type: "filter",
+      },
     ]);
   });
 
@@ -29,11 +40,17 @@ describe("findDataSources", () => {
       { name: "Another Filter", jql: "filter = another_filter" },
     ];
     const client = buildClient([], filters);
+    const metricsClient = new JiraMetricsClient(client);
 
-    const dataSources = await findDataSources(client, "proj");
+    const dataSources = await metricsClient.findDataSources("proj");
 
     expect(dataSources).toEqual([
-      { name: "My Project Filter", jql: "project = MYPROJ", type: "filter" },
+      {
+        host: client.host,
+        name: "My Project Filter",
+        jql: "project = MYPROJ",
+        type: "filter",
+      },
     ]);
   });
 });

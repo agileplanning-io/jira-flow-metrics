@@ -1,4 +1,3 @@
-import { JiraHost } from "../domain/hosts";
 import {
   BulkFetchParams,
   EnhancedSearchParams,
@@ -9,7 +8,7 @@ import { Version3Client, Version3Models } from "jira.js";
 
 export class HttpJiraClient implements JiraClient {
   constructor(
-    readonly host: JiraHost,
+    readonly host: string,
     private readonly client: Version3Client,
   ) {}
 

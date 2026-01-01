@@ -1,5 +1,4 @@
 import { Version3Models } from "jira.js";
-import { JiraHost } from "../domain/hosts";
 
 type SearchAndReconcileResults = Version3Models.SearchAndReconcileResults;
 type BulkIssue = Version3Models.BulkIssue;
@@ -33,7 +32,7 @@ export type BulkFetchParams = {
 };
 
 export interface JiraClient {
-  readonly host: JiraHost;
+  readonly host: string;
   getFields(): Promise<FieldDetails[]>;
   getStatuses(): Promise<StatusDetails[]>;
   enhancedSearch(

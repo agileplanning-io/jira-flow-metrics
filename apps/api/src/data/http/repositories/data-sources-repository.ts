@@ -1,24 +1,46 @@
 import {
-  DataSource,
   DataSourcesRepository,
   SearchDataSourcesParams,
 } from "@entities/projects";
 import { Injectable } from "@nestjs/common";
 import { createJiraClient } from "../client/jira-client";
-import { findDataSources } from "@agileplanning-io/flow-data";
 import { createLinearClient } from "../client/linear-client";
+import {
+  DataSource,
+  MetricsClient,
+  JiraMetricsClient,
+  LinearMetricsClient,
+} from "@agileplanning-io/flow-data";
 
 @Injectable()
-export class HttpJiraDataSourcesRepository extends DataSourcesRepository {
+export class HttpDataSourcesRepository implements DataSourcesRepository {
   async getDataSources({ domain, query }): Promise<DataSource[]> {
     // console.info({ domain });
     const client = await this.createClient(domain);
-    return findDataSources(client, query);
+
+    return await client.findDataSources(query);
   }
 
-  private async createClient(domain: SearchDataSourcesParams["domain"]) {
+  private async createClient(
+    domain: SearchDataSourcesParams["domain"],
+  ): Promise<MetricsClient> {
+    // TODO: create data source client
     return domain.host === "api.linear.app"
-      ? await createLinearClient(domain)
-      : await createJiraClient(domain);
+      ? await this.createLinearDataSourcesClient(domain)
+      : await this.createJiraDataSourcesClient(domain);
+  }
+
+  private async createLinearDataSourcesClient(
+    domain: SearchDataSourcesParams["domain"],
+  ) {
+    const client = await createLinearClient(domain);
+    return new LinearMetricsClient(client);
+  }
+
+  private async createJiraDataSourcesClient(
+    domain: SearchDataSourcesParams["domain"],
+  ) {
+    const client = await createJiraClient(domain);
+    return new JiraMetricsClient(client);
   }
 }
