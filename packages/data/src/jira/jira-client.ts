@@ -32,7 +32,6 @@ export type BulkFetchParams = {
 };
 
 export interface JiraClient {
-  readonly host: string;
   getFields(): Promise<FieldDetails[]>;
   getStatuses(): Promise<StatusDetails[]>;
   enhancedSearch(

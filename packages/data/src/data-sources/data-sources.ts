@@ -4,18 +4,15 @@ import { JiraClient } from "../jira/jira-client";
 import { HttpLinearClient } from "../linear";
 
 type BaseDataSource = {
-  host: string;
   name: string;
 };
 
 export type JiraDataSource = BaseDataSource & {
-  host: string;
   type: "filter" | "project";
   jql: string;
 };
 
 export type LinearDataSource = BaseDataSource & {
-  host: string;
   type: "team";
   id: string;
 };
@@ -58,7 +55,6 @@ const findFilters = async (
     filterPages.map(
       (page) =>
         page.values?.map((filter) => ({
-          host: client.host,
           name: filter.name,
           jql: filter.jql ?? "",
           type: "filter" as const,
@@ -81,7 +77,6 @@ const findProjects = async (
   return flat(
     projectPages.map((page) =>
       page.values.map((project) => ({
-        host: client.host,
         name: `${project.name} (${project.key})`,
         jql: `project=${project.key}`,
         type: "project" as const,

@@ -17,18 +17,8 @@ describe("findDataSources", () => {
     const dataSources = await metricsClient.findDataSources("proj");
 
     expect(dataSources).toEqual([
-      {
-        host: client.host,
-        name: "My Project (MYPROJ)",
-        jql: "project=MYPROJ",
-        type: "project",
-      },
-      {
-        host: client.host,
-        name: "My Project Filter",
-        jql: "project = MYPROJ",
-        type: "filter",
-      },
+      { name: "My Project (MYPROJ)", jql: "project=MYPROJ", type: "project" },
+      { name: "My Project Filter", jql: "project = MYPROJ", type: "filter" },
     ]);
   });
 
@@ -45,12 +35,7 @@ describe("findDataSources", () => {
     const dataSources = await metricsClient.findDataSources("proj");
 
     expect(dataSources).toEqual([
-      {
-        host: client.host,
-        name: "My Project Filter",
-        jql: "project = MYPROJ",
-        type: "filter",
-      },
+      { name: "My Project Filter", jql: "project = MYPROJ", type: "filter" },
     ]);
   });
 });
