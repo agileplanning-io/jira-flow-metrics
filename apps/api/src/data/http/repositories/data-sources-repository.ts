@@ -15,7 +15,6 @@ import {
 @Injectable()
 export class HttpDataSourcesRepository implements DataSourcesRepository {
   async getDataSources({ domain, query }): Promise<DataSource[]> {
-    // console.info({ domain });
     const client = await this.createClient(domain);
 
     return await client.findDataSources(query);
@@ -24,7 +23,6 @@ export class HttpDataSourcesRepository implements DataSourcesRepository {
   private async createClient(
     domain: SearchDataSourcesParams["domain"],
   ): Promise<MetricsClient> {
-    // TODO: create data source client
     return domain.host === "api.linear.app"
       ? await this.createLinearDataSourcesClient(domain)
       : await this.createJiraDataSourcesClient(domain);

@@ -46,12 +46,6 @@ export type Project = {
   defaultCompletedFilter?: IssueFilter;
 };
 
-// export type DataSource = {
-//   name: string;
-//   type: "filter" | "project";
-//   jql: string;
-// };
-
 export type CreateProjectParams = Omit<Project, "id" | "lastSync">;
 export type UpdateProjectParams = Partial<CreateProjectParams> &
   Pick<Project, "lastSync">;
