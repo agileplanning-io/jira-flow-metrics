@@ -1,8 +1,7 @@
 import { mock } from "jest-mock-extended";
 import { Version3Models } from "jira.js";
 import { JiraClient } from "../jira";
-import { JiraMetricsClient, LinearMetricsClient } from "./data-sources";
-import { HttpLinearClient, Team } from "../linear";
+import { JiraMetricsClient } from "./jira-metrics-client";
 
 describe("JiraMetricsClient", () => {
   const projectLead = mock<Version3Models.User>();
@@ -41,19 +40,6 @@ describe("JiraMetricsClient", () => {
   });
 });
 
-describe("LinearMetricsClient", () => {
-  it("searches Linear matching data sources", async () => {
-    const teams: Team[] = [{ id: "1", name: "My Team" }];
-
-    const client = buildLinearClient(teams);
-    const metricsClient = new LinearMetricsClient(client);
-
-    const dataSources = await metricsClient.findDataSources("team");
-
-    expect(dataSources).toEqual([{ id: "1", name: "My Team", type: "team" }]);
-  });
-});
-
 const buildJiraClient = (
   jiraProjects: Version3Models.Project[],
   jiraFilters: Version3Models.FilterDetails[],
@@ -74,11 +60,3 @@ const buildPageResponse = <T>(values: T[]) => ({
   total: values.length,
   isLast: true,
 });
-
-const buildLinearClient = (teams: Team[]) => {
-  const client = mock<HttpLinearClient>();
-
-  client.findTeams.mockResolvedValue(teams);
-
-  return client;
-};
