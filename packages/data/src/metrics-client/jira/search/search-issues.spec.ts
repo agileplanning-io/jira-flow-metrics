@@ -1,8 +1,8 @@
 import { mock } from "jest-mock-extended";
 import { searchIssues } from "./search-issues";
 import { StatusCategory } from "@agileplanning-io/flow-metrics";
-import { JiraClient } from "../jira";
 import { Version3Models } from "jira.js";
+import { JiraClient } from "../jira-client";
 
 describe("searchIssues", () => {
   const created = new Date("2024-03-01");
