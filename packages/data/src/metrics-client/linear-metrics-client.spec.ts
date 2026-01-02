@@ -1,5 +1,5 @@
 import { mock } from "jest-mock-extended";
-import { HttpLinearClient, Team } from "../linear";
+import { HttpLinearClient, Team } from "./linear";
 import { LinearMetricsClient } from "./linear-metrics-client";
 
 describe("LinearMetricsClient", () => {

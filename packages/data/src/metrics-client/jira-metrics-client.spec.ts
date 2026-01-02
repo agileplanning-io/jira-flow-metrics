@@ -1,6 +1,6 @@
 import { mock } from "jest-mock-extended";
 import { Version3Models } from "jira.js";
-import { JiraClient } from "../jira";
+import { JiraClient } from "./jira";
 import { JiraMetricsClient } from "./jira-metrics-client";
 
 describe("JiraMetricsClient", () => {

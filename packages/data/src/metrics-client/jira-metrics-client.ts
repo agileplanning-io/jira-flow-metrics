@@ -1,6 +1,6 @@
 import { flat } from "remeda";
 import { DataSource } from "../data-sources/data-sources";
-import { getAllPages, JiraClient } from "../jira";
+import { getAllPages, JiraClient } from "./jira";
 import { MetricsClient } from "./types";
 
 export class JiraMetricsClient implements MetricsClient {

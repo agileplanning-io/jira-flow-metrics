@@ -7,7 +7,7 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { StatusBuilder } from "./status-builder";
 import { JiraIssueBuilder } from "./issue_builder";
-import { BulkFetchParams, JiraClient } from "../jira";
+import { BulkFetchParams, JiraClient } from "../";
 import { Version3Models } from "jira.js";
 import { mapLimit } from "async";
 

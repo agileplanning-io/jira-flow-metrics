@@ -1,5 +1,5 @@
 import { DataSource } from "../data-sources/data-sources";
-import { HttpLinearClient } from "../linear";
+import { HttpLinearClient } from "./linear";
 import { MetricsClient } from "./types";
 
 export class LinearMetricsClient implements MetricsClient {
