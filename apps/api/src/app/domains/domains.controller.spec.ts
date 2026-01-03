@@ -118,14 +118,14 @@ describe("DomainsController", () => {
     it("stores projects", async () => {
       const params = {
         name: "My Project",
-        jql: "proj = MyProject",
+        jql: "jql:proj = MyProject",
       };
 
       await request(app.getHttpServer())
         .post(`/domains/${domainId}/projects`)
         .send(params)
         .expect(201, {
-          id: "KEPzzuIqHfHc",
+          id: "1SD5uoOE8nFU",
           domainId,
           labels: [],
           components: [],

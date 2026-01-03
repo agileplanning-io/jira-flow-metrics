@@ -39,7 +39,10 @@ export const AddProjectModal: React.FC<AddProjectModalParams> = ({
     try {
       const values = await form.validateFields();
       createProject.mutate(
-        { domainId, project: { jql: dataSource?.jql, domainId, ...values } },
+        {
+          domainId,
+          project: { query: dataSource?.query, domainId, ...values },
+        },
         {
           onSuccess: () => {
             form.resetFields();
