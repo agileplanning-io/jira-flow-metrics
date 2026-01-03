@@ -81,7 +81,7 @@ describe("DomainsController", () => {
       const project = await projects.addProject({
         domainId,
         name: "My Project",
-        jql: "proj = MyProject",
+        query: "jql:proj = MyProject",
         workflowScheme: {
           stories: {
             stages: [

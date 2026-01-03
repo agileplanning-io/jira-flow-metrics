@@ -16,9 +16,22 @@ export type SearchIssuesResult = {
   canonicalStatuses: TransitionStatus[];
 };
 
+const jqlPrefix = "jql:";
+type JqlPrefix = typeof jqlPrefix;
+
+export type IssueQuery = `${JqlPrefix}${string}`;
+
+export const getJql = (query: IssueQuery) => {
+  if (query.startsWith(jqlPrefix)) {
+    return query.slice(jqlPrefix.length);
+  }
+
+  throw new Error(`Unexpected query: ${query}`);
+};
+
 export const searchIssues = async (
   client: JiraClient,
-  jql: string,
+  query: IssueQuery,
   host: string,
 ): Promise<SearchIssuesResult> => {
   const [fields, jiraStatuses] = await Promise.all([
@@ -30,7 +43,7 @@ export const searchIssues = async (
 
   const builder = new JiraIssueBuilder(fields, statusBuilder, host);
 
-  const issueKeys = await getIssueKeys(client, jql);
+  const issueKeys = await getIssueKeys(client, getJql(query));
 
   const jiraIssues = await getIssueDetails(client, {
     keys: issueKeys,

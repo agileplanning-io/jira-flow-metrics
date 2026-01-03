@@ -47,7 +47,7 @@ const createProject = async (projects: ProjectsRepository) => {
   return await projects.addProject({
     domainId,
     name: "My Project",
-    jql: "project = MYPROJ",
+    query: "jql:project = MYPROJ",
     labels: ["wont-fix", "duplicate", "discovery"],
     components: [],
     issueTypes: [],

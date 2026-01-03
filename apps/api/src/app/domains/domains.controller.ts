@@ -17,6 +17,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { omit } from "remeda";
 import { URL } from "url";
 import { Issue } from "@agileplanning-io/flow-metrics";
+import { IssueQuery } from "@agileplanning-io/flow-data";
 
 class CreateDomainBody {
   @ApiProperty()
@@ -34,7 +35,7 @@ class CreateProjectBody {
   name: string;
 
   @ApiProperty()
-  jql: string;
+  query: IssueQuery;
 }
 
 @Controller("domains")

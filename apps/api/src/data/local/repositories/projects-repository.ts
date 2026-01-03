@@ -36,7 +36,7 @@ export class LocalProjectsRepository extends ProjectsRepository {
   }
 
   async addProject(params: CreateProjectParams): Promise<Project> {
-    const id = createId(pick(params, ["domainId", "name", "jql"]));
+    const id = createId(pick(params, ["domainId", "name", "query"]));
     const project = { ...params, id };
     await this.cache.push(projectPath(id), project);
     return project;

@@ -37,7 +37,7 @@ describe("SyncUseCase", () => {
       name: "My Project",
       id: projectId,
       domainId,
-      jql: "project = MYPROJ",
+      query: "jql:project = MYPROJ",
       labels: [],
       components: [],
       issueTypes: [],
