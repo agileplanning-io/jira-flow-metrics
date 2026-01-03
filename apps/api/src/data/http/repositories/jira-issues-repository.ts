@@ -1,12 +1,16 @@
 import { Injectable } from "@nestjs/common";
 import { JiraIssuesRepository } from "@usecases/projects/sync/jira-issues-repository";
 import { createJiraClient } from "../client/jira-client";
-import { searchIssues, SearchIssuesResult } from "@agileplanning-io/flow-data";
+import {
+  IssueQuery,
+  searchIssues,
+  SearchIssuesResult,
+} from "@agileplanning-io/flow-data";
 
 @Injectable()
 export class HttpJiraIssuesRepository extends JiraIssuesRepository {
-  async search(domain, jql: string): Promise<SearchIssuesResult> {
+  async search(domain, query: IssueQuery): Promise<SearchIssuesResult> {
     const client = await createJiraClient(domain);
-    return searchIssues(client, jql, domain.host);
+    return searchIssues(client, query, domain.host);
   }
 }

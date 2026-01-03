@@ -43,7 +43,7 @@ describe("ProjectsController", () => {
     return projects.addProject({
       domainId: "123",
       name: "My Project",
-      jql: "proj=PROJ",
+      query: "jql:proj=PROJ",
       workflowScheme: {
         stories: {
           stages: [

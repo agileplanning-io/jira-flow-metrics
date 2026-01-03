@@ -17,8 +17,16 @@ describe("JiraMetricsClient", () => {
     const dataSources = await metricsClient.findDataSources("proj");
 
     expect(dataSources).toEqual([
-      { name: "My Project (MYPROJ)", jql: "project=MYPROJ", type: "project" },
-      { name: "My Project Filter", jql: "project = MYPROJ", type: "filter" },
+      {
+        name: "My Project (MYPROJ)",
+        query: "jql:project=MYPROJ",
+        type: "project",
+      },
+      {
+        name: "My Project Filter",
+        query: "jql:project = MYPROJ",
+        type: "filter",
+      },
     ]);
   });
 
@@ -35,7 +43,11 @@ describe("JiraMetricsClient", () => {
     const dataSources = await metricsClient.findDataSources("proj");
 
     expect(dataSources).toEqual([
-      { name: "My Project Filter", jql: "project = MYPROJ", type: "filter" },
+      {
+        name: "My Project Filter",
+        query: "jql:project = MYPROJ",
+        type: "filter",
+      },
     ]);
   });
 });

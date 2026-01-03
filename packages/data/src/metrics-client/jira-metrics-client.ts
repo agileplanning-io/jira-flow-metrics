@@ -1,6 +1,6 @@
 import { flat } from "remeda";
 import { DataSource } from "../data-sources/data-sources";
-import { getAllPages, JiraClient } from "./jira";
+import { getAllPages, IssueQuery, JiraClient } from "./jira";
 import { MetricsClient } from "./types";
 
 export class JiraMetricsClient implements MetricsClient {
@@ -28,7 +28,7 @@ export class JiraMetricsClient implements MetricsClient {
       projectPages.map((page) =>
         page.values.map((project) => ({
           name: `${project.name} (${project.key})`,
-          jql: `project=${project.key}`,
+          query: `jql:project=${project.key}` as IssueQuery,
           type: "project" as const,
         })),
       ),
@@ -45,7 +45,7 @@ export class JiraMetricsClient implements MetricsClient {
         (page) =>
           page.values?.map((filter) => ({
             name: filter.name,
-            jql: filter.jql ?? "",
+            query: `jql:${filter.jql ?? ""}` as IssueQuery,
             type: "filter" as const,
           })) ?? [],
       ),

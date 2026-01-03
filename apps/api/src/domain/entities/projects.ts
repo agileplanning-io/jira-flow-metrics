@@ -7,7 +7,7 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { Domain } from "./domains";
 import { flatten } from "remeda";
-import { DataSource } from "@agileplanning-io/flow-data";
+import { DataSource, IssueQuery } from "@agileplanning-io/flow-data";
 
 export type WorkflowStage = {
   name: string;
@@ -32,7 +32,7 @@ export type Project = {
   id: string;
   domainId: string;
   name: string;
-  jql: string;
+  query: IssueQuery;
   lastSync?: {
     date: Date;
     issueCount: number;

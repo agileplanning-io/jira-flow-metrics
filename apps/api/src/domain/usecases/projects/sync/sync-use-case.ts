@@ -27,7 +27,7 @@ export class SyncUseCase {
 
     const { issues, canonicalStatuses } = await this.jiraIssues.search(
       domain,
-      project.jql,
+      project.query,
     );
 
     await this.issues.setIssues(projectId, issues);

@@ -13,7 +13,7 @@ import { z } from "zod";
 
 export type DataSource = {
   name: string;
-  jql: string;
+  query: string;
   type: "project" | "filter";
 };
 

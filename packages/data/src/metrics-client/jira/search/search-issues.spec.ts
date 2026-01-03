@@ -83,7 +83,7 @@ describe("searchIssues", () => {
 
     const { issues, canonicalStatuses } = await searchIssues(
       client,
-      "project = MYPROJ",
+      "jql:project = MYPROJ",
       "jira.example.com",
     );
 
