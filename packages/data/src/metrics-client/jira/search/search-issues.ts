@@ -19,11 +19,24 @@ export type SearchIssuesResult = {
 const jqlPrefix = "jql:";
 type JqlPrefix = typeof jqlPrefix;
 
-export type IssueQuery = `${JqlPrefix}${string}`;
+const linearTeamPrefix = "team:";
+type LinearTeamPrefix = typeof linearTeamPrefix;
+
+export type IssueQuery =
+  | `${JqlPrefix}${string}`
+  | `${LinearTeamPrefix}${string}`;
 
 export const getJql = (query: IssueQuery) => {
   if (query.startsWith(jqlPrefix)) {
     return query.slice(jqlPrefix.length);
+  }
+
+  throw new Error(`Unexpected query: ${query}`);
+};
+
+export const getLinearTeamId = (query: IssueQuery) => {
+  if (query.startsWith(linearTeamPrefix)) {
+    return query.slice(linearTeamPrefix.length);
   }
 
   throw new Error(`Unexpected query: ${query}`);
