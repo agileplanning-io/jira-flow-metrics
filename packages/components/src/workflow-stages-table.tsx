@@ -1,6 +1,6 @@
 import { Table, Tag } from "antd";
 import { FC, Key } from "react";
-import { WorkflowStage } from "./workflow-board/state";
+import { WorkflowStage } from "./workflow-board/workflow-state";
 import { TransitionStatus } from "@agileplanning-io/flow-metrics";
 
 export type WorkflowStagesTableProps = {

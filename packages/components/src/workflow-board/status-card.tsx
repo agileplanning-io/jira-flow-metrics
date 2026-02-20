@@ -1,7 +1,7 @@
 import { FC } from "react";
 import styled from "@emotion/styled";
 import { Draggable } from "@hello-pangea/dnd";
-import { Status } from "./state";
+import { Status } from "./workflow-state";
 import { Flex, Tag } from "antd";
 
 const Container = styled.div<{ $isDragging: boolean }>`

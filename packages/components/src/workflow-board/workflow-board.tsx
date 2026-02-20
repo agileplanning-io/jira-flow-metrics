@@ -16,7 +16,7 @@ import {
   reorderColumns,
   reorderStatuses,
   stateToWorkflow,
-} from "./state";
+} from "./workflow-state";
 import { WorkflowStageCard } from "./column";
 import { Flex } from "antd";
 import { validateWorkflow } from "./validation";
