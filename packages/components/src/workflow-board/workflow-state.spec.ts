@@ -1,6 +1,7 @@
 import { StatusCategory } from "@agileplanning-io/flow-metrics";
 import {
   addColumn,
+  projectToState,
   stateToWorkflow,
   Status,
   WorkflowStageColumn,
@@ -73,6 +74,86 @@ describe("immer", () => {
   it("can be tested", () => {
     const initialState = buildFoo(1);
     expect(double(initialState)).toEqual(buildFoo(2));
+  });
+});
+
+describe("#projectToState", () => {
+  it("generates a view state", () => {
+    const workflowState = projectToState({
+      stages: [
+        {
+          name: "To Do",
+          selectByDefault: false,
+          statuses: [{ name: "To Do", category: StatusCategory.ToDo }],
+        },
+        {
+          name: "In Progress",
+          selectByDefault: true,
+          statuses: [
+            { name: "In Progress", category: StatusCategory.InProgress },
+          ],
+        },
+        {
+          name: "Done",
+          selectByDefault: true,
+          statuses: [{ name: "Done", category: StatusCategory.Done }],
+        },
+      ],
+      statuses: [
+        { name: "To Do", category: StatusCategory.ToDo },
+        { name: "In Progress", category: StatusCategory.InProgress },
+        { name: "Done", category: StatusCategory.Done },
+      ],
+    });
+
+    expect(workflowState).toEqual({
+      columnOrder: ["col:To Do", "col:In Progress", "col:Done"],
+      columns: {
+        "col:Done": {
+          id: "col:Done",
+          statusIds: ["status:Done"],
+          title: "Done",
+        },
+        "col:In Progress": {
+          id: "col:In Progress",
+          statusIds: ["status:In Progress"],
+          title: "In Progress",
+        },
+        "col:To Do": {
+          id: "col:To Do",
+          statusIds: ["status:To Do"],
+          title: "To Do",
+        },
+        unused: {
+          id: "unused",
+          statusIds: [],
+          title: "Unused",
+        },
+      },
+      statuses: {
+        "status:Done": {
+          id: "status:Done",
+          status: {
+            category: "Done",
+            name: "Done",
+          },
+        },
+        "status:In Progress": {
+          id: "status:In Progress",
+          status: {
+            category: "In Progress",
+            name: "In Progress",
+          },
+        },
+        "status:To Do": {
+          id: "status:To Do",
+          status: {
+            category: "To Do",
+            name: "To Do",
+          },
+        },
+      },
+    });
   });
 });
 
