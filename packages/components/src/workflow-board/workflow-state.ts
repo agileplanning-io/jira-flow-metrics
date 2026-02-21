@@ -106,7 +106,7 @@ export const addColumn = produce(
         return buildNewColumn((count ?? 1) + 1);
       }
       return {
-        id: newTitle,
+        id: `col:${newTitle}`,
         title: newTitle,
         statusIds: [status.id],
       };
