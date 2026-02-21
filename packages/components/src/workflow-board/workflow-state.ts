@@ -1,6 +1,8 @@
 import {
   StatusCategory,
   TransitionStatus,
+  Workflow,
+  WorkflowStage,
 } from "@agileplanning-io/flow-metrics";
 import { DraggableLocation } from "@hello-pangea/dnd";
 import { produce } from "immer";
@@ -15,17 +17,6 @@ export type WorkflowStageColumn = {
   id: string;
   title: string;
   statusIds: string[];
-};
-
-export type WorkflowStage = {
-  name: string;
-  selectByDefault: boolean;
-  statuses: TransitionStatus[];
-};
-
-export type Workflow = {
-  stages: WorkflowStage[];
-  statuses: TransitionStatus[];
 };
 
 export type WorkflowState = {

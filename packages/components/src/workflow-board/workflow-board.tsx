@@ -6,8 +6,6 @@ import {
   OnDragEndResponder,
 } from "@hello-pangea/dnd";
 import {
-  Workflow,
-  WorkflowStage,
   addColumn,
   projectToState,
   deleteColumn,
@@ -20,6 +18,7 @@ import {
 import { WorkflowStageCard } from "./column";
 import { Flex } from "antd";
 import { validateWorkflow } from "./validation";
+import { Workflow, WorkflowStage } from "@agileplanning-io/flow-metrics";
 
 const Container = styled.div`
   display: flex;
