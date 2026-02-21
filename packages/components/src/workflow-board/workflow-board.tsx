@@ -62,8 +62,8 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
     if (type === "column") {
       setState(
         reorderColumns(state, {
-          columnId: draggableId,
-          destination,
+          sourceColumnId: draggableId,
+          newColumnIndex: destination.index,
         }),
       );
       return;

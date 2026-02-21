@@ -4,7 +4,12 @@ import {
   Workflow,
   WorkflowStage,
 } from "@agileplanning-io/flow-metrics";
-import { addColumn, workflowToState, stateToWorkflow } from "./workflow-state";
+import {
+  addColumn,
+  workflowToState,
+  stateToWorkflow,
+  reorderColumns,
+} from "./workflow-state";
 import { expect, it, describe } from "vitest";
 import { flat } from "remeda";
 
@@ -118,6 +123,27 @@ describe("addColumn", () => {
         buildWorkflowStage([statuses.inProgress]),
         buildWorkflowStage([statuses.done]),
         buildWorkflowStage([statuses.inReview]),
+      ],
+      statuses: workflow.statuses,
+    });
+  });
+});
+
+describe("reorderColumns", () => {
+  it("reorders the given workflow stages", () => {
+    const workflow = buildTestWorkflow();
+    const initialState = workflowToState(workflow);
+
+    const newState = reorderColumns(initialState, {
+      sourceColumnId: `col:In Progress`,
+      newColumnIndex: 0,
+    });
+
+    expect(stateToWorkflow(newState)).toEqual({
+      stages: [
+        buildWorkflowStage([statuses.inProgress]),
+        buildWorkflowStage([statuses.todo]),
+        buildWorkflowStage([statuses.done]),
       ],
       statuses: workflow.statuses,
     });

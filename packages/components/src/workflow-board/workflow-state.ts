@@ -26,15 +26,18 @@ export type WorkflowState = {
 };
 
 type ReorderColumnsParams = {
-  columnId: string;
-  destination: DraggableLocation;
+  sourceColumnId: string;
+  newColumnIndex: number;
 };
 
 export const reorderColumns = produce(
-  (draft: WorkflowState, { columnId, destination }: ReorderColumnsParams) => {
-    const columnIndex = draft.columnOrder.indexOf(columnId);
+  (
+    draft: WorkflowState,
+    { sourceColumnId, newColumnIndex }: ReorderColumnsParams,
+  ) => {
+    const columnIndex = draft.columnOrder.indexOf(sourceColumnId);
     draft.columnOrder.splice(columnIndex, 1);
-    draft.columnOrder.splice(destination.index, 0, columnId);
+    draft.columnOrder.splice(newColumnIndex, 0, sourceColumnId);
   },
 );
 
