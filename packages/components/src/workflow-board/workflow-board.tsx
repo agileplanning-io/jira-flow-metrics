@@ -88,7 +88,6 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
       setState(
         addColumn(state, {
           source,
-          statusIndex: source.index,
         }),
       );
       return;

@@ -67,7 +67,8 @@ export const reorderStatuses = produce(
 
 type AddColumnParams = {
   source: DraggableLocation;
-  statusIndex: number;
+  // TODO: do we need this? Isn't it the same as source.index?
+  // statusIndex: number;
 };
 
 export const deleteColumn = produce(
@@ -88,9 +89,12 @@ export const renameColumn = produce(
 );
 
 export const addColumn = produce(
-  (draft: WorkflowState, { source, statusIndex }: AddColumnParams) => {
+  (draft: WorkflowState, { source }: AddColumnParams) => {
+    console.info("addColumn", JSON.parse(JSON.stringify(draft)), {
+      source,
+    });
     const sourceColumn = draft.columns[source.droppableId];
-    const statusId = sourceColumn.statusIds[statusIndex];
+    const statusId = sourceColumn.statusIds[source.index];
     const status = draft.statuses[statusId];
 
     const columnExists = (title: string) =>
@@ -113,7 +117,7 @@ export const addColumn = produce(
 
     const newColumn = buildNewColumn();
 
-    sourceColumn.statusIds.splice(statusIndex, 1);
+    sourceColumn.statusIds.splice(source.index, 1);
 
     draft.columns[newColumn.id] = newColumn;
     draft.columnOrder.push(newColumn.id);

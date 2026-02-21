@@ -8,7 +8,8 @@
   "scripts": {
     "build": "tsup --clean --onSuccess 'tsc --emitDeclarationOnly'",
     "dev": "tsup --watch --onSuccess 'tsc --emitDeclarationOnly'",
-    "clean": "rm -rf node_modules && rm -rf dist"
+    "clean": "rm -rf node_modules && rm -rf dist",
+    "test": "vitest"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
@@ -33,14 +34,16 @@
   },
   "devDependencies": {
     "@tsconfig/vite-react": "^3.0.0",
+    "@types/jest": "^29.5.2",
     "@types/react": "^18.2.15",
     "react": "^18.2.0",
     "typescript": "^5.4.5",
-    "vite-plugin-dts": "^3.8.3"
+    "vite-plugin-dts": "^3.8.3",
+    "vitest": "^0.34.6"
   },
   "peerDependencies": {
-    "@ant-design/icons": "^5.2.6",
     "@ant-design/colors": "^7.1.0",
+    "@ant-design/icons": "^5.2.6",
     "antd": "5.19.4",
     "react": "^18.2.0",
     "react-router-dom": "^6.16.0"
