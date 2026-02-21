@@ -26,10 +26,7 @@ const Container = styled.div`
 
 export type WorkflowBoardProps = {
   workflow: Workflow;
-  onWorkflowChanged: (
-    workflow: WorkflowStage[],
-    validationErrors?: string[],
-  ) => void;
+  onWorkflowChanged: (workflow: Workflow, validationErrors?: string[]) => void;
   disabled: boolean;
   readonly: boolean;
 };
@@ -44,7 +41,7 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
 
   useEffect(() => {
     const workflow = stateToWorkflow(state);
-    const validationErrors = validateWorkflow(workflow);
+    const validationErrors = validateWorkflow(workflow.stages);
     onWorkflowChanged(workflow, validationErrors);
   }, [state, onWorkflowChanged]);
 

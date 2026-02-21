@@ -77,34 +77,34 @@ describe("immer", () => {
   });
 });
 
+const buildTestWorkflow = () => ({
+  stages: [
+    {
+      name: "To Do",
+      selectByDefault: false,
+      statuses: [{ name: "To Do", category: StatusCategory.ToDo }],
+    },
+    {
+      name: "In Progress",
+      selectByDefault: true,
+      statuses: [{ name: "In Progress", category: StatusCategory.InProgress }],
+    },
+    {
+      name: "Done",
+      selectByDefault: true,
+      statuses: [{ name: "Done", category: StatusCategory.Done }],
+    },
+  ],
+  statuses: [
+    { name: "To Do", category: StatusCategory.ToDo },
+    { name: "In Progress", category: StatusCategory.InProgress },
+    { name: "Done", category: StatusCategory.Done },
+  ],
+});
+
 describe("#projectToState", () => {
   it("generates a view state", () => {
-    const workflowState = projectToState({
-      stages: [
-        {
-          name: "To Do",
-          selectByDefault: false,
-          statuses: [{ name: "To Do", category: StatusCategory.ToDo }],
-        },
-        {
-          name: "In Progress",
-          selectByDefault: true,
-          statuses: [
-            { name: "In Progress", category: StatusCategory.InProgress },
-          ],
-        },
-        {
-          name: "Done",
-          selectByDefault: true,
-          statuses: [{ name: "Done", category: StatusCategory.Done }],
-        },
-      ],
-      statuses: [
-        { name: "To Do", category: StatusCategory.ToDo },
-        { name: "In Progress", category: StatusCategory.InProgress },
-        { name: "Done", category: StatusCategory.Done },
-      ],
-    });
+    const workflowState = projectToState(buildTestWorkflow());
 
     expect(workflowState).toEqual({
       columnOrder: ["col:To Do", "col:In Progress", "col:Done"],
@@ -154,6 +154,14 @@ describe("#projectToState", () => {
         },
       },
     });
+  });
+});
+
+describe("#stateToProject", () => {
+  it("is the inverse of projectToState", () => {
+    const initialWorkflow = buildTestWorkflow();
+    const inverseWorkflow = stateToWorkflow(projectToState(initialWorkflow));
+    expect(inverseWorkflow).toEqual(initialWorkflow);
   });
 });
 

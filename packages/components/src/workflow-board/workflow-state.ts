@@ -135,8 +135,8 @@ export const moveToColumn = produce(
   },
 );
 
-export const stateToWorkflow = (state: WorkflowState): WorkflowStage[] => {
-  return state.columnOrder.map((columnId) => {
+export const stateToWorkflow = (state: WorkflowState): Workflow => {
+  const stages = state.columnOrder.map((columnId) => {
     const column = state.columns[columnId];
     const statuses = column.statusIds.map(
       (statusId) => state.statuses[statusId].status,
@@ -150,6 +150,10 @@ export const stateToWorkflow = (state: WorkflowState): WorkflowStage[] => {
       statuses,
     };
   });
+
+  const statuses = Object.values(state.statuses).map((status) => status.status);
+
+  return { stages, statuses };
 };
 
 export const projectToState = (project: Workflow): WorkflowState => {
