@@ -18,7 +18,7 @@ import {
 import { WorkflowStageCard } from "./column";
 import { Flex } from "antd";
 import { validateWorkflow } from "./validation";
-import { Workflow, WorkflowStage } from "@agileplanning-io/flow-metrics";
+import { Workflow } from "@agileplanning-io/flow-metrics";
 
 const Container = styled.div`
   display: flex;
@@ -83,7 +83,8 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
     if (destination.droppableId === "new-column") {
       setState(
         addColumn(state, {
-          source,
+          sourceColumnId: source.droppableId,
+          sourceIndex: source.index,
         }),
       );
       return;
@@ -99,11 +100,11 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
   };
 
   const onDeleteColumn = (columnId: string) => {
-    setState(deleteColumn(state, columnId));
+    setState(deleteColumn(state, { columnId }));
   };
 
   const onRenameColumn = (columnId: string, newTitle: string) => {
-    setState(renameColumn(state, columnId, newTitle));
+    setState(renameColumn(state, { columnId, newTitle }));
   };
 
   return (

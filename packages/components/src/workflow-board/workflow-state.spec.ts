@@ -170,7 +170,8 @@ describe("addColumn", () => {
     const state = buildInitialState();
 
     const newState = addColumn(state, {
-      source: { droppableId: columns["col:In Progress"].id, index: 1 },
+      sourceColumnId: columns["col:In Progress"].id,
+      sourceIndex: 1,
     });
 
     // expect(stateToWorkflow(newState)).toEqual({

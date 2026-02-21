@@ -56,36 +56,42 @@ export const reorderStatuses = produce(
   },
 );
 
-type AddColumnParams = {
-  source: DraggableLocation;
-  // TODO: do we need this? Isn't it the same as source.index?
-  // statusIndex: number;
+type DeleteColumnParams = {
+  columnId: string;
 };
 
 export const deleteColumn = produce(
-  (draft: WorkflowState, columnId: string) => {
+  (draft: WorkflowState, { columnId }: DeleteColumnParams) => {
     const column = draft.columns[columnId];
     const columnIndex = draft.columnOrder.indexOf(columnId);
 
     draft.columns["unused"].statusIds.push(...column.statusIds);
     draft.columnOrder.splice(columnIndex, 1);
+
     delete draft.columns[columnId];
   },
 );
 
+type RenameColumnParams = {
+  columnId: string;
+  newTitle: string;
+};
+
 export const renameColumn = produce(
-  (draft: WorkflowState, columnId: string, newTitle: string) => {
+  (draft: WorkflowState, { columnId, newTitle }: RenameColumnParams) => {
     draft.columns[columnId].title = newTitle;
   },
 );
 
+type AddColumnParams = {
+  sourceColumnId: string;
+  sourceIndex: number;
+};
+
 export const addColumn = produce(
-  (draft: WorkflowState, { source }: AddColumnParams) => {
-    console.info("addColumn", JSON.parse(JSON.stringify(draft)), {
-      source,
-    });
-    const sourceColumn = draft.columns[source.droppableId];
-    const statusId = sourceColumn.statusIds[source.index];
+  (draft: WorkflowState, { sourceColumnId, sourceIndex }: AddColumnParams) => {
+    const sourceColumn = draft.columns[sourceColumnId];
+    const statusId = sourceColumn.statusIds[sourceIndex];
     const status = draft.statuses[statusId];
 
     const columnExists = (title: string) =>
@@ -108,7 +114,7 @@ export const addColumn = produce(
 
     const newColumn = buildNewColumn();
 
-    sourceColumn.statusIds.splice(source.index, 1);
+    sourceColumn.statusIds.splice(sourceIndex, 1);
 
     draft.columns[newColumn.id] = newColumn;
     draft.columnOrder.push(newColumn.id);
