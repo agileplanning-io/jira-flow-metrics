@@ -1,35 +1,40 @@
-import { StatusCategory } from "@agileplanning-io/flow-metrics";
+import {
+  StatusCategory,
+  TransitionStatus,
+  Workflow,
+  WorkflowStage,
+} from "@agileplanning-io/flow-metrics";
 import { addColumn, workflowToState, stateToWorkflow } from "./workflow-state";
 import { expect, it, describe } from "vitest";
+import { flat } from "remeda";
 
-const buildTestWorkflow = () => ({
-  stages: [
-    {
-      name: "To Do",
-      selectByDefault: false,
-      statuses: [{ name: "To Do", category: StatusCategory.ToDo }],
-    },
-    {
-      name: "In Progress",
-      selectByDefault: true,
-      statuses: [
-        { name: "In Progress", category: StatusCategory.InProgress },
-        { name: "In Review", category: StatusCategory.InProgress },
-      ],
-    },
-    {
-      name: "Done",
-      selectByDefault: true,
-      statuses: [{ name: "Done", category: StatusCategory.Done }],
-    },
-  ],
-  statuses: [
-    { name: "To Do", category: StatusCategory.ToDo },
-    { name: "In Progress", category: StatusCategory.InProgress },
-    { name: "In Review", category: StatusCategory.InProgress },
-    { name: "Done", category: StatusCategory.Done },
-  ],
+const statuses = {
+  todo: { name: "To Do", category: StatusCategory.ToDo },
+  inProgress: { name: "In Progress", category: StatusCategory.InProgress },
+  inReview: { name: "In Review", category: StatusCategory.InProgress },
+  done: { name: "Done", category: StatusCategory.Done },
+} as const;
+
+const buildWorkflowStage = (statuses: TransitionStatus[]): WorkflowStage => ({
+  name: statuses[0].name,
+  selectByDefault: statuses[0].category === StatusCategory.InProgress,
+  statuses,
 });
+
+const buildTestWorkflow = (
+  inProgressStatuses?: TransitionStatus[],
+): Workflow => {
+  const stages = [
+    buildWorkflowStage([statuses.todo]),
+    buildWorkflowStage(inProgressStatuses ?? [statuses.inProgress]),
+    buildWorkflowStage([statuses.done]),
+  ];
+
+  return {
+    stages,
+    statuses: flat(stages.map((stage) => stage.statuses)),
+  };
+};
 
 describe("#workflowToState", () => {
   it("generates a view state", () => {
@@ -95,8 +100,11 @@ describe("#stateToProject", () => {
 });
 
 describe("addColumn", () => {
-  it("adds a column", () => {
-    const workflow = buildTestWorkflow();
+  it("appends a column to the workflow", () => {
+    const workflow = buildTestWorkflow([
+      statuses.inProgress,
+      statuses.inReview,
+    ]);
     const initialState = workflowToState(workflow);
 
     const newState = addColumn(initialState, {
@@ -106,46 +114,10 @@ describe("addColumn", () => {
 
     expect(stateToWorkflow(newState)).toEqual({
       stages: [
-        {
-          name: "To Do",
-          selectByDefault: false,
-          statuses: [
-            {
-              category: "To Do",
-              name: "To Do",
-            },
-          ],
-        },
-        {
-          name: "In Progress",
-          selectByDefault: true,
-          statuses: [
-            {
-              category: "In Progress",
-              name: "In Progress",
-            },
-          ],
-        },
-        {
-          name: "Done",
-          selectByDefault: false,
-          statuses: [
-            {
-              category: "Done",
-              name: "Done",
-            },
-          ],
-        },
-        {
-          name: "In Review",
-          selectByDefault: true,
-          statuses: [
-            {
-              category: "In Progress",
-              name: "In Review",
-            },
-          ],
-        },
+        buildWorkflowStage([statuses.todo]),
+        buildWorkflowStage([statuses.inProgress]),
+        buildWorkflowStage([statuses.done]),
+        buildWorkflowStage([statuses.inReview]),
       ],
       statuses: workflow.statuses,
     });
