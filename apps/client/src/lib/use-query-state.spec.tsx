@@ -59,7 +59,7 @@ describe("useQueryState", () => {
 
 const mockQuery = (query: string) => {
   const params = new URLSearchParams(query);
-  const setParams = vi.fn<Parameters<SetURLSearchParams>>();
+  const setParams = vi.fn<SetURLSearchParams>();
   vi.mocked(useSearchParams).mockReturnValue([params, setParams]);
   return setParams;
 };

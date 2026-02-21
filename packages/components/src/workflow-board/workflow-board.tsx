@@ -6,20 +6,19 @@ import {
   OnDragEndResponder,
 } from "@hello-pangea/dnd";
 import {
-  Workflow,
-  WorkflowStage,
   addColumn,
-  projectToState,
+  workflowToState,
   deleteColumn,
   moveToColumn,
   renameColumn,
   reorderColumns,
   reorderStatuses,
   stateToWorkflow,
-} from "./state";
+} from "./workflow-state";
 import { WorkflowStageCard } from "./column";
 import { Flex } from "antd";
 import { validateWorkflow } from "./validation";
+import { Workflow } from "@agileplanning-io/flow-metrics";
 
 const Container = styled.div`
   display: flex;
@@ -27,10 +26,7 @@ const Container = styled.div`
 
 export type WorkflowBoardProps = {
   workflow: Workflow;
-  onWorkflowChanged: (
-    workflow: WorkflowStage[],
-    validationErrors?: string[],
-  ) => void;
+  onWorkflowChanged: (workflow: Workflow, validationErrors?: string[]) => void;
   disabled: boolean;
   readonly: boolean;
 };
@@ -41,11 +37,11 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
   disabled,
   readonly,
 }) => {
-  const [state, setState] = useState(() => projectToState(project));
+  const [state, setState] = useState(() => workflowToState(project));
 
   useEffect(() => {
     const workflow = stateToWorkflow(state);
-    const validationErrors = validateWorkflow(workflow);
+    const validationErrors = validateWorkflow(workflow.stages);
     onWorkflowChanged(workflow, validationErrors);
   }, [state, onWorkflowChanged]);
 
@@ -87,8 +83,8 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
     if (destination.droppableId === "new-column") {
       setState(
         addColumn(state, {
-          source,
-          statusIndex: source.index,
+          sourceColumnId: source.droppableId,
+          sourceIndex: source.index,
         }),
       );
       return;
@@ -104,11 +100,11 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
   };
 
   const onDeleteColumn = (columnId: string) => {
-    setState(deleteColumn(state, columnId));
+    setState(deleteColumn(state, { columnId }));
   };
 
   const onRenameColumn = (columnId: string, newTitle: string) => {
-    setState(renameColumn(state, columnId, newTitle));
+    setState(renameColumn(state, { columnId, newTitle }));
   };
 
   return (

@@ -1,6 +1,8 @@
 import {
   StatusCategory,
   TransitionStatus,
+  Workflow,
+  WorkflowStage,
 } from "@agileplanning-io/flow-metrics";
 import { DraggableLocation } from "@hello-pangea/dnd";
 import { produce } from "immer";
@@ -15,17 +17,6 @@ export type WorkflowStageColumn = {
   id: string;
   title: string;
   statusIds: string[];
-};
-
-export type WorkflowStage = {
-  name: string;
-  selectByDefault: boolean;
-  statuses: TransitionStatus[];
-};
-
-export type Workflow = {
-  stages: WorkflowStage[];
-  statuses: TransitionStatus[];
 };
 
 export type WorkflowState = {
@@ -65,32 +56,42 @@ export const reorderStatuses = produce(
   },
 );
 
-type AddColumnParams = {
-  source: DraggableLocation;
-  statusIndex: number;
+type DeleteColumnParams = {
+  columnId: string;
 };
 
 export const deleteColumn = produce(
-  (draft: WorkflowState, columnId: string) => {
+  (draft: WorkflowState, { columnId }: DeleteColumnParams) => {
     const column = draft.columns[columnId];
     const columnIndex = draft.columnOrder.indexOf(columnId);
 
     draft.columns["unused"].statusIds.push(...column.statusIds);
     draft.columnOrder.splice(columnIndex, 1);
+
     delete draft.columns[columnId];
   },
 );
 
+type RenameColumnParams = {
+  columnId: string;
+  newTitle: string;
+};
+
 export const renameColumn = produce(
-  (draft: WorkflowState, columnId: string, newTitle: string) => {
+  (draft: WorkflowState, { columnId, newTitle }: RenameColumnParams) => {
     draft.columns[columnId].title = newTitle;
   },
 );
 
+type AddColumnParams = {
+  sourceColumnId: string;
+  sourceIndex: number;
+};
+
 export const addColumn = produce(
-  (draft: WorkflowState, { source, statusIndex }: AddColumnParams) => {
-    const sourceColumn = draft.columns[source.droppableId];
-    const statusId = sourceColumn.statusIds[statusIndex];
+  (draft: WorkflowState, { sourceColumnId, sourceIndex }: AddColumnParams) => {
+    const sourceColumn = draft.columns[sourceColumnId];
+    const statusId = sourceColumn.statusIds[sourceIndex];
     const status = draft.statuses[statusId];
 
     const columnExists = (title: string) =>
@@ -105,7 +106,7 @@ export const addColumn = produce(
         return buildNewColumn((count ?? 1) + 1);
       }
       return {
-        id: newTitle,
+        id: `col:${newTitle}`,
         title: newTitle,
         statusIds: [status.id],
       };
@@ -113,7 +114,7 @@ export const addColumn = produce(
 
     const newColumn = buildNewColumn();
 
-    sourceColumn.statusIds.splice(statusIndex, 1);
+    sourceColumn.statusIds.splice(sourceIndex, 1);
 
     draft.columns[newColumn.id] = newColumn;
     draft.columnOrder.push(newColumn.id);
@@ -140,8 +141,8 @@ export const moveToColumn = produce(
   },
 );
 
-export const stateToWorkflow = (state: WorkflowState): WorkflowStage[] => {
-  return state.columnOrder.map((columnId) => {
+export const stateToWorkflow = (state: WorkflowState): Workflow => {
+  const stages = state.columnOrder.map((columnId) => {
     const column = state.columns[columnId];
     const statuses = column.statusIds.map(
       (statusId) => state.statuses[statusId].status,
@@ -155,14 +156,18 @@ export const stateToWorkflow = (state: WorkflowState): WorkflowStage[] => {
       statuses,
     };
   });
+
+  const statuses = Object.values(state.statuses).map((status) => status.status);
+
+  return { stages, statuses };
 };
 
-export const projectToState = (project: Workflow): WorkflowState => {
+export const workflowToState = (workflow: Workflow): WorkflowState => {
   const statusId = (status: TransitionStatus) => `status:${status.name}`;
   const colId = (stage: WorkflowStage) => `col:${stage.name}`;
 
   const statuses = Object.fromEntries(
-    project.statuses.map((status) => [
+    workflow.statuses.map((status) => [
       statusId(status),
       {
         id: statusId(status),
@@ -171,7 +176,7 @@ export const projectToState = (project: Workflow): WorkflowState => {
     ]),
   );
 
-  const workflowColumns: WorkflowStageColumn[] = project.stages.map(
+  const workflowColumns: WorkflowStageColumn[] = workflow.stages.map(
     (stage) => ({
       id: colId(stage),
       title: stage.name,
@@ -196,7 +201,7 @@ export const projectToState = (project: Workflow): WorkflowState => {
     workflowColumns.map((stage) => [stage.id, stage]),
   );
 
-  const columnOrder = project.stages.map((stage) => colId(stage));
+  const columnOrder = workflow.stages.map((stage) => colId(stage));
 
   const workflowState: WorkflowState = {
     statuses: statuses,

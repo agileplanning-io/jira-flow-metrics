@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import styled from "@emotion/styled";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import { StatusCard } from "./status-card";
-import { WorkflowStageColumn, Status } from "./state";
+import { WorkflowStageColumn, Status } from "./workflow-state";
 import { Button, Flex, Typography } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 

@@ -7,7 +7,6 @@ import {
   WorkflowBoard,
   WorkflowBoardProps,
 } from "@agileplanning-io/flow-components";
-import { WorkflowStage } from "@data/issues";
 import {
   ClientIssueFilter,
   DateFilterType,
@@ -51,10 +50,10 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
   const updateProject = useUpdateProject();
 
   const onStoryWorkflowChanged = useCallback(
-    (workflow: WorkflowStage[], validationErrors?: string[]) => {
+    (workflow: Workflow, validationErrors?: string[]) => {
       updateValidationErrors(validationErrors);
       setUpdatedStoryWorkflow(
-        workflow.map((stage) => ({
+        workflow.stages.map((stage) => ({
           ...stage,
           statuses: stage.statuses.map((status) => status.name),
         })),
@@ -64,10 +63,10 @@ export const EditProjectForm: FC<EditProjectFormProps> = ({
   );
 
   const onEpicWorkflowChanged = useCallback(
-    (workflow: WorkflowStage[], validationErrors?: string[]) => {
+    (workflow: Workflow, validationErrors?: string[]) => {
       updateValidationErrors(validationErrors);
       setUpdatedEpicWorkflow(
-        workflow.map((stage) => ({
+        workflow.stages.map((stage) => ({
           ...stage,
           statuses: stage.statuses.map((status) => status.name),
         })),
