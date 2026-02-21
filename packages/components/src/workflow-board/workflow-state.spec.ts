@@ -1,7 +1,10 @@
-import { StatusCategory } from "@agileplanning-io/flow-metrics";
+import {
+  buildDefaultWorkflowScheme,
+  StatusCategory,
+} from "@agileplanning-io/flow-metrics";
 import {
   addColumn,
-  projectToState,
+  workflowToState,
   stateToWorkflow,
   Status,
   WorkflowStageColumn,
@@ -87,7 +90,10 @@ const buildTestWorkflow = () => ({
     {
       name: "In Progress",
       selectByDefault: true,
-      statuses: [{ name: "In Progress", category: StatusCategory.InProgress }],
+      statuses: [
+        { name: "In Progress", category: StatusCategory.InProgress },
+        { name: "In Review", category: StatusCategory.InProgress },
+      ],
     },
     {
       name: "Done",
@@ -98,13 +104,14 @@ const buildTestWorkflow = () => ({
   statuses: [
     { name: "To Do", category: StatusCategory.ToDo },
     { name: "In Progress", category: StatusCategory.InProgress },
+    { name: "In Review", category: StatusCategory.InProgress },
     { name: "Done", category: StatusCategory.Done },
   ],
 });
 
-describe("#projectToState", () => {
+describe("#workflowToState", () => {
   it("generates a view state", () => {
-    const workflowState = projectToState(buildTestWorkflow());
+    const workflowState = workflowToState(buildTestWorkflow());
 
     expect(workflowState).toEqual({
       columnOrder: ["col:To Do", "col:In Progress", "col:Done"],
@@ -160,25 +167,26 @@ describe("#projectToState", () => {
 describe("#stateToProject", () => {
   it("is the inverse of projectToState", () => {
     const initialWorkflow = buildTestWorkflow();
-    const inverseWorkflow = stateToWorkflow(projectToState(initialWorkflow));
+    const inverseWorkflow = stateToWorkflow(workflowToState(initialWorkflow));
     expect(inverseWorkflow).toEqual(initialWorkflow);
   });
 });
 
 describe("addColumn", () => {
   it("adds a column", () => {
-    const state = buildInitialState();
+    const workflow = buildTestWorkflow();
+    const initialState = workflowToState(workflow);
 
-    const newState = addColumn(state, {
+    const newState = addColumn(initialState, {
       sourceColumnId: columns["col:In Progress"].id,
       sourceIndex: 1,
     });
 
-    // expect(stateToWorkflow(newState)).toEqual({
-    //   columns: {
-    //     ["col:To Do"]: columns["col:To Do"],
-    //   },
-    // });
+    expect(newState).toEqual({
+      columns: {
+        ["col:To Do"]: columns["col:To Do"],
+      },
+    });
 
     expect(newState).toEqual({});
   });

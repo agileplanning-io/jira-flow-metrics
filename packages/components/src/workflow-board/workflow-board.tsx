@@ -7,7 +7,7 @@ import {
 } from "@hello-pangea/dnd";
 import {
   addColumn,
-  projectToState,
+  workflowToState,
   deleteColumn,
   moveToColumn,
   renameColumn,
@@ -37,7 +37,7 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
   disabled,
   readonly,
 }) => {
-  const [state, setState] = useState(() => projectToState(project));
+  const [state, setState] = useState(() => workflowToState(project));
 
   useEffect(() => {
     const workflow = stateToWorkflow(state);
