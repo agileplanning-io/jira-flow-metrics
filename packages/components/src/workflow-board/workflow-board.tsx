@@ -92,8 +92,10 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
 
     setState(
       moveToColumn(state, {
-        source,
-        destination,
+        sourceColumnId: source.droppableId,
+        sourceIndex: source.index,
+        targetColumnId: destination.droppableId,
+        targetIndex: destination.index,
         statusId: draggableId,
       }),
     );

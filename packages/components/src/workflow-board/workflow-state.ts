@@ -125,22 +125,27 @@ export const addColumn = produce(
 );
 
 type MoveToColumnParams = {
+  // TODO: do we need statusId _and_ source col/index?
   statusId: string;
-  source: DraggableLocation;
-  destination: DraggableLocation;
+  sourceColumnId: string;
+  sourceIndex: number;
+  targetColumnId: string;
+  targetIndex: number;
 };
 
 export const moveToColumn = produce(
   (
     draft: WorkflowState,
-    { statusId, source, destination }: MoveToColumnParams,
-  ) => {
-    draft.columns[source.droppableId].statusIds.splice(source.index, 1);
-    draft.columns[destination.droppableId].statusIds.splice(
-      destination.index,
-      0,
+    {
       statusId,
-    );
+      sourceColumnId,
+      sourceIndex,
+      targetColumnId,
+      targetIndex,
+    }: MoveToColumnParams,
+  ) => {
+    draft.columns[sourceColumnId].statusIds.splice(sourceIndex, 1);
+    draft.columns[targetColumnId].statusIds.splice(targetIndex, 0, statusId);
   },
 );
 
