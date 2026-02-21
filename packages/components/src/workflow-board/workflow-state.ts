@@ -44,18 +44,18 @@ export const reorderColumns = produce(
 type ReorderStatusesParams = {
   columnId: string;
   statusId: string;
-  destination: DraggableLocation;
+  newStatusIndex: number;
 };
 
 export const reorderStatuses = produce(
   (
     draft: WorkflowState,
-    { columnId, statusId, destination }: ReorderStatusesParams,
+    { columnId, statusId, newStatusIndex }: ReorderStatusesParams,
   ) => {
     const column = draft.columns[columnId];
     const statusIndex = column.statusIds.indexOf(statusId);
     column.statusIds.splice(statusIndex, 1);
-    column.statusIds.splice(destination.index, 0, statusId);
+    column.statusIds.splice(newStatusIndex, 0, statusId);
   },
 );
 

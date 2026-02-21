@@ -9,6 +9,7 @@ import {
   workflowToState,
   stateToWorkflow,
   reorderColumns,
+  reorderStatuses,
 } from "./workflow-state";
 import { expect, it, describe } from "vitest";
 import { flat } from "remeda";
@@ -20,8 +21,11 @@ const statuses = {
   done: { name: "Done", category: StatusCategory.Done },
 } as const;
 
-const buildWorkflowStage = (statuses: TransitionStatus[]): WorkflowStage => ({
-  name: statuses[0].name,
+const buildWorkflowStage = (
+  statuses: TransitionStatus[],
+  name?: string,
+): WorkflowStage => ({
+  name: name ?? statuses[0].name,
   selectByDefault: statuses[0].category === StatusCategory.InProgress,
   statuses,
 });
@@ -130,7 +134,7 @@ describe("addColumn", () => {
 });
 
 describe("reorderColumns", () => {
-  it("reorders the given workflow stages", () => {
+  it("reorders the workflow stages", () => {
     const workflow = buildTestWorkflow();
     const initialState = workflowToState(workflow);
 
@@ -143,6 +147,34 @@ describe("reorderColumns", () => {
       stages: [
         buildWorkflowStage([statuses.inProgress]),
         buildWorkflowStage([statuses.todo]),
+        buildWorkflowStage([statuses.done]),
+      ],
+      statuses: workflow.statuses,
+    });
+  });
+});
+
+describe("reorderStatuses", () => {
+  it("reorders the statuses in the workflow stage", () => {
+    const workflow = buildTestWorkflow([
+      statuses.inProgress,
+      statuses.inReview,
+    ]);
+    const initialState = workflowToState(workflow);
+
+    const newState = reorderStatuses(initialState, {
+      columnId: "col:In Progress",
+      statusId: "status:In Review",
+      newStatusIndex: 0,
+    });
+
+    expect(stateToWorkflow(newState)).toEqual({
+      stages: [
+        buildWorkflowStage([statuses.todo]),
+        buildWorkflowStage(
+          [statuses.inReview, statuses.inProgress],
+          "In Progress",
+        ),
         buildWorkflowStage([statuses.done]),
       ],
       statuses: workflow.statuses,

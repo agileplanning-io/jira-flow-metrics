@@ -74,7 +74,7 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
         reorderStatuses(state, {
           columnId: source.droppableId,
           statusId: draggableId,
-          destination,
+          newStatusIndex: destination.index,
         }),
       );
       return;
