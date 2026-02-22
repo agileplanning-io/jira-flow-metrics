@@ -4,14 +4,13 @@ import {
   Workflow,
   WorkflowStage,
 } from "@agileplanning-io/flow-metrics";
-import {
-  workflowToState,
-  stateToWorkflow,
-  ModifyWorkflowActionType,
-  workflowStateReducer,
-} from "./workflow-state";
+import { workflowToState, stateToWorkflow } from "./workflow-state";
 import { expect, it, describe } from "vitest";
 import { flat, isNullish } from "remeda";
+import {
+  ModifyWorkflowActionType,
+  workflowStateReducer,
+} from "./workflow-reducer";
 
 const statuses = {
   todo: { name: "To Do", category: StatusCategory.ToDo },
@@ -106,11 +105,11 @@ describe("#workflowToState", () => {
   });
 });
 
-describe("#stateToProject", () => {
-  it("is the inverse of projectToState", () => {
+describe("#stateToWorkflow", () => {
+  it("is the inverse of workflowToState", () => {
     const initialWorkflow = buildTestWorkflow();
-    const inverseWorkflow = stateToWorkflow(workflowToState(initialWorkflow));
-    expect(inverseWorkflow).toEqual(initialWorkflow);
+    const viewState = workflowToState(initialWorkflow);
+    expect(stateToWorkflow(viewState)).toEqual(initialWorkflow);
   });
 });
 
@@ -206,7 +205,6 @@ describe("#workflowStateReducer", () => {
 
       const newState = workflowStateReducer(initialState, {
         type: ModifyWorkflowActionType.MoveToColumn,
-        statusId: "status:In Review",
         sourceColumnId: "col:In Review",
         sourceIndex: 0,
         targetColumnId: "col:In Progress",

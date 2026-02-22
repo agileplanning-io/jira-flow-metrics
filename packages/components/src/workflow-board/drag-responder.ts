@@ -1,9 +1,9 @@
 import { OnDragEndResponder } from "@hello-pangea/dnd";
+import { DraggableType } from "./workflow-state";
 import {
-  DraggableType,
   ModifyWorkflowAction,
   ModifyWorkflowActionType,
-} from "./workflow-state";
+} from "./workflow-reducer";
 
 export const makeDragResponder =
   (dispatch: React.Dispatch<ModifyWorkflowAction>): OnDragEndResponder =>
@@ -50,7 +50,6 @@ export const makeDragResponder =
           sourceIndex: source.index,
           targetColumnId: destination.droppableId,
           targetIndex: destination.index,
-          statusId: draggableId,
         });
       }
     }
