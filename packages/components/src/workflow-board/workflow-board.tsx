@@ -1,4 +1,4 @@
-import { FC, useEffect, useReducer } from "react";
+import { FC, useCallback, useEffect, useReducer } from "react";
 import styled from "@emotion/styled";
 import {
   DragDropContext,
@@ -10,11 +10,13 @@ import {
   stateToWorkflow,
   ModifyWorkflowActionType,
   workflowStateReducer,
+  WorkflowState,
 } from "./workflow-state";
 import { WorkflowStageCard } from "./column";
 import { Flex } from "antd";
 import { validateWorkflow } from "./validation";
 import { Workflow } from "@agileplanning-io/flow-metrics";
+import { makeDragResponder } from "./workflow-drag-responder";
 
 const Container = styled.div`
   display: flex;
@@ -37,60 +39,20 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
     workflowToState(workflow),
   );
 
+  const onStateChanged = useCallback(
+    (state: WorkflowState) => {
+      const workflow = stateToWorkflow(state);
+      const validationErrors = validateWorkflow(workflow.stages);
+      onWorkflowChanged(workflow, validationErrors);
+    },
+    [state],
+  );
+
   useEffect(() => {
-    const workflow = stateToWorkflow(state);
-    const validationErrors = validateWorkflow(workflow.stages);
-    onWorkflowChanged(workflow, validationErrors);
-  }, [state, onWorkflowChanged]);
+    onStateChanged(state);
+  }, [state, onStateChanged]);
 
-  const onDragEnd: OnDragEndResponder = (event) => {
-    const { destination, source, draggableId, type } = event;
-
-    if (!destination) {
-      return;
-    }
-
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return;
-    }
-
-    if (type === "column") {
-      return dispatch({
-        type: ModifyWorkflowActionType.ReorderColumns,
-        sourceColumnId: draggableId,
-        newColumnIndex: destination.index,
-      });
-    }
-
-    if (source.droppableId === destination.droppableId) {
-      return dispatch({
-        type: ModifyWorkflowActionType.ReorderStatuses,
-        columnId: source.droppableId,
-        statusId: draggableId,
-        newStatusIndex: destination.index,
-      });
-    }
-
-    if (destination.droppableId === "new-column") {
-      return dispatch({
-        type: ModifyWorkflowActionType.AddColumn,
-        sourceColumnId: source.droppableId,
-        sourceIndex: source.index,
-      });
-    }
-
-    return dispatch({
-      type: ModifyWorkflowActionType.MoveToColumn,
-      sourceColumnId: source.droppableId,
-      sourceIndex: source.index,
-      targetColumnId: destination.droppableId,
-      targetIndex: destination.index,
-      statusId: draggableId,
-    });
-  };
+  const onDragEnd = useCallback(makeDragResponder(dispatch), [dispatch]);
 
   const onDeleteColumn = (columnId: string) => {
     dispatch({
