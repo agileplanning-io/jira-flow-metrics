@@ -80,14 +80,8 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
         >
           {(provided) => (
             <Container {...provided.droppableProps} ref={provided.innerRef}>
-              <WorkflowStageCard
-                key={DraggableType.Unused}
-                column={state.columns[DraggableType.Unused]}
-                statuses={state.columns[DraggableType.Unused].statusIds.map(
-                  (statusIdId) => state.statuses[statusIdId],
-                )}
-                index={0}
-                isDragDisabled={true}
+              <UnusedColumnCard
+                state={state}
                 disabled={disabled}
                 readonly={readonly}
               />
@@ -131,19 +125,7 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
           >
             {(provided) => (
               <Container {...provided.droppableProps} ref={provided.innerRef}>
-                <WorkflowStageCard
-                  key={DraggableType.NewColumn}
-                  column={{
-                    id: DraggableType.NewColumn,
-                    statusIds: [],
-                    title: "New Column",
-                  }}
-                  statuses={[]}
-                  index={0}
-                  isDragDisabled={true}
-                  disabled={disabled}
-                  readonly={readonly}
-                />
+                <NewColumnCard disabled={disabled} readonly={readonly} />
               </Container>
             )}
           </Droppable>
@@ -152,3 +134,48 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
     </DragDropContext>
   );
 };
+
+type UnusedColumnCardProps = {
+  state: WorkflowState;
+  disabled: boolean;
+  readonly: boolean;
+};
+
+const UnusedColumnCard: FC<UnusedColumnCardProps> = ({
+  state,
+  disabled,
+  readonly,
+}) => (
+  <WorkflowStageCard
+    key={DraggableType.Unused}
+    column={state.columns[DraggableType.Unused]}
+    statuses={state.columns[DraggableType.Unused].statusIds.map(
+      (statusIdId) => state.statuses[statusIdId],
+    )}
+    index={0}
+    isDragDisabled={true}
+    disabled={disabled}
+    readonly={readonly}
+  />
+);
+
+type NewColumnCardProps = {
+  disabled: boolean;
+  readonly: boolean;
+};
+
+const NewColumnCard: FC<NewColumnCardProps> = ({ disabled, readonly }) => (
+  <WorkflowStageCard
+    key={DraggableType.NewColumn}
+    column={{
+      id: DraggableType.NewColumn,
+      statusIds: [],
+      title: "New Column",
+    }}
+    statuses={[]}
+    index={0}
+    isDragDisabled={true}
+    disabled={disabled}
+    readonly={readonly}
+  />
+);
