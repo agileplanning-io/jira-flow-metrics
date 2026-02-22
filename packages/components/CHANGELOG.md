@@ -1,5 +1,14 @@
 # @agileplanning-io/flow-components
 
+## 1.0.1
+
+### Patch Changes
+
+- dca01e8: refactor: use reducer for workflow state
+- bf26a64: refactor: test coverage for drag responder
+- 189886f: refactor: improve test coverage for workflow state
+- 80b9460: refactor: workflow board state
+
 ## 1.0.0
 
 ### Major Changes
