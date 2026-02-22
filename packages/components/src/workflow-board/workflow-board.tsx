@@ -1,20 +1,19 @@
-import { FC, useEffect, useReducer } from "react";
+import { FC, useCallback, useEffect, useReducer } from "react";
 import styled from "@emotion/styled";
-import {
-  DragDropContext,
-  Droppable,
-  OnDragEndResponder,
-} from "@hello-pangea/dnd";
+import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import {
   workflowToState,
   stateToWorkflow,
   ModifyWorkflowActionType,
   workflowStateReducer,
+  WorkflowState,
+  DraggableType,
 } from "./workflow-state";
 import { WorkflowStageCard } from "./column";
 import { Flex } from "antd";
 import { validateWorkflow } from "./validation";
 import { Workflow } from "@agileplanning-io/flow-metrics";
+import { makeDragResponder } from "./drag-responder";
 
 const Container = styled.div`
   display: flex;
@@ -27,70 +26,34 @@ export type WorkflowBoardProps = {
   readonly: boolean;
 };
 
+const initState = (workflow: Workflow) => workflowToState(workflow);
+
 export const WorkflowBoard: FC<WorkflowBoardProps> = ({
   workflow,
   onWorkflowChanged,
   disabled,
   readonly,
 }) => {
-  const [state, dispatch] = useReducer(workflowStateReducer, workflow, () =>
-    workflowToState(workflow),
+  const [state, dispatch] = useReducer(
+    workflowStateReducer,
+    workflow,
+    initState,
+  );
+
+  const onStateChanged = useCallback(
+    (state: WorkflowState) => {
+      const workflow = stateToWorkflow(state);
+      const validationErrors = validateWorkflow(workflow.stages);
+      onWorkflowChanged(workflow, validationErrors);
+    },
+    [state],
   );
 
   useEffect(() => {
-    const workflow = stateToWorkflow(state);
-    const validationErrors = validateWorkflow(workflow.stages);
-    onWorkflowChanged(workflow, validationErrors);
-  }, [state, onWorkflowChanged]);
+    onStateChanged(state);
+  }, [state, onStateChanged]);
 
-  const onDragEnd: OnDragEndResponder = (event) => {
-    const { destination, source, draggableId, type } = event;
-
-    if (!destination) {
-      return;
-    }
-
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return;
-    }
-
-    if (type === "column") {
-      return dispatch({
-        type: ModifyWorkflowActionType.ReorderColumns,
-        sourceColumnId: draggableId,
-        newColumnIndex: destination.index,
-      });
-    }
-
-    if (source.droppableId === destination.droppableId) {
-      return dispatch({
-        type: ModifyWorkflowActionType.ReorderStatuses,
-        columnId: source.droppableId,
-        statusId: draggableId,
-        newStatusIndex: destination.index,
-      });
-    }
-
-    if (destination.droppableId === "new-column") {
-      return dispatch({
-        type: ModifyWorkflowActionType.AddColumn,
-        sourceColumnId: source.droppableId,
-        sourceIndex: source.index,
-      });
-    }
-
-    return dispatch({
-      type: ModifyWorkflowActionType.MoveToColumn,
-      sourceColumnId: source.droppableId,
-      sourceIndex: source.index,
-      targetColumnId: destination.droppableId,
-      targetIndex: destination.index,
-      statusId: draggableId,
-    });
-  };
+  const onDragEnd = useCallback(makeDragResponder(dispatch), [dispatch]);
 
   const onDeleteColumn = (columnId: string) => {
     dispatch({
@@ -111,16 +74,16 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
     <DragDropContext onDragEnd={onDragEnd}>
       <Flex style={{ margin: "0 -4px", overflowX: "auto" }}>
         <Droppable
-          droppableId="unused-tasks"
-          type="unused"
+          droppableId="unused-statuses-container"
+          type={DraggableType.Unused}
           isDropDisabled={disabled || readonly}
         >
           {(provided) => (
             <Container {...provided.droppableProps} ref={provided.innerRef}>
               <WorkflowStageCard
-                key="unused"
-                column={state.columns["unused"]}
-                tasks={state.columns["unused"].statusIds.map(
+                key={DraggableType.Unused}
+                column={state.columns[DraggableType.Unused]}
+                tasks={state.columns[DraggableType.Unused].statusIds.map(
                   (taskId) => state.statuses[taskId],
                 )}
                 index={0}
@@ -132,9 +95,9 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
           )}
         </Droppable>
         <Droppable
-          droppableId="all-columns"
+          droppableId="workflow-columns-container"
           direction="horizontal"
-          type="column"
+          type={DraggableType.WorkstageColumn}
         >
           {(provided) => (
             <Container {...provided.droppableProps} ref={provided.innerRef}>
@@ -162,13 +125,16 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
           )}
         </Droppable>
         {!readonly ? (
-          <Droppable droppableId="create-column" type="new-column">
+          <Droppable
+            droppableId="new-column-container"
+            type={DraggableType.NewColumn}
+          >
             {(provided) => (
               <Container {...provided.droppableProps} ref={provided.innerRef}>
                 <WorkflowStageCard
-                  key="new-column"
+                  key={DraggableType.NewColumn}
                   column={{
-                    id: "new-column",
+                    id: DraggableType.NewColumn,
                     statusIds: [],
                     title: "New Column",
                   }}

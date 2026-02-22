@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import styled from "@emotion/styled";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
 import { StatusCard } from "./status-card";
-import { WorkflowStageColumn, Status } from "./workflow-state";
+import { WorkflowStageColumn, Status, DraggableType } from "./workflow-state";
 import { Button, Flex, Typography } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 
@@ -91,7 +91,7 @@ export const WorkflowStageCard: FC<WorkflowStageCardProps> = ({
               />
             ) : null}
           </Flex>
-          <Droppable droppableId={column.id} type="task">
+          <Droppable droppableId={column.id} type={DraggableType.Status}>
             {(provided, snapshot) => (
               <StatusList
                 ref={provided.innerRef}
