@@ -1,16 +1,13 @@
 import { FC, useCallback, useEffect, useReducer } from "react";
 import styled from "@emotion/styled";
-import {
-  DragDropContext,
-  Droppable,
-  OnDragEndResponder,
-} from "@hello-pangea/dnd";
+import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import {
   workflowToState,
   stateToWorkflow,
   ModifyWorkflowActionType,
   workflowStateReducer,
   WorkflowState,
+  ColumnType,
 } from "./workflow-state";
 import { WorkflowStageCard } from "./column";
 import { Flex } from "antd";
@@ -77,16 +74,16 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
     <DragDropContext onDragEnd={onDragEnd}>
       <Flex style={{ margin: "0 -4px", overflowX: "auto" }}>
         <Droppable
-          droppableId="unused-statuses"
-          type="unused"
+          droppableId="unused-statuses-container"
+          type={ColumnType.Unused}
           isDropDisabled={disabled || readonly}
         >
           {(provided) => (
             <Container {...provided.droppableProps} ref={provided.innerRef}>
               <WorkflowStageCard
-                key="unused"
-                column={state.columns["unused"]}
-                tasks={state.columns["unused"].statusIds.map(
+                key={ColumnType.Unused}
+                column={state.columns[ColumnType.Unused]}
+                tasks={state.columns[ColumnType.Unused].statusIds.map(
                   (taskId) => state.statuses[taskId],
                 )}
                 index={0}
@@ -98,9 +95,9 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
           )}
         </Droppable>
         <Droppable
-          droppableId="all-columns"
+          droppableId="workflow-columns-container"
           direction="horizontal"
-          type="column"
+          type={ColumnType.WorkstageColumn}
         >
           {(provided) => (
             <Container {...provided.droppableProps} ref={provided.innerRef}>
@@ -128,13 +125,16 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
           )}
         </Droppable>
         {!readonly ? (
-          <Droppable droppableId="create-column" type="new-column">
+          <Droppable
+            droppableId="new-column-container"
+            type={ColumnType.NewColumn}
+          >
             {(provided) => (
               <Container {...provided.droppableProps} ref={provided.innerRef}>
                 <WorkflowStageCard
-                  key="new-column"
+                  key={ColumnType.NewColumn}
                   column={{
-                    id: "new-column",
+                    id: ColumnType.NewColumn,
                     statusIds: [],
                     title: "New Column",
                   }}

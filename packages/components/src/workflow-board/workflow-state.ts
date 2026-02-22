@@ -25,6 +25,16 @@ export type WorkflowState = {
   columnOrder: string[];
 };
 
+/**
+ * The type of the column on the screen. In the cases of types for which there is only one unique
+ * column, the type can also be used as the column ID.
+ */
+export enum ColumnType {
+  Unused = "unused",
+  NewColumn = "new-column",
+  WorkstageColumn = "workstage-column",
+}
+
 export enum ModifyWorkflowActionType {
   ReorderColumns = "reorder_columns",
   ReorderStatuses = "reorder_statuses",
@@ -122,7 +132,7 @@ const deleteColumn = produce(
     const column = draft.columns[columnId];
     const columnIndex = draft.columnOrder.indexOf(columnId);
 
-    draft.columns["unused"].statusIds.push(...column.statusIds);
+    draft.columns[ColumnType.Unused].statusIds.push(...column.statusIds);
     draft.columnOrder.splice(columnIndex, 1);
 
     delete draft.columns[columnId];
@@ -257,7 +267,7 @@ export const workflowToState = (workflow: Workflow): WorkflowState => {
     .map((status) => status.id);
 
   workflowColumns.push({
-    id: "unused",
+    id: ColumnType.Unused,
     title: "Unused",
     statusIds: unusedStatusIds,
   });

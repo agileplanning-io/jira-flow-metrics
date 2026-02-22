@@ -1,5 +1,6 @@
 import { OnDragEndResponder } from "@hello-pangea/dnd";
 import {
+  ColumnType,
   ModifyWorkflowAction,
   ModifyWorkflowActionType,
 } from "./workflow-state";
@@ -20,7 +21,7 @@ export const makeDragResponder =
       return;
     }
 
-    if (type === "column") {
+    if (type === ColumnType.WorkstageColumn) {
       return dispatch({
         type: ModifyWorkflowActionType.ReorderColumns,
         sourceColumnId: draggableId,
@@ -37,7 +38,7 @@ export const makeDragResponder =
       });
     }
 
-    if (destination.droppableId === "new-column") {
+    if (destination.droppableId === ColumnType.NewColumn) {
       return dispatch({
         type: ModifyWorkflowActionType.AddColumn,
         sourceColumnId: source.droppableId,
