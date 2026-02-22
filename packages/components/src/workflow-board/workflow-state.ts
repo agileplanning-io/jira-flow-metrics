@@ -4,7 +4,6 @@ import {
   Workflow,
   WorkflowStage,
 } from "@agileplanning-io/flow-metrics";
-import { DraggableLocation } from "@hello-pangea/dnd";
 import { produce } from "immer";
 import { flatten } from "remeda";
 
@@ -26,33 +25,36 @@ export type WorkflowState = {
 };
 
 type ReorderColumnsParams = {
-  columnId: string;
-  destination: DraggableLocation;
+  sourceColumnId: string;
+  newColumnIndex: number;
 };
 
 export const reorderColumns = produce(
-  (draft: WorkflowState, { columnId, destination }: ReorderColumnsParams) => {
-    const columnIndex = draft.columnOrder.indexOf(columnId);
+  (
+    draft: WorkflowState,
+    { sourceColumnId, newColumnIndex }: ReorderColumnsParams,
+  ) => {
+    const columnIndex = draft.columnOrder.indexOf(sourceColumnId);
     draft.columnOrder.splice(columnIndex, 1);
-    draft.columnOrder.splice(destination.index, 0, columnId);
+    draft.columnOrder.splice(newColumnIndex, 0, sourceColumnId);
   },
 );
 
 type ReorderStatusesParams = {
   columnId: string;
   statusId: string;
-  destination: DraggableLocation;
+  newStatusIndex: number;
 };
 
 export const reorderStatuses = produce(
   (
     draft: WorkflowState,
-    { columnId, statusId, destination }: ReorderStatusesParams,
+    { columnId, statusId, newStatusIndex }: ReorderStatusesParams,
   ) => {
     const column = draft.columns[columnId];
     const statusIndex = column.statusIds.indexOf(statusId);
     column.statusIds.splice(statusIndex, 1);
-    column.statusIds.splice(destination.index, 0, statusId);
+    column.statusIds.splice(newStatusIndex, 0, statusId);
   },
 );
 
@@ -122,22 +124,27 @@ export const addColumn = produce(
 );
 
 type MoveToColumnParams = {
+  // TODO: do we need statusId _and_ source col/index?
   statusId: string;
-  source: DraggableLocation;
-  destination: DraggableLocation;
+  sourceColumnId: string;
+  sourceIndex: number;
+  targetColumnId: string;
+  targetIndex: number;
 };
 
 export const moveToColumn = produce(
   (
     draft: WorkflowState,
-    { statusId, source, destination }: MoveToColumnParams,
-  ) => {
-    draft.columns[source.droppableId].statusIds.splice(source.index, 1);
-    draft.columns[destination.droppableId].statusIds.splice(
-      destination.index,
-      0,
+    {
       statusId,
-    );
+      sourceColumnId,
+      sourceIndex,
+      targetColumnId,
+      targetIndex,
+    }: MoveToColumnParams,
+  ) => {
+    draft.columns[sourceColumnId].statusIds.splice(sourceIndex, 1);
+    draft.columns[targetColumnId].statusIds.splice(targetIndex, 0, statusId);
   },
 );
 
