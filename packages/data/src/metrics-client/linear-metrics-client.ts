@@ -9,9 +9,9 @@ export class LinearMetricsClient implements MetricsClient {
     const teams = await this.client.findTeams(query);
 
     return teams.map((team) => ({
-      id: team.id,
       name: team.name,
       type: "team",
+      query: `team:${team.id}`,
     }));
   }
 }

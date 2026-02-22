@@ -1,5 +1,5 @@
 import { Project, ProjectsRepository } from "@entities/projects";
-import { JiraIssuesRepository } from "./jira-issues-repository";
+import { SearchIssuesRepository } from "./jira-issues-repository";
 import { SyncUseCase } from "./sync-use-case";
 import { mock } from "jest-mock-extended";
 import { Domain, DomainsRepository } from "@entities/domains";
@@ -28,10 +28,10 @@ describe("SyncUseCase", () => {
   it("syncs issues", async () => {
     const projectId = "projectId";
     const domainId = "domainId";
-    const jiraIssues = mock<JiraIssuesRepository>();
+    const jiraIssues = mock<SearchIssuesRepository>();
     const projects = mock<ProjectsRepository>();
     const domains = mock<DomainsRepository>();
-    const issues = mock<IssuesRepository>();
+    const issues = mock<SearchIssuesRepository>();
 
     const project: Project = {
       name: "My Project",
