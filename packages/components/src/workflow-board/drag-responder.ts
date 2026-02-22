@@ -50,7 +50,6 @@ export const makeDragResponder =
           sourceIndex: source.index,
           targetColumnId: destination.droppableId,
           targetIndex: destination.index,
-          statusId: draggableId,
         });
       }
     }

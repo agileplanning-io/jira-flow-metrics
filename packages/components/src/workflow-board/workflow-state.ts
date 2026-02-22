@@ -193,8 +193,6 @@ const addColumn = produce(
 
 type MoveToColumnParams = {
   type: ModifyWorkflowActionType.MoveToColumn;
-  // TODO: do we need statusId _and_ source col/index?
-  statusId: string;
   sourceColumnId: string;
   sourceIndex: number;
   targetColumnId: string;
@@ -205,14 +203,16 @@ const moveToColumn = produce(
   (
     draft: WorkflowState,
     {
-      statusId,
       sourceColumnId,
       sourceIndex,
       targetColumnId,
       targetIndex,
     }: MoveToColumnParams,
   ) => {
-    draft.columns[sourceColumnId].statusIds.splice(sourceIndex, 1);
+    const [statusId] = draft.columns[sourceColumnId].statusIds.splice(
+      sourceIndex,
+      1,
+    );
     draft.columns[targetColumnId].statusIds.splice(targetIndex, 0, statusId);
   },
 );

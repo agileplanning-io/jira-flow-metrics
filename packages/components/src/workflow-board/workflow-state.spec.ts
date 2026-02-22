@@ -206,7 +206,6 @@ describe("#workflowStateReducer", () => {
 
       const newState = workflowStateReducer(initialState, {
         type: ModifyWorkflowActionType.MoveToColumn,
-        statusId: "status:In Review",
         sourceColumnId: "col:In Review",
         sourceIndex: 0,
         targetColumnId: "col:In Progress",
