@@ -14,7 +14,7 @@ const Container = styled.div<{ $isDragging: boolean }>`
 `;
 
 export type StatusCardProps = {
-  task: Status;
+  status: Status;
   index: number;
   disabled: boolean;
 };
@@ -25,9 +25,13 @@ const categoryColors = {
   Done: "green",
 };
 
-export const StatusCard: FC<StatusCardProps> = ({ task, index, disabled }) => {
+export const StatusCard: FC<StatusCardProps> = ({
+  status,
+  index,
+  disabled,
+}) => {
   return (
-    <Draggable draggableId={task.id} index={index} isDragDisabled={disabled}>
+    <Draggable draggableId={status.id} index={index} isDragDisabled={disabled}>
       {(provided, snapshot) => (
         <Container
           {...provided.draggableProps}
@@ -36,12 +40,12 @@ export const StatusCard: FC<StatusCardProps> = ({ task, index, disabled }) => {
           $isDragging={snapshot.isDragging}
         >
           <Flex align="flex-start">
-            <span>{task.status.name}</span>
+            <span>{status.status.name}</span>
             <Tag
               style={{ marginLeft: "auto", marginRight: 0 }}
-              color={categoryColors[task.status.category]}
+              color={categoryColors[status.status.category]}
             >
-              {task.status.category}
+              {status.status.category}
             </Tag>
           </Flex>
         </Container>

@@ -29,7 +29,7 @@ const StatusList = styled.div<{ $isDraggingOver: boolean }>`
 
 export type WorkflowStageCardProps = {
   column: WorkflowStageColumn;
-  tasks: Status[];
+  statuses: Status[];
   index: number;
   isDragDisabled: boolean;
   disabled: boolean;
@@ -41,7 +41,7 @@ export type WorkflowStageCardProps = {
 export const WorkflowStageCard: FC<WorkflowStageCardProps> = ({
   column,
   index,
-  tasks,
+  statuses,
   isDragDisabled,
   disabled,
   readonly,
@@ -98,10 +98,10 @@ export const WorkflowStageCard: FC<WorkflowStageCardProps> = ({
                 {...provided.droppableProps}
                 $isDraggingOver={snapshot.isDraggingOver}
               >
-                {tasks.map((task, index) => (
+                {statuses.map((status, index) => (
                   <StatusCard
-                    key={task.id}
-                    task={task}
+                    key={status.id}
+                    status={status}
                     index={index}
                     disabled={disabled || readonly}
                   />

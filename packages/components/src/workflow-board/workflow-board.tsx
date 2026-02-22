@@ -83,8 +83,8 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
               <WorkflowStageCard
                 key={DraggableType.Unused}
                 column={state.columns[DraggableType.Unused]}
-                tasks={state.columns[DraggableType.Unused].statusIds.map(
-                  (taskId) => state.statuses[taskId],
+                statuses={state.columns[DraggableType.Unused].statusIds.map(
+                  (statusIdId) => state.statuses[statusIdId],
                 )}
                 index={0}
                 isDragDisabled={true}
@@ -103,14 +103,14 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
             <Container {...provided.droppableProps} ref={provided.innerRef}>
               {state.columnOrder.map((columnId, index) => {
                 const column = state.columns[columnId];
-                const tasks = column.statusIds.map(
-                  (taskId) => state.statuses[taskId],
+                const statuses = column.statusIds.map(
+                  (statusId) => state.statuses[statusId],
                 );
                 return (
                   <WorkflowStageCard
                     key={column.id}
                     column={column}
-                    tasks={tasks}
+                    statuses={statuses}
                     index={index}
                     isDragDisabled={false}
                     disabled={disabled}
@@ -138,7 +138,7 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
                     statusIds: [],
                     title: "New Column",
                   }}
-                  tasks={[]}
+                  statuses={[]}
                   index={0}
                   isDragDisabled={true}
                   disabled={disabled}
