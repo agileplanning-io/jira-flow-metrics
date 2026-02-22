@@ -4,7 +4,6 @@ import {
   Workflow,
   WorkflowStage,
 } from "@agileplanning-io/flow-metrics";
-import { DraggableLocation } from "@hello-pangea/dnd";
 import { produce } from "immer";
 import { flatten } from "remeda";
 
