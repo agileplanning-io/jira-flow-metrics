@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useReducer } from "react";
 import styled from "@emotion/styled";
 import {
   DragDropContext,
@@ -6,14 +6,10 @@ import {
   OnDragEndResponder,
 } from "@hello-pangea/dnd";
 import {
-  addColumn,
   workflowToState,
-  deleteColumn,
-  moveToColumn,
-  renameColumn,
-  reorderColumns,
-  reorderStatuses,
   stateToWorkflow,
+  ModifyWorkflowActionType,
+  workflowStateReducer,
 } from "./workflow-state";
 import { WorkflowStageCard } from "./column";
 import { Flex } from "antd";
@@ -32,12 +28,14 @@ export type WorkflowBoardProps = {
 };
 
 export const WorkflowBoard: FC<WorkflowBoardProps> = ({
-  workflow: project,
+  workflow,
   onWorkflowChanged,
   disabled,
   readonly,
 }) => {
-  const [state, setState] = useState(() => workflowToState(project));
+  const [state, dispatch] = useReducer(workflowStateReducer, workflow, () =>
+    workflowToState(workflow),
+  );
 
   useEffect(() => {
     const workflow = stateToWorkflow(state);
@@ -60,53 +58,53 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
     }
 
     if (type === "column") {
-      setState(
-        reorderColumns(state, {
-          sourceColumnId: draggableId,
-          newColumnIndex: destination.index,
-        }),
-      );
-      return;
+      return dispatch({
+        type: ModifyWorkflowActionType.ReorderColumns,
+        sourceColumnId: draggableId,
+        newColumnIndex: destination.index,
+      });
     }
 
     if (source.droppableId === destination.droppableId) {
-      setState(
-        reorderStatuses(state, {
-          columnId: source.droppableId,
-          statusId: draggableId,
-          newStatusIndex: destination.index,
-        }),
-      );
-      return;
+      return dispatch({
+        type: ModifyWorkflowActionType.ReorderStatuses,
+        columnId: source.droppableId,
+        statusId: draggableId,
+        newStatusIndex: destination.index,
+      });
     }
 
     if (destination.droppableId === "new-column") {
-      setState(
-        addColumn(state, {
-          sourceColumnId: source.droppableId,
-          sourceIndex: source.index,
-        }),
-      );
-      return;
-    }
-
-    setState(
-      moveToColumn(state, {
+      return dispatch({
+        type: ModifyWorkflowActionType.AddColumn,
         sourceColumnId: source.droppableId,
         sourceIndex: source.index,
-        targetColumnId: destination.droppableId,
-        targetIndex: destination.index,
-        statusId: draggableId,
-      }),
-    );
+      });
+    }
+
+    return dispatch({
+      type: ModifyWorkflowActionType.MoveToColumn,
+      sourceColumnId: source.droppableId,
+      sourceIndex: source.index,
+      targetColumnId: destination.droppableId,
+      targetIndex: destination.index,
+      statusId: draggableId,
+    });
   };
 
   const onDeleteColumn = (columnId: string) => {
-    setState(deleteColumn(state, { columnId }));
+    dispatch({
+      type: ModifyWorkflowActionType.DeleteColumn,
+      columnId,
+    });
   };
 
   const onRenameColumn = (columnId: string, newTitle: string) => {
-    setState(renameColumn(state, { columnId, newTitle }));
+    dispatch({
+      type: ModifyWorkflowActionType.RenameColumn,
+      columnId,
+      newTitle,
+    });
   };
 
   return (

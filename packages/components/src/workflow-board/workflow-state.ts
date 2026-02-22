@@ -6,6 +6,7 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { produce } from "immer";
 import { flatten } from "remeda";
+import { match } from "ts-pattern";
 
 export type Status = {
   id: string;
@@ -24,12 +25,64 @@ export type WorkflowState = {
   columnOrder: string[];
 };
 
+export enum ModifyWorkflowActionType {
+  ReorderColumns = "reorder_columns",
+  ReorderStatuses = "reorder_statuses",
+  DeleteColumn = "delete_column",
+  RenameColumn = "rename_column",
+  AddColumn = "add_column",
+  MoveToColumn = "move_to_column",
+}
+
+export type ModifyWorkflowAction =
+  | ReorderColumnsParams
+  | ReorderStatusesParams
+  | DeleteColumnParams
+  | RenameColumnParams
+  | AddColumnParams
+  | MoveToColumnParams;
+
 type ReorderColumnsParams = {
+  type: ModifyWorkflowActionType.ReorderColumns;
   sourceColumnId: string;
   newColumnIndex: number;
 };
 
-export const reorderColumns = produce(
+/**
+ * A convenience function to curry application of the individual reducer functions in order to
+ * remove some repetition in the workflowStateReducer.
+ * @param {WorkflowState} state the workflow state
+ * @returns A function which, given a reducer function `f`, applies `f` to the given `state`.
+ */
+const applyWithState =
+  (state: WorkflowState) =>
+  <T>(f: (state: WorkflowState, params: T) => WorkflowState) =>
+  (params: T) =>
+    f(state, params);
+
+export const workflowStateReducer = (
+  state: WorkflowState,
+  action: ModifyWorkflowAction,
+): WorkflowState => {
+  const apply = applyWithState(state);
+
+  return match(action)
+    .with(
+      { type: ModifyWorkflowActionType.ReorderColumns },
+      apply(reorderColumns),
+    )
+    .with(
+      { type: ModifyWorkflowActionType.ReorderStatuses },
+      apply(reorderStatuses),
+    )
+    .with({ type: ModifyWorkflowActionType.DeleteColumn }, apply(deleteColumn))
+    .with({ type: ModifyWorkflowActionType.RenameColumn }, apply(renameColumn))
+    .with({ type: ModifyWorkflowActionType.AddColumn }, apply(addColumn))
+    .with({ type: ModifyWorkflowActionType.MoveToColumn }, apply(moveToColumn))
+    .exhaustive();
+};
+
+const reorderColumns = produce(
   (
     draft: WorkflowState,
     { sourceColumnId, newColumnIndex }: ReorderColumnsParams,
@@ -41,12 +94,13 @@ export const reorderColumns = produce(
 );
 
 type ReorderStatusesParams = {
+  type: ModifyWorkflowActionType.ReorderStatuses;
   columnId: string;
   statusId: string;
   newStatusIndex: number;
 };
 
-export const reorderStatuses = produce(
+const reorderStatuses = produce(
   (
     draft: WorkflowState,
     { columnId, statusId, newStatusIndex }: ReorderStatusesParams,
@@ -59,10 +113,11 @@ export const reorderStatuses = produce(
 );
 
 type DeleteColumnParams = {
+  type: ModifyWorkflowActionType.DeleteColumn;
   columnId: string;
 };
 
-export const deleteColumn = produce(
+const deleteColumn = produce(
   (draft: WorkflowState, { columnId }: DeleteColumnParams) => {
     const column = draft.columns[columnId];
     const columnIndex = draft.columnOrder.indexOf(columnId);
@@ -75,22 +130,24 @@ export const deleteColumn = produce(
 );
 
 type RenameColumnParams = {
+  type: ModifyWorkflowActionType.RenameColumn;
   columnId: string;
   newTitle: string;
 };
 
-export const renameColumn = produce(
+const renameColumn = produce(
   (draft: WorkflowState, { columnId, newTitle }: RenameColumnParams) => {
     draft.columns[columnId].title = newTitle;
   },
 );
 
 type AddColumnParams = {
+  type: ModifyWorkflowActionType.AddColumn;
   sourceColumnId: string;
   sourceIndex: number;
 };
 
-export const addColumn = produce(
+const addColumn = produce(
   (draft: WorkflowState, { sourceColumnId, sourceIndex }: AddColumnParams) => {
     const sourceColumn = draft.columns[sourceColumnId];
     const statusId = sourceColumn.statusIds[sourceIndex];
@@ -124,6 +181,7 @@ export const addColumn = produce(
 );
 
 type MoveToColumnParams = {
+  type: ModifyWorkflowActionType.MoveToColumn;
   // TODO: do we need statusId _and_ source col/index?
   statusId: string;
   sourceColumnId: string;
@@ -132,7 +190,7 @@ type MoveToColumnParams = {
   targetIndex: number;
 };
 
-export const moveToColumn = produce(
+const moveToColumn = produce(
   (
     draft: WorkflowState,
     {
