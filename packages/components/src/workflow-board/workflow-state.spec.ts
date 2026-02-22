@@ -12,6 +12,7 @@ import {
   reorderStatuses,
   moveToColumn,
   deleteColumn,
+  ModifyWorkflowActionType,
 } from "./workflow-state";
 import { expect, it, describe } from "vitest";
 import { flat, isNullish } from "remeda";
@@ -128,6 +129,7 @@ describe("WorkflowState", () => {
       const initialState = workflowToState(workflow);
 
       const newState = addColumn(initialState, {
+        type: ModifyWorkflowActionType.AddColumn,
         sourceColumnId: initialState.columns["col:In Progress"].id,
         sourceIndex: 1, // In Review status
       });
@@ -150,6 +152,7 @@ describe("WorkflowState", () => {
       const initialState = workflowToState(workflow);
 
       const newState = reorderColumns(initialState, {
+        type: ModifyWorkflowActionType.ReorderColumns,
         sourceColumnId: `col:In Progress`,
         newColumnIndex: 0,
       });
@@ -175,6 +178,7 @@ describe("WorkflowState", () => {
       const initialState = workflowToState(workflow);
 
       const newState = reorderStatuses(initialState, {
+        type: ModifyWorkflowActionType.ReorderStatuses,
         columnId: "col:In Progress",
         statusId: "status:In Review",
         newStatusIndex: 0,
@@ -205,6 +209,7 @@ describe("WorkflowState", () => {
       const initialState = workflowToState(workflow);
 
       const newState = moveToColumn(initialState, {
+        type: ModifyWorkflowActionType.MoveToColumn,
         statusId: "status:In Review",
         sourceColumnId: "col:In Review",
         sourceIndex: 0,
@@ -229,7 +234,10 @@ describe("WorkflowState", () => {
       const workflow = buildTestWorkflow();
       const initialState = workflowToState(workflow);
 
-      const newState = deleteColumn(initialState, { columnId: "col:Done" });
+      const newState = deleteColumn(initialState, {
+        type: ModifyWorkflowActionType.DeleteColumn,
+        columnId: "col:Done",
+      });
 
       expect(stateToWorkflow(newState)).toEqual({
         stages: [

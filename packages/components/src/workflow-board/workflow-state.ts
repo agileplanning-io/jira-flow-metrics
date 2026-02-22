@@ -24,7 +24,25 @@ export type WorkflowState = {
   columnOrder: string[];
 };
 
+export enum ModifyWorkflowActionType {
+  ReorderColumns = "reorder_columns",
+  ReorderStatuses = "reorder_statuses",
+  DeleteColumn = "delete_column",
+  RenameColumn = "rename_column",
+  AddColumn = "add_column",
+  MoveToColumn = "move_to_column",
+}
+
+// export type ModifyWorkflowAction = {
+//   type: ModifyWorkflowActionType.ReorderColumns;
+//   sourceColumnId: string;
+//   newColumnIndex: number;
+// } | {
+
+// }
+
 type ReorderColumnsParams = {
+  type: ModifyWorkflowActionType.ReorderColumns;
   sourceColumnId: string;
   newColumnIndex: number;
 };
@@ -41,6 +59,7 @@ export const reorderColumns = produce(
 );
 
 type ReorderStatusesParams = {
+  type: ModifyWorkflowActionType.ReorderStatuses;
   columnId: string;
   statusId: string;
   newStatusIndex: number;
@@ -59,6 +78,7 @@ export const reorderStatuses = produce(
 );
 
 type DeleteColumnParams = {
+  type: ModifyWorkflowActionType.DeleteColumn;
   columnId: string;
 };
 
@@ -75,6 +95,7 @@ export const deleteColumn = produce(
 );
 
 type RenameColumnParams = {
+  type: ModifyWorkflowActionType.RenameColumn;
   columnId: string;
   newTitle: string;
 };
@@ -86,6 +107,7 @@ export const renameColumn = produce(
 );
 
 type AddColumnParams = {
+  type: ModifyWorkflowActionType.AddColumn;
   sourceColumnId: string;
   sourceIndex: number;
 };
@@ -124,6 +146,7 @@ export const addColumn = produce(
 );
 
 type MoveToColumnParams = {
+  type: ModifyWorkflowActionType.MoveToColumn;
   // TODO: do we need statusId _and_ source col/index?
   statusId: string;
   sourceColumnId: string;

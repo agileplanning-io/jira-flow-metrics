@@ -14,6 +14,7 @@ import {
   reorderColumns,
   reorderStatuses,
   stateToWorkflow,
+  ModifyWorkflowActionType,
 } from "./workflow-state";
 import { WorkflowStageCard } from "./column";
 import { Flex } from "antd";
@@ -62,6 +63,7 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
     if (type === "column") {
       setState(
         reorderColumns(state, {
+          type: ModifyWorkflowActionType.ReorderColumns,
           sourceColumnId: draggableId,
           newColumnIndex: destination.index,
         }),
@@ -72,6 +74,7 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
     if (source.droppableId === destination.droppableId) {
       setState(
         reorderStatuses(state, {
+          type: ModifyWorkflowActionType.ReorderStatuses,
           columnId: source.droppableId,
           statusId: draggableId,
           newStatusIndex: destination.index,
@@ -83,6 +86,7 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
     if (destination.droppableId === "new-column") {
       setState(
         addColumn(state, {
+          type: ModifyWorkflowActionType.AddColumn,
           sourceColumnId: source.droppableId,
           sourceIndex: source.index,
         }),
@@ -92,6 +96,7 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
 
     setState(
       moveToColumn(state, {
+        type: ModifyWorkflowActionType.MoveToColumn,
         sourceColumnId: source.droppableId,
         sourceIndex: source.index,
         targetColumnId: destination.droppableId,
@@ -102,11 +107,22 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
   };
 
   const onDeleteColumn = (columnId: string) => {
-    setState(deleteColumn(state, { columnId }));
+    setState(
+      deleteColumn(state, {
+        type: ModifyWorkflowActionType.DeleteColumn,
+        columnId,
+      }),
+    );
   };
 
   const onRenameColumn = (columnId: string, newTitle: string) => {
-    setState(renameColumn(state, { columnId, newTitle }));
+    setState(
+      renameColumn(state, {
+        type: ModifyWorkflowActionType.RenameColumn,
+        columnId,
+        newTitle,
+      }),
+    );
   };
 
   return (
