@@ -6,6 +6,7 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { produce } from "immer";
 import { flatten } from "remeda";
+import { match } from "ts-pattern";
 
 export type Status = {
   id: string;
@@ -33,19 +34,44 @@ export enum ModifyWorkflowActionType {
   MoveToColumn = "move_to_column",
 }
 
-// export type ModifyWorkflowAction = {
-//   type: ModifyWorkflowActionType.ReorderColumns;
-//   sourceColumnId: string;
-//   newColumnIndex: number;
-// } | {
-
-// }
+export type ModifyWorkflowAction =
+  | ReorderColumnsParams
+  | ReorderStatusesParams
+  | DeleteColumnParams
+  | RenameColumnParams
+  | AddColumnParams
+  | MoveToColumnParams;
 
 type ReorderColumnsParams = {
   type: ModifyWorkflowActionType.ReorderColumns;
   sourceColumnId: string;
   newColumnIndex: number;
 };
+
+export const workflowStateReducer = (
+  state: WorkflowState,
+  action: ModifyWorkflowAction,
+): WorkflowState =>
+  match(action)
+    .with({ type: ModifyWorkflowActionType.ReorderColumns }, (params) =>
+      reorderColumns(state, params),
+    )
+    .with({ type: ModifyWorkflowActionType.ReorderStatuses }, (params) =>
+      reorderStatuses(state, params),
+    )
+    .with({ type: ModifyWorkflowActionType.DeleteColumn }, (params) =>
+      deleteColumn(state, params),
+    )
+    .with({ type: ModifyWorkflowActionType.RenameColumn }, (params) =>
+      renameColumn(state, params),
+    )
+    .with({ type: ModifyWorkflowActionType.AddColumn }, (params) =>
+      addColumn(state, params),
+    )
+    .with({ type: ModifyWorkflowActionType.MoveToColumn }, (params) =>
+      moveToColumn(state, params),
+    )
+    .exhaustive();
 
 export const reorderColumns = produce(
   (
