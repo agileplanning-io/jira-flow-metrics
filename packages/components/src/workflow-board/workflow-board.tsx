@@ -29,14 +29,18 @@ export type WorkflowBoardProps = {
   readonly: boolean;
 };
 
+const initState = (workflow: Workflow) => workflowToState(workflow);
+
 export const WorkflowBoard: FC<WorkflowBoardProps> = ({
   workflow,
   onWorkflowChanged,
   disabled,
   readonly,
 }) => {
-  const [state, dispatch] = useReducer(workflowStateReducer, workflow, () =>
-    workflowToState(workflow),
+  const [state, dispatch] = useReducer(
+    workflowStateReducer,
+    workflow,
+    initState,
   );
 
   const onStateChanged = useCallback(
@@ -73,7 +77,7 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
     <DragDropContext onDragEnd={onDragEnd}>
       <Flex style={{ margin: "0 -4px", overflowX: "auto" }}>
         <Droppable
-          droppableId="unused-tasks"
+          droppableId="unused-statuses"
           type="unused"
           isDropDisabled={disabled || readonly}
         >
