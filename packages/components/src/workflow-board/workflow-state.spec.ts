@@ -5,14 +5,10 @@ import {
   WorkflowStage,
 } from "@agileplanning-io/flow-metrics";
 import {
-  addColumn,
   workflowToState,
   stateToWorkflow,
-  reorderColumns,
-  reorderStatuses,
-  moveToColumn,
-  deleteColumn,
   ModifyWorkflowActionType,
+  workflowStateReducer,
 } from "./workflow-state";
 import { expect, it, describe } from "vitest";
 import { flat, isNullish } from "remeda";
@@ -128,7 +124,7 @@ describe("WorkflowState", () => {
       });
       const initialState = workflowToState(workflow);
 
-      const newState = addColumn(initialState, {
+      const newState = workflowStateReducer(initialState, {
         type: ModifyWorkflowActionType.AddColumn,
         sourceColumnId: initialState.columns["col:In Progress"].id,
         sourceIndex: 1, // In Review status
@@ -151,7 +147,7 @@ describe("WorkflowState", () => {
       const workflow = buildTestWorkflow();
       const initialState = workflowToState(workflow);
 
-      const newState = reorderColumns(initialState, {
+      const newState = workflowStateReducer(initialState, {
         type: ModifyWorkflowActionType.ReorderColumns,
         sourceColumnId: `col:In Progress`,
         newColumnIndex: 0,
@@ -177,7 +173,7 @@ describe("WorkflowState", () => {
       });
       const initialState = workflowToState(workflow);
 
-      const newState = reorderStatuses(initialState, {
+      const newState = workflowStateReducer(initialState, {
         type: ModifyWorkflowActionType.ReorderStatuses,
         columnId: "col:In Progress",
         statusId: "status:In Review",
@@ -208,7 +204,7 @@ describe("WorkflowState", () => {
       });
       const initialState = workflowToState(workflow);
 
-      const newState = moveToColumn(initialState, {
+      const newState = workflowStateReducer(initialState, {
         type: ModifyWorkflowActionType.MoveToColumn,
         statusId: "status:In Review",
         sourceColumnId: "col:In Review",
@@ -234,7 +230,7 @@ describe("WorkflowState", () => {
       const workflow = buildTestWorkflow();
       const initialState = workflowToState(workflow);
 
-      const newState = deleteColumn(initialState, {
+      const newState = workflowStateReducer(initialState, {
         type: ModifyWorkflowActionType.DeleteColumn,
         columnId: "col:Done",
       });

@@ -73,7 +73,7 @@ export const workflowStateReducer = (
     )
     .exhaustive();
 
-export const reorderColumns = produce(
+const reorderColumns = produce(
   (
     draft: WorkflowState,
     { sourceColumnId, newColumnIndex }: ReorderColumnsParams,
@@ -91,7 +91,7 @@ type ReorderStatusesParams = {
   newStatusIndex: number;
 };
 
-export const reorderStatuses = produce(
+const reorderStatuses = produce(
   (
     draft: WorkflowState,
     { columnId, statusId, newStatusIndex }: ReorderStatusesParams,
@@ -108,7 +108,7 @@ type DeleteColumnParams = {
   columnId: string;
 };
 
-export const deleteColumn = produce(
+const deleteColumn = produce(
   (draft: WorkflowState, { columnId }: DeleteColumnParams) => {
     const column = draft.columns[columnId];
     const columnIndex = draft.columnOrder.indexOf(columnId);
@@ -126,7 +126,7 @@ type RenameColumnParams = {
   newTitle: string;
 };
 
-export const renameColumn = produce(
+const renameColumn = produce(
   (draft: WorkflowState, { columnId, newTitle }: RenameColumnParams) => {
     draft.columns[columnId].title = newTitle;
   },
@@ -138,7 +138,7 @@ type AddColumnParams = {
   sourceIndex: number;
 };
 
-export const addColumn = produce(
+const addColumn = produce(
   (draft: WorkflowState, { sourceColumnId, sourceIndex }: AddColumnParams) => {
     const sourceColumn = draft.columns[sourceColumnId];
     const statusId = sourceColumn.statusIds[sourceIndex];
@@ -181,7 +181,7 @@ type MoveToColumnParams = {
   targetIndex: number;
 };
 
-export const moveToColumn = produce(
+const moveToColumn = produce(
   (
     draft: WorkflowState,
     {
