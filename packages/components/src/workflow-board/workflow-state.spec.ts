@@ -11,9 +11,10 @@ import {
   reorderColumns,
   reorderStatuses,
   moveToColumn,
+  deleteColumn,
 } from "./workflow-state";
 import { expect, it, describe } from "vitest";
-import { flat, flatten, isNullish } from "remeda";
+import { flat, isNullish } from "remeda";
 
 const statuses = {
   todo: { name: "To Do", category: StatusCategory.ToDo },
@@ -223,5 +224,20 @@ describe("WorkflowState", () => {
     });
   });
 
-  describe("deleteColumn", () => {});
+  describe("deleteColumn", () => {
+    it("removes the given column", () => {
+      const workflow = buildTestWorkflow();
+      const initialState = workflowToState(workflow);
+
+      const newState = deleteColumn(initialState, { columnId: "col:Done" });
+
+      expect(stateToWorkflow(newState)).toEqual({
+        stages: [
+          buildWorkflowStage([statuses.todo]),
+          buildWorkflowStage([statuses.inProgress]),
+        ],
+        statuses: workflow.statuses,
+      });
+    });
+  });
 });
