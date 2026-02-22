@@ -48,30 +48,39 @@ type ReorderColumnsParams = {
   newColumnIndex: number;
 };
 
+/**
+ * A convenience function to curry application of the individual reducer functions in order to
+ * remove some repetition in the workflowStateReducer.
+ * @param {WorkflowState} state the workflow state
+ * @returns A function which, given a reducer function `f`, applies `f` to the given `state`.
+ */
+const applyWithState =
+  (state: WorkflowState) =>
+  <T>(f: (state: WorkflowState, params: T) => WorkflowState) =>
+  (params: T) =>
+    f(state, params);
+
 export const workflowStateReducer = (
   state: WorkflowState,
   action: ModifyWorkflowAction,
-): WorkflowState =>
-  match(action)
-    .with({ type: ModifyWorkflowActionType.ReorderColumns }, (params) =>
-      reorderColumns(state, params),
+): WorkflowState => {
+  const apply = applyWithState(state);
+
+  return match(action)
+    .with(
+      { type: ModifyWorkflowActionType.ReorderColumns },
+      apply(reorderColumns),
     )
-    .with({ type: ModifyWorkflowActionType.ReorderStatuses }, (params) =>
-      reorderStatuses(state, params),
+    .with(
+      { type: ModifyWorkflowActionType.ReorderStatuses },
+      apply(reorderStatuses),
     )
-    .with({ type: ModifyWorkflowActionType.DeleteColumn }, (params) =>
-      deleteColumn(state, params),
-    )
-    .with({ type: ModifyWorkflowActionType.RenameColumn }, (params) =>
-      renameColumn(state, params),
-    )
-    .with({ type: ModifyWorkflowActionType.AddColumn }, (params) =>
-      addColumn(state, params),
-    )
-    .with({ type: ModifyWorkflowActionType.MoveToColumn }, (params) =>
-      moveToColumn(state, params),
-    )
+    .with({ type: ModifyWorkflowActionType.DeleteColumn }, apply(deleteColumn))
+    .with({ type: ModifyWorkflowActionType.RenameColumn }, apply(renameColumn))
+    .with({ type: ModifyWorkflowActionType.AddColumn }, apply(addColumn))
+    .with({ type: ModifyWorkflowActionType.MoveToColumn }, apply(moveToColumn))
     .exhaustive();
+};
 
 const reorderColumns = produce(
   (
