@@ -106,11 +106,11 @@ describe("#workflowToState", () => {
   });
 });
 
-describe("#stateToProject", () => {
-  it("is the inverse of projectToState", () => {
+describe("#stateToWorkflow", () => {
+  it("is the inverse of workflowToState", () => {
     const initialWorkflow = buildTestWorkflow();
-    const inverseWorkflow = stateToWorkflow(workflowToState(initialWorkflow));
-    expect(inverseWorkflow).toEqual(initialWorkflow);
+    const viewState = workflowToState(initialWorkflow);
+    expect(stateToWorkflow(viewState)).toEqual(initialWorkflow);
   });
 });
 
