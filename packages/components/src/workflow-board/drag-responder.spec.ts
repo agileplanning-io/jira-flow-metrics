@@ -1,8 +1,9 @@
 import { vitest } from "vitest";
 import { mock } from "vitest-mock-extended";
-import { DraggableType, ModifyWorkflowActionType } from "./workflow-state";
+import { DraggableType } from "./workflow-state";
 import { makeDragResponder } from "./drag-responder";
 import { DropResult, OnDragEndResponder } from "@hello-pangea/dnd";
+import { ModifyWorkflowActionType } from "./workflow-reducer";
 
 describe("makeDragResponder", () => {
   const sourceColumnId = "sourceColumnId";

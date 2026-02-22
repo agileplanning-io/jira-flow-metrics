@@ -4,14 +4,13 @@ import {
   Workflow,
   WorkflowStage,
 } from "@agileplanning-io/flow-metrics";
-import {
-  workflowToState,
-  stateToWorkflow,
-  ModifyWorkflowActionType,
-  workflowStateReducer,
-} from "./workflow-state";
+import { workflowToState, stateToWorkflow } from "./workflow-state";
 import { expect, it, describe } from "vitest";
 import { flat, isNullish } from "remeda";
+import {
+  ModifyWorkflowActionType,
+  workflowStateReducer,
+} from "./workflow-reducer";
 
 const statuses = {
   todo: { name: "To Do", category: StatusCategory.ToDo },

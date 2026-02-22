@@ -4,8 +4,6 @@ import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import {
   workflowToState,
   stateToWorkflow,
-  ModifyWorkflowActionType,
-  workflowStateReducer,
   WorkflowState,
   DraggableType,
 } from "./workflow-state";
@@ -14,6 +12,10 @@ import { Flex } from "antd";
 import { validateWorkflow } from "./validation";
 import { Workflow } from "@agileplanning-io/flow-metrics";
 import { makeDragResponder } from "./drag-responder";
+import {
+  workflowStateReducer,
+  ModifyWorkflowActionType,
+} from "./workflow-reducer";
 
 const Container = styled.div`
   display: flex;
