@@ -1,11 +1,11 @@
-import { createImmerReducer } from "./create-reducer";
+import { createReducer } from "./create-reducer";
 
 describe("#createReducer", () => {
   type State = {
     count: number;
   };
 
-  const { reducer, actions } = createImmerReducer({
+  const { reducer, actions } = createReducer({
     reset: (state: State) => (state.count = 0),
     inc: (state: State) => (state.count += 1),
     incBy: (state: State, payload: { amount: number }) =>

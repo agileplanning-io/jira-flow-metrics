@@ -27,7 +27,7 @@ type ActionCreators<H extends Record<string, AnyFn>> = {
     : () => { type: K };
 };
 
-export function createImmerReducer<
+export function createReducer<
   H extends Record<string, (state: any, payload?: any) => void>,
 >(handlers: H) {
   type S = StateFromHandlers<H>;
