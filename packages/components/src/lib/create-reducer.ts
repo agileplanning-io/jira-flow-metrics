@@ -1,42 +1,59 @@
-import { Draft, produce } from "immer";
+import { produce, Draft } from "immer";
 
-// Helper to extract the payload type from a handler
-type Params<S, F> = F extends (state: Draft<S>, action: infer P) => any
-  ? P
+type AnyFn = (...args: any[]) => any;
+
+type StateFromHandlers<H> = H[keyof H] extends (
+  state: infer S,
+  ...args: any[]
+) => any
+  ? S
   : never;
 
-// Handlers receive Draft<S> to allow mutation
-type Handler<S, P = any> = (state: Draft<S>, action: P) => void;
+type Payload<F extends AnyFn> = Parameters<F> extends [any, infer P] ? P : void;
 
-export function createImmerReducer<H extends Record<string, Handler<any, any>>>(
-  handlers: H,
-) {
-  // Infer the state type from the handlers
-  type S = H[keyof H] extends Handler<infer State, any> ? State : never;
+type HasPayload<F extends AnyFn> = Parameters<F> extends [any, any]
+  ? true
+  : false;
 
-  // Create a discriminated union of all actions
-  type Action = {
-    [K in keyof H & string]: { type: K } & Params<S, H[K]>;
-  }[keyof H & string];
+type ActionFromHandlers<H extends Record<string, AnyFn>> = {
+  [K in keyof H & string]: HasPayload<H[K]> extends true
+    ? { type: K; payload: Payload<H[K]> }
+    : { type: K };
+}[keyof H & string];
 
-  // Reducer: applies the action using Immer produce
+type ActionCreators<H extends Record<string, AnyFn>> = {
+  [K in keyof H & string]: HasPayload<H[K]> extends true
+    ? (payload: Payload<H[K]>) => { type: K; payload: Payload<H[K]> }
+    : () => { type: K };
+};
+
+export function createImmerReducer<
+  H extends Record<string, (state: any, payload?: any) => void>,
+>(handlers: H) {
+  type S = StateFromHandlers<H>;
+  type Action = ActionFromHandlers<H>;
+
   const reducer = (state: S, action: Action): S =>
-    produce(state, (draft: Draft<S>) => {
-      const handler = handlers[action.type as keyof H] as Handler<S, any>;
-      handler(draft, action);
+    produce(state, (draft) => {
+      const handler = handlers[action.type as keyof H] as (
+        state: Draft<S>,
+        payload?: any,
+      ) => void;
+
+      if ("payload" in action) {
+        handler(draft, action.payload);
+      } else {
+        handler(draft);
+      }
     });
 
-  // Fully typed actions object
   const actions = Object.fromEntries(
     Object.keys(handlers).map((key) => [
       key,
-      (params: object) => ({ type: key, ...params }),
+      (payload?: unknown) =>
+        payload === undefined ? { type: key } : { type: key, payload },
     ]),
-  ) as unknown as {
-    [K in keyof H & string]: (
-      params: Params<S, H[K]>,
-    ) => { type: K } & Params<S, H[K]>;
-  };
+  ) as ActionCreators<H>;
 
   return { reducer, actions };
 }
