@@ -6,6 +6,7 @@ import {
   stateToWorkflow,
   WorkflowState,
   DraggableType,
+  WorkflowStageColumn,
 } from "./workflow-state";
 import { WorkflowStageCard } from "./column";
 import { Flex } from "antd";
@@ -49,7 +50,7 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
   );
 
   useEffect(() => {
-    onStateChanged(state);
+    onStateChanged(state as WorkflowState);
   }, [state, onStateChanged]);
 
   const onDragEnd = useCallback(makeDragResponder(dispatch), [dispatch]);
@@ -73,7 +74,7 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
           {(provided) => (
             <Container {...provided.droppableProps} ref={provided.innerRef}>
               <UnusedColumnCard
-                state={state}
+                state={state as WorkflowState}
                 disabled={disabled}
                 readonly={readonly}
               />
@@ -95,7 +96,7 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
                 return (
                   <WorkflowStageCard
                     key={column.id}
-                    column={column}
+                    column={column as WorkflowStageColumn}
                     statuses={statuses}
                     index={index}
                     isDragDisabled={false}
