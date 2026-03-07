@@ -1,10 +1,9 @@
+import { createReducer } from "../lib/create-reducer";
 import {
   WorkflowState,
   DraggableType,
   WorkflowStageColumn,
 } from "./workflow-state";
-
-import { createImmerReducer } from "../create-reducer";
 
 const reducers = {
   reorderColumns: (
@@ -110,6 +109,6 @@ const reducers = {
 };
 
 export const { reducer: workflowStateReducer, actions: workflowActions } =
-  createImmerReducer(reducers);
+  createReducer(reducers);
 
 export type WorkflowAction = Parameters<typeof workflowStateReducer>[1];
