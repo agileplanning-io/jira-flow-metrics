@@ -1,12 +1,9 @@
 import { OnDragEndResponder } from "@hello-pangea/dnd";
 import { DraggableType } from "./workflow-state";
-import {
-  ModifyWorkflowAction,
-  ModifyWorkflowActionType,
-} from "./workflow-reducer";
+import { WorkflowAction, workflowActions } from "./workflow-reducer";
 
 export const makeDragResponder =
-  (dispatch: React.Dispatch<ModifyWorkflowAction>): OnDragEndResponder =>
+  (dispatch: React.Dispatch<WorkflowAction>): OnDragEndResponder =>
   (event) => {
     const { destination, source, draggableId, type } = event;
 
@@ -22,35 +19,39 @@ export const makeDragResponder =
     }
 
     if (type === DraggableType.WorkstageColumn) {
-      return dispatch({
-        type: ModifyWorkflowActionType.ReorderColumns,
-        sourceColumnId: draggableId,
-        newColumnIndex: destination.index,
-      });
+      return dispatch(
+        workflowActions.reorderColumns({
+          sourceColumnId: draggableId,
+          newColumnIndex: destination.index,
+        }),
+      );
     }
 
     if (type === DraggableType.Status) {
       if (source.droppableId === destination.droppableId) {
-        return dispatch({
-          type: ModifyWorkflowActionType.ReorderStatuses,
-          columnId: source.droppableId,
-          statusId: draggableId,
-          newStatusIndex: destination.index,
-        });
+        return dispatch(
+          workflowActions.reorderStatuses({
+            columnId: source.droppableId,
+            statusId: draggableId,
+            newStatusIndex: destination.index,
+          }),
+        );
       } else if (destination.droppableId === DraggableType.NewColumn) {
-        return dispatch({
-          type: ModifyWorkflowActionType.AddColumn,
-          sourceColumnId: source.droppableId,
-          sourceIndex: source.index,
-        });
+        return dispatch(
+          workflowActions.addColumn({
+            sourceColumnId: source.droppableId,
+            sourceIndex: source.index,
+          }),
+        );
       } else {
-        return dispatch({
-          type: ModifyWorkflowActionType.MoveToColumn,
-          sourceColumnId: source.droppableId,
-          sourceIndex: source.index,
-          targetColumnId: destination.droppableId,
-          targetIndex: destination.index,
-        });
+        return dispatch(
+          workflowActions.moveToColumn({
+            sourceColumnId: source.droppableId,
+            sourceIndex: source.index,
+            targetColumnId: destination.droppableId,
+            targetIndex: destination.index,
+          }),
+        );
       }
     }
   };

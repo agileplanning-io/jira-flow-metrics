@@ -12,10 +12,7 @@ import { Flex } from "antd";
 import { validateWorkflow } from "./validation";
 import { Workflow } from "@agileplanning-io/flow-metrics";
 import { makeDragResponder } from "./drag-responder";
-import {
-  workflowStateReducer,
-  ModifyWorkflowActionType,
-} from "./workflow-reducer";
+import { workflowStateReducer, workflowActions } from "./workflow-reducer";
 
 const Container = styled.div`
   display: flex;
@@ -58,18 +55,11 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
   const onDragEnd = useCallback(makeDragResponder(dispatch), [dispatch]);
 
   const onDeleteColumn = (columnId: string) => {
-    dispatch({
-      type: ModifyWorkflowActionType.DeleteColumn,
-      columnId,
-    });
+    dispatch(workflowActions.deleteColumn({ columnId }));
   };
 
   const onRenameColumn = (columnId: string, newTitle: string) => {
-    dispatch({
-      type: ModifyWorkflowActionType.RenameColumn,
-      columnId,
-      newTitle,
-    });
+    dispatch(workflowActions.renameColumn({ columnId, newTitle }));
   };
 
   return (

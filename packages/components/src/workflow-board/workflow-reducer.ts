@@ -1,188 +1,158 @@
 import { produce } from "immer";
-import { match } from "ts-pattern";
 import {
   WorkflowState,
   DraggableType,
   WorkflowStageColumn,
 } from "./workflow-state";
 
-/**
- * A convenience function to curry application of the individual reducer functions in order to
- * remove some repetition in the workflowStateReducer.
- * @param {WorkflowState} state the workflow state
- * @returns A function which, given a reducer function `f`, applies `f` to the given `state`.
- */
-const applyWithState =
-  (state: WorkflowState) =>
-  <T>(f: (state: WorkflowState, params: T) => WorkflowState) =>
-  (params: T) =>
-    f(state, params);
+type AnyFn<S> = (state: S, params: any) => S;
+type Params<H extends AnyFn<any>> = H extends (
+  state: any,
+  params: infer P,
+) => any
+  ? P
+  : never;
 
-export const workflowStateReducer = (
-  state: WorkflowState,
-  action: ModifyWorkflowAction,
-): WorkflowState => {
-  const apply = applyWithState(state);
-
-  return match(action)
-    .with(
-      { type: ModifyWorkflowActionType.ReorderColumns },
-      apply(reorderColumns),
-    )
-    .with(
-      { type: ModifyWorkflowActionType.ReorderStatuses },
-      apply(reorderStatuses),
-    )
-    .with({ type: ModifyWorkflowActionType.DeleteColumn }, apply(deleteColumn))
-    .with({ type: ModifyWorkflowActionType.RenameColumn }, apply(renameColumn))
-    .with({ type: ModifyWorkflowActionType.AddColumn }, apply(addColumn))
-    .with({ type: ModifyWorkflowActionType.MoveToColumn }, apply(moveToColumn))
-    .exhaustive();
-};
-
-export enum ModifyWorkflowActionType {
-  ReorderColumns = "reorder_columns",
-  ReorderStatuses = "reorder_statuses",
-  DeleteColumn = "delete_column",
-  RenameColumn = "rename_column",
-  AddColumn = "add_column",
-  MoveToColumn = "move_to_column",
+function createReducer<S>() {
+  return <H extends Record<string, AnyFn<S>>>(handlers: H) => {
+    type Action = {
+      [K in keyof H & string]: { type: K } & Params<H[K]>;
+    }[keyof H & string];
+    return {
+      reducer: (state: S, action: Action): S =>
+        (handlers[action.type as keyof H] as AnyFn<S>)(state, action as any),
+      actions: Object.fromEntries(
+        Object.keys(handlers).map((key) => [
+          key,
+          (params: object) => ({ type: key, ...params }),
+        ]),
+      ) as unknown as {
+        [K in keyof H & string]: (
+          params: Params<H[K]>,
+        ) => { type: K } & Params<H[K]>;
+      },
+    };
+  };
 }
 
-export type ModifyWorkflowAction =
-  | ReorderColumnsParams
-  | ReorderStatusesParams
-  | DeleteColumnParams
-  | RenameColumnParams
-  | AddColumnParams
-  | MoveToColumnParams;
+export const { reducer: workflowStateReducer, actions: workflowActions } =
+  createReducer<WorkflowState>()({
+    reorderColumns: produce(
+      (
+        draft: WorkflowState,
+        {
+          sourceColumnId,
+          newColumnIndex,
+        }: { sourceColumnId: string; newColumnIndex: number },
+      ) => {
+        const columnIndex = draft.columnOrder.indexOf(sourceColumnId);
+        draft.columnOrder.splice(columnIndex, 1);
+        draft.columnOrder.splice(newColumnIndex, 0, sourceColumnId);
+      },
+    ),
 
-type ReorderColumnsParams = {
-  type: ModifyWorkflowActionType.ReorderColumns;
-  sourceColumnId: string;
-  newColumnIndex: number;
-};
+    reorderStatuses: produce(
+      (
+        draft: WorkflowState,
+        {
+          columnId,
+          statusId,
+          newStatusIndex,
+        }: { columnId: string; statusId: string; newStatusIndex: number },
+      ) => {
+        const column = draft.columns[columnId];
+        const statusIndex = column.statusIds.indexOf(statusId);
+        column.statusIds.splice(statusIndex, 1);
+        column.statusIds.splice(newStatusIndex, 0, statusId);
+      },
+    ),
 
-const reorderColumns = produce(
-  (
-    draft: WorkflowState,
-    { sourceColumnId, newColumnIndex }: ReorderColumnsParams,
-  ) => {
-    const columnIndex = draft.columnOrder.indexOf(sourceColumnId);
-    draft.columnOrder.splice(columnIndex, 1);
-    draft.columnOrder.splice(newColumnIndex, 0, sourceColumnId);
-  },
-);
+    deleteColumn: produce(
+      (draft: WorkflowState, { columnId }: { columnId: string }) => {
+        const column = draft.columns[columnId];
+        const columnIndex = draft.columnOrder.indexOf(columnId);
 
-type ReorderStatusesParams = {
-  type: ModifyWorkflowActionType.ReorderStatuses;
-  columnId: string;
-  statusId: string;
-  newStatusIndex: number;
-};
+        draft.columns[DraggableType.Unused].statusIds.push(...column.statusIds);
+        draft.columnOrder.splice(columnIndex, 1);
 
-const reorderStatuses = produce(
-  (
-    draft: WorkflowState,
-    { columnId, statusId, newStatusIndex }: ReorderStatusesParams,
-  ) => {
-    const column = draft.columns[columnId];
-    const statusIndex = column.statusIds.indexOf(statusId);
-    column.statusIds.splice(statusIndex, 1);
-    column.statusIds.splice(newStatusIndex, 0, statusId);
-  },
-);
+        delete draft.columns[columnId];
+      },
+    ),
 
-type DeleteColumnParams = {
-  type: ModifyWorkflowActionType.DeleteColumn;
-  columnId: string;
-};
+    renameColumn: produce(
+      (
+        draft: WorkflowState,
+        { columnId, newTitle }: { columnId: string; newTitle: string },
+      ) => {
+        draft.columns[columnId].title = newTitle;
+      },
+    ),
 
-const deleteColumn = produce(
-  (draft: WorkflowState, { columnId }: DeleteColumnParams) => {
-    const column = draft.columns[columnId];
-    const columnIndex = draft.columnOrder.indexOf(columnId);
+    addColumn: produce(
+      (
+        draft: WorkflowState,
+        {
+          sourceColumnId,
+          sourceIndex,
+        }: { sourceColumnId: string; sourceIndex: number },
+      ) => {
+        const sourceColumn = draft.columns[sourceColumnId];
+        const statusId = sourceColumn.statusIds[sourceIndex];
+        const status = draft.statuses[statusId];
 
-    draft.columns[DraggableType.Unused].statusIds.push(...column.statusIds);
-    draft.columnOrder.splice(columnIndex, 1);
+        const columnExists = (title: string) =>
+          Object.values(draft.columns).some((column) => column.title === title);
 
-    delete draft.columns[columnId];
-  },
-);
+        const buildNewColumn = (count?: number): WorkflowStageColumn => {
+          const newTitle =
+            count === undefined
+              ? status.status.name
+              : `${status.status.name} ${count}`;
+          if (columnExists(newTitle)) {
+            return buildNewColumn((count ?? 1) + 1);
+          }
+          return {
+            id: `col:${newTitle}`,
+            title: newTitle,
+            statusIds: [status.id],
+          };
+        };
 
-type RenameColumnParams = {
-  type: ModifyWorkflowActionType.RenameColumn;
-  columnId: string;
-  newTitle: string;
-};
+        const newColumn = buildNewColumn();
 
-const renameColumn = produce(
-  (draft: WorkflowState, { columnId, newTitle }: RenameColumnParams) => {
-    draft.columns[columnId].title = newTitle;
-  },
-);
+        sourceColumn.statusIds.splice(sourceIndex, 1);
 
-type AddColumnParams = {
-  type: ModifyWorkflowActionType.AddColumn;
-  sourceColumnId: string;
-  sourceIndex: number;
-};
+        draft.columns[newColumn.id] = newColumn;
+        draft.columnOrder.push(newColumn.id);
+      },
+    ),
 
-const addColumn = produce(
-  (draft: WorkflowState, { sourceColumnId, sourceIndex }: AddColumnParams) => {
-    const sourceColumn = draft.columns[sourceColumnId];
-    const statusId = sourceColumn.statusIds[sourceIndex];
-    const status = draft.statuses[statusId];
+    moveToColumn: produce(
+      (
+        draft: WorkflowState,
+        {
+          sourceColumnId,
+          sourceIndex,
+          targetColumnId,
+          targetIndex,
+        }: {
+          sourceColumnId: string;
+          sourceIndex: number;
+          targetColumnId: string;
+          targetIndex: number;
+        },
+      ) => {
+        const [statusId] = draft.columns[sourceColumnId].statusIds.splice(
+          sourceIndex,
+          1,
+        );
+        draft.columns[targetColumnId].statusIds.splice(
+          targetIndex,
+          0,
+          statusId,
+        );
+      },
+    ),
+  });
 
-    const columnExists = (title: string) =>
-      Object.values(draft.columns).some((column) => column.title === title);
-
-    const buildNewColumn = (count?: number): WorkflowStageColumn => {
-      const newTitle =
-        count === undefined
-          ? status.status.name
-          : `${status.status.name} ${count}`;
-      if (columnExists(newTitle)) {
-        return buildNewColumn((count ?? 1) + 1);
-      }
-      return {
-        id: `col:${newTitle}`,
-        title: newTitle,
-        statusIds: [status.id],
-      };
-    };
-
-    const newColumn = buildNewColumn();
-
-    sourceColumn.statusIds.splice(sourceIndex, 1);
-
-    draft.columns[newColumn.id] = newColumn;
-    draft.columnOrder.push(newColumn.id);
-  },
-);
-
-type MoveToColumnParams = {
-  type: ModifyWorkflowActionType.MoveToColumn;
-  sourceColumnId: string;
-  sourceIndex: number;
-  targetColumnId: string;
-  targetIndex: number;
-};
-
-const moveToColumn = produce(
-  (
-    draft: WorkflowState,
-    {
-      sourceColumnId,
-      sourceIndex,
-      targetColumnId,
-      targetIndex,
-    }: MoveToColumnParams,
-  ) => {
-    const [statusId] = draft.columns[sourceColumnId].statusIds.splice(
-      sourceIndex,
-      1,
-    );
-    draft.columns[targetColumnId].statusIds.splice(targetIndex, 0, statusId);
-  },
-);
+export type WorkflowAction = Parameters<typeof workflowStateReducer>[1];
