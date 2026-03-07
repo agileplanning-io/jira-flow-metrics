@@ -4,7 +4,11 @@ import {
   Workflow,
   WorkflowStage,
 } from "@agileplanning-io/flow-metrics";
-import { workflowToState, stateToWorkflow } from "./workflow-state";
+import {
+  workflowToState,
+  stateToWorkflow,
+  WorkflowState,
+} from "./workflow-state";
 import { expect, it, describe } from "vitest";
 import { flat, isNullish } from "remeda";
 import { workflowActions, workflowStateReducer } from "./workflow-reducer";
@@ -120,7 +124,7 @@ describe("#workflowStateReducer", () => {
       });
       const initialState = workflowToState(workflow);
 
-      const newState = workflowStateReducer(
+      const newState: WorkflowState = workflowStateReducer(
         initialState,
         workflowActions.addColumn({
           sourceColumnId: initialState.columns["col:In Progress"].id,
