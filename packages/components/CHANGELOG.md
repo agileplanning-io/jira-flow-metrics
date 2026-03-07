@@ -1,5 +1,11 @@
 # @agileplanning-io/flow-components
 
+## 1.0.2
+
+### Patch Changes
+
+- 914b1c2: refactor: use createReducer function
+
 ## 1.0.1
 
 ### Patch Changes
