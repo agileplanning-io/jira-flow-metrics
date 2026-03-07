@@ -3,7 +3,7 @@ import { mock } from "vitest-mock-extended";
 import { DraggableType } from "./workflow-state";
 import { makeDragResponder } from "./drag-responder";
 import { DropResult, OnDragEndResponder } from "@hello-pangea/dnd";
-import { ModifyWorkflowActionType } from "./workflow-reducer";
+import { workflowActions } from "./workflow-reducer";
 
 describe("makeDragResponder", () => {
   const sourceColumnId = "sourceColumnId";
@@ -18,7 +18,7 @@ describe("makeDragResponder", () => {
     responder = makeDragResponder(dispatch);
   });
 
-  it(`generates a ${ModifyWorkflowActionType.ReorderColumns} action when a column is dragged over another`, () => {
+  it(`generates a reorderColumns action when a column is dragged over another`, () => {
     const destinationIndex = 1;
 
     const dropResult = mock<DropResult>({
@@ -32,14 +32,15 @@ describe("makeDragResponder", () => {
 
     responder(dropResult, mock());
 
-    expect(dispatch).toHaveBeenCalledWith({
-      type: ModifyWorkflowActionType.ReorderColumns,
-      sourceColumnId: sourceColumnId,
-      newColumnIndex: destinationIndex,
-    });
+    expect(dispatch).toHaveBeenCalledWith(
+      workflowActions.reorderColumns({
+        sourceColumnId,
+        newColumnIndex: destinationIndex,
+      }),
+    );
   });
 
-  it(`generates a ${ModifyWorkflowActionType.ReorderStatuses} action when a status is moved within a column`, () => {
+  it(`generates a reorderStatuses action when a status is moved within a column`, () => {
     const sourceIndex = 0;
     const destinationIndex = 1;
 
@@ -58,15 +59,16 @@ describe("makeDragResponder", () => {
 
     responder(dropResult, mock());
 
-    expect(dispatch).toHaveBeenCalledWith({
-      type: ModifyWorkflowActionType.ReorderStatuses,
-      statusId: sourceStatusId,
-      columnId: sourceColumnId,
-      newStatusIndex: destinationIndex,
-    });
+    expect(dispatch).toHaveBeenCalledWith(
+      workflowActions.reorderStatuses({
+        statusId: sourceStatusId,
+        columnId: sourceColumnId,
+        newStatusIndex: destinationIndex,
+      }),
+    );
   });
 
-  it(`generates a ${ModifyWorkflowActionType.AddColumn} action when a status is moved over the new column`, () => {
+  it(`generates an addColumn action when a status is moved over the new column`, () => {
     const sourceIndex = 0;
     const destinationIndex = 1;
 
@@ -85,14 +87,12 @@ describe("makeDragResponder", () => {
 
     responder(dropResult, mock());
 
-    expect(dispatch).toHaveBeenCalledWith({
-      type: ModifyWorkflowActionType.AddColumn,
-      sourceColumnId,
-      sourceIndex: 0,
-    });
+    expect(dispatch).toHaveBeenCalledWith(
+      workflowActions.addColumn({ sourceColumnId, sourceIndex: 0 }),
+    );
   });
 
-  it(`generates a ${ModifyWorkflowActionType.AddColumn} action when a status is moved over the new column`, () => {
+  it(`generates an addColumn action when a status is moved over the new column`, () => {
     const sourceIndex = 0;
     const targetIndex = 1;
 
@@ -111,14 +111,12 @@ describe("makeDragResponder", () => {
 
     responder(dropResult, mock());
 
-    expect(dispatch).toHaveBeenCalledWith({
-      type: ModifyWorkflowActionType.AddColumn,
-      sourceColumnId,
-      sourceIndex: 0,
-    });
+    expect(dispatch).toHaveBeenCalledWith(
+      workflowActions.addColumn({ sourceColumnId, sourceIndex: 0 }),
+    );
   });
 
-  it(`generates a ${ModifyWorkflowActionType.MoveToColumn} action when a status is moved over another column`, () => {
+  it(`generates a moveToColumn action when a status is moved over another column`, () => {
     const sourceIndex = 0;
     const targetIndex = 1;
 
@@ -137,13 +135,13 @@ describe("makeDragResponder", () => {
 
     responder(dropResult, mock());
 
-    expect(dispatch).toHaveBeenCalledWith({
-      type: ModifyWorkflowActionType.MoveToColumn,
-      sourceColumnId,
-      sourceIndex,
-      targetColumnId,
-      targetIndex,
-      statusId: sourceStatusId,
-    });
+    expect(dispatch).toHaveBeenCalledWith(
+      workflowActions.moveToColumn({
+        sourceColumnId,
+        sourceIndex,
+        targetColumnId,
+        targetIndex,
+      }),
+    );
   });
 });

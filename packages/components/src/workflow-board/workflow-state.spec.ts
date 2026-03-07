@@ -4,13 +4,14 @@ import {
   Workflow,
   WorkflowStage,
 } from "@agileplanning-io/flow-metrics";
-import { workflowToState, stateToWorkflow } from "./workflow-state";
+import {
+  workflowToState,
+  stateToWorkflow,
+  WorkflowState,
+} from "./workflow-state";
 import { expect, it, describe } from "vitest";
 import { flat, isNullish } from "remeda";
-import {
-  ModifyWorkflowActionType,
-  workflowStateReducer,
-} from "./workflow-reducer";
+import { workflowActions, workflowStateReducer } from "./workflow-reducer";
 
 const statuses = {
   todo: { name: "To Do", category: StatusCategory.ToDo },
@@ -114,7 +115,7 @@ describe("#stateToWorkflow", () => {
 });
 
 describe("#workflowStateReducer", () => {
-  describe(`type:${ModifyWorkflowActionType.AddColumn}`, () => {
+  describe("addColumn", () => {
     it("appends a column to the workflow", () => {
       const workflow = buildTestWorkflow({
         inProgressStages: [
@@ -123,11 +124,13 @@ describe("#workflowStateReducer", () => {
       });
       const initialState = workflowToState(workflow);
 
-      const newState = workflowStateReducer(initialState, {
-        type: ModifyWorkflowActionType.AddColumn,
-        sourceColumnId: initialState.columns["col:In Progress"].id,
-        sourceIndex: 1, // In Review status
-      });
+      const newState: WorkflowState = workflowStateReducer(
+        initialState,
+        workflowActions.addColumn({
+          sourceColumnId: initialState.columns["col:In Progress"].id,
+          sourceIndex: 1, // In Review status
+        }),
+      );
 
       expect(stateToWorkflow(newState)).toEqual({
         stages: [
@@ -141,16 +144,18 @@ describe("#workflowStateReducer", () => {
     });
   });
 
-  describe(`type:${ModifyWorkflowActionType.ReorderColumns}`, () => {
+  describe("reorderColumns", () => {
     it("reorders the workflow stages", () => {
       const workflow = buildTestWorkflow();
       const initialState = workflowToState(workflow);
 
-      const newState = workflowStateReducer(initialState, {
-        type: ModifyWorkflowActionType.ReorderColumns,
-        sourceColumnId: `col:In Progress`,
-        newColumnIndex: 0,
-      });
+      const newState = workflowStateReducer(
+        initialState,
+        workflowActions.reorderColumns({
+          sourceColumnId: `col:In Progress`,
+          newColumnIndex: 0,
+        }),
+      );
 
       expect(stateToWorkflow(newState)).toEqual({
         stages: [
@@ -163,7 +168,7 @@ describe("#workflowStateReducer", () => {
     });
   });
 
-  describe(`type:${ModifyWorkflowActionType.ReorderStatuses}`, () => {
+  describe("reorderStatuses", () => {
     it("reorders the statuses in the workflow stage", () => {
       const workflow = buildTestWorkflow({
         inProgressStages: [
@@ -172,12 +177,14 @@ describe("#workflowStateReducer", () => {
       });
       const initialState = workflowToState(workflow);
 
-      const newState = workflowStateReducer(initialState, {
-        type: ModifyWorkflowActionType.ReorderStatuses,
-        columnId: "col:In Progress",
-        statusId: "status:In Review",
-        newStatusIndex: 0,
-      });
+      const newState = workflowStateReducer(
+        initialState,
+        workflowActions.reorderStatuses({
+          columnId: "col:In Progress",
+          statusId: "status:In Review",
+          newStatusIndex: 0,
+        }),
+      );
 
       expect(stateToWorkflow(newState)).toEqual({
         stages: [
@@ -193,7 +200,7 @@ describe("#workflowStateReducer", () => {
     });
   });
 
-  describe(`type:${ModifyWorkflowActionType.MoveToColumn}`, () => {
+  describe("moveToColumn", () => {
     it("moves the status to the given workflow stage", () => {
       const workflow = buildTestWorkflow({
         inProgressStages: [
@@ -203,13 +210,15 @@ describe("#workflowStateReducer", () => {
       });
       const initialState = workflowToState(workflow);
 
-      const newState = workflowStateReducer(initialState, {
-        type: ModifyWorkflowActionType.MoveToColumn,
-        sourceColumnId: "col:In Review",
-        sourceIndex: 0,
-        targetColumnId: "col:In Progress",
-        targetIndex: 1,
-      });
+      const newState = workflowStateReducer(
+        initialState,
+        workflowActions.moveToColumn({
+          sourceColumnId: "col:In Review",
+          sourceIndex: 0,
+          targetColumnId: "col:In Progress",
+          targetIndex: 1,
+        }),
+      );
 
       expect(stateToWorkflow(newState)).toEqual({
         stages: [
@@ -223,15 +232,15 @@ describe("#workflowStateReducer", () => {
     });
   });
 
-  describe(`type:${ModifyWorkflowActionType.DeleteColumn}`, () => {
+  describe("deleteColumn", () => {
     it("removes the given column", () => {
       const workflow = buildTestWorkflow();
       const initialState = workflowToState(workflow);
 
-      const newState = workflowStateReducer(initialState, {
-        type: ModifyWorkflowActionType.DeleteColumn,
-        columnId: "col:Done",
-      });
+      const newState = workflowStateReducer(
+        initialState,
+        workflowActions.deleteColumn({ columnId: "col:Done" }),
+      );
 
       expect(stateToWorkflow(newState)).toEqual({
         stages: [

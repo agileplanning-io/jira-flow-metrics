@@ -6,16 +6,14 @@ import {
   stateToWorkflow,
   WorkflowState,
   DraggableType,
+  WorkflowStageColumn,
 } from "./workflow-state";
 import { WorkflowStageCard } from "./column";
 import { Flex } from "antd";
 import { validateWorkflow } from "./validation";
 import { Workflow } from "@agileplanning-io/flow-metrics";
 import { makeDragResponder } from "./drag-responder";
-import {
-  workflowStateReducer,
-  ModifyWorkflowActionType,
-} from "./workflow-reducer";
+import { workflowStateReducer, workflowActions } from "./workflow-reducer";
 
 const Container = styled.div`
   display: flex;
@@ -52,24 +50,17 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
   );
 
   useEffect(() => {
-    onStateChanged(state);
+    onStateChanged(state as WorkflowState);
   }, [state, onStateChanged]);
 
   const onDragEnd = useCallback(makeDragResponder(dispatch), [dispatch]);
 
   const onDeleteColumn = (columnId: string) => {
-    dispatch({
-      type: ModifyWorkflowActionType.DeleteColumn,
-      columnId,
-    });
+    dispatch(workflowActions.deleteColumn({ columnId }));
   };
 
   const onRenameColumn = (columnId: string, newTitle: string) => {
-    dispatch({
-      type: ModifyWorkflowActionType.RenameColumn,
-      columnId,
-      newTitle,
-    });
+    dispatch(workflowActions.renameColumn({ columnId, newTitle }));
   };
 
   return (
@@ -83,7 +74,7 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
           {(provided) => (
             <Container {...provided.droppableProps} ref={provided.innerRef}>
               <UnusedColumnCard
-                state={state}
+                state={state as WorkflowState}
                 disabled={disabled}
                 readonly={readonly}
               />
@@ -105,7 +96,7 @@ export const WorkflowBoard: FC<WorkflowBoardProps> = ({
                 return (
                   <WorkflowStageCard
                     key={column.id}
-                    column={column}
+                    column={column as WorkflowStageColumn}
                     statuses={statuses}
                     index={index}
                     isDragDisabled={false}
