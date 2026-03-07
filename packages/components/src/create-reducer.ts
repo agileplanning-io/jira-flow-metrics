@@ -1,15 +1,14 @@
 type AnyFn<S> = (state: S, params: any) => S;
-type Params<H extends AnyFn<any>> = H extends (
-  state: any,
-  params: infer P,
-) => any
+type Params<S, H extends AnyFn<S>> = H extends (state: S, params: infer P) => S
   ? P
   : never;
+
+// type Handlers<S> = H extends Record<string, AnyFn<S>>;
 
 export function createReducer<S>() {
   return <H extends Record<string, AnyFn<S>>>(handlers: H) => {
     type Action = {
-      [K in keyof H & string]: { type: K } & Params<H[K]>;
+      [K in keyof H & string]: { type: K } & Params<S, H[K]>;
     }[keyof H & string];
     return {
       reducer: (state: S, action: Action): S =>
@@ -21,8 +20,8 @@ export function createReducer<S>() {
         ]),
       ) as unknown as {
         [K in keyof H & string]: (
-          params: Params<H[K]>,
-        ) => { type: K } & Params<H[K]>;
+          params: Params<S, H[K]>,
+        ) => { type: K } & Params<S, H[K]>;
       },
     };
   };
