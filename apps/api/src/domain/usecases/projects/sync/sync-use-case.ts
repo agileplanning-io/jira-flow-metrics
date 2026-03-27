@@ -1,7 +1,5 @@
 import { ProjectsRepository } from "@entities/projects";
-import { IssuesRepository } from "@entities/issues";
 import { Injectable } from "@nestjs/common";
-import { JiraIssuesRepository } from "./jira-issues-repository";
 import {
   FilterType,
   IssueFilter,
@@ -11,6 +9,8 @@ import {
 } from "@agileplanning-io/flow-metrics";
 import { DomainsRepository } from "@entities/domains";
 import { filter, flat, isNonNullish, unique } from "remeda";
+import { SearchIssuesRepository } from "./jira-issues-repository";
+import { IssuesRepository } from "@entities/issues";
 
 @Injectable()
 export class SyncUseCase {
@@ -18,14 +18,14 @@ export class SyncUseCase {
     private readonly projects: ProjectsRepository,
     private readonly issues: IssuesRepository,
     private readonly domains: DomainsRepository,
-    private readonly jiraIssues: JiraIssuesRepository,
+    private readonly searchIssues: SearchIssuesRepository,
   ) {}
 
   async exec(projectId: string) {
     const project = await this.projects.getProject(projectId);
     const domain = await this.domains.getDomain(project.domainId);
 
-    const { issues, canonicalStatuses } = await this.jiraIssues.search(
+    const { issues, canonicalStatuses } = await this.searchIssues.search(
       domain,
       project.query,
     );

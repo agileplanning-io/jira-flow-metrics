@@ -10,10 +10,10 @@ import { LocalDomainsRepository } from "./local/repositories/domains-repository"
 import { HttpDataSourcesRepository } from "./http/repositories/data-sources-repository";
 import { IssuesRepository } from "@entities/issues";
 import { LocalIssuesRepository } from "./local/issues-repository";
-import { JiraIssuesRepository } from "@usecases/projects/sync/jira-issues-repository";
-import { HttpJiraIssuesRepository } from "./http/repositories/jira-issues-repository";
+import { HttpSearchIssuesRepository } from "./http/repositories/jira-issues-repository";
 import { StorageModule } from "./storage/storage-module";
 import { LocalPoliciesRepository } from "./local/repositories/policies-repository";
+import { SearchIssuesRepository } from "@usecases/projects/sync/jira-issues-repository";
 
 @Global()
 @Module({
@@ -40,8 +40,8 @@ import { LocalPoliciesRepository } from "./local/repositories/policies-repositor
       useClass: HttpDataSourcesRepository,
     },
     {
-      provide: JiraIssuesRepository,
-      useClass: HttpJiraIssuesRepository,
+      provide: SearchIssuesRepository,
+      useClass: HttpSearchIssuesRepository,
     },
   ],
   exports: [
@@ -50,7 +50,7 @@ import { LocalPoliciesRepository } from "./local/repositories/policies-repositor
     PoliciesRepository,
     DataSourcesRepository,
     IssuesRepository,
-    JiraIssuesRepository,
+    SearchIssuesRepository,
   ],
 })
 export class DataModule {}

@@ -11,7 +11,9 @@ describe("LinearMetricsClient", () => {
 
     const dataSources = await metricsClient.findDataSources("team");
 
-    expect(dataSources).toEqual([{ id: "1", name: "My Team", type: "team" }]);
+    expect(dataSources).toEqual([
+      { query: "team:1", name: "My Team", type: "team" },
+    ]);
   });
 });
 
